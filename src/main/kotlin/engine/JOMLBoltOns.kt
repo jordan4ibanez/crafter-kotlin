@@ -78,7 +78,7 @@ fun Vector4f.print(debugInfo: String? = null) {
 }
 
 // Again, mutable objects inherit from READ-ONLY views. We can do this trick for real now.
-// Destructure is also an alias for toArray(). Which I need to also implement next.
+// Destructure is also an alias for toArray().
 fun Vector2fc.destructure(): Array<Float> {
   return arrayOf(this.x(), this.y())
 }

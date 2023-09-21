@@ -5,13 +5,20 @@ import org.joml.Vector2i
 import org.joml.Vector2ic
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
+import org.lwjgl.opengl.GL11.glViewport
 import org.lwjgl.system.MemoryUtil.NULL
 
 object glfw {
 
   private val monitorSize = Vector2i()
+  private var windowPointer: Long = NULL
 
   fun initialize() {
+
+    // A simple way to stop this from being called multiple times.
+    if (windowPointer != NULL) {
+      throw RuntimeException("GLFW: Attempted to initialize GLFW with active window.")
+    }
 
     // Set the error callback for GLFW to funnel into JRE System Error output.
     GLFWErrorCallback.createPrint(System.err).set()
@@ -39,8 +46,20 @@ object glfw {
 
     run {
       val (sizeX, sizeY) = getMonitorSize().destructure()
-      glfwCreateWindow(sizeX / 2, sizeY / 2, "Whatever the game is called", NULL, NULL)
+      windowPointer = glfwCreateWindow(sizeX / 2, sizeY / 2, "Whatever the game is called", NULL, NULL)
     }
+
+    // Now if this gets called, we have a serious problem.
+    if (windowPointer == NULL) {
+      throw RuntimeException("GLFW: Failed to create GLFW window.")
+    }
+
+    glfwSetFramebufferSizeCallback(windowPointer) { _, width, height ->
+      println("Window was resized to: $width, $height")
+      glViewport(0, 0, width, height)
+    }
+
+
 
   }
 
