@@ -7,9 +7,9 @@ import org.lwjgl.glfw.GLFWErrorCallback
 
 object glfw {
 
-  val monitorSize = Vector2i()
+  private val monitorSize = Vector2i()
 
-  fun initializeGLFW() {
+  fun initialize() {
 
     // Set the error callback for GLFW to funnel into JRE System Error output.
     GLFWErrorCallback.createPrint(System.err).set()
