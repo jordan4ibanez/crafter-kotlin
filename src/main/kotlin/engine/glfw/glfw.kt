@@ -13,6 +13,7 @@ object glfw {
   private val monitorSize = Vector2i()
   private var windowPointer: Long = NULL
   private const val WINDOW_TITLE = "Crafter"
+  private val frameBufferSize = Vector2i(0,0)
 
   fun initialize() {
 
@@ -69,6 +70,7 @@ object glfw {
     glfwSetFramebufferSizeCallback(windowPointer) { _, width, height ->
       println("Framebuffer was resized to: $width, $height")
       glViewport(0, 0, width, height)
+      frameBufferSize.set(width, height)
     }
 
     glfwSetWindowPos(windowPointer, windowPosX, windowPosY)
@@ -80,6 +82,11 @@ object glfw {
 
     // We only want one of this object. Share it as READ-ONLY throughout the entire program.
     return monitorSize.set(videoMode.width(), videoMode.height())
+  }
+
+  // This is kind of weird to have this fun in here, but GLFW is handling the framebuffer.
+  fun getFrameBufferSize(): Vector2ic {
+    return frameBufferSize
   }
 
 
