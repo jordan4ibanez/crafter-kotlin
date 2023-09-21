@@ -99,3 +99,24 @@ fun Vector4fc.destructure(): Array<Float> {
 fun Vector4ic.destructure(): Array<Int> {
   return arrayOf(this.x(), this.y(), this.z(), this.w())
 }
+
+fun Vector2fc.toArray(): Array<Float> {
+  return this.destructure()
+}
+fun Vector2ic.toArray(): Array<Int> {
+  return this.destructure()
+}
+
+fun Vector3fc.toArray(): Array<Float> {
+  return this.destructure()
+}
+fun Vector3ic.toArray(): Array<Int> {
+  return this.destructure()
+}
+
+fun Vector4fc.toArray(): Array<Float> {
+  return this.destructure()
+}
+fun Vector4ic.toArray(): Array<Int> {
+  return this.destructure()
+}
