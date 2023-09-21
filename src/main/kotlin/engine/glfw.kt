@@ -57,10 +57,10 @@ object glfw {
   }
 
   private fun constructWindow() {
-    val (monitorSizeX, monitorSizeY) = engine.glfw.getMonitorSize().destructure()
+    val (monitorSizeX, monitorSizeY) = getMonitorSize().destructure()
     val (windowSizeX, windowSizeY) = arrayOf(monitorSizeX / 2, monitorSizeY / 2)
     val (windowPosX, windowPosY) = arrayOf((monitorSizeX - windowSizeX) / 2, (monitorSizeY - windowSizeY) / 2)
-    windowPointer = glfwCreateWindow(windowSizeX, windowSizeY, engine.glfw.WINDOW_TITLE, NULL, NULL)
+    windowPointer = glfwCreateWindow(windowSizeX, windowSizeY, WINDOW_TITLE, NULL, NULL)
 
     // Now if this gets called, we have a serious problem.
     if (windowPointer == NULL) {
