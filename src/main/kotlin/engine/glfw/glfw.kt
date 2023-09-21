@@ -9,7 +9,7 @@ object glfw {
 
   val monitorSize = Vector2i()
 
-  private fun initializeGLFW() {
+  fun initializeGLFW() {
 
     // Set the error callback for GLFW to funnel into JRE System Error output.
     GLFWErrorCallback.createPrint(System.err).set()
@@ -38,7 +38,7 @@ object glfw {
   }
 
 
-  private fun getMonitorSize(): Vector2ic {
+  fun getMonitorSize(): Vector2ic {
     val mainMonitor = glfwGetPrimaryMonitor()
     val videoMode = glfwGetVideoMode(mainMonitor) ?: throw RuntimeException("GLFW: Failed to get monitor video mode.")
 
