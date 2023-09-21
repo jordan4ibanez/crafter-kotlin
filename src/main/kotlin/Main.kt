@@ -7,5 +7,6 @@ fun main(args: Array<String>) {
   glfw.initialize()
 
 
+  glfw.destroy()
 
 }
