@@ -6,8 +6,7 @@ fun main(args: Array<String>) {
   println(args)
 
   glfw.initialize()
-
-  gl.printHi()
+  gl.initialize()
 
 
   glfw.destroy()
