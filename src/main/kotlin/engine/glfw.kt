@@ -1,8 +1,8 @@
-package engine.glfw
+package engine
 
-import engine.destructure
 import org.joml.Vector2i
 import org.joml.Vector2ic
+import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL11.glViewport
@@ -57,10 +57,10 @@ object glfw {
   }
 
   private fun constructWindow() {
-    val (monitorSizeX, monitorSizeY) = getMonitorSize().destructure()
+    val (monitorSizeX, monitorSizeY) = engine.glfw.getMonitorSize().destructure()
     val (windowSizeX, windowSizeY) = arrayOf(monitorSizeX / 2, monitorSizeY / 2)
     val (windowPosX, windowPosY) = arrayOf((monitorSizeX - windowSizeX) / 2, (monitorSizeY - windowSizeY) / 2)
-    windowPointer = glfwCreateWindow(windowSizeX, windowSizeY, WINDOW_TITLE, NULL, NULL)
+    windowPointer = glfwCreateWindow(windowSizeX, windowSizeY, engine.glfw.WINDOW_TITLE, NULL, NULL)
 
     // Now if this gets called, we have a serious problem.
     if (windowPointer == NULL) {
@@ -89,5 +89,11 @@ object glfw {
     return frameBufferSize
   }
 
+  fun destroy() {
+    glfwFreeCallbacks(windowPointer)
+    glfwDestroyWindow(windowPointer)
+    glfwTerminate()
+    glfwSetErrorCallback(null)?.free()
+  }
 
 }
