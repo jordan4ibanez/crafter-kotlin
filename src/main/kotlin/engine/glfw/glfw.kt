@@ -1,9 +1,11 @@
 package engine.glfw
 
+import engine.destructure
 import org.joml.Vector2i
 import org.joml.Vector2ic
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
+import org.lwjgl.system.MemoryUtil.NULL
 
 object glfw {
 
@@ -35,8 +37,12 @@ object glfw {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE)
 
-  }
+    run {
+      val (sizeX, sizeY) = getMonitorSize().destructure()
+      glfwCreateWindow(sizeX / 2, sizeY / 2, "Whatever the game is called", NULL, NULL)
+    }
 
+  }
 
   fun getMonitorSize(): Vector2ic {
     val mainMonitor = glfwGetPrimaryMonitor()
@@ -45,4 +51,6 @@ object glfw {
     // We only want one of this object. Share it as READ-ONLY throughout the entire program.
     return monitorSize.set(videoMode.width(), videoMode.height())
   }
+
+
 }

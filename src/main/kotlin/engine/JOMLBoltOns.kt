@@ -34,13 +34,13 @@ private fun assembleVectorComponents(x: Float, y: Float, z: Float? = null, w: Fl
   return builder.toString()
 }
 
-private fun Vector2fc.destructure(): String {
+private fun Vector2fc.destructureToString(): String {
   return assembleVectorComponents(this.x(), this.y())
 }
-private fun Vector3fc.destructure(): String {
+private fun Vector3fc.destructureToString(): String {
   return assembleVectorComponents(this.x(), this.y(), this.z())
 }
-private fun Vector4fc.destructure(): String {
+private fun Vector4fc.destructureToString(): String {
   return assembleVectorComponents(this.x(), this.y(), this.z(), this.w())
 }
 
@@ -51,28 +51,51 @@ private fun finalizeVectorSerialization(type: String, debugInfo: String?, compon
 // Mutable Vector objects inherit from READ-ONLY view. :)
 // We add the additional types to make it nicer. You can see I don't need to create secondary pass-throughs. Nice.
 fun Vector2fc.print(debugInfo: String? = null) {
-  val result = finalizeVectorSerialization("Vector2fc", debugInfo, this.destructure())
+  val result = finalizeVectorSerialization("Vector2fc", debugInfo, this.destructureToString())
   println(result)
 }
 fun Vector2f.print(debugInfo: String? = null) {
-  val result = finalizeVectorSerialization("Vector2f", debugInfo, this.destructure())
+  val result = finalizeVectorSerialization("Vector2f", debugInfo, this.destructureToString())
   println(result)
 }
 
 fun Vector3fc.print(debugInfo: String? = null) {
-  val result = finalizeVectorSerialization("Vector3fc", debugInfo, this.destructure())
+  val result = finalizeVectorSerialization("Vector3fc", debugInfo, this.destructureToString())
   println(result)
 }
 fun Vector3f.print(debugInfo: String? = null) {
-  val result = finalizeVectorSerialization("Vector3f", debugInfo, this.destructure())
+  val result = finalizeVectorSerialization("Vector3f", debugInfo, this.destructureToString())
   println(result)
 }
 
 fun Vector4fc.print(debugInfo: String? = null) {
-  val result = finalizeVectorSerialization("Vector4fc", debugInfo, this.destructure())
+  val result = finalizeVectorSerialization("Vector4fc", debugInfo, this.destructureToString())
   println(result)
 }
 fun Vector4f.print(debugInfo: String? = null) {
-  val result = finalizeVectorSerialization("Vector4f", debugInfo, this.destructure())
+  val result = finalizeVectorSerialization("Vector4f", debugInfo, this.destructureToString())
   println(result)
+}
+
+// Again, mutable objects inherit from READ-ONLY views. We can do this trick for real now.
+// Destructure is also an alias for toArray(). Which I need to also implement next.
+fun Vector2fc.destructure(): Array<Float> {
+  return arrayOf(this.x(), this.y())
+}
+fun Vector2ic.destructure(): Array<Int> {
+  return arrayOf(this.x(), this.y())
+}
+
+fun Vector3fc.destructure(): Array<Float> {
+  return arrayOf(this.x(), this.y(), this.z())
+}
+fun Vector3ic.destructure(): Array<Int> {
+  return arrayOf(this.x(), this.y(), this.z())
+}
+
+fun Vector4fc.destructure(): Array<Float> {
+  return arrayOf(this.x(), this.y(), this.z(), this.w())
+}
+fun Vector4ic.destructure(): Array<Int> {
+  return arrayOf(this.x(), this.y(), this.z(), this.w())
 }
