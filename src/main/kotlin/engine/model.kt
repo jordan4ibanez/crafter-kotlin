@@ -12,10 +12,6 @@ import org.lwjgl.system.MemoryStack
 import java.nio.ByteBuffer
 import java.nio.IntBuffer
 
-//Note: inverseDatabase
-// The existence check inverse database. Can quickly check if the database contains a texture by ID.
-// Do not remove this, this is causing O(1) performance penalty. Safer to have this.
-
 // Mesh works as a factory, container, and namespace. All in one.
 object mesh {
 
@@ -24,7 +20,6 @@ object mesh {
 
 object texture {
   private val database = HashMap<String, Texture>()
-  private val inverseDatabase = HashMap<Int, String>()
 
   fun createTexture(fileLocation: String) {
     database[fileLocation] = Texture(fileLocation)
