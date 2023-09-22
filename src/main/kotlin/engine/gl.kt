@@ -22,6 +22,8 @@ object gl {
     glDepthMask(true)
     glEnable(GL_DEPTH_TEST)
     glDepthFunc(GL_LESS)
+
+    //todo: this has to be implemented before it's used
 //    glDepthRange(camera near, camera far)
 
     val enableCulling = false
