@@ -3,15 +3,19 @@ package engine
 import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS
+import org.lwjgl.opengl.GLCapabilities
 import org.lwjgl.opengl.GLUtil.setupDebugMessageCallback
 import org.lwjgl.system.Callback
 
 object gl {
 
   private lateinit var debugCallback: Callback
+  private lateinit var capabilities: GLCapabilities
 
   fun initialize() {
-    createCapabilities()
+
+    capabilities = createCapabilities()
+
     println(glGetString(GL_VERSION))
 
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS)
@@ -33,7 +37,5 @@ object gl {
     } else {
       glDisable(GL_CULL_FACE)
     }
-
-
   }
 }

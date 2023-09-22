@@ -10,12 +10,11 @@ import org.lwjgl.system.MemoryUtil.NULL
 
 object glfw {
 
-  private val monitorSize = Vector2i()
-  private var windowPointer: Long = NULL
-  private const val WINDOW_TITLE = "Crafter"
-  private val frameBufferSize = Vector2i(0,0)
+  private val monitorSize = Vector2i(0,0)
 
   fun initialize() {
+
+    var windowPointer = window.getPointer()
 
     // A simple way to stop this from being called multiple times.
     if (windowPointer != NULL) {
@@ -46,7 +45,8 @@ object glfw {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE)
 
-    constructWindow()
+    // Needs to update the pointer now.
+    windowPointer = constructWindow()
 
     glfwMakeContextCurrent(windowPointer)
 
@@ -54,13 +54,18 @@ object glfw {
 
     glfwShowWindow(windowPointer)
 
+    window.setPointer(windowPointer)
+
   }
 
-  private fun constructWindow() {
+  private fun constructWindow(): Long {
+
+    // This function is talking to the window object.
+
     val (monitorSizeX, monitorSizeY) = getMonitorSize().destructure()
     val (windowSizeX, windowSizeY) = arrayOf(monitorSizeX / 2, monitorSizeY / 2)
     val (windowPosX, windowPosY) = arrayOf((monitorSizeX - windowSizeX) / 2, (monitorSizeY - windowSizeY) / 2)
-    windowPointer = glfwCreateWindow(windowSizeX, windowSizeY, WINDOW_TITLE, NULL, NULL)
+    val windowPointer = glfwCreateWindow(windowSizeX, windowSizeY, window.getTitleBase(), NULL, NULL)
 
     // Now if this gets called, we have a serious problem.
     if (windowPointer == NULL) {
@@ -70,10 +75,14 @@ object glfw {
     glfwSetFramebufferSizeCallback(windowPointer) { _, width, height ->
       println("Framebuffer was resized to: $width, $height")
       glViewport(0, 0, width, height)
-      frameBufferSize.set(width, height)
+      window.frameBufferSize.set(width, height)
     }
 
     glfwSetWindowPos(windowPointer, windowPosX, windowPosY)
+
+    window.setPointer(windowPointer)
+
+    return windowPointer
   }
 
   fun getMonitorSize(): Vector2ic {
@@ -84,14 +93,9 @@ object glfw {
     return monitorSize.set(videoMode.width(), videoMode.height())
   }
 
-  // This is kind of weird to have this fun in here, but GLFW is handling the framebuffer.
-  fun getFrameBufferSize(): Vector2ic {
-    return frameBufferSize
-  }
-
   fun destroy() {
-    glfwFreeCallbacks(windowPointer)
-    glfwDestroyWindow(windowPointer)
+    glfwFreeCallbacks(window.getPointer())
+    glfwDestroyWindow(window.getPointer())
     glfwTerminate()
     glfwSetErrorCallback(null)?.free()
   }
