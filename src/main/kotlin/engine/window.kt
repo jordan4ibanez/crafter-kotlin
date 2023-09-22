@@ -38,6 +38,10 @@ object window {
     glClearColor(clearColor.x(), clearColor.y(), clearColor.z(), 1f)
   }
 
+  fun setVsync(state: Boolean) {
+    glfwSwapInterval(tern(state, GLFW_TRUE, GLFW_FALSE))
+  }
+
   fun getClearColor(): Vector3fc {
     return clearColor
   }
