@@ -3,7 +3,7 @@ val lwjglVersion = "3.3.3"
 val jomlVersion = "1.10.5"
 
 plugins {
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version "1.9.10"
     application
 }
 
