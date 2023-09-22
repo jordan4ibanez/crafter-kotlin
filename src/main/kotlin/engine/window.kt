@@ -5,17 +5,10 @@ import org.joml.Vector2ic
 import org.lwjgl.system.MemoryUtil.NULL
 
 object window {
-  private var pointer: Long = NULL
+  internal var pointer: Long = NULL
   private const val WINDOW_TITLE_BASE = "Crafter"
   internal val frameBufferSize = Vector2i(0,0)
-
-  internal fun getPointer(): Long {
-    return pointer
-  }
-
-  internal fun setPointer(pointer: Long) {
-    this.pointer = pointer
-  }
+  internal val position = Vector2i(0,0)
 
   internal fun getTitleBase(): String {
     return WINDOW_TITLE_BASE
@@ -24,6 +17,8 @@ object window {
   fun getFrameBufferSize(): Vector2ic {
     return frameBufferSize
   }
+
+
 
 
 }

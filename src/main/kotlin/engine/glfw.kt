@@ -10,14 +10,14 @@ import org.lwjgl.system.MemoryUtil.NULL
 
 object glfw {
 
+  // This object is abstracting away complex implementation details away from the window object.
+
   private val monitorSize = Vector2i(0,0)
 
   fun initialize() {
 
-    var windowPointer = window.getPointer()
-
     // A simple way to stop this from being called multiple times.
-    if (windowPointer != NULL) {
+    if (window.pointer != NULL) {
       throw RuntimeException("GLFW: Attempted to initialize GLFW with active window.")
     }
 
@@ -45,44 +45,43 @@ object glfw {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE)
 
-    // Needs to update the pointer now.
-    windowPointer = constructWindow()
+    // Automatically updates the window object pointer.
+    constructWindow()
 
-    glfwMakeContextCurrent(windowPointer)
+    glfwMakeContextCurrent(window.pointer)
 
     glfwSwapInterval(1)
 
-    glfwShowWindow(windowPointer)
-
-    window.setPointer(windowPointer)
+    glfwShowWindow(window.pointer)
 
   }
 
-  private fun constructWindow(): Long {
+  private fun constructWindow() {
 
     // This function is talking to the window object.
 
     val (monitorSizeX, monitorSizeY) = getMonitorSize().destructure()
     val (windowSizeX, windowSizeY) = arrayOf(monitorSizeX / 2, monitorSizeY / 2)
     val (windowPosX, windowPosY) = arrayOf((monitorSizeX - windowSizeX) / 2, (monitorSizeY - windowSizeY) / 2)
-    val windowPointer = glfwCreateWindow(windowSizeX, windowSizeY, window.getTitleBase(), NULL, NULL)
+    window.pointer = glfwCreateWindow(windowSizeX, windowSizeY, window.getTitleBase(), NULL, NULL)
 
     // Now if this gets called, we have a serious problem.
-    if (windowPointer == NULL) {
+    if (window.pointer == NULL) {
       throw RuntimeException("GLFW: Failed to create GLFW window.")
     }
 
-    glfwSetFramebufferSizeCallback(windowPointer) { _, width, height ->
+    glfwSetFramebufferSizeCallback(window.pointer) { _, width, height ->
       println("Framebuffer was resized to: $width, $height")
       glViewport(0, 0, width, height)
       window.frameBufferSize.set(width, height)
     }
 
-    glfwSetWindowPos(windowPointer, windowPosX, windowPosY)
+    glfwSetWindowPosCallback(window.pointer) { _, positionX, positionY ->
+      println("Window was moved to: $positionX, $positionY")
+      window.position.set(positionX, positionY)
+    }
 
-    window.setPointer(windowPointer)
-
-    return windowPointer
+    glfwSetWindowPos(window.pointer, windowPosX, windowPosY)
   }
 
   fun getMonitorSize(): Vector2ic {
@@ -94,8 +93,8 @@ object glfw {
   }
 
   fun destroy() {
-    glfwFreeCallbacks(window.getPointer())
-    glfwDestroyWindow(window.getPointer())
+    glfwFreeCallbacks(window.pointer)
+    glfwDestroyWindow(window.pointer)
     glfwTerminate()
     glfwSetErrorCallback(null)?.free()
   }
