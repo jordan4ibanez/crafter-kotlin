@@ -1,6 +1,7 @@
 package engine
 
 import org.joml.Vector2f
+import org.joml.Vector2fc
 import org.joml.Vector2i
 import org.joml.Vector2ic
 import org.lwjgl.opengl.GL11.*
@@ -19,29 +20,64 @@ object mesh {
 }
 
 object texture {
+
   private val database = HashMap<String, Texture>()
+  private val idDatabase = HashMap<Int, String>()
 
   fun createTexture(fileLocation: String) {
-    database[fileLocation] = Texture(fileLocation)
+    val textureObject = Texture(fileLocation)
+    safePut(fileLocation, textureObject)
   }
 
   fun destroyTexture(name: String) {
-    // This is safe because it will error out if this texture does not exist automatically.
-    destroyTexture(safeGet(name).id)
-    database.remove(name)
+    safeDestroy(name)
   }
 
   fun getID(name: String): Int {
     return safeGet(name).id
   }
 
+  fun getSize(name: String): Vector2ic {
+    return safeGet(name).size
+  }
+
+  fun getFloatingSize(name: String): Vector2fc {
+    return safeGet(name).floatingSize
+  }
+
+  fun getChannels(name: String): Int {
+    return safeGet(name).channels
+  }
+
+  fun getName(id: Int): String {
+    return idDatabase[id] ?: throw RuntimeException("texture: Attempted to index nonexistent ID. $id")
+  }
+
+  fun exists(name: String): Boolean {
+    return database.containsKey(name)
+  }
+
+  fun exists(id: Int): Boolean {
+    return idDatabase.containsKey(id)
+  }
+
   private fun safePut(name: String, textureObject: Texture) {
-    if (database.containsKey(name)) throw RuntimeException("texture: Tried to overwrite existing texture. $name")
+    if (database.containsKey(name)) throw RuntimeException("texture: Attempted to overwrite existing texture. $name")
+    database[name] = textureObject
+    idDatabase[textureObject.id] = name
   }
 
   private fun safeGet(name: String): Texture {
     // A handy utility to prevent unwanted behavior.
     return database[name] ?: throw RuntimeException("texture: Attempted to index nonexistent texture. $name")
+  }
+
+  private fun safeDestroy(name: String) {
+    // This is safe because it will error out if this texture does not exist automatically.
+    val id = safeGet(name).id
+    destroyTexture(id)
+    database.remove(name)
+    idDatabase.remove(id)
   }
 }
 
