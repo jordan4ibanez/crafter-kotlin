@@ -12,10 +12,42 @@ import org.lwjgl.system.MemoryStack
 import java.nio.ByteBuffer
 import java.nio.IntBuffer
 
+//Note: inverseDatabase
+// The existence check inverse database. Can quickly check if the database contains a texture by ID.
+// Do not remove this, this is causing O(1) performance penalty. Safer to have this.
+
 // Mesh works as a factory, container, and namespace. All in one.
 object mesh {
 
 
+}
+
+object texture {
+  private val database = HashMap<String, Texture>()
+  private val inverseDatabase = HashMap<Int, String>()
+
+  fun createTexture(fileLocation: String) {
+    database[fileLocation] = Texture(fileLocation)
+  }
+
+  fun destroyTexture(name: String) {
+    // This is safe because it will error out if this texture does not exist automatically.
+    destroyTexture(safeGet(name).id)
+    database.remove(name)
+  }
+
+  fun getID(name: String): Int {
+    return safeGet(name).id
+  }
+
+  private fun safePut(name: String, textureObject: Texture) {
+    if (database.containsKey(name)) throw RuntimeException("texture: Tried to overwrite existing texture. $name")
+  }
+
+  private fun safeGet(name: String): Texture {
+    // A handy utility to prevent unwanted behavior.
+    return database[name] ?: throw RuntimeException("texture: Attempted to index nonexistent texture. $name")
+  }
 }
 
 private class Texture {
@@ -47,20 +79,22 @@ private class Texture {
     id = bufferToGL(name, size, buffer)
 
     destroyTextureBuffer(buffer)
-
   }
-
-
-
 }
 
 private class Mesh {
 
 }
 
-private class TexturelessMesh {
+//todo: this will be interesting
+//private class TexturelessMesh {
+//
+//}
 
-}
+//note: Mesh functions
+
+
+//note: Texture functions
 
 @JvmRecord
 data class TextureData(val buffer: ByteBuffer, val width: Int, val height: Int, val channels: Int)
@@ -110,11 +144,15 @@ fun bufferToGL(name: String, size: Vector2ic, buffer: ByteBuffer): Int {
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.x(), size.y(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
-  // If this gets called, the driver is probably borked
+  // If this gets called, the driver most likely has an issue.
   if (!glIsTexture(textureID)) {
     throw RuntimeException("Texture: OpenGL failed to upload $name into GPU memory!")
   }
   glGenerateMipmap(GL_TEXTURE_2D);
 
   return textureID
+}
+
+fun destroyTexture(id: Int) {
+  glDeleteTextures(id)
 }
