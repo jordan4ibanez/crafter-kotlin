@@ -3,6 +3,7 @@ package engine
 import org.joml.Vector2i
 import org.joml.Vector2ic
 import org.lwjgl.glfw.GLFW.glfwSetWindowPos
+import org.lwjgl.glfw.GLFW.glfwWindowShouldClose
 import org.lwjgl.system.MemoryUtil.NULL
 
 object window {
@@ -25,6 +26,10 @@ object window {
 
   fun setPosition(x: Int, y: Int) {
     glfwSetWindowPos(pointer, x, y)
+  }
+
+  fun shouldClose(): Boolean {
+    return glfwWindowShouldClose(pointer)
   }
 
 }
