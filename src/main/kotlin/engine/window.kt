@@ -2,6 +2,7 @@ package engine
 
 import org.joml.Vector2i
 import org.joml.Vector2ic
+import org.lwjgl.glfw.GLFW.glfwSetWindowPos
 import org.lwjgl.system.MemoryUtil.NULL
 
 object window {
@@ -18,7 +19,12 @@ object window {
     return frameBufferSize
   }
 
+  fun getPosition(): Vector2ic {
+    return position
+  }
 
-
+  fun setPosition(x: Int, y: Int) {
+    glfwSetWindowPos(pointer, x, y)
+  }
 
 }

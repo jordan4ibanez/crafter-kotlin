@@ -48,10 +48,11 @@ object glfw {
     // Automatically updates the window object pointer.
     constructWindow()
 
+    // Puts all callback initializations into one function scope.
+    constructCallbacks()
+
     glfwMakeContextCurrent(window.pointer)
-
     glfwSwapInterval(1)
-
     glfwShowWindow(window.pointer)
 
   }
@@ -70,6 +71,12 @@ object glfw {
       throw RuntimeException("GLFW: Failed to create GLFW window.")
     }
 
+    window.setPosition(windowPosX, windowPosY)
+  }
+
+
+
+  private fun constructCallbacks() {
     glfwSetFramebufferSizeCallback(window.pointer) { _, width, height ->
       println("Framebuffer was resized to: $width, $height")
       glViewport(0, 0, width, height)
@@ -80,15 +87,11 @@ object glfw {
       println("Window was moved to: $positionX, $positionY")
       window.position.set(positionX, positionY)
     }
-
-    glfwSetWindowPos(window.pointer, windowPosX, windowPosY)
   }
 
   fun getMonitorSize(): Vector2ic {
     val mainMonitor = glfwGetPrimaryMonitor()
     val videoMode = glfwGetVideoMode(mainMonitor) ?: throw RuntimeException("GLFW: Failed to get monitor video mode.")
-
-    // We only want one of this object. Share it as READ-ONLY throughout the entire program.
     return monitorSize.set(videoMode.width(), videoMode.height())
   }
 
