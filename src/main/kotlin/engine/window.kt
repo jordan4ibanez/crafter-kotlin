@@ -1,7 +1,6 @@
 package engine
 
 import org.joml.*
-import org.joml.Math.clamp
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.system.MemoryUtil.NULL
@@ -39,7 +38,7 @@ object window {
   }
 
   fun setVsync(state: Boolean) {
-    glfwSwapInterval(tern(state, GLFW_TRUE, GLFW_FALSE))
+    glfwSwapInterval(if (state) GLFW_TRUE else GLFW_FALSE)
   }
 
   fun getClearColor(): Vector3fc {
