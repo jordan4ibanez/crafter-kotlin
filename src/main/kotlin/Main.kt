@@ -6,6 +6,8 @@ fun load() {
   glfw.initialize()
   gl.initialize()
 
+  getFileString("./shaders/test.txt")
+
 }
 
 var timer = 0f
