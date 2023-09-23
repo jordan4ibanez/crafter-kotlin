@@ -20,7 +20,18 @@ import java.nio.IntBuffer
 
 // mesh works as a factory, container, and namespace. All in one.
 object mesh {
+  private val database = HashMap<String, Mesh>()
+  private val idDatabase = HashMap<Int, String>()
 
+  // note: 3D and 2D are explicit here to make code more readable.
+
+  fun create3D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String) {
+    val meshObject = Mesh(name, positions, textureCoords, indices, textureName, true)
+  }
+
+  fun create2D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String) {
+    val meshObject = Mesh(name, positions, textureCoords, indices, textureName, false)
+  }
 
 }
 
@@ -36,12 +47,12 @@ private class Mesh {
   val textureCoordsID: Int
   val indicesVboID: Int
   val indicesCount: Int
-  val textureID: Int
+  var textureID: Int
   // Optionals.
 //  val bones: Int
 //  val colors: Int
 
-  constructor(name: String, positions: FloatArray, textureCoords: FloatArray, indices: FloatArray, textureName: String, is2D: Boolean) {
+  constructor(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String, is3D: Boolean) {
 
     // Check texture existence before continuing.
     try {
@@ -58,11 +69,25 @@ private class Mesh {
     // GL State machine Object assignment begin.
     glBindVertexArray(vaoID)
 
-    // Store the width of the components. Vector2f or Vector3f, basically.
-    val positionComponents = if (is2D) 2 else 3
+    // Store the width of the components. Vector3f or Vector2f, basically.
+    val componentWidth = if (is3D) 3 else 2
 
+    positionsID     = uploadFloatArray(positions, 0, componentWidth)
+    textureCoordsID = uploadFloatArray(textureCoords, 1, 2)
+    indicesVboID    = uploadIndices(indices)
 
+    // Finally unbind the VAO.
+    glBindVertexArray(0)
+  }
 
+  fun swapTexture(name: String) {
+    val newTextureID: Int
+    try {
+      newTextureID = texture.getID(name)
+    } catch (e: Exception) {
+      throw RuntimeException("Mesh: Attempted to hotswap to nonexistent texture. $name")
+    }
+    textureID = newTextureID
   }
 }
 
@@ -184,7 +209,7 @@ object texture {
   private val database = HashMap<String, Texture>()
   private val idDatabase = HashMap<Int, String>()
 
-  fun createTexture(fileLocation: String) {
+  fun create(fileLocation: String) {
     val textureObject = Texture(fileLocation)
     safePut(fileLocation, textureObject)
   }
