@@ -10,8 +10,6 @@ fun main(args: Array<String>) {
 
   gameLoop()
 
-  print(Math.clamp(0f, 1f, -1f))
-
   destruction()
 
 }
@@ -43,8 +41,7 @@ tailrec fun gameLoop() {
   draw()
   window.swapBuffers()
 
-  if (window.shouldClose()){
-    return
-  }
+  if (window.shouldClose()) return
+
   return gameLoop()
 }

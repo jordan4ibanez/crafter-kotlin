@@ -21,6 +21,10 @@ object mesh {
 
 object texture {
 
+  //note: For now textures in the game remain until game is closed.
+  // But, in the future we will want textures to be able to be cleared from GL memory.
+  // This is designed for that.
+
   private val database = HashMap<String, Texture>()
   private val idDatabase = HashMap<Int, String>()
 
@@ -29,8 +33,12 @@ object texture {
     safePut(fileLocation, textureObject)
   }
 
-  fun destroyTexture(name: String) {
+  fun destroy(name: String) {
     safeDestroy(name)
+  }
+
+  fun destroy(id: Int) {
+    safeDestroy(id)
   }
 
   fun getID(name: String): Int {
@@ -72,9 +80,23 @@ object texture {
     return database[name] ?: throw RuntimeException("texture: Attempted to index nonexistent texture. $name")
   }
 
+  private fun safeGet(id: Int): Texture {
+    // A handy utility to prevent unwanted behavior.
+    val name = idDatabase[id] ?: throw RuntimeException("texture: Attempted to index nonexistent ID. $id")
+    return safeGet(name)
+  }
+
   private fun safeDestroy(name: String) {
     // This is safe because it will error out if this texture does not exist automatically.
     val id = safeGet(name).id
+    destroyTexture(id)
+    database.remove(name)
+    idDatabase.remove(id)
+  }
+
+  private fun safeDestroy(id: Int) {
+    // This is safe because it will error out if this texture does not exist automatically.
+    val name = safeGet(id).name
     destroyTexture(id)
     database.remove(name)
     idDatabase.remove(id)
@@ -88,17 +110,24 @@ private class Texture {
   val floatingSize: Vector2f = Vector2f()
   val channels: Int
 
-  //TODO: This needs to be implemented later.
-  // This clones a Texture.
-//  constructor(name: String, buffer: ByteBuffer, size: Vector2ic) {
-//    val stack: MemoryStack = try {
-//      MemoryStack.stackPush()
-//    } catch (e: RuntimeException) {
-//      throw RuntimeException("Texture: Failed to push memory stack.")
-//    }
-//  }
+  constructor(name: String, buffer: ByteBuffer, size: Vector2ic, channels: Int) {
+
+    // Clones a texture.
+
+    this.name = name
+    this.size.set(size)
+    this.floatingSize.set(size.x().toFloat(), size.y().toFloat())
+    this.channels = channels
+
+    id = bufferToGL(name, size, buffer)
+
+    //note: This does not destroy the buffer because the buffer could still be in use!
+  }
 
   constructor(fileLocation: String) {
+
+    // Creates a GL texture from a file location.
+
     name = fileLocation
 
     val (buffer, width, height, channels) = constructTextureFromFile(fileLocation)
@@ -127,7 +156,6 @@ private class Mesh {
 
 //note: Texture functions
 
-@JvmRecord
 data class TextureData(val buffer: ByteBuffer, val width: Int, val height: Int, val channels: Int)
 
 private fun constructTextureFromFile(fileLocation: String): TextureData {
@@ -135,7 +163,7 @@ private fun constructTextureFromFile(fileLocation: String): TextureData {
   val stack: MemoryStack = try {
     MemoryStack.stackPush()
   } catch (e: RuntimeException) {
-    throw RuntimeException("Texture: Failed to push memory stack.")
+    throw RuntimeException("constructTextureFromFile: Failed to push memory stack.")
   }
   val stackWidth: IntBuffer = stack.mallocInt(1)
   val stackHeight: IntBuffer = stack.mallocInt(1)
