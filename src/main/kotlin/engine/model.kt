@@ -11,8 +11,7 @@ import org.lwjgl.opengl.GL30.*
 import org.lwjgl.stb.STBImage.stbi_image_free
 import org.lwjgl.stb.STBImage.stbi_load
 import org.lwjgl.system.MemoryStack
-import org.lwjgl.system.MemoryUtil.memAllocFloat
-import org.lwjgl.system.MemoryUtil.memFree
+import org.lwjgl.system.MemoryUtil.*
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
@@ -67,7 +66,7 @@ private class Mesh {
   }
 }
 
-fun uploadFloatArray(floatArray: FloatArray, glslPosition: Int, componentWidth: Int): Int {
+private fun uploadFloatArray(floatArray: FloatArray, glslPosition: Int, componentWidth: Int): Int {
   // OpenGL is a state machine. Uploading float array to current VAO state.
   // glslPosition: The "(location = X)" in the fragment shader.
   // componentWidth: 2 = Vec2, 3 = Vec3, etc
@@ -91,7 +90,6 @@ fun uploadFloatArray(floatArray: FloatArray, glslPosition: Int, componentWidth: 
     // Enable the GLSL array.
     glEnableVertexAttribArray(glslPosition)
 
-    //note: This is a safety measure. Not required.
     // Unbind the array buffer.
     glBindBuffer(GL_ARRAY_BUFFER, 0)
 
@@ -99,6 +97,72 @@ fun uploadFloatArray(floatArray: FloatArray, glslPosition: Int, componentWidth: 
     throw RuntimeException("uploadFloatArray: Failed to upload. $e")
   } finally {
     // Free to C float* (float[]) or else there will be a massive memory leak.
+    memFree(buffer)
+  }
+
+  return newID
+}
+
+private fun uploadIntArray(intArray: IntArray, glslPosition: Int, componentWidth: Int): Int {
+  // OpenGL is a state machine. Uploading int array to current VAO state.
+  // glslPosition: The "(location = X)" in the fragment shader.
+  // componentWidth: 2 = Vec2, 3 = Vec3, etc
+  // Returns the VBO ID.
+
+  lateinit var buffer: IntBuffer
+  val newID: Int
+
+  try {
+    buffer = memAllocInt(intArray.size)
+    buffer.put(intArray).flip()
+
+    newID = glGenBuffers()
+
+    // Bind, push, and set pointer
+    glBindBuffer(GL_ARRAY_BUFFER, newID)
+    glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
+    // Not normalized (false), no stride (0), pointer index (0).
+    glVertexAttribIPointer(glslPosition, componentWidth, GL_INT, 0, 0)
+
+    // Enable the GLSL array.
+    glEnableVertexAttribArray(glslPosition)
+
+    // Unbind the array buffer.
+    glBindBuffer(GL_ARRAY_BUFFER, 0)
+
+  } catch (e: Exception) {
+    throw RuntimeException("uploadIntArray: Failed to upload. $e")
+  } finally {
+    // Free to C float* (float[]) or else there will be a massive memory leak.
+    memFree(buffer)
+  }
+
+  return newID
+}
+
+private fun uploadIndices(indicesArray: IntArray): Int {
+  // OpenGL is a state machine. Uploading raw indices array to VAO state.
+  // Returns the indices ID.
+
+  lateinit var buffer: IntBuffer
+  val newID: Int
+
+  try {
+
+    newID = glGenBuffers()
+
+    buffer = memAllocInt(indicesArray.size)
+    buffer.put(indicesArray).flip()
+
+    // Not normalized (false), no stride (0), pointer index (0).
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, newID)
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
+
+    // note: Do not unbind GL_ELEMENT_ARRAY_BUFFER
+
+  } catch (e: Exception) {
+    throw RuntimeException("uploadIndices: Failed to upload. $e")
+  } finally {
     memFree(buffer)
   }
 
