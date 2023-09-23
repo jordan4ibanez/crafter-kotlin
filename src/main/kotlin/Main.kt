@@ -2,7 +2,6 @@ import engine.gl
 import engine.glfw
 import engine.texture
 import engine.window
-import org.joml.Math
 
 fun main(args: Array<String>) {
   println(args)
@@ -22,7 +21,7 @@ fun initialization() {
 }
 
 // All general logic goes here. Consider this love.update()
-fun logic() {
+fun update() {
 
 }
 
@@ -31,6 +30,7 @@ fun draw() {
 
 }
 
+// Game cleanup procedures go here. Consider this love.quit()
 fun destruction() {
   texture.destroyAll()
   glfw.destroy()
@@ -39,8 +39,11 @@ fun destruction() {
 
 tailrec fun gameLoop() {
   window.update()
-  logic()
+
+  update()
+
   draw()
+
   window.swapBuffers()
 
   if (window.shouldClose()) return
