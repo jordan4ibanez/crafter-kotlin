@@ -13,13 +13,27 @@ import org.lwjgl.system.MemoryStack
 import java.nio.ByteBuffer
 import java.nio.IntBuffer
 
-// Mesh works as a factory, container, and namespace. All in one.
+//note: Mesh functions
+
+// mesh works as a factory, container, and namespace. All in one.
 object mesh {
 
-  // todo: this was next.
 
 }
 
+//todo: this will be interesting
+//private class TexturelessMesh {
+//
+//}
+
+private class Mesh {
+
+}
+
+
+//note: Texture operations.
+
+// texture works as a factory, container, and namespace. All in one.
 object texture {
 
   //note: For now textures in the game remain until game is closed.
@@ -150,20 +164,6 @@ private class Texture {
     destroyTextureBuffer(buffer)
   }
 }
-
-private class Mesh {
-
-}
-
-//todo: this will be interesting
-//private class TexturelessMesh {
-//
-//}
-
-//note: Mesh functions
-
-
-//note: Texture functions
 
 data class TextureData(val buffer: ByteBuffer, val width: Int, val height: Int, val channels: Int)
 
