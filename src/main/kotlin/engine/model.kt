@@ -6,11 +6,15 @@ import org.joml.Vector2i
 import org.joml.Vector2ic
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER
-import org.lwjgl.opengl.GL30.glGenerateMipmap
+import org.lwjgl.opengl.GL20
+import org.lwjgl.opengl.GL30.*
 import org.lwjgl.stb.STBImage.stbi_image_free
 import org.lwjgl.stb.STBImage.stbi_load
 import org.lwjgl.system.MemoryStack
+import org.lwjgl.system.MemoryUtil.memAllocFloat
+import org.lwjgl.system.MemoryUtil.memFree
 import java.nio.ByteBuffer
+import java.nio.FloatBuffer
 import java.nio.IntBuffer
 
 //note: Mesh functions
@@ -32,13 +36,13 @@ private class Mesh {
   val positionsID: Int
   val textureCoordsID: Int
   val indicesVboID: Int
-  val indicesCountID: Int
+  val indicesCount: Int
   val textureID: Int
   // Optionals.
 //  val bones: Int
 //  val colors: Int
 
-  constructor(name: String, positions: FloatArray, textureCoords: FloatArray, indices: FloatArray, textureName: String) {
+  constructor(name: String, positions: FloatArray, textureCoords: FloatArray, indices: FloatArray, textureName: String, is2D: Boolean) {
 
     // Check texture existence before continuing.
     try {
@@ -47,9 +51,61 @@ private class Mesh {
       throw RuntimeException("Mesh: Tried to use nonexistent texture. $textureName")
     }
 
+    this.name = name
+    indicesCount = indices.size
+
+    vaoID = glGenVertexArrays()
+
+    // GL State machine Object assignment begin.
+    glBindVertexArray(vaoID)
+
+    // Store the width of the components. Vector2f or Vector3f, basically.
+    val positionComponents = if (is2D) 2 else 3
+
+
 
   }
 }
+
+fun uploadFloatArray(floatArray: FloatArray, glslPosition: Int, componentWidth: Int): Int {
+  // OpenGL is a state machine. Uploading float array to current VAO state.
+  // glslPosition: The "(location = X)" in the fragment shader.
+  // componentWidth: 2 = Vec2, 3 = Vec3, etc
+  // Returns the VBO ID.
+
+  lateinit var buffer: FloatBuffer
+  val newID: Int
+
+  try {
+    buffer = memAllocFloat(floatArray.size)
+    buffer.put(floatArray).flip()
+
+    newID = glGenBuffers()
+
+    // Bind, push, and set pointer
+    glBindBuffer(GL_ARRAY_BUFFER, newID)
+    glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
+    // Not normalized (false), no stride (0), pointer index (0).
+    glVertexAttribPointer(glslPosition, componentWidth, GL_FLOAT, false, 0, 0)
+
+    // Enable the GLSL array.
+    glEnableVertexAttribArray(glslPosition)
+
+    //note: This is a safety measure. Not required.
+    // Unbind the array buffer.
+    glBindBuffer(GL_ARRAY_BUFFER, 0)
+
+  } catch (e: Exception) {
+    throw RuntimeException("uploadFloatArray: Failed to upload. $e")
+  } finally {
+    // Free to C float* (float[]) or else there will be a massive memory leak.
+    memFree(buffer)
+  }
+
+  return newID
+}
+
+
 
 
 //note: Texture operations.
@@ -163,7 +219,7 @@ private class Texture {
     this.floatingSize.set(size.x().toFloat(), size.y().toFloat())
     this.channels = channels
 
-    id = bufferToGL(name, size, buffer)
+    id = uploadTextureBuffer(name, size, buffer)
 
     //note: This does not destroy the buffer because the buffer could still be in use!
   }
@@ -180,7 +236,7 @@ private class Texture {
     floatingSize.set(width.toFloat(),height.toFloat())
     this.channels = channels
 
-    id = bufferToGL(name, size, buffer)
+    id = uploadTextureBuffer(name, size, buffer)
 
     destroyTextureBuffer(buffer)
   }
@@ -211,7 +267,7 @@ private fun destroyTextureBuffer(buffer: ByteBuffer) {
   stbi_image_free(buffer)
 }
 
-fun bufferToGL(name: String, size: Vector2ic, buffer: ByteBuffer): Int {
+private fun uploadTextureBuffer(name: String, size: Vector2ic, buffer: ByteBuffer): Int {
 
   val textureID = glGenTextures();
 
@@ -242,6 +298,6 @@ fun bufferToGL(name: String, size: Vector2ic, buffer: ByteBuffer): Int {
   return textureID
 }
 
-fun destroyTexture(id: Int) {
+private fun destroyTexture(id: Int) {
   glDeleteTextures(id)
 }
