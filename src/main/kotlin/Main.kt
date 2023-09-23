@@ -26,6 +26,19 @@ fun quit() {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+// Warning: gameLoop really should not be touched. Focus on the infrastructure around it before adding to it.
 tailrec fun gameLoop() {
   window.update()
 
