@@ -8,8 +8,17 @@ fun load() {
 
 }
 
+var timer = 0f
+var counter = 0
+
 // All general logic goes here. Consider this love.update()
 fun update() {
+  timer += getDelta()
+
+  if (timer >= 1f) {
+    timer -= 1f
+    window.setTitle("Count: ${counter++}")
+  }
 
 }
 
