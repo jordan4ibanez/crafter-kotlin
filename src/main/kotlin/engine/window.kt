@@ -16,6 +16,10 @@ object window {
     return WINDOW_TITLE_BASE
   }
 
+  fun setTitle(newTitle: String) {
+    glfwSetWindowTitle(pointer, "$WINDOW_TITLE_BASE | $newTitle")
+  }
+
   fun getFrameBufferSize(): Vector2ic {
     return frameBufferSize
   }
