@@ -33,6 +33,34 @@ object mesh {
     val meshObject = Mesh(name, positions, textureCoords, indices, textureName, false)
   }
 
+  fun destroy(name: String) {
+
+  }
+
+  fun destroy(vaoID: Int) {
+
+  }
+
+  fun getID(name: String): Int {
+
+  }
+
+  fun getName(vaoID: Int): String {
+
+  }
+
+  fun exists(name: String): Boolean {
+
+  }
+
+  fun destroyAll() {
+    database.forEach {(_, meshObject) ->
+      // Debug info for now.
+      println("mesh: Destroying ${meshObject.vaoID} | ${meshObject.name}")
+
+    }
+  }
+
 }
 
 //todo: this will be interesting
@@ -194,7 +222,37 @@ private fun uploadIndices(indicesArray: IntArray): Int {
   return newID
 }
 
+private fun destroyMesh(meshObject: Mesh) {
 
+  glBindVertexArray(meshObject.vaoID)
+
+  destroyVBO(meshObject.positionsID, 0, "positions")
+  destroyVBO(meshObject.textureCoordsID, 1, "texture coords")
+  destroyVBO(meshObject.indicesVboID, -1, "indices")
+
+  // Todo: destroy the bones and colors VBO
+
+  // Now unbind.
+  glBindVertexArray(0)
+
+  // Then destroy the VBO.
+  glDeleteVertexArrays(meshObject.vaoID)
+  if (glIsVertexArray(meshObject.vaoID)) {
+    throw RuntimeException("destroyMesh: Failed to destroy VAO ${meshObject.vaoID} | ${meshObject.name}")
+  }
+}
+
+private fun destroyVBO(vboID: Int, glslPosition: Int, vboName: String) {
+  // This is used so that the indices array doesn't cause problems.
+  if (glslPosition >= 0) {
+    glDisableVertexAttribArray(glslPosition)
+  }
+  glDeleteBuffers(vboID)
+  if (glIsBuffer(vboID)) {
+    // Debug info for now.
+    throw RuntimeException("destroyVBO: Failed to destroy vbo. $vboID | $vboName")
+  }
+}
 
 
 //note: Texture operations.
