@@ -17,6 +17,9 @@ private class Shader {
     programID = createShader(vertexSourceCodeLocation, fragmentSourceCodeLocation)
   }
 
+  // todo: Add uniform things
+  // todo: Add uniform things
+
 }
 
 private fun createShader(vertexSourceCodeLocation: String, fragmentSourceCodeLocation: String): Int {
