@@ -27,7 +27,28 @@ object mesh {
 //}
 
 private class Mesh {
+  val name: String
+  val vaoID: Int
+  val positionsID: Int
+  val textureCoordsID: Int
+  val indicesVboID: Int
+  val indicesCountID: Int
+  val textureID: Int
+  // Optionals.
+//  val bones: Int
+//  val colors: Int
 
+  constructor(name: String, positions: FloatArray, textureCoords: FloatArray, indices: FloatArray, textureName: String) {
+
+    // Check texture existence before continuing.
+    try {
+      textureID = texture.getID(textureName)
+    } catch (e: RuntimeException) {
+      throw RuntimeException("Mesh: Tried to use nonexistent texture. $textureName")
+    }
+
+
+  }
 }
 
 
