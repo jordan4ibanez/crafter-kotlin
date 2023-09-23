@@ -3,17 +3,6 @@ import engine.glfw
 import engine.texture
 import engine.window
 
-fun main(args: Array<String>) {
-  println(args)
-
-  load()
-
-  gameLoop()
-
-  quit()
-
-}
-
 // Initialization procedure. Consider this love.load()
 fun load() {
   glfw.initialize()
@@ -49,4 +38,17 @@ tailrec fun gameLoop() {
   if (window.shouldClose()) return
 
   return gameLoop()
+}
+
+//note: main is at the bottom because procedures should be put into the designated functions.
+// Try not to modify this. It's the literal base of the entire program.
+fun main(args: Array<String>) {
+  println(args)
+
+  load()
+
+  gameLoop()
+
+  quit()
+
 }
