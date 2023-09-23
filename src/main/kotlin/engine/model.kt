@@ -69,6 +69,14 @@ object texture {
     return idDatabase.containsKey(id)
   }
 
+  fun destroyAll() {
+    database.forEach { (_, textureObject) ->
+      // Debug info for now.
+      println("texture: Destroying ${textureObject.id} | ${textureObject.name}")
+      destroyTexture(textureObject.id)
+    }
+  }
+
   private fun safePut(name: String, textureObject: Texture) {
     if (database.containsKey(name)) throw RuntimeException("texture: Attempted to overwrite existing texture. $name")
     database[name] = textureObject

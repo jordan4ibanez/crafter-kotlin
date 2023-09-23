@@ -1,5 +1,6 @@
 import engine.gl
 import engine.glfw
+import engine.texture
 import engine.window
 import org.joml.Math
 
@@ -31,6 +32,7 @@ fun draw() {
 }
 
 fun destruction() {
+  texture.destroyAll()
   glfw.destroy()
 }
 
