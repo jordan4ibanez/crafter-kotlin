@@ -6,16 +6,16 @@ import engine.window
 fun main(args: Array<String>) {
   println(args)
 
-  initialization()
+  load()
 
   gameLoop()
 
-  destruction()
+  quit()
 
 }
 
 // Initialization procedure. Consider this love.load()
-fun initialization() {
+fun load() {
   glfw.initialize()
   gl.initialize()
 }
@@ -31,7 +31,7 @@ fun draw() {
 }
 
 // Game cleanup procedures go here. Consider this love.quit()
-fun destruction() {
+fun quit() {
   texture.destroyAll()
   glfw.destroy()
 }
