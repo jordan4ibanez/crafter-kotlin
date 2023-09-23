@@ -1,12 +1,8 @@
-import engine.gl
-import engine.glfw
-import engine.texture
-import engine.window
+import engine.*
 
 // Initialization procedure. Consider this love.load()
 fun load() {
-  glfw.initialize()
-  gl.initialize()
+
 }
 
 // All general logic goes here. Consider this love.update()
@@ -21,8 +17,7 @@ fun draw() {
 
 // Game cleanup procedures go here. Consider this love.quit()
 fun quit() {
-  texture.destroyAll()
-  glfw.destroy()
+
 }
 
 
@@ -58,10 +53,17 @@ tailrec fun gameLoop() {
 fun main(args: Array<String>) {
   println(args)
 
+  glfw.initialize()
+  gl.initialize()
+
   load()
 
   gameLoop()
 
   quit()
+
+  mesh.destroyAll()
+  texture.destroyAll()
+  glfw.destroy()
 
 }
