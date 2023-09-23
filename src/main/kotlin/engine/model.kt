@@ -4,6 +4,7 @@ import org.joml.Vector2f
 import org.joml.Vector2fc
 import org.joml.Vector2i
 import org.joml.Vector2ic
+import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER
 import org.lwjgl.opengl.GL20
@@ -27,40 +28,70 @@ object mesh {
 
   fun create3D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String) {
     val meshObject = Mesh(name, positions, textureCoords, indices, textureName, true)
+    safePut(name, meshObject)
   }
 
   fun create2D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String) {
     val meshObject = Mesh(name, positions, textureCoords, indices, textureName, false)
+    safePut(name, meshObject)
+  }
+
+  fun draw(name: String) {
+    drawMesh(safeGet(name))
+  }
+
+  fun drawLines(name: String) {
+    drawMeshLineMode(safeGet(name))
   }
 
   fun destroy(name: String) {
-
-  }
-
-  fun destroy(vaoID: Int) {
-
+    safeDestroy(name)
   }
 
   fun getID(name: String): Int {
-
+    return safeGet(name).vaoID
   }
 
   fun getName(vaoID: Int): String {
-
+    return safeGet(vaoID).name
   }
 
   fun exists(name: String): Boolean {
-
+    return database.containsKey(name)
   }
 
   fun destroyAll() {
     database.forEach {(_, meshObject) ->
       // Debug info for now.
       println("mesh: Destroying ${meshObject.vaoID} | ${meshObject.name}")
-
+      destroyMesh(meshObject)
     }
   }
 
+  private fun safePut(name: String, meshObject: Mesh) {
+    if (database.containsKey(name)) throw RuntimeException("mesh: Attempted to overwrite existing mesh. $name")
+    database[name] = meshObject
+    idDatabase[meshObject.vaoID] = name
+  }
+
+  private fun safeGet(name: String): Mesh {
+    // A handy utility to prevent unwanted behavior.
+    return database[name] ?: throw RuntimeException("mesh: Attempted to index nonexistent mesh. $name")
+  }
+
+  private fun safeGet(vaoID: Int): Mesh {
+    // A handy utility to prevent unwanted behavior.
+    val name = idDatabase[vaoID] ?: throw RuntimeException("mesh: Attempted to index nonexistent vaoID. $vaoID")
+    return safeGet(name)
+  }
+
+  private fun safeDestroy(name: String) {
+    // This is safe because it will error out if this texture does not exist automatically.
+    val meshObject = safeGet(name)
+    destroyMesh(meshObject)
+    database.remove(name)
+    idDatabase.remove(meshObject.vaoID)
+  }
 }
 
 //todo: this will be interesting
@@ -117,6 +148,26 @@ private class Mesh {
     }
     textureID = newTextureID
   }
+}
+
+private fun drawMesh(meshObject: Mesh) {
+  //note: There were a few things in the Java version, see about implementing them again.
+
+  glBindTexture(GL_TEXTURE_2D, meshObject.textureID)
+  glBindVertexArray(meshObject.vaoID)
+  glDrawElements(GL_TRIANGLES, meshObject.indicesCount, GL_UNSIGNED_INT, 0)
+
+  //note: Unbinding is optional. Done for safety.
+  glBindVertexArray(0)
+}
+
+private fun drawMeshLineMode(meshObject: Mesh) {
+  glBindTexture(GL_TEXTURE_2D, meshObject.textureID)
+  glBindVertexArray(meshObject.vaoID)
+  glDrawElements(GL_LINES, meshObject.indicesCount, GL_UNSIGNED_INT, 0)
+
+  //note: Unbinding is optional. Done for safety.
+  glBindVertexArray(0)
 }
 
 private fun uploadFloatArray(floatArray: FloatArray, glslPosition: Int, componentWidth: Int): Int {
@@ -297,7 +348,7 @@ object texture {
   }
 
   fun getName(id: Int): String {
-    return idDatabase[id] ?: throw RuntimeException("texture: Attempted to index nonexistent ID. $id")
+    return safeGet(id).name
   }
 
   fun exists(name: String): Boolean {
