@@ -49,6 +49,18 @@ object window {
     return clearColor
   }
 
+  fun getAspectRatio(): Float {
+    return frameBufferSize.x().toFloat() / frameBufferSize.y().toFloat()
+  }
+
+  fun isMaximized(): Boolean {
+    return glfwGetWindowAttrib(pointer, GLFW_MAXIMIZED) == GLFW_TRUE
+  }
+
+  fun isFocused(): Boolean {
+    return glfwGetWindowAttrib(pointer, GLFW_FOCUSED) == GLFW_TRUE
+  }
+
   fun update() {
     delta.calculate()
     glfwPollEvents()
