@@ -5,20 +5,44 @@ fun load() {
 
   glfw.initialize()
   gl.initialize()
+  shader.create("main", "./shaders/main_shader.vert", "./shaders/main_shader.frag")
 
 }
 
 var timer = 0f
 var counter = 0
+var color = 0f
+var brighten = true
+var speed = 0.5f
 
 // All general logic goes here. Consider this love.update()
-fun update() {
-  timer += getDelta()
+fun update(dtime: Float) {
+
+  timer += dtime
 
   if (timer >= 1f) {
     timer -= 1f
     window.setTitle("Count: ${counter++}")
   }
+
+  if (brighten) {
+    color += dtime * speed
+    if (color >= 1f) {
+      color = 1f
+      brighten = false
+    }
+  } else {
+    color -= dtime * speed
+    if (color <= 0f) {
+      color = 0f
+      brighten = true
+    }
+  }
+  println(color)
+
+  window.setClearColor(color)
+
+
 
 }
 
@@ -54,7 +78,7 @@ fun quit() {
 tailrec fun gameLoop() {
   window.update()
 
-  update()
+  update(getDelta())
 
   draw()
 
