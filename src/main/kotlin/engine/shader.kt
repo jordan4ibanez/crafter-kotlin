@@ -1,6 +1,7 @@
 package engine
 
 import org.joml.Matrix4f
+import org.joml.Matrix4fc
 import org.joml.Vector2fc
 import org.joml.Vector3fc
 import org.lwjgl.opengl.GL20.*
@@ -49,7 +50,7 @@ object shader {
     }
   }
 
-  fun setUniform(name: String, matrix4f: Matrix4f) {
+  fun setUniform(name: String, matrix4f: Matrix4fc) {
     val stack: MemoryStack
     try {
       stack = stackPush()
