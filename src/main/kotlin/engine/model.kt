@@ -321,6 +321,13 @@ object texture {
   fun create(fileLocation: String) {
     val textureObject = Texture(fileLocation)
     safePut(fileLocation, textureObject)
+    println("texture: Created texture $fileLocation at ${textureObject.id}")
+  }
+
+  fun create(name: String, fileLocation: String) {
+    val textureObject = Texture(name, fileLocation)
+    safePut(name, textureObject)
+    println("texture: Created texture $name at ${textureObject.id}")
   }
 
   fun destroy(name: String) {
@@ -427,6 +434,22 @@ private class Texture {
     // Creates a GL texture from a file location.
 
     name = fileLocation
+
+    val (buffer, width, height, channels) = constructTextureFromFile(fileLocation)
+
+    size.set(width,height)
+    floatingSize.set(width.toFloat(),height.toFloat())
+    this.channels = channels
+
+    id = uploadTextureBuffer(name, size, buffer)
+
+    destroyTextureBuffer(buffer)
+  }
+
+  constructor(name: String, fileLocation: String) {
+    // Creates a GL texture from a file location with a custom name.
+
+    this.name = name
 
     val (buffer, width, height, channels) = constructTextureFromFile(fileLocation)
 
