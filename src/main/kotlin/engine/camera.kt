@@ -18,6 +18,15 @@ object camera {
   private val position = Vector3f(0f,0f,0f)
   private val rotation = Vector3f(0f,0f,0f)
 
+  fun updateCameraMatrix() {
+    cameraMatrix
+      .identity()
+      .perspective(FOV, window.getAspectRatio(), zNear, zFar)
+      .rotateX(rotation.x)
+      .rotateY(rotation.y)
+
+    shader.setUniform("cameraMatrix", cameraMatrix)
+  }
 
 
 
