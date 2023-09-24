@@ -41,6 +41,11 @@ object window {
     glClearColor(clearColor.x(), clearColor.y(), clearColor.z(), 1f)
   }
 
+  fun setClearColor(scalar: Float) {
+    clearColor.set(scalar)
+    glClearColor(scalar, scalar, scalar, 1f)
+  }
+
   fun setVsync(state: Boolean) {
     glfwSwapInterval(if (state) GLFW_TRUE else GLFW_FALSE)
   }
