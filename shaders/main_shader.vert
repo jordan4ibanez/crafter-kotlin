@@ -5,10 +5,10 @@
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec2 textureCoordinate;
-layout (location = 2) in vec4 color;
+//layout (location = 2) in vec4 color;
 
 out vec2 outputTextureCoordinate;
-out vec4 newColoring;
+//out vec4 newColoring;
 
 uniform mat4 cameraMatrix;
 uniform mat4 objectMatrix;
@@ -26,5 +26,5 @@ void main() {
 
     outputTextureCoordinate = textureCoordinate;
 
-    newColoring = color;
+//    newColoring = color;
 }
