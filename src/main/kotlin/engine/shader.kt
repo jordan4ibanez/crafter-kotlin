@@ -33,6 +33,7 @@ object shader {
     // note: This is a micro helper so shader can just be assigned to immediately.
     currentShader = shaderObject
     currentUniforms = currentShader.uniforms
+    println("shader: Shader $name created successfully. ID: ${currentShader.programID}")
   }
 
   fun createUniform(uniformName: String) {
