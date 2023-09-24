@@ -6,6 +6,7 @@ fun load() {
   glfw.initialize()
   gl.initialize()
   shader.create("main", "./shaders/main_shader.vert", "./shaders/main_shader.frag")
+  shader.createUniforms(arrayOf("hi"))
 
 }
 
