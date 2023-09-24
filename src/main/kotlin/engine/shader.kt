@@ -1,41 +1,146 @@
 package engine
 
+import org.joml.Matrix4f
+import org.joml.Vector2fc
+import org.joml.Vector3fc
 import org.lwjgl.opengl.GL20.*
+import org.lwjgl.system.MemoryStack
+import org.lwjgl.system.MemoryStack.stackPush
+import org.lwjgl.system.MemoryUtil.memFree
 import java.io.File
+import java.nio.FloatBuffer
 
 object shader {
 
-  // note: We do not want to destroy shaders during gameplay. No individual destruction. Only full.
+  //note: We do not want to destroy shaders during gameplay. No individual destruction. Only full.
+  // This is a state machine.
 
   private val database = HashMap<String, Shader>()
 
+  private lateinit var currentShader: Shader
+  private lateinit var currentUniforms: HashMap<String, Int>
 
   fun start(name: String) {
-    glUseProgram(safeGet(name).programID)
+    currentShader = safeGet(name)
+    currentUniforms = currentShader.uniforms
+    glUseProgram(currentShader.programID)
   }
 
   fun create(name: String, vertexSourceCodeLocation: String, fragmentSourceCodeLocation: String) {
     val shaderObject = Shader(name, vertexSourceCodeLocation, fragmentSourceCodeLocation)
     safePut(name, shaderObject)
+    // note: This is a micro helper so shader can just be assigned to immediately.
+    currentShader = shaderObject
+    currentUniforms = currentShader.uniforms
   }
 
-  fun exists(name: String): Boolean {
-    return database.containsKey(name)
+  fun createUniform(uniformName: String) {
+    val location = glGetUniformLocation(currentShader.programID, uniformName)
+    if (location < 0) throw RuntimeException("shader: Unable to create uniform in shader ${currentShader.name}. $uniformName")
+    currentUniforms[uniformName] = location
   }
 
-  fun createUniform(shaderName: String, uniformName: String) {
-    val shader = safeGet(shaderName)
-    val location = glGetUniformLocation(shader.programID, uniformName)
-    if (location < 0) throw RuntimeException("shader: Unable to create uniform in shader $shaderName. $uniformName")
-    shader.uniforms[uniformName] = location
-  }
-
-  fun createUniforms(shaderName: String, uniformNames: Array<String>) {
-    val shader = safeGet(shaderName)
-    val shaderProgramID = shader.programID
+  fun createUniforms(uniformNames: Array<String>) {
+    val shaderProgramID = currentShader.programID
     uniformNames.forEach { uniformName ->
       val location = glGetUniformLocation(shaderProgramID, uniformName)
-      if (location < 0) throw RuntimeException("shader: Unable to create uniform in shader $shaderName. $uniformName")
+      if (location < 0) throw RuntimeException("shader: Unable to create uniform in shader ${currentShader.name}. $uniformName")
+      currentUniforms[uniformName] = location
+    }
+  }
+
+  fun setUniform(name: String, matrix4f: Matrix4f) {
+    val stack: MemoryStack
+    try {
+      stack = stackPush()
+    } catch (e: Exception) {
+      throw RuntimeException("setUniform: Failed to allocate stack memory. $name | ${currentShader.name}")
+    }
+    val buffer = stack.mallocFloat(16)
+    matrix4f.get(buffer)
+    glUniformMatrix4fv(safeUniformGet(name), false, buffer)
+
+    // FIXME: this might be wrong.
+    try {
+      memFree(buffer)
+    } catch (e: Exception) {
+      throw RuntimeException("setUniform: Failed to free stack memory. $name")
+    }
+  }
+
+  fun setUniform(name: String, vector: Vector3fc) {
+    val stack: MemoryStack
+    try {
+      stack = stackPush()
+    } catch (e: Exception) {
+      throw RuntimeException("setUniform: Failed to allocate stack memory. $name | ${currentShader.name}")
+    }
+    val buffer = stack.mallocFloat(3)
+    vector.get(buffer)
+    glUniform3fv(safeUniformGet(name), buffer)
+
+    // FIXME: this might be wrong.
+    try {
+      memFree(buffer)
+    } catch (e: Exception) {
+      throw RuntimeException("setUniform: Failed to free stack memory. $name")
+    }
+  }
+
+  fun setUniform(name: String, vector: Vector2fc) {
+    val stack: MemoryStack
+    try {
+      stack = stackPush()
+    } catch (e: Exception) {
+      throw RuntimeException("setUniform: Failed to allocate stack memory. $name | ${currentShader.name}")
+    }
+    val buffer = stack.mallocFloat(2)
+    vector.get(buffer)
+    glUniform3fv(safeUniformGet(name), buffer)
+
+    // FIXME: this might be wrong.
+    try {
+      memFree(buffer)
+    } catch (e: Exception) {
+      throw RuntimeException("setUniform: Failed to free stack memory. $name")
+    }
+  }
+
+  fun setUniform(name: String, value: Float) {
+    val stack: MemoryStack
+    try {
+      stack = stackPush()
+    } catch (e: Exception) {
+      throw RuntimeException("setUniform: Failed to allocate stack memory. $name | ${currentShader.name}")
+    }
+    val buffer = stack.mallocFloat(1)
+    buffer.put(value).flip()
+    glUniform1fv(safeUniformGet(name), buffer)
+
+    // FIXME: this might be wrong.
+    try {
+      memFree(buffer)
+    } catch (e: Exception) {
+      throw RuntimeException("setUniform: Failed to free stack memory. $name")
+    }
+  }
+
+  fun setUniform(name: String, value: Int) {
+    val stack: MemoryStack
+    try {
+      stack = stackPush()
+    } catch (e: Exception) {
+      throw RuntimeException("setUniform: Failed to allocate stack memory. $name | ${currentShader.name}")
+    }
+    val buffer = stack.mallocInt(1)
+    buffer.put(value).flip()
+    glUniform1iv(safeUniformGet(name), buffer)
+
+    // FIXME: this might be wrong.
+    try {
+      memFree(buffer)
+    } catch (e: Exception) {
+      throw RuntimeException("setUniform: Failed to free stack memory. $name")
     }
   }
 
@@ -44,7 +149,6 @@ object shader {
     database.values.forEach { shader ->
       glDeleteProgram(shader.programID)
     }
-
   }
 
   private fun safePut(name: String, shaderObject: Shader) {
@@ -54,6 +158,10 @@ object shader {
 
   private fun safeGet(name: String): Shader {
     return database[name] ?: throw RuntimeException("shader: Attempted to index nonexistent shader. $name")
+  }
+
+  private fun safeUniformGet(name: String): Int {
+    return currentUniforms[name] ?: throw RuntimeException("shader: Attempted to index nonexistent uniform. $name")
   }
 }
 
