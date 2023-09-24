@@ -40,6 +40,8 @@ object shader {
     val location = glGetUniformLocation(currentShader.programID, uniformName)
     if (location < 0) throw RuntimeException("shader: Unable to create uniform in shader ${currentShader.name}. $uniformName")
     currentUniforms[uniformName] = location
+    // Debug for now.
+    println("shader: Created uniform $uniformName at $location")
   }
 
   fun createUniforms(uniformNames: Array<String>) {
@@ -48,6 +50,8 @@ object shader {
       val location = glGetUniformLocation(shaderProgramID, uniformName)
       if (location < 0) throw RuntimeException("shader: Unable to create uniform in shader ${currentShader.name}. $uniformName")
       currentUniforms[uniformName] = location
+      // Debug for now.
+      println("shader: Created uniform $uniformName at $location")
     }
   }
 
