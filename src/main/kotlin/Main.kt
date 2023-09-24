@@ -6,7 +6,27 @@ fun load() {
   glfw.initialize()
   gl.initialize()
   shader.create("main", "./shaders/main_shader.vert", "./shaders/main_shader.frag")
-  shader.createUniforms(arrayOf("hi"))
+  shader.createUniforms(arrayOf("cameraMatrix", "objectMatrix"))
+
+  // Debug texture.
+  texture.create("debug", "./textures/debug.png")
+
+  // Debug mesh.
+  mesh.create3D(
+    "debug",
+    // positions.
+    floatArrayOf(
+      -1f, -1f, 0f,
+      1f, -1f, 0f
+      -1f, -1f, 0f
+    ),
+    // texture coords.
+    floatArrayOf(0f, 0f, 0f),
+    // indices.
+    intArrayOf(0, 1, 2),
+    // texture name.
+    "debug"
+    )
 
 }
 
@@ -39,10 +59,9 @@ fun update(dtime: Float) {
       brighten = true
     }
   }
-  println(color)
-
   window.setClearColor(color)
 
+//  println(color)
 
 
 }
