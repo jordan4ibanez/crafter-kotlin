@@ -5,6 +5,56 @@ import java.io.File
 
 object shader {
 
+  // note: We do not want to destroy shaders during gameplay. No individual destruction. Only full.
+
+  private val database = HashMap<String, Shader>()
+
+
+  fun start(name: String) {
+    glUseProgram(safeGet(name).programID)
+  }
+
+  fun create(name: String, vertexSourceCodeLocation: String, fragmentSourceCodeLocation: String) {
+    val shaderObject = Shader(name, vertexSourceCodeLocation, fragmentSourceCodeLocation)
+    safePut(name, shaderObject)
+  }
+
+  fun exists(name: String): Boolean {
+    return database.containsKey(name)
+  }
+
+  fun createUniform(shaderName: String, uniformName: String) {
+    val shader = safeGet(shaderName)
+    val location = glGetUniformLocation(shader.programID, uniformName)
+    if (location < 0) throw RuntimeException("shader: Unable to create uniform in shader $shaderName. $uniformName")
+    shader.uniforms[uniformName] = location
+  }
+
+  fun createUniforms(shaderName: String, uniformNames: Array<String>) {
+    val shader = safeGet(shaderName)
+    val shaderProgramID = shader.programID
+    uniformNames.forEach { uniformName ->
+      val location = glGetUniformLocation(shaderProgramID, uniformName)
+      if (location < 0) throw RuntimeException("shader: Unable to create uniform in shader $shaderName. $uniformName")
+    }
+  }
+
+  fun destroyAll() {
+    glUseProgram(0)
+    database.values.forEach { shader ->
+      glDeleteProgram(shader.programID)
+    }
+
+  }
+
+  private fun safePut(name: String, shaderObject: Shader) {
+    if (database.containsKey(name)) throw RuntimeException("shader: Attempted to overwrite existing shader. $name")
+    database[name] = shaderObject
+  }
+
+  private fun safeGet(name: String): Shader {
+    return database[name] ?: throw RuntimeException("shader: Attempted to index nonexistent shader. $name")
+  }
 }
 
 private class Shader {
