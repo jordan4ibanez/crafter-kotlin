@@ -1,15 +1,12 @@
 package engine
 
-import org.joml.Matrix4f
 import org.joml.Matrix4fc
 import org.joml.Vector2fc
 import org.joml.Vector3fc
 import org.lwjgl.opengl.GL20.*
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryStack.stackPush
-import org.lwjgl.system.MemoryUtil.memFree
-import java.io.File
-import java.nio.FloatBuffer
+
 
 object shader {
 
@@ -65,6 +62,7 @@ object shader {
     val buffer = stack.mallocFloat(16)
     matrix4f.get(buffer)
     glUniformMatrix4fv(safeUniformGet(name), false, buffer)
+    stack.pop()
   }
 
   fun setUniform(name: String, vector: Vector3fc) {
@@ -77,6 +75,7 @@ object shader {
     val buffer = stack.mallocFloat(3)
     vector.get(buffer)
     glUniform3fv(safeUniformGet(name), buffer)
+    stack.pop()
   }
 
   fun setUniform(name: String, vector: Vector2fc) {
@@ -89,6 +88,7 @@ object shader {
     val buffer = stack.mallocFloat(2)
     vector.get(buffer)
     glUniform3fv(safeUniformGet(name), buffer)
+    stack.pop()
   }
 
   fun setUniform(name: String, value: Float) {
@@ -101,6 +101,7 @@ object shader {
     val buffer = stack.mallocFloat(1)
     buffer.put(value).flip()
     glUniform1fv(safeUniformGet(name), buffer)
+    stack.pop()
   }
 
   fun setUniform(name: String, value: Int) {
@@ -113,6 +114,7 @@ object shader {
     val buffer = stack.mallocInt(1)
     buffer.put(value).flip()
     glUniform1iv(safeUniformGet(name), buffer)
+    stack.pop()
   }
 
   fun destroyAll() {
