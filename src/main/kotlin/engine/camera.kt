@@ -20,6 +20,8 @@ object camera {
   private val position = Vector3f(0f,0f,0f)
   private val rotation = Vector3f(0f,0f,0f)
 
+  private val workerVector3f = Vector3f()
+
   fun updateCameraMatrix() {
     cameraMatrix
       .identity()
@@ -28,6 +30,11 @@ object camera {
       .rotateY(rotation.y)
 
     shader.setUniform("cameraMatrix", cameraMatrix)
+  }
+
+
+  fun setObjectMatrix(position: Vector3fc, rotation:Vector3fc) {
+    setObjectMatrix(position, rotation, workerVector3f.set(1f,1f,1f))
   }
 
   fun setObjectMatrix(position: Vector3fc, rotation: Vector3fc, scale: Vector3fc) {
