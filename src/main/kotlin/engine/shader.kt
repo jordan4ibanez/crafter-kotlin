@@ -65,13 +65,6 @@ object shader {
     val buffer = stack.mallocFloat(16)
     matrix4f.get(buffer)
     glUniformMatrix4fv(safeUniformGet(name), false, buffer)
-
-    // FIXME: this might be wrong.
-    try {
-      memFree(buffer)
-    } catch (e: Exception) {
-      throw RuntimeException("setUniform: Failed to free stack memory. $name")
-    }
   }
 
   fun setUniform(name: String, vector: Vector3fc) {
@@ -84,13 +77,6 @@ object shader {
     val buffer = stack.mallocFloat(3)
     vector.get(buffer)
     glUniform3fv(safeUniformGet(name), buffer)
-
-    // FIXME: this might be wrong.
-    try {
-      memFree(buffer)
-    } catch (e: Exception) {
-      throw RuntimeException("setUniform: Failed to free stack memory. $name")
-    }
   }
 
   fun setUniform(name: String, vector: Vector2fc) {
@@ -103,13 +89,6 @@ object shader {
     val buffer = stack.mallocFloat(2)
     vector.get(buffer)
     glUniform3fv(safeUniformGet(name), buffer)
-
-    // FIXME: this might be wrong.
-    try {
-      memFree(buffer)
-    } catch (e: Exception) {
-      throw RuntimeException("setUniform: Failed to free stack memory. $name")
-    }
   }
 
   fun setUniform(name: String, value: Float) {
@@ -122,13 +101,6 @@ object shader {
     val buffer = stack.mallocFloat(1)
     buffer.put(value).flip()
     glUniform1fv(safeUniformGet(name), buffer)
-
-    // FIXME: this might be wrong.
-    try {
-      memFree(buffer)
-    } catch (e: Exception) {
-      throw RuntimeException("setUniform: Failed to free stack memory. $name")
-    }
   }
 
   fun setUniform(name: String, value: Int) {
@@ -141,13 +113,6 @@ object shader {
     val buffer = stack.mallocInt(1)
     buffer.put(value).flip()
     glUniform1iv(safeUniformGet(name), buffer)
-
-    // FIXME: this might be wrong.
-    try {
-      memFree(buffer)
-    } catch (e: Exception) {
-      throw RuntimeException("setUniform: Failed to free stack memory. $name")
-    }
   }
 
   fun destroyAll() {
