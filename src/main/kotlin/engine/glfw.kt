@@ -55,6 +55,15 @@ object glfw {
     glfwSwapInterval(1)
     glfwShowWindow(window.pointer)
 
+    // Create the initial framebuffer size in window object.
+    run {
+      val x = IntArray(1)
+      val y = IntArray(1)
+      glfwGetFramebufferSize(window.pointer, x, y)
+      window.frameBufferSize.set(x[0], y[0])
+    }
+
+
   }
 
   private fun constructWindow() {
