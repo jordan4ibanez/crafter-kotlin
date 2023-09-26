@@ -1,4 +1,6 @@
 import engine.*
+import org.joml.Math.random
+import org.joml.Math.toRadians
 import org.joml.Vector3f
 
 // Initialization procedure. Consider this love.load()
@@ -18,14 +20,20 @@ fun load() {
     "debug",
     // positions.
     floatArrayOf(
-      -1f, -1f, 0f,
-      1f, -1f, 0f
-      -1f, -1f, 0f
+      -0.5f,  0.5f, 0f,
+      -0.5f, -0.5f, 0f,
+       0.5f, -0.5f, 0f,
+       0.5f,  0.5f, 0f
     ),
     // texture coords.
-    floatArrayOf(0f, 0f, 0f),
+    floatArrayOf(
+      0f, 0f,
+      0f, 1f,
+      1f, 1f,
+      1f, 0f
+    ),
     // indices.
-    intArrayOf(0, 1, 2),
+    intArrayOf(0, 1, 2, 0, 2, 3),
     // texture name.
     "debug"
     )
@@ -69,10 +77,12 @@ fun update(dtime: Float) {
 }
 
 // All draw procedures go here. Consider this love.draw()
+var rotation = 0f
 fun draw() {
+  rotation += getDelta() * 50f
+//  println(rotation)
   camera.updateCameraMatrix()
-  camera.setObjectMatrix(Vector3f(0f,0f,2f), Vector3f(0f, 0f, 0f))
-
+  camera.setObjectMatrix(Vector3f(0f, 0f, -1f), Vector3f(0f,toRadians(rotation), 0f))
   mesh.draw("debug")
 
 }
