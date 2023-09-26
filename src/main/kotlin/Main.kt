@@ -1,4 +1,5 @@
 import engine.*
+import org.joml.Vector3f
 
 // Initialization procedure. Consider this love.load()
 fun load() {
@@ -7,6 +8,7 @@ fun load() {
   gl.initialize()
   shader.create("main", "./shaders/main_shader.vert", "./shaders/main_shader.frag")
   shader.createUniforms(arrayOf("cameraMatrix", "objectMatrix"))
+  shader.start("main")
 
   // Debug texture.
   texture.create("debug", "./textures/debug.png")
@@ -68,6 +70,10 @@ fun update(dtime: Float) {
 
 // All draw procedures go here. Consider this love.draw()
 fun draw() {
+  camera.updateCameraMatrix()
+  camera.setObjectMatrix(Vector3f(0f,0f,2f), Vector3f(0f, 0f, 0f))
+
+  mesh.draw("debug")
 
 }
 
