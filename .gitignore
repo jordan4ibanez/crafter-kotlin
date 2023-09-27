@@ -44,3 +44,4 @@ bin/
 .idea/workspace.xml
 .idea/uiDesigner.xml
 *.kt~
+*.kts~
