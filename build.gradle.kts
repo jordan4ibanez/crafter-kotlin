@@ -30,8 +30,9 @@ repositories {
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
-    testImplementation(kotlin("test-junit"))
+
+    testImplementation("org.jetbrains", "kotlin-test")
+    testImplementation("org.jetbrains", "kotlin-test-junit")
 
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
 
