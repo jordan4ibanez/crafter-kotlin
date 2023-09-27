@@ -31,6 +31,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit"))
 
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
 
