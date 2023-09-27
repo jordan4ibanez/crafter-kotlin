@@ -34,6 +34,8 @@ dependencies {
     testImplementation("org.jetbrains", "kotlin-test")
     testImplementation("org.jetbrains", "kotlin-test-junit")
 
+    runtimeOnly("org.jetbrains.kotlin:kotlin-reflect:1.9.10")
+
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
 
     implementation("org.lwjgl", "lwjgl")
