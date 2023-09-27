@@ -155,11 +155,13 @@ fun main(args: Array<String>) = runBlocking {
 @OptIn(DelicateCoroutinesApi::class)
 suspend fun blah() {
   coroutineScope {
-    repeat(5) { threadID ->
+    repeat(6) { threadID ->
+      println("threadID: $threadID")
       GlobalScope.launch {
         if (threadID == 5) {
+          println("Launching closer")
           delay(10_005)
-          print("all done.")
+          println("all done.")
         } else {
           delay((random() * 10_000).toLong())
           println("test worked: $threadID")
