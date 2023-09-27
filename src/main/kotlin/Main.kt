@@ -4,6 +4,7 @@ import org.joml.Math.random
 import org.joml.Math.toRadians
 import org.joml.Random
 import org.joml.Vector3f
+import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.atomic.AtomicInteger
 
 // Initialization procedure. Consider this love.load()
@@ -152,21 +153,18 @@ fun main(args: Array<String>) = runBlocking {
 
 }
 
+private val blah = ConcurrentLinkedDeque<Int>()
+
 @OptIn(DelicateCoroutinesApi::class)
 suspend fun blah() {
   coroutineScope {
-    repeat(6) { threadID ->
+    repeat(600) { threadID ->
       println("threadID: $threadID")
       GlobalScope.launch {
         if (threadID == 5) {
-          println("Launching closer")
-          delay(10_005)
           println("all done.")
         } else {
-          delay((random() * 10_000).toLong())
-          println("test worked: $threadID")
-          val blah = atomicCounter.addAndGet(1)
-          println(blah)
+          blah.add((random() * 100).toInt())
         }
       }
     }
