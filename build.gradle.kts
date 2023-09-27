@@ -34,7 +34,9 @@ dependencies {
     testImplementation("org.jetbrains", "kotlin-test")
     testImplementation("org.jetbrains", "kotlin-test-junit")
 
-    runtimeOnly("org.jetbrains.kotlin:kotlin-reflect:1.9.10")
+    runtimeOnly("org.jetbrains.kotlin", "kotlin-reflect", "1.9.10")
+
+    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.7.3")
 
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
 
