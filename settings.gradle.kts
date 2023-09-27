@@ -10,3 +10,5 @@ plugins {
 }
 
 rootProject.name = "crafter"
+
+include("app", "core")
