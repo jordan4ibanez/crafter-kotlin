@@ -1,10 +1,14 @@
 import engine.*
+import kotlinx.coroutines.*
 import org.joml.Math.random
 import org.joml.Math.toRadians
+import org.joml.Random
 import org.joml.Vector3f
+import java.util.concurrent.atomic.AtomicInteger
 
 // Initialization procedure. Consider this love.load()
 fun load() {
+
 
   glfw.initialize()
   gl.initialize()
@@ -125,15 +129,44 @@ tailrec fun gameLoop() {
   return gameLoop()
 }
 
+val atomicCounter = AtomicInteger(0)
+
 //note: main is at the bottom because procedures should be put into the designated functions.
 // Try not to modify this. It's the literal base of the entire program.
-fun main(args: Array<String>) {
+fun main(args: Array<String>) = runBlocking {
   println(args)
 
   load()
+
+  Random.newSeed()
+
+
+
+  blah()
+
+
 
   gameLoop()
 
   quit()
 
+}
+
+@OptIn(DelicateCoroutinesApi::class)
+suspend fun blah() {
+  coroutineScope {
+    repeat(5) { threadID ->
+      GlobalScope.launch {
+        if (threadID == 5) {
+          delay(10_005)
+          print("all done.")
+        } else {
+          delay((random() * 10_000).toLong())
+          println("test worked: $threadID")
+          val blah = atomicCounter.addAndGet(1)
+          println(blah)
+        }
+      }
+    }
+  }
 }
