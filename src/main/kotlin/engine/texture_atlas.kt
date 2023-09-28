@@ -16,6 +16,15 @@ import java.util.SortedSet
 import java.util.TreeSet
 import java.util.UUID.randomUUID
 
+
+
+val worldAtlas = Packer()
+val fontAtlas = Packer()
+
+// note: Everything below this is just implementation.
+//  You only really talk to the two vals above.
+
+
 /*
 A texture packer that automates into an atlas.
 This is designed very strangely because it's meant to be an internal module.
@@ -124,18 +133,18 @@ private class Canvas {
   }
 }
 
-private class Packer {
-  val padding = 1
-  val edgeColor = Vector4i(255,0,0,255)
-  val blankSpaceColor = Vector4i(0,0,0,0)
-  val showDebugEdge = false
-  val expansionAmount = 16
-  val size = Vector2i(16, 16)
-  var maxSize = Vector2i(0,0)
-  val textures = HashMap<String, Canvas>()
-  val canvas = Canvas(size.x(), size.y())
-  val availableX: SortedSet<Int> = TreeSet()
-  val availableY: SortedSet<Int> = TreeSet()
+class Packer {
+  private val padding = 1
+  private val edgeColor = Vector4i(255,0,0,255)
+  private val blankSpaceColor = Vector4i(0,0,0,0)
+  private val showDebugEdge = false
+  private val expansionAmount = 16
+  private val size = Vector2i(16, 16)
+  private var maxSize = Vector2i(0,0)
+  private val textures = HashMap<String, Canvas>()
+  private val canvas = Canvas(size.x(), size.y())
+  private val availableX: SortedSet<Int> = TreeSet()
+  private val availableY: SortedSet<Int> = TreeSet()
   private var locked = false
 
   constructor() {
@@ -283,9 +292,9 @@ private class Packer {
               otherY + otherHeight + padding > y &&
               otherY <= y + thisHeight + padding) {
 
+              failed = true
+              return@xLoop
             }
-            failed = true
-            return@xLoop
           }
 
           if (!failed) {
@@ -320,4 +329,10 @@ private class Packer {
     maxSize.set(curX, curY)
     return true
   }
+
+  fun getSize(): Vector2ic {
+    return canvas.size
+  }
+
+
 }
