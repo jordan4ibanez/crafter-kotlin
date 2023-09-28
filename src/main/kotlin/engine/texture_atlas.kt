@@ -211,7 +211,7 @@ class Packer {
     if (textures.containsKey(name)) throw RuntimeException("Packer: tried to add duplicate of $name")
     if (textures.containsKey(fileLocation)) throw RuntimeException("Packer: tried to add duplicate of $fileLocation")
     textures[name] = Canvas(fileLocation)
-    println("Packer[${this.name}]: added $fileLocation as $name")
+//    println("Packer[${this.name}]: added $fileLocation as $name")
   }
 
   fun debugPrintCanvas() {
@@ -250,9 +250,7 @@ class Packer {
       textureCanvas.size.print("$name | $posX | $posY")
 
       for (x in 0 until sizeX) {
-        println(x + posX)
         for (y in 0 until sizeY) {
-//          println("$x, $y")
           val color = textureCanvas.getPixel(x,y)
           canvas.setPixel(x + posX, y + posY, color)
         }
