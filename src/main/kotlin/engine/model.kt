@@ -234,7 +234,7 @@ private fun uploadIntArray(intArray: IntArray, glslPosition: Int, componentWidth
   } catch (e: Exception) {
     throw RuntimeException("uploadIntArray: Failed to upload. $e")
   } finally {
-    // Free to C float* (float[]) or else there will be a massive memory leak.
+    // Free to C int* (int[]) or else there will be a massive memory leak.
     memFree(buffer)
   }
 
@@ -264,6 +264,7 @@ private fun uploadIndices(indicesArray: IntArray): Int {
   } catch (e: Exception) {
     throw RuntimeException("uploadIndices: Failed to upload. $e")
   } finally {
+    // Free to C int* (int[]) or else there will be a massive memory leak.
     memFree(buffer)
   }
 
