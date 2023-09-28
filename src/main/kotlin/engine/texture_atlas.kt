@@ -345,5 +345,7 @@ class Packer {
     return canvas.size
   }
 
-
+  fun getChannels(): Int {
+    return CHANNELS
+  }
 }
