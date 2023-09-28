@@ -158,7 +158,7 @@ private val blah = ConcurrentLinkedDeque<Int>()
 @OptIn(DelicateCoroutinesApi::class)
 suspend fun blah() {
   coroutineScope {
-    repeat(600) { threadID ->
+    repeat(2) { threadID ->
       println("threadID: $threadID")
       GlobalScope.launch {
         if (threadID == 5) {
