@@ -4,15 +4,12 @@ import org.joml.Vector2f
 import org.joml.Vector2fc
 import org.joml.Vector2i
 import org.joml.Vector2ic
-import org.lwjgl.BufferUtils
-import org.lwjgl.BufferUtils.createFloatBuffer
-import org.lwjgl.BufferUtils.createIntBuffer
 import org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER
 import org.lwjgl.opengl.GL30.*
 import org.lwjgl.stb.STBImage.stbi_image_free
 import org.lwjgl.stb.STBImage.stbi_load
 import org.lwjgl.system.MemoryStack
-//import org.lwjgl.system.MemoryUtil.*
+import org.lwjgl.system.MemoryUtil.*
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
@@ -180,7 +177,7 @@ private fun uploadFloatArray(floatArray: FloatArray, glslPosition: Int, componen
   val newID: Int
 
   try {
-    buffer = createFloatBuffer(floatArray.size)
+    buffer = memAllocFloat(floatArray.size)
     buffer.put(floatArray).flip()
 
     newID = glGenBuffers()
@@ -199,6 +196,9 @@ private fun uploadFloatArray(floatArray: FloatArray, glslPosition: Int, componen
 
   } catch (e: Exception) {
     throw RuntimeException("uploadFloatArray: Failed to upload. $e")
+  } finally {
+    // Free to C float* (float[]) or else there will be a massive memory leak.
+    memFree(buffer)
   }
 
   return newID
@@ -214,7 +214,7 @@ private fun uploadIntArray(intArray: IntArray, glslPosition: Int, componentWidth
   val newID: Int
 
   try {
-    buffer = createIntBuffer(intArray.size)
+    buffer = memAllocInt(intArray.size)
     buffer.put(intArray).flip()
 
     newID = glGenBuffers()
@@ -233,6 +233,9 @@ private fun uploadIntArray(intArray: IntArray, glslPosition: Int, componentWidth
 
   } catch (e: Exception) {
     throw RuntimeException("uploadIntArray: Failed to upload. $e")
+  } finally {
+    // Free to C float* (float[]) or else there will be a massive memory leak.
+    memFree(buffer)
   }
 
   return newID
@@ -249,7 +252,7 @@ private fun uploadIndices(indicesArray: IntArray): Int {
 
     newID = glGenBuffers()
 
-    buffer = createIntBuffer(indicesArray.size)
+    buffer = memAllocInt(indicesArray.size)
     buffer.put(indicesArray).flip()
 
     // Not normalized (false), no stride (0), pointer index (0).
@@ -260,6 +263,8 @@ private fun uploadIndices(indicesArray: IntArray): Int {
 
   } catch (e: Exception) {
     throw RuntimeException("uploadIndices: Failed to upload. $e")
+  } finally {
+    memFree(buffer)
   }
 
   return newID
