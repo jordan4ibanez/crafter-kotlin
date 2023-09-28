@@ -18,6 +18,9 @@ fun load() {
   shader.start("main")
 
   // Debug texture.
+
+  worldAtlas.add("1", "./textures/debug.png")
+
   texture.create("debug", "./textures/debug.png")
 
   // Debug mesh.

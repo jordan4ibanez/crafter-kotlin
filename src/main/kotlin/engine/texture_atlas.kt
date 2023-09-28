@@ -18,8 +18,8 @@ import java.util.UUID.randomUUID
 
 
 
-val worldAtlas = Packer()
-val fontAtlas = Packer()
+val worldAtlas = Packer("worldAtlas")
+val fontAtlas = Packer("fontAtlas")
 
 // note: Everything below this is just implementation.
 //  You only really talk to the two vals above.
@@ -146,10 +146,12 @@ class Packer {
   private val availableX: SortedSet<Int> = TreeSet()
   private val availableY: SortedSet<Int> = TreeSet()
   private var locked = false
+  private val name: String
 
-  constructor() {
+  constructor(name: String) {
     availableX.add(padding)
     availableY.add(padding)
+    this.name = name
   }
 
   fun empty(): Boolean {
@@ -209,6 +211,7 @@ class Packer {
     if (textures.containsKey(name)) throw RuntimeException("Packer: tried to add duplicate of $name")
     if (textures.containsKey(fileLocation)) throw RuntimeException("Packer: tried to add duplicate of $fileLocation")
     textures[name] = Canvas(fileLocation)
+    println("Packer[${this.name}]: added $fileLocation as $name")
   }
 
   fun debugPrintCanvas() {
