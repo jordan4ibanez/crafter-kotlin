@@ -85,7 +85,7 @@ private class Canvas {
       data.get(index).toUByte().toInt(),
       data.get(index + 1).toUByte().toInt(),
       data.get(index + 2).toUByte().toInt(),
-      data.get(index + 4).toUByte().toInt()
+      data.get(index + 3).toUByte().toInt()
     )
   }
 
@@ -154,7 +154,7 @@ class Packer {
     this.name = name
   }
 
-  fun empty(): Boolean {
+  fun isEmpty(): Boolean {
     return textures.isEmpty()
   }
 
@@ -238,13 +238,22 @@ class Packer {
     canvas.resize(maxSize.x, maxSize.y)
     canvas.allocate()
 
-    textures.values.forEach {textureCanvas ->
+    textures.forEach { pair ->
+      val (name, textureCanvas) = pair
+
       val posX = textureCanvas.position.x
       val posY = textureCanvas.position.y
 
-      for (x in 0 until posX) {
-        for (y in 0 until posY) {
-          canvas.setPixel(x + posX, y + posY, textureCanvas.getPixel(x,y))
+      val sizeX = textureCanvas.size.x
+      val sizeY = textureCanvas.size.y
+
+      textureCanvas.size.print("$name")
+
+      for (x in 0 until sizeX) {
+        for (y in 0 until sizeY) {
+//          println("$x, $y")
+          val color = textureCanvas.getPixel(x,y)
+          canvas.setPixel(x + posX, y + posY, color)
         }
       }
     }
