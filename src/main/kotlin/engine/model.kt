@@ -4,10 +4,7 @@ import org.joml.Vector2f
 import org.joml.Vector2fc
 import org.joml.Vector2i
 import org.joml.Vector2ic
-import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER
-import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30.*
 import org.lwjgl.stb.STBImage.stbi_image_free
 import org.lwjgl.stb.STBImage.stbi_load
@@ -21,18 +18,18 @@ import java.nio.IntBuffer
 
 // mesh works as a factory, container, and namespace. All in one.
 object mesh {
-  private val database = HashMap<String, Mesh>()
+  private val database = HashMap<String, MeshObject>()
   private val idDatabase = HashMap<Int, String>()
 
   // note: 3D and 2D are explicit here to make code more readable.
 
   fun create3D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String) {
-    val meshObject = Mesh(name, positions, textureCoords, indices, textureName, true)
+    val meshObject = MeshObject(name, positions, textureCoords, indices, textureName, true)
     safePut(name, meshObject)
   }
 
   fun create2D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String) {
-    val meshObject = Mesh(name, positions, textureCoords, indices, textureName, false)
+    val meshObject = MeshObject(name, positions, textureCoords, indices, textureName, false)
     safePut(name, meshObject)
   }
 
@@ -68,18 +65,18 @@ object mesh {
     }
   }
 
-  private fun safePut(name: String, meshObject: Mesh) {
+  private fun safePut(name: String, meshObject: MeshObject) {
     if (database.containsKey(name)) throw RuntimeException("mesh: Attempted to overwrite existing mesh. $name")
     database[name] = meshObject
     idDatabase[meshObject.vaoID] = name
   }
 
-  private fun safeGet(name: String): Mesh {
+  private fun safeGet(name: String): MeshObject {
     // A handy utility to prevent unwanted behavior.
     return database[name] ?: throw RuntimeException("mesh: Attempted to index nonexistent mesh. $name")
   }
 
-  private fun safeGet(vaoID: Int): Mesh {
+  private fun safeGet(vaoID: Int): MeshObject {
     // A handy utility to prevent unwanted behavior.
     val name = idDatabase[vaoID] ?: throw RuntimeException("mesh: Attempted to index nonexistent vaoID. $vaoID")
     return safeGet(name)
@@ -99,7 +96,7 @@ object mesh {
 //
 //}
 
-private class Mesh {
+private class MeshObject {
   val name: String
   val vaoID: Int
   val positionsID: Int
@@ -150,7 +147,7 @@ private class Mesh {
   }
 }
 
-private fun drawMesh(meshObject: Mesh) {
+private fun drawMesh(meshObject: MeshObject) {
   //note: There were a few things in the Java version, see about implementing them again.
 
   glBindTexture(GL_TEXTURE_2D, meshObject.textureID)
@@ -161,7 +158,7 @@ private fun drawMesh(meshObject: Mesh) {
   glBindVertexArray(0)
 }
 
-private fun drawMeshLineMode(meshObject: Mesh) {
+private fun drawMeshLineMode(meshObject: MeshObject) {
   glBindTexture(GL_TEXTURE_2D, meshObject.textureID)
   glBindVertexArray(meshObject.vaoID)
   glDrawElements(GL_LINES, meshObject.indicesCount, GL_UNSIGNED_INT, 0)
@@ -273,7 +270,7 @@ private fun uploadIndices(indicesArray: IntArray): Int {
   return newID
 }
 
-private fun destroyMesh(meshObject: Mesh) {
+private fun destroyMesh(meshObject: MeshObject) {
 
   glBindVertexArray(meshObject.vaoID)
 
@@ -315,17 +312,17 @@ object texture {
   // But, in the future we will want textures to be able to be cleared from GL memory.
   // This is designed for that.
 
-  private val database = HashMap<String, Texture>()
+  private val database = HashMap<String, TextureObject>()
   private val idDatabase = HashMap<Int, String>()
 
   fun create(fileLocation: String) {
-    val textureObject = Texture(fileLocation)
+    val textureObject = TextureObject(fileLocation)
     safePut(fileLocation, textureObject)
     println("texture: Created texture $fileLocation at ${textureObject.id}")
   }
 
   fun create(name: String, fileLocation: String) {
-    val textureObject = Texture(name, fileLocation)
+    val textureObject = TextureObject(name, fileLocation)
     safePut(name, textureObject)
     println("texture: Created texture $name at ${textureObject.id}")
   }
@@ -374,18 +371,18 @@ object texture {
     }
   }
 
-  private fun safePut(name: String, textureObject: Texture) {
+  private fun safePut(name: String, textureObject: TextureObject) {
     if (database.containsKey(name)) throw RuntimeException("texture: Attempted to overwrite existing texture. $name")
     database[name] = textureObject
     idDatabase[textureObject.id] = name
   }
 
-  private fun safeGet(name: String): Texture {
+  private fun safeGet(name: String): TextureObject {
     // A handy utility to prevent unwanted behavior.
     return database[name] ?: throw RuntimeException("texture: Attempted to index nonexistent texture. $name")
   }
 
-  private fun safeGet(id: Int): Texture {
+  private fun safeGet(id: Int): TextureObject {
     // A handy utility to prevent unwanted behavior.
     val name = idDatabase[id] ?: throw RuntimeException("texture: Attempted to index nonexistent ID. $id")
     return safeGet(name)
@@ -408,7 +405,7 @@ object texture {
   }
 }
 
-private class Texture {
+private class TextureObject {
   val name: String
   val id: Int
   val size: Vector2i = Vector2i()
