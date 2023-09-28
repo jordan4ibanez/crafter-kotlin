@@ -109,7 +109,7 @@ private class Canvas {
   }
 
   private fun toIndex(x: Int, y: Int): Int {
-    val width = size.y() * CHANNELS
+    val width = size.x() * CHANNELS
     return (y * width) + (x * CHANNELS)
   }
 
@@ -247,9 +247,10 @@ class Packer {
       val sizeX = textureCanvas.size.x
       val sizeY = textureCanvas.size.y
 
-      textureCanvas.size.print("$name")
+      textureCanvas.size.print("$name | $posX | $posY")
 
       for (x in 0 until sizeX) {
+        println(x + posX)
         for (y in 0 until sizeY) {
 //          println("$x, $y")
           val color = textureCanvas.getPixel(x,y)
