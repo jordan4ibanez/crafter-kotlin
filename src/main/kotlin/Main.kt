@@ -20,8 +20,10 @@ fun load() {
   // Debug texture.
 
   worldAtlas.add("1", "./textures/debug.png")
+  worldAtlas.add("blah", "./textures/text_box.png")
+  worldAtlas.add("fkalj", "./textures/test_thing.png")
 
-  texture.create("debug", "./textures/debug.png")
+  texture.create("debug", worldAtlas.flush(), worldAtlas.getSize(), worldAtlas.getChannels())
 
   // Debug mesh.
   mesh.create3D(
