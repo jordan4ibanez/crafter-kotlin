@@ -8,6 +8,7 @@ import org.lwjgl.stb.STBImage.stbi_image_free
 import org.lwjgl.stb.STBImage.stbi_load
 import org.lwjgl.system.MemoryStack
 import java.nio.ByteBuffer
+import java.util.UUID.randomUUID
 
 /*
 A texture packer that automates into an atlas.
@@ -18,11 +19,13 @@ Self-contained, sleek, black box.
 private const val CHANNELS = 4
 
 private class Canvas {
+  val uuid: String
   var data: ByteBuffer = createByteBuffer(0)
   val size: Vector2i = Vector2i()
 
   constructor(width: Int, height: Int) {
     resize(width, height)
+    uuid = randomUUID().toString()
   }
 
   constructor(fileLocation: String) {
@@ -44,6 +47,8 @@ private class Canvas {
     }
 
     size.set(width[0], height[0])
+
+    uuid = randomUUID().toString()
   }
 
   fun resize(width: Int, height: Int) {
@@ -103,3 +108,13 @@ private class Canvas {
   }
 }
 
+private class Packer {
+  val padding = 1
+  val edgeColor = Vector4i(255,0,0,255)
+  val blankSpaceColor = Vector4i(0,0,0,0)
+  val showDebugEdge = false
+  val expansionAmount = 16
+  val size = Vector2i(16, 16)
+  var maxSize = Vector2i(0,0)
+  val textures = HashMap<String, >
+}
