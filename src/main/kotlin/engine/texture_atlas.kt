@@ -60,9 +60,9 @@ private class Canvas {
 
     data = stbi_load(fileLocation, width, height, channels, 4)!!
 
-    if (channels[0] != CHANNELS) {
-      throw RuntimeException("Canvas: Attempted to upload image with ${channels[0]} channels.")
-    }
+//    if (channels[0] != CHANNELS) {
+//      throw RuntimeException("Canvas: Attempted to upload image with ${channels[0]} channels.")
+//    }
 
     size.set(width[0], height[0])
 
