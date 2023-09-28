@@ -328,6 +328,12 @@ object texture {
     println("texture: Created texture $name at ${textureObject.id}")
   }
 
+  fun create(name: String, buffer: ByteBuffer, size: Vector2ic, channels: Int) {
+    val textureObject = TextureObject(name, buffer, size, channels)
+    safePut(name, textureObject)
+    println("texture: Created texture $name at ${textureObject.id}")
+  }
+
   fun destroy(name: String) {
     safeDestroy(name)
   }
