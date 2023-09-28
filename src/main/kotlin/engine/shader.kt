@@ -13,9 +13,9 @@ object shader {
   //note: We do not want to destroy shaders during gameplay. No individual destruction. Only full.
   // This is a state machine.
 
-  private val database = HashMap<String, Shader>()
+  private val database = HashMap<String, ShaderObject>()
 
-  private lateinit var currentShader: Shader
+  private lateinit var currentShader: ShaderObject
   private lateinit var currentUniforms: HashMap<String, Int>
 
   fun start(name: String) {
@@ -25,7 +25,7 @@ object shader {
   }
 
   fun create(name: String, vertexSourceCodeLocation: String, fragmentSourceCodeLocation: String) {
-    val shaderObject = Shader(name, vertexSourceCodeLocation, fragmentSourceCodeLocation)
+    val shaderObject = ShaderObject(name, vertexSourceCodeLocation, fragmentSourceCodeLocation)
     safePut(name, shaderObject)
     // note: This is a micro helper so shader can just be assigned to immediately.
     currentShader = shaderObject
@@ -124,12 +124,12 @@ object shader {
     }
   }
 
-  private fun safePut(name: String, shaderObject: Shader) {
+  private fun safePut(name: String, shaderObject: ShaderObject) {
     if (database.containsKey(name)) throw RuntimeException("shader: Attempted to overwrite existing shader. $name")
     database[name] = shaderObject
   }
 
-  private fun safeGet(name: String): Shader {
+  private fun safeGet(name: String): ShaderObject {
     return database[name] ?: throw RuntimeException("shader: Attempted to index nonexistent shader. $name")
   }
 
@@ -138,7 +138,7 @@ object shader {
   }
 }
 
-private class Shader {
+private class ShaderObject {
   val name: String
   val programID: Int
   val uniforms = HashMap<String, Int>()
@@ -174,7 +174,7 @@ private fun compileSourceCode(programID: Int, sourceCodeLocation: String, shader
   val shaderID = glCreateShader(shaderType)
 
   if (shaderID == 0) {
-    val shaderTypeString = if (shaderType == GL_VERTEX_SHADER) "GL_VERTEX_SHADER" else "GL_FRAGMENT_SHADER"
+    val shaderTypeString = if (shaderType == GL_VERTEX_SHADER) "GL_VERTEXShaderObject" else "GL_FRAGMENTShaderObject"
     throw RuntimeException("compileSourceCode: Failed to create shader $shaderTypeString at $sourceCodeLocation")
   }
 
