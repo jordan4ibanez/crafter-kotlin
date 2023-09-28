@@ -34,13 +34,44 @@ private fun assembleVectorComponents(x: Float, y: Float, z: Float? = null, w: Fl
   return builder.toString()
 }
 
+private fun assembleVectorComponents(x: Int, y: Int, z: Int? = null, w: Int? = null): String {
+  val builder = StringBuilder()
+  run iteration@ {
+    listOf("x", "y", "z", "w").zip(listOf(x, y, z, w)).forEach {
+      val (key, value) = it
+      if (value == null) {
+        return@iteration
+      }
+      if (key != "x") {
+        builder.append(", ")
+      }
+      builder.append("$key: $value")
+    }
+  }
+  return builder.toString()
+}
+
 private fun Vector2fc.destructureToString(): String {
   return assembleVectorComponents(this.x(), this.y())
 }
+
+private fun Vector2ic.destructureToString(): String {
+  return assembleVectorComponents(this.x(), this.y())
+}
+
 private fun Vector3fc.destructureToString(): String {
   return assembleVectorComponents(this.x(), this.y(), this.z())
 }
+
+private fun Vector3ic.destructureToString(): String {
+  return assembleVectorComponents(this.x(), this.y(), this.z())
+}
+
 private fun Vector4fc.destructureToString(): String {
+  return assembleVectorComponents(this.x(), this.y(), this.z(), this.w())
+}
+
+private fun Vector4ic.destructureToString(): String {
   return assembleVectorComponents(this.x(), this.y(), this.z(), this.w())
 }
 
@@ -55,6 +86,15 @@ fun Vector2fc.print(debugInfo: String? = null) {
   println(result)
 }
 fun Vector2f.print(debugInfo: String? = null) {
+  val result = finalizeVectorSerialization("Vector2f", debugInfo, this.destructureToString())
+  println(result)
+}
+
+fun Vector2ic.print(debugInfo: String? = null) {
+  val result = finalizeVectorSerialization("Vector2fc", debugInfo, this.destructureToString())
+  println(result)
+}
+fun Vector2i.print(debugInfo: String? = null) {
   val result = finalizeVectorSerialization("Vector2f", debugInfo, this.destructureToString())
   println(result)
 }
