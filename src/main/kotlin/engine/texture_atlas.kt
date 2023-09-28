@@ -1,8 +1,12 @@
 package engine
 
 import org.joml.Vector2i
+import org.joml.Vector2ic
 import org.joml.Vector4i
 import org.lwjgl.BufferUtils.createByteBuffer
+import org.lwjgl.stb.STBImage.stbi_image_free
+import org.lwjgl.stb.STBImage.stbi_load
+import org.lwjgl.system.MemoryStack
 import java.nio.ByteBuffer
 
 /*
@@ -19,6 +23,27 @@ private class Canvas {
 
   constructor(width: Int, height: Int) {
     resize(width, height)
+  }
+
+  constructor(fileLocation: String) {
+    val stack: MemoryStack
+    try {
+      stack = MemoryStack.stackPush()
+    } catch (e: Exception) {
+      throw RuntimeException("Canvas: Failed to allocate stack memory.")
+    }
+
+    val width = stack.mallocInt(1)
+    val height = stack.mallocInt(1)
+    val channels = stack.mallocInt(1)
+
+    data = stbi_load(fileLocation, width, height, channels, 4)!!
+
+    if (channels[0] != CHANNELS) {
+      throw RuntimeException("Canvas: Attempted to upload image with ${channels[0]} channels.")
+    }
+
+    size.set(width[0], height[0])
   }
 
   fun resize(width: Int, height: Int) {
@@ -72,6 +97,9 @@ private class Canvas {
       }
     }
   }
-}
 
+  fun destroy() {
+    stbi_image_free(data)
+  }
+}
 
