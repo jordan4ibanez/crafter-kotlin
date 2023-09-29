@@ -40,13 +40,16 @@ private class Canvas {
   var data: ByteBuffer = createByteBuffer(0)
   val size: Vector2i = Vector2i()
   var packed = false
+  val name: String
 
-  constructor(width: Int, height: Int) {
+  constructor(name: String, width: Int, height: Int) {
+    this.name = name
     resize(width, height)
     uuid = randomUUID().toString()
   }
 
-  constructor(fileLocation: String) {
+  constructor(name: String, fileLocation: String) {
+    this.name = name
     val stack: MemoryStack
     try {
       stack = MemoryStack.stackPush()
@@ -142,7 +145,7 @@ class Packer {
   private val size = Vector2i(16, 16)
   private var maxSize = Vector2i(0,0)
   private val textures = HashMap<String, Canvas>()
-  private val canvas = Canvas(size.x(), size.y())
+  private val canvas: Canvas
   private val availableX: SortedSet<Int> = TreeSet()
   private val availableY: SortedSet<Int> = TreeSet()
   private var locked = false
@@ -152,6 +155,7 @@ class Packer {
     availableX.add(padding)
     availableY.add(padding)
     this.name = name
+    canvas = Canvas(name, size.x(), size.y())
   }
 
   fun isEmpty(): Boolean {
@@ -223,7 +227,7 @@ class Packer {
   fun add(name: String, fileLocation: String) {
     if (textures.containsKey(name)) throw RuntimeException("Packer: tried to add duplicate of $name")
     if (textures.containsKey(fileLocation)) throw RuntimeException("Packer: tried to add duplicate of $fileLocation")
-    textures[name] = Canvas(fileLocation)
+    textures[name] = Canvas(name, fileLocation)
 //    println("Packer[${this.name}]: added $fileLocation as $name")
   }
 
@@ -239,6 +243,7 @@ class Packer {
 
   private fun pack() {
     textures.values.forEach { textureCanvas ->
+      println("packing ${textureCanvas.name}  ======================")
       while(!tetrisPack(textureCanvas)) {
         val currentSize = canvas.size
         canvas.resize(currentSize.x + expansionAmount, currentSize.y + expansionAmount)
@@ -278,6 +283,8 @@ class Packer {
   private fun tetrisPack(textureCanvas: Canvas): Boolean {
     var found = false
 
+    var bestScore = Int.MAX_VALUE
+
     val maxX = canvas.size.x
     val maxY = canvas.size.y
 
@@ -287,26 +294,28 @@ class Packer {
     var bestX = padding
     var bestY = padding
 
-    println("HI THERE=================================")
-
-
     run exit@ {
       availableY.forEach yLoop@{ hmm ->
         val y = hmm!!
-
-        println(y)
 
         if (found) return@exit
 
         availableX.forEach xLoop@{ hmm2 ->
           val x = hmm2!!
 
-          if (x + thisWidth + padding >= maxX || y + thisHeight + padding >= maxY) return@yLoop
+          val newScore = x + y
+
+//          println("n:$newScore | b:$bestScore")
+
+          if (newScore > bestScore) return@xLoop
+
+          println("($x | $y)")
+
+          if (x + thisWidth + padding >= maxX || y + thisHeight + padding >= maxY) return@xLoop
 
           var failed = false
 
           textures.values.forEach nextObject@ { other ->
-            if (!other.packed) return@nextObject
             if (other.uuid == textureCanvas.uuid) return@nextObject
 
             val otherX = other.position.x
@@ -315,10 +324,12 @@ class Packer {
             val otherWidth = other.size.x
             val otherHeight = other.size.y
 
-            if (otherX + otherWidth + padding > x &&
-              otherX <= x + thisWidth + padding &&
+            if (other.packed && otherX + otherWidth + padding > x &&
+              otherX < x + thisWidth + padding &&
               otherY + otherHeight + padding > y &&
-              otherY <= y + thisHeight + padding) {
+              otherY < y + thisHeight + padding) {
+
+              println("${textureCanvas.uuid} collided with ${other.uuid}")
 
               failed = true
               return@xLoop
@@ -330,11 +341,14 @@ class Packer {
             found = true
             bestX = x
             bestY = y
+            bestScore = newScore
             return@yLoop
           }
         }
       }
     }
+
+    println("final score: $bestScore")
 
     if (!found) return false
 
