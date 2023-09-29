@@ -2074,21 +2074,6 @@ class FastNoise {
     var distance2 = 999999f
 
     when (m_cellularDistanceFunction) {
-      default,case Euclidean -> {
-        for (xi in (xr - 1) .. (xr + 1)) {
-          for (yi in (yr - 1) .. (yr + 1)) {
-            var vec = CELL_2D [Hash2D(m_seed, xi, yi) and 255];
-
-            var vecX = xi -x + vec.x;
-            var vecY = yi -y + vec.y;
-
-            var newDistance = vecX * vecX +vecY * vecY;
-
-            distance2 = Math.max(Math.min(distance2, newDistance), distance);
-            distance = Math.min(distance, newDistance);
-          }
-        }
-      }
       Manhattan -> {
         for (xi in (xr - 1) .. (xr + 1)) {
           for (yi in (yr - 1) .. (yr + 1)) {
@@ -2113,6 +2098,21 @@ class FastNoise {
             var vecY = yi -y + vec.y;
 
             var newDistance =(Math.abs(vecX) + Math.abs(vecY)) + (vecX * vecX + vecY * vecY);
+
+            distance2 = Math.max(Math.min(distance2, newDistance), distance);
+            distance = Math.min(distance, newDistance);
+          }
+        }
+      }
+      else -> {
+        for (xi in (xr - 1) .. (xr + 1)) {
+          for (yi in (yr - 1) .. (yr + 1)) {
+            var vec = CELL_2D [Hash2D(m_seed, xi, yi) and 255];
+
+            var vecX = xi -x + vec.x;
+            var vecY = yi -y + vec.y;
+
+            var newDistance = vecX * vecX +vecY * vecY;
 
             distance2 = Math.max(Math.min(distance2, newDistance), distance);
             distance = Math.min(distance, newDistance);
