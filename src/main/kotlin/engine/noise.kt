@@ -76,7 +76,7 @@ private val Distance2Div = CellularReturnType.Distance2Div
 
 
 
-class FastNoise {
+class Noise {
 
 
   private var seed = 1337
@@ -93,7 +93,7 @@ class FastNoise {
 
   private var cellularDistanceFunction = CellularDistanceFunction.Euclidean
   private var cellularReturnType = CellularReturnType.CellValue
-  private var cellularNoiseLookup: FastNoise? = null
+  private var cellularNoiseLookup: Noise? = null
 
   private var gradientPerturbAmp = (1.0f / 0.45f)
 
@@ -182,7 +182,7 @@ class FastNoise {
 
   // Noise used to calculate a cell value if cellular return type is NoiseLookup
   // The lookup value is acquired through GetNoise() so ensure you SetNoiseType() on the noise lookup, value, gradient or simplex is recommended
-  fun setCellularNoiseLookup(noise: FastNoise) {
+  fun setCellularNoiseLookup(noise: Noise) {
     cellularNoiseLookup = noise
   }
 
