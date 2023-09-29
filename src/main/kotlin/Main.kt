@@ -4,6 +4,7 @@ import org.joml.Math.random
 import org.joml.Math.toRadians
 import org.joml.Random
 import org.joml.Vector3f
+import org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -50,6 +51,9 @@ fun load() {
 
 }
 
+
+
+
 var timer = 0f
 var counter = 0
 var color = 0f
@@ -58,6 +62,11 @@ var speed = 0.5f
 
 // All general logic goes here. Consider this love.update()
 fun update(dtime: Float) {
+
+  if (keyboard.isDown(GLFW_KEY_ESCAPE)){
+   window.close()
+    return
+  }
 
   timer += dtime
 
@@ -86,6 +95,9 @@ fun update(dtime: Float) {
 
 }
 
+
+
+
 // All draw procedures go here. Consider this love.draw()
 var rotation = 0f
 fun draw() {
@@ -97,6 +109,9 @@ fun draw() {
 
 }
 
+
+
+
 // Game cleanup procedures go here. Consider this love.quit()
 fun quit() {
 
@@ -106,6 +121,11 @@ fun quit() {
   glfw.destroy()
 
 }
+
+
+
+
+
 
 
 
