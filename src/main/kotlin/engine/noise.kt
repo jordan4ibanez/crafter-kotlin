@@ -2,6 +2,7 @@ package engine
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import java.lang.RuntimeException
 
 //note: IntelliJ's auto translater butchered this so I had to translate it by hand.
 
@@ -896,7 +897,7 @@ class FastNoise {
 
     var seed = m_seed;
     var sum = 1 - Math.abs(SinglePerlin(seed, x, y, z));
-    var amp = 1;
+    var amp = 1f
 
     for (i in 1 until m_octaves) {
       x *= m_lacunarity;
@@ -1089,7 +1090,7 @@ class FastNoise {
 
     when (m_fractalType) {
       FBM -> return SingleSimplexFractalFBM(x, y, z);
-      Billow -> SingleSimplexFractalBillow(x, y, z);
+      Billow -> return SingleSimplexFractalBillow(x, y, z);
       RigidMulti -> return SingleSimplexFractalRigidMulti(x, y, z);
       else -> return 0f
     }
@@ -1103,7 +1104,7 @@ class FastNoise {
 
     var seed = m_seed;
     var sum = SingleSimplex(seed, x, y, z);
-    var amp = 1;
+    var amp = 1f
 
     for (i in 1 until m_octaves) {
       x *= m_lacunarity;
@@ -1125,7 +1126,7 @@ class FastNoise {
 
     var seed = m_seed;
     var sum = Math.abs(SingleSimplex(seed, x, y, z)) * 2 - 1;
-    var amp = 1;
+    var amp = 1f
 
     for (i in 1 until m_octaves) {
       x *= m_lacunarity;
@@ -1147,14 +1148,14 @@ class FastNoise {
 
     var seed = m_seed;
     var sum = 1 - Math.abs(SingleSimplex(seed, x, y, z));
-    var amp = 1;
+    var amp = 1f
 
     for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
       z *= m_lacunarity;
 
-      amp *= m_gain;
+      amp *= m_gain
       sum -= (1 - Math.abs(SingleSimplex(++seed, x, y, z))) * amp;
     }
 
@@ -1340,10 +1341,14 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  fun SingleSimplexFractalRigidMulti(x: Float, y: Float): Float {
+  fun SingleSimplexFractalRigidMulti(x1: Float, y1: Float): Float {
+
+    var x = x1
+    var y = y1
+
     var seed = m_seed;
     var sum = 1 - Math.abs(SingleSimplex(seed, x, y));
-    var amp = 1;
+    var amp = 1f
 
     for (i in 1 until m_octaves) {
       x *= m_lacunarity;
@@ -1582,7 +1587,7 @@ class FastNoise {
 
     var seed = m_seed;
     var sum = Math.abs(SingleCubic(seed, x, y, z)) * 2 - 1;
-    var amp = 1;
+    var amp = 1f
     var i = 0;
 
     while (++i < m_octaves) {
@@ -1684,7 +1689,7 @@ class FastNoise {
 
     when (m_fractalType) {
       FBM -> return SingleCubicFractalFBM(x, y);
-      Billow -> SingleCubicFractalBillow(x, y);
+      Billow -> return SingleCubicFractalBillow(x, y);
       RigidMulti -> return SingleCubicFractalRigidMulti(x, y);
       else -> return 0f
     }
@@ -1886,13 +1891,17 @@ class FastNoise {
           }
         }
       }
+      else -> {}
     }
 
     when (m_cellularReturnType) {
       CellValue -> return ValCoord3D(0, xc, yc, zc);
       NoiseLookup -> {
         var vec = CELL_3D [Hash3D(m_seed, xc, yc, zc) and 255];
-        return m_cellularNoiseLookup.GetNoise(xc + vec.x, yc + vec.y, zc + vec.z);
+        if (m_cellularNoiseLookup == null) {
+          throw RuntimeException("noise: Forgot to set m_cellularNoiseLookup.")
+        }
+        return m_cellularNoiseLookup!!.GetNoise(xc + vec.x, yc + vec.y, zc + vec.z)
       }
       Distance -> return distance - 1;
       else -> return 0f
@@ -2059,7 +2068,10 @@ class FastNoise {
 
       NoiseLookup -> {
         var vec = CELL_2D [Hash2D(m_seed, xc, yc) and 255];
-        return m_cellularNoiseLookup.GetNoise(xc + vec.x, yc + vec.y);
+        if (m_cellularNoiseLookup == null) {
+          throw RuntimeException("noise: Forgot to set m_cellularNoiseLookup.")
+        }
+        return m_cellularNoiseLookup!!.GetNoise(xc + vec.x, yc + vec.y);
       }
       Distance -> return distance - 1;
       else -> return 0f
