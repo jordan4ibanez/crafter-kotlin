@@ -1,8 +1,7 @@
 package engine
 
 import kotlinx.coroutines.*
-import org.joml.Math
-import org.joml.Vector2i
+import org.joml.Math.random
 import org.joml.Vector2ic
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -29,19 +28,25 @@ internal fun disperseChunkGenerators() {
   // Shoot and forget.
 
   // If there's nothing to be done, do nothing.
-  if (generationInput.isEmpty()) return
+//  if (generationInput.isEmpty()) return
   GlobalScope.launch {genChunk() }
 }
 
 fun genChunk() {
   //note: Async double check.
-  if (generationInput.isEmpty()) return
-  val position = generationInput.remove()!!
+
+  //Fixme: Remember to re-enable this!
+  // if (generationInput.isEmpty()) return
+  // val position = generationInput.remove()!!
 
   //fixme: placeholder
   val grass = 1
   val dirt  = 2
   val stone = 3
+
+  val noise = Noise((random() * 1_000_000).toInt())
+
+  println(noise.getNoise(1f, 2f))
 
 
 }
