@@ -34,14 +34,12 @@ import org.joml.Vector3f;
 //
 
 
-private enum class NoiseType {Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, Cellular, WhiteNoise, Cubic, CubicFractal}
-private enum class Interp {Linear, Hermite, Quintic}
-private enum class FractalType {FBM, Billow, RigidMulti}
-private enum class CellularDistanceFunction {Euclidean, Manhattan, Natural}
-private enum class CellularReturnType {CellValue, NoiseLookup, Distance, Distance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div}
+enum class NoiseType {Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, Cellular, WhiteNoise, Cubic, CubicFractal}
+enum class Interp {Linear, Hermite, Quintic}
+enum class FractalType {FBM, Billow, RigidMulti}
+enum class CellularDistanceFunction {Euclidean, Manhattan, Natural}
+enum class CellularReturnType {CellValue, NoiseLookup, Distance, Distance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div}
 
-//note: This is here because intellij is absolutely struggling translating this file by hand.
-// It might not be necessary to have this!
 private val Value          = NoiseType.Value
 private val ValueFractal   = NoiseType.ValueFractal
 private val Perlin         = NoiseType.Perlin
@@ -52,6 +50,28 @@ private val Cellular       = NoiseType.Cellular
 private val WhiteNoise     = NoiseType.WhiteNoise
 private val Cubic          = NoiseType.Cubic
 private val CubicFractal   = NoiseType.CubicFractal
+
+private val Linear  = Interp.Linear
+private val Hermite = Interp.Hermite
+private val Quintic = Interp.Quintic
+
+private val FBM        = FractalType.FBM
+private val Billow     = FractalType.Billow
+private val RigidMulti = FractalType.RigidMulti
+
+private val Euclidean = CellularDistanceFunction.Euclidean
+private val Manhattan = CellularDistanceFunction.Manhattan
+private val Natural   = CellularDistanceFunction.Natural
+
+private val CellValue    = CellularReturnType.CellValue
+private val NoiseLookup  = CellularReturnType.NoiseLookup
+private val Distance     = CellularReturnType.Distance
+private val Distance2    = CellularReturnType.Distance2
+private val Distance2Add = CellularReturnType.Distance2Add
+private val Distance2Sub = CellularReturnType.Distance2Sub
+private val Distance2Mul = CellularReturnType.Distance2Mul
+private val Distance2Div = CellularReturnType.Distance2Div
+
 
 
 class FastNoise {
@@ -465,10 +485,7 @@ class FastNoise {
         }
       Cellular ->
         when (m_cellularReturnType) {
-          case CellValue:
-          case NoiseLookup:
-          case Distance:
-          return SingleCellular(x, y, z);
+          CellValue,NoiseLookup,Distance-> return SingleCellular(x, y, z)
           else -> return SingleCellular2Edge(x, y, z);
         }
       WhiteNoise -> return GetWhiteNoise(x, y, z);
@@ -492,12 +509,9 @@ class FastNoise {
       Value -> return SingleValue(m_seed, x, y);
       ValueFractal ->
         when (m_fractalType) {
-          FBM ->
-          return SingleValueFractalFBM(x, y);
-          Billow ->
-          return SingleValueFractalBillow(x, y);
-          RigidMulti ->
-          return SingleValueFractalRigidMulti(x, y);
+          FBM -> return SingleValueFractalFBM(x, y)
+          Billow -> return SingleValueFractalBillow(x, y)
+          RigidMulti -> return SingleValueFractalRigidMulti(x, y)
           else -> return 0f
         }
       Perlin -> return SinglePerlin(m_seed, x, y);
@@ -536,72 +550,72 @@ class FastNoise {
 
   // White Noise
 
-  private FloatCast2Int(f: Float): Int {
+  private fun FloatCast2Int(f: Float): Int {
     val i = f.toRawBits()
-
     return i xor (i shr 16);
   }
 
-  public float GetWhiteNoise(float x, float y, float z, float w) {
-    int xi = FloatCast2Int(x);
-    int yi = FloatCast2Int(y);
-    int zi = FloatCast2Int(z);
-    int wi = FloatCast2Int(w);
+  fun GetWhiteNoise(x: Float, y: Float, z: Float, w: Float): Float {
+    val xi = FloatCast2Int(x);
+    val yi = FloatCast2Int(y);
+    val zi = FloatCast2Int(z);
+    val wi = FloatCast2Int(w);
 
     return ValCoord4D(m_seed, xi, yi, zi, wi);
   }
 
-  public float GetWhiteNoise(float x, float y, float z) {
-    int xi = FloatCast2Int(x);
-    int yi = FloatCast2Int(y);
-    int zi = FloatCast2Int(z);
+  fun GetWhiteNoise(x: Float, y: Float, z: Float): Float {
+    val xi = FloatCast2Int(x);
+    val yi = FloatCast2Int(y);
+    val zi = FloatCast2Int(z);
 
     return ValCoord3D(m_seed, xi, yi, zi);
   }
 
-  public float GetWhiteNoise(float x, float y) {
-    int xi = FloatCast2Int(x);
-    int yi = FloatCast2Int(y);
+  fun GetWhiteNoise(x: Float, y: Float): Float {
+    val xi = FloatCast2Int(x);
+    val yi = FloatCast2Int(y);
 
     return ValCoord2D(m_seed, xi, yi);
   }
 
-  public float GetWhiteNoiseInt(int x, int y, int z, int w) {
+  fun GetWhiteNoiseInt(x: Int, y: Int, z: Int, w: Int): Float {
     return ValCoord4D(m_seed, x, y, z, w);
   }
 
-  public float GetWhiteNoiseInt(int x, int y, int z) {
+  fun GetWhiteNoiseInt(x: Int, y: Int, z: Int): Float {
     return ValCoord3D(m_seed, x, y, z);
   }
 
-  public float GetWhiteNoiseInt(int x, int y) {
+  fun GetWhiteNoiseInt(x: Int, y: Int): Float {
     return ValCoord2D(m_seed, x, y);
   }
 
   // Value Noise
-  public float GetValueFractal(float x, float y, float z) {
-    x *= m_frequency;
-    y *= m_frequency;
-    z *= m_frequency;
+  fun GetValueFractal(x1: Float, y1: Float, z1: Float): Float {
+    var x = x1 * m_frequency;
+    var y = y1 * m_frequency;
+    var z = z1 * m_frequency;
 
-    switch (m_fractalType) {
-      case FBM:
-      return SingleValueFractalFBM(x, y, z);
-      case Billow:
-      return SingleValueFractalBillow(x, y, z);
-      case RigidMulti:
-      return SingleValueFractalRigidMulti(x, y, z);
-      default:
-      return 0;
+    when (m_fractalType) {
+      FBM -> return SingleValueFractalFBM(x, y, z);
+      Billow -> return SingleValueFractalBillow(x, y, z);
+      RigidMulti -> return SingleValueFractalRigidMulti(x, y, z);
+      else -> return 0f;
     }
   }
 
-  private float SingleValueFractalFBM(float x, float y, float z) {
-    int seed = m_seed;
-    float sum = SingleValue(seed, x, y, z);
-    float amp = 1;
+  fun SingleValueFractalFBM(x1: Float, y1: Float, z1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+    var z = z1
+
+    var seed = m_seed;
+    var sum = SingleValue(seed, x, y, z);
+    var amp = 1f;
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
       z *= m_lacunarity;
@@ -613,12 +627,17 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SingleValueFractalBillow(float x, float y, float z) {
-    int seed = m_seed;
-    float sum = Math.abs(SingleValue(seed, x, y, z)) * 2 - 1;
-    float amp = 1;
+  fun SingleValueFractalBillow(x1: Float, y1: Float, z1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+    var z = z1
+
+    var seed = m_seed;
+    var sum = Math.abs(SingleValue(seed, x, y, z)) * 2 - 1;
+    var amp = 1f
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
       z *= m_lacunarity;
@@ -630,12 +649,17 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SingleValueFractalRigidMulti(float x, float y, float z) {
-    int seed = m_seed;
-    float sum = 1 - Math.abs(SingleValue(seed, x, y, z));
-    float amp = 1;
+  fun SingleValueFractalRigidMulti(x1: Float, y1: Float, z1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+    var z = z1
+
+    var seed = m_seed;
+    var sum = 1 - Math.abs(SingleValue(seed, x, y, z));
+    var amp = 1f;
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
       z *= m_lacunarity;
@@ -647,71 +671,77 @@ class FastNoise {
     return sum;
   }
 
-  public float GetValue(float x, float y, float z) {
+  fun GetValue(x: Float, y: Float, z: Float): Float {
     return SingleValue(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
   }
 
-  private float SingleValue(int seed, float x, float y, float z) {
-    int x0 = FastFloor(x);
-    int y0 = FastFloor(y);
-    int z0 = FastFloor(z);
-    int x1 = x0 + 1;
-    int y1 = y0 + 1;
-    int z1 = z0 + 1;
+  fun SingleValue(seed: Int, x: Float, y: Float, z: Float): Float {
+    var x0 = FastFloor(x);
+    var y0 = FastFloor(y);
+    var z0 = FastFloor(z);
+    var x1 = x0 + 1;
+    var y1 = y0 + 1;
+    var z1 = z0 + 1;
 
-    float xs, ys, zs;
-    switch (m_interp) {
-      default:
-      case Linear:
-      xs = x - x0;
-      ys = y - y0;
-      zs = z - z0;
-      break;
-      case Hermite:
-      xs = InterpHermiteFunc(x - x0);
-      ys = InterpHermiteFunc(y - y0);
-      zs = InterpHermiteFunc(z - z0);
-      break;
-      case Quintic:
-      xs = InterpQuinticFunc(x - x0);
-      ys = InterpQuinticFunc(y - y0);
-      zs = InterpQuinticFunc(z - z0);
-      break;
+    var xs = 0f
+    var ys = 0f
+    var zs = 0f
+
+    when (m_interp) {
+      Hermite -> {
+        xs = InterpHermiteFunc(x - x0);
+        ys = InterpHermiteFunc(y - y0);
+        zs = InterpHermiteFunc(z - z0);
+      }
+      Quintic -> {
+        xs = InterpQuinticFunc(x - x0);
+        ys = InterpQuinticFunc(y - y0);
+        zs = InterpQuinticFunc(z - z0);
+      }
+      else -> {
+        xs = x - x0;
+        ys = y - y0;
+        zs = z - z0;
+      }
     }
 
-    float xf00 = Lerp(ValCoord3D(seed, x0, y0, z0), ValCoord3D(seed, x1, y0, z0), xs);
-    float xf10 = Lerp(ValCoord3D(seed, x0, y1, z0), ValCoord3D(seed, x1, y1, z0), xs);
-    float xf01 = Lerp(ValCoord3D(seed, x0, y0, z1), ValCoord3D(seed, x1, y0, z1), xs);
-    float xf11 = Lerp(ValCoord3D(seed, x0, y1, z1), ValCoord3D(seed, x1, y1, z1), xs);
+    var xf00 = Lerp(ValCoord3D(seed, x0, y0, z0), ValCoord3D(seed, x1, y0, z0), xs);
+    var xf10 = Lerp(ValCoord3D(seed, x0, y1, z0), ValCoord3D(seed, x1, y1, z0), xs);
+    var xf01 = Lerp(ValCoord3D(seed, x0, y0, z1), ValCoord3D(seed, x1, y0, z1), xs);
+    var xf11 = Lerp(ValCoord3D(seed, x0, y1, z1), ValCoord3D(seed, x1, y1, z1), xs);
 
-    float yf0 = Lerp(xf00, xf10, ys);
-    float yf1 = Lerp(xf01, xf11, ys);
+    var yf0 = Lerp(xf00, xf10, ys);
+    var yf1 = Lerp(xf01, xf11, ys);
 
     return Lerp(yf0, yf1, zs);
   }
 
-  public float GetValueFractal(float x, float y) {
+  fun GetValueFractal(x1: Float, y1: Float): Float {
+
+    var x = x1
+    var y = y1
+
     x *= m_frequency;
     y *= m_frequency;
 
-    switch (m_fractalType) {
-      case FBM:
-      return SingleValueFractalFBM(x, y);
-      case Billow:
-      return SingleValueFractalBillow(x, y);
-      case RigidMulti:
-      return SingleValueFractalRigidMulti(x, y);
-      default:
-      return 0;
+    when (m_fractalType) {
+      FBM -> return SingleValueFractalFBM(x, y);
+      Billow -> return SingleValueFractalBillow(x, y);
+      RigidMulti -> return SingleValueFractalRigidMulti(x, y);
+      else -> return 0f
     }
   }
 
-  private float SingleValueFractalFBM(float x, float y) {
-    int seed = m_seed;
-    float sum = SingleValue(seed, x, y);
-    float amp = 1;
+  fun SingleValueFractalFBM(x1: Float, y1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+
+    var seed = m_seed;
+    var sum = SingleValue(seed, x, y);
+    var amp = 1f
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
 
@@ -722,12 +752,16 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SingleValueFractalBillow(float x, float y) {
-    int seed = m_seed;
-    float sum = Math.abs(SingleValue(seed, x, y)) * 2 - 1;
-    float amp = 1;
+  fun SingleValueFractalBillow(x1: Float, y1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+
+    var seed = m_seed;
+    var sum = Math.abs(SingleValue(seed, x, y)) * 2 - 1;
+    var amp = 1f
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
       amp *= m_gain;
@@ -737,12 +771,16 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SingleValueFractalRigidMulti(float x, float y) {
-    int seed = m_seed;
-    float sum = 1 - Math.abs(SingleValue(seed, x, y));
-    float amp = 1;
+  fun SingleValueFractalRigidMulti(x1: Float, y1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+
+    var seed = m_seed;
+    var sum = 1 - Math.abs(SingleValue(seed, x, y));
+    var amp = 1f
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
 
@@ -753,63 +791,70 @@ class FastNoise {
     return sum;
   }
 
-  public float GetValue(float x, float y) {
+  fun GetValue(x: Float, y: Float): Float {
     return SingleValue(m_seed, x * m_frequency, y * m_frequency);
   }
 
-  private float SingleValue(int seed, float x, float y) {
-    int x0 = FastFloor(x);
-    int y0 = FastFloor(y);
-    int x1 = x0 + 1;
-    int y1 = y0 + 1;
+  fun SingleValue(seed: Int, x: Float, y: Float): Float {
+    var x0 = FastFloor(x);
+    var y0 = FastFloor(y);
+    var x1 = x0 + 1;
+    var y1 = y0 + 1;
 
-    float xs, ys;
-    switch (m_interp) {
-      default:
-      case Linear:
-      xs = x - x0;
-      ys = y - y0;
-      break;
-      case Hermite:
-      xs = InterpHermiteFunc(x - x0);
-      ys = InterpHermiteFunc(y - y0);
-      break;
-      case Quintic:
-      xs = InterpQuinticFunc(x - x0);
-      ys = InterpQuinticFunc(y - y0);
-      break;
+    var xs = 0f
+    var ys = 0f
+
+    when (m_interp) {
+      Hermite -> {
+        xs = InterpHermiteFunc(x - x0);
+        ys = InterpHermiteFunc(y - y0);
+      }
+      Quintic -> {
+        xs = InterpQuinticFunc(x - x0);
+        ys = InterpQuinticFunc(y - y0);
+      }
+      else -> {
+        xs = x - x0;
+        ys = y - y0;
+      }
     }
 
-    float xf0 = Lerp(ValCoord2D(seed, x0, y0), ValCoord2D(seed, x1, y0), xs);
-    float xf1 = Lerp(ValCoord2D(seed, x0, y1), ValCoord2D(seed, x1, y1), xs);
+    var xf0 = Lerp(ValCoord2D(seed, x0, y0), ValCoord2D(seed, x1, y0), xs);
+    var xf1 = Lerp(ValCoord2D(seed, x0, y1), ValCoord2D(seed, x1, y1), xs);
 
     return Lerp(xf0, xf1, ys);
   }
 
   // Gradient Noise
-  public float GetPerlinFractal(float x, float y, float z) {
+  fun GetPerlinFractal(x1: Float, y1: Float, z1: Float): Float {
+
+    var x = x1
+    var y = y1
+    var z = z1
+
     x *= m_frequency;
     y *= m_frequency;
     z *= m_frequency;
 
-    switch (m_fractalType) {
-      case FBM:
-      return SinglePerlinFractalFBM(x, y, z);
-      case Billow:
-      return SinglePerlinFractalBillow(x, y, z);
-      case RigidMulti:
-      return SinglePerlinFractalRigidMulti(x, y, z);
-      default:
-      return 0;
+    when (m_fractalType) {
+      FBM -> return SinglePerlinFractalFBM(x, y, z);
+      Billow -> return SinglePerlinFractalBillow(x, y, z);
+      RigidMulti -> return SinglePerlinFractalRigidMulti(x, y, z);
+      else -> return 0f
     }
   }
 
-  private float SinglePerlinFractalFBM(float x, float y, float z) {
-    int seed = m_seed;
-    float sum = SinglePerlin(seed, x, y, z);
-    float amp = 1;
+  fun SinglePerlinFractalFBM(x1: Float, y1: Float, z1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+    var z = z1
+
+    var seed = m_seed;
+    var sum = SinglePerlin(seed, x, y, z);
+    var amp = 1f
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
       z *= m_lacunarity;
@@ -821,12 +866,17 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SinglePerlinFractalBillow(float x, float y, float z) {
-    int seed = m_seed;
-    float sum = Math.abs(SinglePerlin(seed, x, y, z)) * 2 - 1;
-    float amp = 1;
+  fun SinglePerlinFractalBillow(x1: Float, y1: Float, z1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+    var z = z1
+
+    var seed = m_seed;
+    var sum = Math.abs(SinglePerlin(seed, x, y, z)) * 2 - 1;
+    var amp = 1f
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
       z *= m_lacunarity;
@@ -838,12 +888,17 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SinglePerlinFractalRigidMulti(float x, float y, float z) {
-    int seed = m_seed;
-    float sum = 1 - Math.abs(SinglePerlin(seed, x, y, z));
-    float amp = 1;
+  fun SinglePerlinFractalRigidMulti(x1: Float, y1: Float, z1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+    var z = z1
+
+    var seed = m_seed;
+    var sum = 1 - Math.abs(SinglePerlin(seed, x, y, z));
+    var amp = 1;
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
       z *= m_lacunarity;
@@ -855,78 +910,84 @@ class FastNoise {
     return sum;
   }
 
-  public float GetPerlin(float x, float y, float z) {
+  fun GetPerlin(x: Float, y: Float, z: Float): Float {
     return SinglePerlin(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
   }
 
-  private float SinglePerlin(int seed, float x, float y, float z) {
-    int x0 = FastFloor(x);
-    int y0 = FastFloor(y);
-    int z0 = FastFloor(z);
-    int x1 = x0 + 1;
-    int y1 = y0 + 1;
-    int z1 = z0 + 1;
+  fun SinglePerlin(seed: Int, x: Float, y: Float, z: Float): Float {
 
-    float xs, ys, zs;
-    switch (m_interp) {
-      default:
-      case Linear:
-      xs = x - x0;
-      ys = y - y0;
-      zs = z - z0;
-      break;
-      case Hermite:
-      xs = InterpHermiteFunc(x - x0);
-      ys = InterpHermiteFunc(y - y0);
-      zs = InterpHermiteFunc(z - z0);
-      break;
-      case Quintic:
-      xs = InterpQuinticFunc(x - x0);
-      ys = InterpQuinticFunc(y - y0);
-      zs = InterpQuinticFunc(z - z0);
-      break;
+    var x0 = FastFloor(x);
+    var y0 = FastFloor(y);
+    var z0 = FastFloor(z);
+    var x1 = x0 + 1;
+    var y1 = y0 + 1;
+    var z1 = z0 + 1;
+
+    var xs = 0f
+    var ys = 0f
+    var zs = 0f
+    when (m_interp) {
+      Hermite -> {
+        xs = InterpHermiteFunc(x - x0);
+        ys = InterpHermiteFunc(y - y0);
+        zs = InterpHermiteFunc(z - z0);
+      }
+      Quintic -> {
+        xs = InterpQuinticFunc(x - x0);
+        ys = InterpQuinticFunc(y - y0);
+        zs = InterpQuinticFunc(z - z0);
+      }
+      else -> {
+        xs = x - x0;
+        ys = y - y0;
+        zs = z - z0;
+      }
     }
 
-    float xd0 = x - x0;
-    float yd0 = y - y0;
-    float zd0 = z - z0;
-    float xd1 = xd0 - 1;
-    float yd1 = yd0 - 1;
-    float zd1 = zd0 - 1;
+    var xd0 = x - x0;
+    var yd0 = y - y0;
+    var zd0 = z - z0;
+    var xd1 = xd0 - 1;
+    var yd1 = yd0 - 1;
+    var zd1 = zd0 - 1;
 
-    float xf00 = Lerp(GradCoord3D(seed, x0, y0, z0, xd0, yd0, zd0), GradCoord3D(seed, x1, y0, z0, xd1, yd0, zd0), xs);
-    float xf10 = Lerp(GradCoord3D(seed, x0, y1, z0, xd0, yd1, zd0), GradCoord3D(seed, x1, y1, z0, xd1, yd1, zd0), xs);
-    float xf01 = Lerp(GradCoord3D(seed, x0, y0, z1, xd0, yd0, zd1), GradCoord3D(seed, x1, y0, z1, xd1, yd0, zd1), xs);
-    float xf11 = Lerp(GradCoord3D(seed, x0, y1, z1, xd0, yd1, zd1), GradCoord3D(seed, x1, y1, z1, xd1, yd1, zd1), xs);
+    var xf00 = Lerp(GradCoord3D(seed, x0, y0, z0, xd0, yd0, zd0), GradCoord3D(seed, x1, y0, z0, xd1, yd0, zd0), xs);
+    var xf10 = Lerp(GradCoord3D(seed, x0, y1, z0, xd0, yd1, zd0), GradCoord3D(seed, x1, y1, z0, xd1, yd1, zd0), xs);
+    var xf01 = Lerp(GradCoord3D(seed, x0, y0, z1, xd0, yd0, zd1), GradCoord3D(seed, x1, y0, z1, xd1, yd0, zd1), xs);
+    var xf11 = Lerp(GradCoord3D(seed, x0, y1, z1, xd0, yd1, zd1), GradCoord3D(seed, x1, y1, z1, xd1, yd1, zd1), xs);
 
-    float yf0 = Lerp(xf00, xf10, ys);
-    float yf1 = Lerp(xf01, xf11, ys);
+    var yf0 = Lerp(xf00, xf10, ys);
+    var yf1 = Lerp(xf01, xf11, ys);
 
     return Lerp(yf0, yf1, zs);
   }
 
-  public float GetPerlinFractal(float x, float y) {
+  fun GetPerlinFractal(x1: Float, y1: Float): Float {
+
+    var x = x1
+    var y = y1
+
     x *= m_frequency;
     y *= m_frequency;
 
-    switch (m_fractalType) {
-      case FBM:
-      return SinglePerlinFractalFBM(x, y);
-      case Billow:
-      return SinglePerlinFractalBillow(x, y);
-      case RigidMulti:
-      return SinglePerlinFractalRigidMulti(x, y);
-      default:
-      return 0;
+    when (m_fractalType) {
+      FBM -> return SinglePerlinFractalFBM(x, y);
+      Billow -> return SinglePerlinFractalBillow(x, y);
+      RigidMulti -> return SinglePerlinFractalRigidMulti(x, y);
+      else -> return 0f
     }
   }
 
-  private float SinglePerlinFractalFBM(float x, float y) {
-    int seed = m_seed;
-    float sum = SinglePerlin(seed, x, y);
-    float amp = 1;
+  fun SinglePerlinFractalFBM(x1: Float, y1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+
+    var seed = m_seed;
+    var sum = SinglePerlin(seed, x, y);
+    var amp = 1f
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
 
@@ -937,12 +998,16 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SinglePerlinFractalBillow(float x, float y) {
-    int seed = m_seed;
-    float sum = Math.abs(SinglePerlin(seed, x, y)) * 2 - 1;
-    float amp = 1;
+  fun SinglePerlinFractalBillow(x1: Float, y1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+
+    var seed = m_seed;
+    var sum = Math.abs(SinglePerlin(seed, x, y)) * 2 - 1;
+    var amp = 1f
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
 
@@ -953,12 +1018,16 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SinglePerlinFractalRigidMulti(float x, float y) {
-    int seed = m_seed;
-    float sum = 1 - Math.abs(SinglePerlin(seed, x, y));
-    float amp = 1;
+  fun SinglePerlinFractalRigidMulti(x1: Float, y1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+
+    var seed = m_seed;
+    var sum = 1 - Math.abs(SinglePerlin(seed, x, y));
+    var amp = 1f
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
 
@@ -969,68 +1038,74 @@ class FastNoise {
     return sum;
   }
 
-  public float GetPerlin(float x, float y) {
+  fun GetPerlin(x: Float, y: Float): Float {
     return SinglePerlin(m_seed, x * m_frequency, y * m_frequency);
   }
 
-  private float SinglePerlin(int seed, float x, float y) {
-    int x0 = FastFloor(x);
-    int y0 = FastFloor(y);
-    int x1 = x0 + 1;
-    int y1 = y0 + 1;
+  fun SinglePerlin(seed: Int, x: Float, y: Float): Float {
+    var x0 = FastFloor(x);
+    var y0 = FastFloor(y);
+    var x1 = x0 + 1;
+    var y1 = y0 + 1;
 
-    float xs, ys;
-    switch (m_interp) {
-      default:
-      case Linear:
-      xs = x - x0;
-      ys = y - y0;
-      break;
-      case Hermite:
-      xs = InterpHermiteFunc(x - x0);
-      ys = InterpHermiteFunc(y - y0);
-      break;
-      case Quintic:
-      xs = InterpQuinticFunc(x - x0);
-      ys = InterpQuinticFunc(y - y0);
-      break;
+    var xs = 0f
+    var ys = 0f
+    when (m_interp) {
+      Hermite -> {
+        xs = InterpHermiteFunc(x - x0);
+        ys = InterpHermiteFunc(y - y0);
+      }
+      Quintic -> {
+        xs = InterpQuinticFunc(x - x0);
+        ys = InterpQuinticFunc(y - y0);
+      }
+      else -> {
+        xs = x - x0;
+        ys = y - y0;
+      }
     }
 
-    float xd0 = x - x0;
-    float yd0 = y - y0;
-    float xd1 = xd0 - 1;
-    float yd1 = yd0 - 1;
+    var xd0 = x - x0;
+    var yd0 = y - y0;
+    var xd1 = xd0 - 1;
+    var yd1 = yd0 - 1;
 
-    float xf0 = Lerp(GradCoord2D(seed, x0, y0, xd0, yd0), GradCoord2D(seed, x1, y0, xd1, yd0), xs);
-    float xf1 = Lerp(GradCoord2D(seed, x0, y1, xd0, yd1), GradCoord2D(seed, x1, y1, xd1, yd1), xs);
+    var xf0 = Lerp(GradCoord2D(seed, x0, y0, xd0, yd0), GradCoord2D(seed, x1, y0, xd1, yd0), xs);
+    var xf1 = Lerp(GradCoord2D(seed, x0, y1, xd0, yd1), GradCoord2D(seed, x1, y1, xd1, yd1), xs);
 
     return Lerp(xf0, xf1, ys);
   }
 
   // Simplex Noise
-  public float GetSimplexFractal(float x, float y, float z) {
+  fun GetSimplexFractal(x1: Float, y1: Float, z1: Float): Float {
+
+    var x = x1
+    var y = y1
+    var z = z1
+
     x *= m_frequency;
     y *= m_frequency;
     z *= m_frequency;
 
-    switch (m_fractalType) {
-      case FBM:
-      return SingleSimplexFractalFBM(x, y, z);
-      case Billow:
-      return SingleSimplexFractalBillow(x, y, z);
-      case RigidMulti:
-      return SingleSimplexFractalRigidMulti(x, y, z);
-      default:
-      return 0;
+    when (m_fractalType) {
+      FBM -> return SingleSimplexFractalFBM(x, y, z);
+      Billow -> SingleSimplexFractalBillow(x, y, z);
+      RigidMulti -> return SingleSimplexFractalRigidMulti(x, y, z);
+      else -> return 0f
     }
   }
 
-  private float SingleSimplexFractalFBM(float x, float y, float z) {
-    int seed = m_seed;
-    float sum = SingleSimplex(seed, x, y, z);
-    float amp = 1;
+  fun SingleSimplexFractalFBM(x1: Float, y1: Float, z1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+    var z = z1
+
+    var seed = m_seed;
+    var sum = SingleSimplex(seed, x, y, z);
+    var amp = 1;
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
       z *= m_lacunarity;
@@ -1042,12 +1117,17 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SingleSimplexFractalBillow(float x, float y, float z) {
-    int seed = m_seed;
-    float sum = Math.abs(SingleSimplex(seed, x, y, z)) * 2 - 1;
-    float amp = 1;
+  fun SingleSimplexFractalBillow(x1: Float, y1: Float, z1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+    var z = z1
+
+    var seed = m_seed;
+    var sum = Math.abs(SingleSimplex(seed, x, y, z)) * 2 - 1;
+    var amp = 1;
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
       z *= m_lacunarity;
@@ -1059,12 +1139,17 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SingleSimplexFractalRigidMulti(float x, float y, float z) {
-    int seed = m_seed;
-    float sum = 1 - Math.abs(SingleSimplex(seed, x, y, z));
-    float amp = 1;
+  fun SingleSimplexFractalRigidMulti(x1: Float, y1: Float, z1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+    var z = z1
+
+    var seed = m_seed;
+    var sum = 1 - Math.abs(SingleSimplex(seed, x, y, z));
+    var amp = 1;
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
       z *= m_lacunarity;
@@ -1076,114 +1161,121 @@ class FastNoise {
     return sum;
   }
 
-  public float GetSimplex(float x, float y, float z) {
+  fun GetSimplex(x: Float, y: Float, z: Float): Float {
     return SingleSimplex(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
   }
 
-  private final static float F3 = (float) (1.0 / 3.0);
-  private final static float G3 = (float) (1.0 / 6.0);
-  private final static float G33 = G3 * 3 - 1;
+  private val F3 = (1.0f / 3.0f);
+  private val G3 = (1.0f / 6.0f);
+  private val G33 = G3 * 3f - 1f;
 
-  private float SingleSimplex(int seed, float x, float y, float z) {
-    float t = (x + y + z) * F3;
-    int i = FastFloor(x + t);
-    int j = FastFloor(y + t);
-    int k = FastFloor(z + t);
+  fun SingleSimplex(seed: Int, x: Float, y: Float, z: Float): Float {
+    var t = (x + y + z) * F3;
+    var i: Int = FastFloor(x + t);
+    var j: Int = FastFloor(y + t);
+    var k: Int = FastFloor(z + t);
 
     t = (i + j + k) * G3;
-    float x0 = x - (i - t);
-    float y0 = y - (j - t);
-    float z0 = z - (k - t);
+    var x0 = x - (i - t);
+    var y0 = y - (j - t);
+    var z0 = z - (k - t);
 
-    int i1, j1, k1;
-    int i2, j2, k2;
+    var i1: Int = 0
+    var j1: Int = 0
+    var k1: Int = 0
+    var i2: Int = 0
+    var j2: Int = 0
+    var k2: Int = 0
 
     if (x0 >= y0) {
       if (y0 >= z0) {
-        i1 = 1;
-        j1 = 0;
-        k1 = 0;
-        i2 = 1;
-        j2 = 1;
-        k2 = 0;
+        i1 = 1
+        j1 = 0
+        k1 = 0
+        i2 = 1
+        j2 = 1
+        k2 = 0
       } else if (x0 >= z0) {
-        i1 = 1;
-        j1 = 0;
-        k1 = 0;
-        i2 = 1;
-        j2 = 0;
-        k2 = 1;
+        i1 = 1
+        j1 = 0
+        k1 = 0
+        i2 = 1
+        j2 = 0
+        k2 = 1
       } else // x0 < z0
       {
-        i1 = 0;
-        j1 = 0;
-        k1 = 1;
-        i2 = 1;
-        j2 = 0;
-        k2 = 1;
+        i1 = 0
+        j1 = 0
+        k1 = 1
+        i2 = 1
+        j2 = 0
+        k2 = 1
       }
     } else // x0 < y0
     {
       if (y0 < z0) {
-        i1 = 0;
-        j1 = 0;
-        k1 = 1;
-        i2 = 0;
-        j2 = 1;
-        k2 = 1;
+        i1 = 0
+        j1 = 0
+        k1 = 1
+        i2 = 0
+        j2 = 1
+        k2 = 1
       } else if (x0 < z0) {
-        i1 = 0;
-        j1 = 1;
-        k1 = 0;
-        i2 = 0;
-        j2 = 1;
-        k2 = 1;
+        i1 = 0
+        j1 = 1
+        k1 = 0
+        i2 = 0
+        j2 = 1
+        k2 = 1
       } else // x0 >= z0
       {
-        i1 = 0;
-        j1 = 1;
-        k1 = 0;
-        i2 = 1;
-        j2 = 1;
-        k2 = 0;
+        i1 = 0
+        j1 = 1
+        k1 = 0
+        i2 = 1
+        j2 = 1
+        k2 = 0
       }
     }
 
-    float x1 = x0 - i1 + G3;
-    float y1 = y0 - j1 + G3;
-    float z1 = z0 - k1 + G3;
-    float x2 = x0 - i2 + F3;
-    float y2 = y0 - j2 + F3;
-    float z2 = z0 - k2 + F3;
-    float x3 = x0 + G33;
-    float y3 = y0 + G33;
-    float z3 = z0 + G33;
+    var x1 = x0 - i1 + G3;
+    var y1 = y0 - j1 + G3;
+    var z1 = z0 - k1 + G3;
+    var x2 = x0 - i2 + F3;
+    var y2 = y0 - j2 + F3;
+    var z2 = z0 - k2 + F3;
+    var x3 = x0 + G33;
+    var y3 = y0 + G33;
+    var z3 = z0 + G33;
 
-    float n0, n1, n2, n3;
+    var n0 = 0f
+    var n1 = 0f
+    var n2 = 0f
+    var n3 = 0f
 
-    t = (float) 0.6 - x0 * x0 - y0 * y0 - z0 * z0;
-    if (t < 0) n0 = 0;
+    t = 0.6f - x0 * x0 - y0 * y0 - z0 * z0;
+    if (t < 0) n0 = 0f
     else {
       t *= t;
       n0 = t * t * GradCoord3D(seed, i, j, k, x0, y0, z0);
     }
 
-    t = (float) 0.6 - x1 * x1 - y1 * y1 - z1 * z1;
-    if (t < 0) n1 = 0;
+    t = 0.6f - x1 * x1 - y1 * y1 - z1 * z1;
+    if (t < 0) n1 = 0f
     else {
       t *= t;
       n1 = t * t * GradCoord3D(seed, i + i1, j + j1, k + k1, x1, y1, z1);
     }
 
-    t = (float) 0.6 - x2 * x2 - y2 * y2 - z2 * z2;
-    if (t < 0) n2 = 0;
+    t = 0.6f - x2 * x2 - y2 * y2 - z2 * z2;
+    if (t < 0) n2 = 0f
     else {
       t *= t;
       n2 = t * t * GradCoord3D(seed, i + i2, j + j2, k + k2, x2, y2, z2);
     }
 
-    t = (float) 0.6 - x3 * x3 - y3 * y3 - z3 * z3;
-    if (t < 0) n3 = 0;
+    t = 0.6f - x3 * x3 - y3 * y3 - z3 * z3;
+    if (t < 0) n3 = 0f
     else {
       t *= t;
       n3 = t * t * GradCoord3D(seed, i + 1, j + 1, k + 1, x3, y3, z3);
@@ -1192,28 +1284,32 @@ class FastNoise {
     return 32 * (n0 + n1 + n2 + n3);
   }
 
-  public float GetSimplexFractal(float x, float y) {
+  fun GetSimplexFractal(x1: Float, y1: Float): Float {
+
+    var x = x1
+    var y = y1
+
     x *= m_frequency;
     y *= m_frequency;
 
-    switch (m_fractalType) {
-      case FBM:
-      return SingleSimplexFractalFBM(x, y);
-      case Billow:
-      return SingleSimplexFractalBillow(x, y);
-      case RigidMulti:
-      return SingleSimplexFractalRigidMulti(x, y);
-      default:
-      return 0;
+    when (m_fractalType) {
+      FBM -> return SingleSimplexFractalFBM(x, y);
+      Billow -> return SingleSimplexFractalBillow(x, y);
+      RigidMulti -> return SingleSimplexFractalRigidMulti(x, y);
+      else -> return 0f
     }
   }
 
-  private float SingleSimplexFractalFBM(float x, float y) {
-    int seed = m_seed;
-    float sum = SingleSimplex(seed, x, y);
-    float amp = 1;
+  fun SingleSimplexFractalFBM(x1: Float, y1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+
+    var seed = m_seed;
+    var sum = SingleSimplex(seed, x, y);
+    var amp = 1f
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
 
@@ -1224,12 +1320,16 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SingleSimplexFractalBillow(float x, float y) {
-    int seed = m_seed;
-    float sum = Math.abs(SingleSimplex(seed, x, y)) * 2 - 1;
-    float amp = 1;
+  fun SingleSimplexFractalBillow(x1: Float, y1: Float): Float {
 
-    for (int i = 1; i < m_octaves; i++) {
+    var x = x1
+    var y = y1
+
+    var seed = m_seed;
+    var sum = Math.abs(SingleSimplex(seed, x, y)) * 2 - 1;
+    var amp = 1f
+
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
 
@@ -1240,12 +1340,12 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SingleSimplexFractalRigidMulti(float x, float y) {
-    int seed = m_seed;
-    float sum = 1 - Math.abs(SingleSimplex(seed, x, y));
-    float amp = 1;
+  fun SingleSimplexFractalRigidMulti(x: Float, y: Float): Float {
+    var seed = m_seed;
+    var sum = 1 - Math.abs(SingleSimplex(seed, x, y));
+    var amp = 1;
 
-    for (int i = 1; i < m_octaves; i++) {
+    for (i in 1 until m_octaves) {
       x *= m_lacunarity;
       y *= m_lacunarity;
 
@@ -1256,30 +1356,29 @@ class FastNoise {
     return sum;
   }
 
-  public float GetSimplex(float x, float y) {
+  fun GetSimplex(x: Float, y: Float): Float {
     return SingleSimplex(m_seed, x * m_frequency, y * m_frequency);
   }
 
-  //private final static float F2 = (float) (1.0 / 2.0);
-  //private final static float G2 = (float) (1.0 / 4.0);
+  private val SQRT3 = 1.7320508075688772935274463415059f
+  private val F2 = 0.5f * (SQRT3 - 1.0f);
+  private val G2 = (3.0f - SQRT3) / 6.0f;
 
-  private final static float SQRT3 = (float) 1.7320508075688772935274463415059;
-  private final static float F2 = 0.5f * (SQRT3 - 1.0f);
-  private final static float G2 = (3.0f - SQRT3) / 6.0f;
-
-  private float SingleSimplex(int seed, float x, float y) {
-    float t = (x + y) * F2;
-    int i = FastFloor(x + t);
-    int j = FastFloor(y + t);
+  fun SingleSimplex(seed: Int, x: Float, y: Float): Float {
+    var t = (x + y) * F2;
+    var i = FastFloor(x + t);
+    var j = FastFloor(y + t);
 
     t = (i + j) * G2;
-    float X0 = i - t;
-    float Y0 = j - t;
+    var X0 = i - t;
+    var Y0 = j - t;
 
-    float x0 = x - X0;
-    float y0 = y - Y0;
+    var x0 = x - X0;
+    var y0 = y - Y0;
 
-    int i1, j1;
+    var i1 = 0
+    var j1 = 0
+
     if (x0 > y0) {
       i1 = 1;
       j1 = 0;
@@ -1288,29 +1387,31 @@ class FastNoise {
       j1 = 1;
     }
 
-    float x1 = x0 - i1 + G2;
-    float y1 = y0 - j1 + G2;
-    float x2 = x0 - 1 + 2*G2;
-    float y2 = y0 - 1 + 2*G2;
+    var x1 = x0 - i1 + G2;
+    var y1 = y0 - j1 + G2;
+    var x2 = x0 - 1 + 2*G2;
+    var y2 = y0 - 1 + 2*G2;
 
-    float n0, n1, n2;
+    var n0 = 0f
+    var n1 = 0f
+    var n2 = 0f
 
-    t = (float) 0.5 - x0 * x0 - y0 * y0;
-    if (t < 0) n0 = 0;
+    t = 0.5f - x0 * x0 - y0 * y0;
+    if (t < 0) n0 = 0f
     else {
       t *= t;
       n0 = t * t * GradCoord2D(seed, i, j, x0, y0);
     }
 
-    t = (float) 0.5 - x1 * x1 - y1 * y1;
-    if (t < 0) n1 = 0;
+    t = 0.5f - x1 * x1 - y1 * y1;
+    if (t < 0) n1 = 0f
     else {
       t *= t;
       n1 = t * t * GradCoord2D(seed, i + i1, j + j1, x1, y1);
     }
 
-    t = (float) 0.5 - x2 * x2 - y2 * y2;
-    if (t < 0) n2 = 0;
+    t = 0.5f - x2 * x2 - y2 * y2;
+    if (t < 0) n2 = 0f
     else {
       t *= t;
       n2 = t * t * GradCoord2D(seed, i + 1, j + 1, x2, y2);
@@ -1319,12 +1420,11 @@ class FastNoise {
     return 50 * (n0 + n1 + n2);
   }
 
-  public float GetSimplex(float x, float y, float z, float w) {
+  fun GetSimplex(x: Float, y: Float, z: Float, w: Float): Float {
     return SingleSimplex(m_seed, x * m_frequency, y * m_frequency, z * m_frequency, w * m_frequency);
   }
 
-  private static final byte[] SIMPLEX_4D =
-  {
+  private val SIMPLEX_4D = byteArrayOf(
     0, 1, 2, 3, 0, 1, 3, 2, 0, 0, 0, 0, 0, 2, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 0,
     0, 2, 1, 3, 0, 0, 0, 0, 0, 3, 1, 2, 0, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 2, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1333,92 +1433,97 @@ class FastNoise {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     2, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 1, 2, 3, 0, 2, 1, 0, 0, 0, 0, 3, 1, 2, 0,
     2, 1, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 0, 2, 0, 0, 0, 0, 3, 2, 0, 1, 3, 2, 1, 0
-  };
+  )
 
-  private final static float F4 = (float) ((2.23606797 - 1.0) / 4.0);
-  private final static float G4 = (float) ((5.0 - 2.23606797) / 20.0);
+  private val F4 = ((2.23606797f - 1.0f) / 4.0f);
+  private val G4 = ((5.0f - 2.23606797f) / 20.0f);
 
-  private float SingleSimplex(int seed, float x, float y, float z, float w) {
-    float n0, n1, n2, n3, n4;
-    float t = (x + y + z + w) * F4;
-    int i = FastFloor(x + t);
-    int j = FastFloor(y + t);
-    int k = FastFloor(z + t);
-    int l = FastFloor(w + t);
+  fun SingleSimplex(seed: Int, x: Float, y: Float, z: Float, w: Float): Float {
+    var n0 = 0f
+    var n1 = 0f
+    var n2 = 0f
+    var n3 = 0f
+    var n4 = 0f
+
+    var t = (x + y + z + w) * F4;
+    var i = FastFloor(x + t);
+    var j = FastFloor(y + t);
+    var k = FastFloor(z + t);
+    var l = FastFloor(w + t);
     t = (i + j + k + l) * G4;
-    float X0 = i - t;
-    float Y0 = j - t;
-    float Z0 = k - t;
-    float W0 = l - t;
-    float x0 = x - X0;
-    float y0 = y - Y0;
-    float z0 = z - Z0;
-    float w0 = w - W0;
+    var X0 = i - t;
+    var Y0 = j - t;
+    var Z0 = k - t;
+    var W0 = l - t;
+    var x0 = x - X0;
+    var y0 = y - Y0;
+    var z0 = z - Z0;
+    var w0 = w - W0;
 
-    int c = (x0 > y0) ? 32 : 0;
-    c += (x0 > z0) ? 16 : 0;
-    c += (y0 > z0) ? 8 : 0;
-    c += (x0 > w0) ? 4 : 0;
-    c += (y0 > w0) ? 2 : 0;
-    c += (z0 > w0) ? 1 : 0;
-    c <<= 2;
+    var c = if (x0 > y0) 32 else 0;
+    c += if (x0 > z0) 16 else 0;
+    c += if (y0 > z0) 8 else 0;
+    c += if (x0 > w0) 4 else 0;
+    c += if (y0 > w0) 2 else 0;
+    c += if (z0 > w0) 1 else 0;
+    c = c shl 2
 
-    int i1 = SIMPLEX_4D[c] >= 3 ? 1 : 0;
-    int i2 = SIMPLEX_4D[c] >= 2 ? 1 : 0;
-    int i3 = SIMPLEX_4D[c++] >= 1 ? 1 : 0;
-    int j1 = SIMPLEX_4D[c] >= 3 ? 1 : 0;
-    int j2 = SIMPLEX_4D[c] >= 2 ? 1 : 0;
-    int j3 = SIMPLEX_4D[c++] >= 1 ? 1 : 0;
-    int k1 = SIMPLEX_4D[c] >= 3 ? 1 : 0;
-    int k2 = SIMPLEX_4D[c] >= 2 ? 1 : 0;
-    int k3 = SIMPLEX_4D[c++] >= 1 ? 1 : 0;
-    int l1 = SIMPLEX_4D[c] >= 3 ? 1 : 0;
-    int l2 = SIMPLEX_4D[c] >= 2 ? 1 : 0;
-    int l3 = SIMPLEX_4D[c] >= 1 ? 1 : 0;
+    var i1 = if (SIMPLEX_4D[c] >= 3) 1 else 0;
+    var i2 = if (SIMPLEX_4D[c] >= 2) 1 else 0;
+    var i3 = if (SIMPLEX_4D[c++] >= 1) 1 else 0;
+    var j1 = if (SIMPLEX_4D[c] >= 3) 1 else 0;
+    var j2 = if (SIMPLEX_4D[c] >= 2) 1 else 0;
+    var j3 = if (SIMPLEX_4D[c++] >= 1) 1 else 0;
+    var k1 = if (SIMPLEX_4D[c] >= 3) 1 else 0;
+    var k2 = if (SIMPLEX_4D[c] >= 2) 1 else 0;
+    var k3 = if (SIMPLEX_4D[c++] >= 1) 1 else 0;
+    var l1 = if (SIMPLEX_4D[c] >= 3) 1 else 0;
+    var l2 = if (SIMPLEX_4D[c] >= 2) 1 else 0;
+    var l3 = if (SIMPLEX_4D[c] >= 1) 1 else 0;
 
-    float x1 = x0 - i1 + G4;
-    float y1 = y0 - j1 + G4;
-    float z1 = z0 - k1 + G4;
-    float w1 = w0 - l1 + G4;
-    float x2 = x0 - i2 + 2 * G4;
-    float y2 = y0 - j2 + 2 * G4;
-    float z2 = z0 - k2 + 2 * G4;
-    float w2 = w0 - l2 + 2 * G4;
-    float x3 = x0 - i3 + 3 * G4;
-    float y3 = y0 - j3 + 3 * G4;
-    float z3 = z0 - k3 + 3 * G4;
-    float w3 = w0 - l3 + 3 * G4;
-    float x4 = x0 - 1 + 4 * G4;
-    float y4 = y0 - 1 + 4 * G4;
-    float z4 = z0 - 1 + 4 * G4;
-    float w4 = w0 - 1 + 4 * G4;
+    var x1 = x0 - i1 + G4;
+    var y1 = y0 - j1 + G4;
+    var z1 = z0 - k1 + G4;
+    var w1 = w0 - l1 + G4;
+    var x2 = x0 - i2 + 2 * G4;
+    var y2 = y0 - j2 + 2 * G4;
+    var z2 = z0 - k2 + 2 * G4;
+    var w2 = w0 - l2 + 2 * G4;
+    var x3 = x0 - i3 + 3 * G4;
+    var y3 = y0 - j3 + 3 * G4;
+    var z3 = z0 - k3 + 3 * G4;
+    var w3 = w0 - l3 + 3 * G4;
+    var x4 = x0 - 1 + 4 * G4;
+    var y4 = y0 - 1 + 4 * G4;
+    var z4 = z0 - 1 + 4 * G4;
+    var w4 = w0 - 1 + 4 * G4;
 
-    t = (float) 0.6 - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
-    if (t < 0) n0 = 0;
+    t = 0.6f - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
+    if (t < 0) n0 = 0f
     else {
       t *= t;
       n0 = t * t * GradCoord4D(seed, i, j, k, l, x0, y0, z0, w0);
     }
-    t = (float) 0.6 - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
-    if (t < 0) n1 = 0;
+    t = 0.6f - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
+    if (t < 0) n1 = 0f
     else {
       t *= t;
       n1 = t * t * GradCoord4D(seed, i + i1, j + j1, k + k1, l + l1, x1, y1, z1, w1);
     }
-    t = (float) 0.6 - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
-    if (t < 0) n2 = 0;
+    t = 0.6f - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
+    if (t < 0) n2 = 0f
     else {
       t *= t;
       n2 = t * t * GradCoord4D(seed, i + i2, j + j2, k + k2, l + l2, x2, y2, z2, w2);
     }
-    t = (float) 0.6 - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
-    if (t < 0) n3 = 0;
+    t = 0.6f - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
+    if (t < 0) n3 = 0f
     else {
       t *= t;
       n3 = t * t * GradCoord4D(seed, i + i3, j + j3, k + k3, l + l3, x3, y3, z3, w3);
     }
-    t = (float) 0.6 - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
-    if (t < 0) n4 = 0;
+    t = 0.6f - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
+    if (t < 0) n4 = 0f
     else {
       t *= t;
       n4 = t * t * GradCoord4D(seed, i + 1, j + 1, k + 1, l + 1, x4, y4, z4, w4);
@@ -1428,28 +1533,34 @@ class FastNoise {
   }
 
   // Cubic Noise
-  public float GetCubicFractal(float x, float y, float z) {
+  fun GetCubicFractal(x1: Float, y1: Float, z1: Float): Float {
+
+    var x = x1
+    var y = y1
+    var z = z1
+
     x *= m_frequency;
     y *= m_frequency;
     z *= m_frequency;
 
-    switch (m_fractalType) {
-      case FBM:
-      return SingleCubicFractalFBM(x, y, z);
-      case Billow:
-      return SingleCubicFractalBillow(x, y, z);
-      case RigidMulti:
-      return SingleCubicFractalRigidMulti(x, y, z);
-      default:
-      return 0;
+    when (m_fractalType) {
+      FBM -> return SingleCubicFractalFBM(x, y, z);
+      Billow -> return SingleCubicFractalBillow(x, y, z);
+      RigidMulti -> return SingleCubicFractalRigidMulti(x, y, z);
+      else -> return 0f
     }
   }
 
-  private float SingleCubicFractalFBM(float x, float y, float z) {
-    int seed = m_seed;
-    float sum = SingleCubic(seed, x, y, z);
-    float amp = 1;
-    int i = 0;
+  fun SingleCubicFractalFBM(x1: Float, y1: Float, z1: Float): Float {
+
+    var x = x1
+    var y = y1
+    var z = z1
+
+    var seed = m_seed;
+    var sum = SingleCubic(seed, x, y, z);
+    var amp = 1f
+    var i = 0;
 
     while (++i < m_octaves) {
       x *= m_lacunarity;
@@ -1463,11 +1574,16 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SingleCubicFractalBillow(float x, float y, float z) {
-    int seed = m_seed;
-    float sum = Math.abs(SingleCubic(seed, x, y, z)) * 2 - 1;
-    float amp = 1;
-    int i = 0;
+  fun SingleCubicFractalBillow(x1: Float, y1: Float, z1: Float): Float {
+
+    var x = x1
+    var y = y1
+    var z = z1
+
+    var seed = m_seed;
+    var sum = Math.abs(SingleCubic(seed, x, y, z)) * 2 - 1;
+    var amp = 1;
+    var i = 0;
 
     while (++i < m_octaves) {
       x *= m_lacunarity;
@@ -1481,11 +1597,16 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SingleCubicFractalRigidMulti(float x, float y, float z) {
-    int seed = m_seed;
-    float sum = 1 - Math.abs(SingleCubic(seed, x, y, z));
-    float amp = 1;
-    int i = 0;
+  fun SingleCubicFractalRigidMulti(x1: Float, y1: Float, z1: Float): Float {
+
+    var x = x1
+    var y = y1
+    var z = z1
+
+    var seed = m_seed;
+    var sum = 1 - Math.abs(SingleCubic(seed, x, y, z));
+    var amp = 1f
+    var i = 0;
 
     while (++i < m_octaves) {
       x *= m_lacunarity;
@@ -1499,30 +1620,30 @@ class FastNoise {
     return sum;
   }
 
-  public float GetCubic(float x, float y, float z) {
+  fun GetCubic(x: Float, y: Float, z: Float): Float {
     return SingleCubic(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
   }
 
-  private final static float CUBIC_3D_BOUNDING = 1 / (float) (1.5 * 1.5 * 1.5);
+  private val CUBIC_3D_BOUNDING = 1f / (1.5f * 1.5f * 1.5f);
 
-  private float SingleCubic(int seed, float x, float y, float z) {
-    int x1 = FastFloor(x);
-    int y1 = FastFloor(y);
-    int z1 = FastFloor(z);
+  fun SingleCubic(seed: Int, x: Float, y: Float, z: Float): Float {
+    var x1 = FastFloor(x);
+    var y1 = FastFloor(y);
+    var z1 = FastFloor(z);
 
-    int x0 = x1 - 1;
-    int y0 = y1 - 1;
-    int z0 = z1 - 1;
-    int x2 = x1 + 1;
-    int y2 = y1 + 1;
-    int z2 = z1 + 1;
-    int x3 = x1 + 2;
-    int y3 = y1 + 2;
-    int z3 = z1 + 2;
+    var x0 = x1 - 1;
+    var y0 = y1 - 1;
+    var z0 = z1 - 1;
+    var x2 = x1 + 1;
+    var y2 = y1 + 1;
+    var z2 = z1 + 1;
+    var x3 = x1 + 2;
+    var y3 = y1 + 2;
+    var z3 = z1 + 2;
 
-    float xs = x - (float) x1;
-    float ys = y - (float) y1;
-    float zs = z - (float) z1;
+    var xs = x - x1.toFloat()
+    var ys = y - y1.toFloat()
+    var zs = z - z1.toFloat()
 
     return CubicLerp(
       CubicLerp(
@@ -1553,27 +1674,31 @@ class FastNoise {
   }
 
 
-  public float GetCubicFractal(float x, float y) {
+  fun GetCubicFractal(x1: Float, y1: Float): Float {
+
+    var x = x1
+    var y = y1
+
     x *= m_frequency;
     y *= m_frequency;
 
-    switch (m_fractalType) {
-      case FBM:
-      return SingleCubicFractalFBM(x, y);
-      case Billow:
-      return SingleCubicFractalBillow(x, y);
-      case RigidMulti:
-      return SingleCubicFractalRigidMulti(x, y);
-      default:
-      return 0;
+    when (m_fractalType) {
+      FBM -> return SingleCubicFractalFBM(x, y);
+      Billow -> SingleCubicFractalBillow(x, y);
+      RigidMulti -> return SingleCubicFractalRigidMulti(x, y);
+      else -> return 0f
     }
   }
 
-  private float SingleCubicFractalFBM(float x, float y) {
-    int seed = m_seed;
-    float sum = SingleCubic(seed, x, y);
-    float amp = 1;
-    int i = 0;
+  fun SingleCubicFractalFBM(x1: Float, y1: Float): Float {
+
+    var x = x1
+    var y = y1
+
+    var seed = m_seed;
+    var sum = SingleCubic(seed, x, y);
+    var amp = 1f
+    var i = 0;
 
     while (++i < m_octaves) {
       x *= m_lacunarity;
@@ -1586,11 +1711,15 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SingleCubicFractalBillow(float x, float y) {
-    int seed = m_seed;
-    float sum = Math.abs(SingleCubic(seed, x, y)) * 2 - 1;
-    float amp = 1;
-    int i = 0;
+  fun SingleCubicFractalBillow(x1: Float, y1: Float): Float {
+
+    var x = x1
+    var y = y1
+
+    var seed = m_seed;
+    var sum = Math.abs(SingleCubic(seed, x, y)) * 2 - 1;
+    var amp = 1f
+    var i = 0;
 
     while (++i < m_octaves) {
       x *= m_lacunarity;
@@ -1603,11 +1732,15 @@ class FastNoise {
     return sum * m_fractalBounding;
   }
 
-  private float SingleCubicFractalRigidMulti(float x, float y) {
-    int seed = m_seed;
-    float sum = 1 - Math.abs(SingleCubic(seed, x, y));
-    float amp = 1;
-    int i = 0;
+  fun SingleCubicFractalRigidMulti(x1: Float, y1: Float): Float {
+
+    var x = x1
+    var y = y1
+
+    var seed = m_seed;
+    var sum = 1 - Math.abs(SingleCubic(seed, x, y));
+    var amp = 1f
+    var i = 0;
 
     while (++i < m_octaves) {
       x *= m_lacunarity;
@@ -1620,28 +1753,32 @@ class FastNoise {
     return sum;
   }
 
-  public float GetCubic(float x, float y) {
+  fun GetCubic(x1: Float, y1: Float): Float {
+
+    var x = x1
+    var y = y1
+
     x *= m_frequency;
     y *= m_frequency;
 
     return SingleCubic(0, x, y);
   }
 
-  private final static float CUBIC_2D_BOUNDING = 1 / (float) (1.5 * 1.5);
+  private val CUBIC_2D_BOUNDING = 1f / (1.5f * 1.5f);
 
-  private float SingleCubic(int seed, float x, float y) {
-    int x1 = FastFloor(x);
-    int y1 = FastFloor(y);
+  private fun SingleCubic(seed: Int, x: Float, y: Float): Float {
+    var x1 = FastFloor(x);
+    var y1 = FastFloor(y);
 
-    int x0 = x1 - 1;
-    int y0 = y1 - 1;
-    int x2 = x1 + 1;
-    int y2 = y1 + 1;
-    int x3 = x1 + 2;
-    int y3 = y1 + 2;
+    var x0 = x1 - 1;
+    var y0 = y1 - 1;
+    var x2 = x1 + 1;
+    var y2 = y1 + 1;
+    var x3 = x1 + 2;
+    var y3 = y1 + 2;
 
-    float xs = x - (float) x1;
-    float ys = y - (float) y1;
+    var xs = x - x1.toFloat();
+    var ys = y - y1.toFloat();
 
     return CubicLerp(
       CubicLerp(ValCoord2D(seed, x0, y0), ValCoord2D(seed, x1, y0), ValCoord2D(seed, x2, y0), ValCoord2D(seed, x3, y0),
@@ -1656,439 +1793,423 @@ class FastNoise {
   }
 
   // Cellular Noise
-  public float GetCellular(float x, float y, float z) {
+  fun GetCellular(x1: Float, y1: Float, z1: Float): Float {
+
+    var x = x1
+    var y = y1
+    var z = z1
+
     x *= m_frequency;
     y *= m_frequency;
     z *= m_frequency;
 
-    switch (m_cellularReturnType) {
-      case CellValue:
-      case NoiseLookup:
-      case Distance:
-      return SingleCellular(x, y, z);
-      default:
-      return SingleCellular2Edge(x, y, z);
+    when (m_cellularReturnType) {
+      CellValue,NoiseLookup,Distance -> return SingleCellular(x, y, z);
+      else -> return SingleCellular2Edge(x, y, z);
     }
   }
 
-  private float SingleCellular(float x, float y, float z) {
-    int xr = FastRound(x);
-    int yr = FastRound(y);
-    int zr = FastRound(z);
+  fun SingleCellular(x: Float, y: Float, z: Float): Float {
+    var xr = FastRound(x);
+    var yr = FastRound(y);
+    var zr = FastRound(z);
 
-    float distance = 999999;
-    int xc = 0, yc = 0, zc = 0;
+    var distance = 999999f;
+    var xc = 0
+    var yc = 0
+    var zc = 0;
 
-    switch (m_cellularDistanceFunction) {
-      case Euclidean:
-      for (int xi = xr - 1; xi <= xr + 1; xi++) {
-      for (int yi = yr - 1; yi <= yr + 1; yi++) {
-      for (int zi = zr - 1; zi <= zr + 1; zi++) {
-      Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
+    when (m_cellularDistanceFunction) {
+      Euclidean -> {
+        for (xi in (xr - 1) .. (xr + 1)) {
+          for (yi in (yr - 1) ..  (yr + 1)) {
+            for (zi in (zr - 1) .. (zr + 1)) {
+              var vec = CELL_3D [Hash3D(m_seed, xi, yi, zi) and 255];
 
-      float vecX = xi - x + vec.x;
-      float vecY = yi - y + vec.y;
-      float vecZ = zi - z + vec.z;
+              var vecX = xi -x + vec.x;
+              var vecY = yi -y + vec.y;
+              var vecZ = zi -z + vec.z;
 
-      float newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ;
+              var newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ;
 
-      if (newDistance < distance) {
-        distance = newDistance;
-        xc = xi;
-        yc = yi;
-        zc = zi;
+              if (newDistance < distance) {
+                distance = newDistance;
+                xc = xi;
+                yc = yi;
+                zc = zi;
+              }
+            }
+          }
+        }
+      }
+      Manhattan -> {
+        for (xi in (xr - 1) .. (xr + 1)) {
+          for (yi in (yr - 1) .. (yr + 1)) {
+            for (zi in (zr - 1) .. (zr + 1)) {
+              var vec = CELL_3D [Hash3D(m_seed, xi, yi, zi) and 255];
+
+              var vecX = xi -x + vec.x;
+              var vecY = yi -y + vec.y;
+              var vecZ = zi -z + vec.z;
+
+              var newDistance = Math . abs (vecX) + Math.abs(vecY) + Math.abs(vecZ);
+
+              if (newDistance < distance) {
+                distance = newDistance;
+                xc = xi;
+                yc = yi;
+                zc = zi;
+              }
+            }
+          }
+        }
+      }
+      Natural -> {
+        for (xi in (xr - 1) .. (xr + 1)) {
+          for (yi in (yr - 1) .. (yr + 1)) {
+            for (zi in (zr - 1) .. (zr + 1)) {
+              var vec = CELL_3D [Hash3D(m_seed, xi, yi, zi) and 255];
+
+              var vecX = xi -x + vec.x;
+              var vecY = yi -y + vec.y;
+              var vecZ = zi -z + vec.z;
+
+              var newDistance =(Math.abs(vecX) + Math.abs(vecY) + Math.abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
+
+              if (newDistance < distance) {
+                distance = newDistance;
+                xc = xi;
+                yc = yi;
+                zc = zi;
+              }
+            }
+          }
+        }
       }
     }
-    }
-    }
-      break;
-      case Manhattan:
-      for (int xi = xr - 1; xi <= xr + 1; xi++) {
-      for (int yi = yr - 1; yi <= yr + 1; yi++) {
-      for (int zi = zr - 1; zi <= zr + 1; zi++) {
-      Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
 
-      float vecX = xi - x + vec.x;
-      float vecY = yi - y + vec.y;
-      float vecZ = zi - z + vec.z;
-
-      float newDistance = Math.abs(vecX) + Math.abs(vecY) + Math.abs(vecZ);
-
-      if (newDistance < distance) {
-        distance = newDistance;
-        xc = xi;
-        yc = yi;
-        zc = zi;
+    when (m_cellularReturnType) {
+      CellValue -> return ValCoord3D(0, xc, yc, zc);
+      NoiseLookup -> {
+        var vec = CELL_3D [Hash3D(m_seed, xc, yc, zc) and 255];
+        return m_cellularNoiseLookup.GetNoise(xc + vec.x, yc + vec.y, zc + vec.z);
       }
-    }
-    }
-    }
-      break;
-      case Natural:
-      for (int xi = xr - 1; xi <= xr + 1; xi++) {
-      for (int yi = yr - 1; yi <= yr + 1; yi++) {
-      for (int zi = zr - 1; zi <= zr + 1; zi++) {
-      Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
-
-      float vecX = xi - x + vec.x;
-      float vecY = yi - y + vec.y;
-      float vecZ = zi - z + vec.z;
-
-      float newDistance = (Math.abs(vecX) + Math.abs(vecY) + Math.abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
-
-      if (newDistance < distance) {
-        distance = newDistance;
-        xc = xi;
-        yc = yi;
-        zc = zi;
-      }
-    }
-    }
-    }
-      break;
-    }
-
-    switch (m_cellularReturnType) {
-      case CellValue:
-      return ValCoord3D(0, xc, yc, zc);
-
-      case NoiseLookup:
-      Float3 vec = CELL_3D[Hash3D(m_seed, xc, yc, zc) & 255];
-      return m_cellularNoiseLookup.GetNoise(xc + vec.x, yc + vec.y, zc + vec.z);
-
-      case Distance:
-      return distance - 1;
-      default:
-      return 0;
+      Distance -> return distance - 1;
+      else -> return 0f
     }
   }
 
-  private float SingleCellular2Edge(float x, float y, float z) {
-    int xr = FastRound(x);
-    int yr = FastRound(y);
-    int zr = FastRound(z);
+  fun SingleCellular2Edge(x: Float, y: Float, z: Float): Float {
+    var xr: Int = FastRound(x);
+    var yr: Int = FastRound(y);
+    var zr: Int = FastRound(z);
 
-    float distance = 999999;
-    float distance2 = 999999;
+    var distance = 999999f;
+    var distance2 = 999999f;
 
-    switch (m_cellularDistanceFunction) {
-      case Euclidean:
-      for (int xi = xr - 1; xi <= xr + 1; xi++) {
-      for (int yi = yr - 1; yi <= yr + 1; yi++) {
-      for (int zi = zr - 1; zi <= zr + 1; zi++) {
-      Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
+    when (m_cellularDistanceFunction) {
+      Euclidean -> {
+        for (xi in (xr - 1) .. (xr + 1)) {
+          for (yi in (yr - 1) .. (yr + 1)) {
+            for (zi in (zr - 1) .. (zr + 1)) {
+              var vec = CELL_3D [Hash3D(m_seed, xi, yi, zi) and 255];
 
-      float vecX = xi - x + vec.x;
-      float vecY = yi - y + vec.y;
-      float vecZ = zi - z + vec.z;
+              var vecX = xi -x + vec.x;
+              var vecY = yi -y + vec.y;
+              var vecZ = zi -z + vec.z;
 
-      float newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ;
+              var newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ;
 
-      distance2 = Math.max(Math.min(distance2, newDistance), distance);
-      distance = Math.min(distance, newDistance);
+              distance2 = Math.max(Math.min(distance2, newDistance), distance);
+              distance = Math.min(distance, newDistance);
+            }
+          }
+        }
+      }
+      Manhattan -> {
+        for (xi in (xr - 1) .. (xr + 1)) {
+          for (yi in (yr - 1) .. (yr + 1)) {
+            for (zi in (zr - 1) .. (zr + 1)) {
+              var vec = CELL_3D [Hash3D(m_seed, xi, yi, zi) and 255];
+
+              var vecX = xi -x + vec.x;
+              var vecY = yi -y + vec.y;
+              var vecZ = zi -z + vec.z;
+
+              var newDistance = Math.abs (vecX) + Math.abs(vecY) + Math.abs(vecZ);
+
+              distance2 = Math.max(Math.min(distance2, newDistance), distance);
+              distance = Math.min(distance, newDistance);
+            }
+          }
+        }
+      }
+      Natural -> {
+        for (xi in (xr - 1) .. (xr + 1)) {
+          for (yi in (yr - 1) .. (yr + 1)) {
+            for (zi in (zr - 1) .. (zr + 1)) {
+              var vec = CELL_3D [Hash3D(m_seed, xi, yi, zi) and 255];
+
+              var vecX = xi -x + vec.x;
+              var vecY = yi -y + vec.y;
+              var vecZ = zi -z + vec.z;
+
+              var newDistance =(Math.abs(vecX) + Math.abs(vecY) + Math.abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
+
+              distance2 = Math.max(Math.min(distance2, newDistance), distance);
+              distance = Math.min(distance, newDistance);
+            }
+          }
+        }
+      }
+      else -> {}
     }
-    }
-    }
-      break;
-      case Manhattan:
-      for (int xi = xr - 1; xi <= xr + 1; xi++) {
-      for (int yi = yr - 1; yi <= yr + 1; yi++) {
-      for (int zi = zr - 1; zi <= zr + 1; zi++) {
-      Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
 
-      float vecX = xi - x + vec.x;
-      float vecY = yi - y + vec.y;
-      float vecZ = zi - z + vec.z;
-
-      float newDistance = Math.abs(vecX) + Math.abs(vecY) + Math.abs(vecZ);
-
-      distance2 = Math.max(Math.min(distance2, newDistance), distance);
-      distance = Math.min(distance, newDistance);
-    }
-    }
-    }
-      break;
-      case Natural:
-      for (int xi = xr - 1; xi <= xr + 1; xi++) {
-      for (int yi = yr - 1; yi <= yr + 1; yi++) {
-      for (int zi = zr - 1; zi <= zr + 1; zi++) {
-      Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
-
-      float vecX = xi - x + vec.x;
-      float vecY = yi - y + vec.y;
-      float vecZ = zi - z + vec.z;
-
-      float newDistance = (Math.abs(vecX) + Math.abs(vecY) + Math.abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
-
-      distance2 = Math.max(Math.min(distance2, newDistance), distance);
-      distance = Math.min(distance, newDistance);
-    }
-    }
-    }
-      break;
-      default:
-      break;
-    }
-
-    switch (m_cellularReturnType) {
-      case Distance2:
-      return distance2 - 1;
-      case Distance2Add:
-      return distance2 + distance - 1;
-      case Distance2Sub:
-      return distance2 - distance - 1;
-      case Distance2Mul:
-      return distance2 * distance - 1;
-      case Distance2Div:
-      return distance / distance2 - 1;
-      default:
-      return 0;
+    when (m_cellularReturnType) {
+      Distance2 -> return distance2 - 1;
+      Distance2Add -> return distance2 + distance - 1;
+      Distance2Sub -> return distance2 - distance - 1;
+      Distance2Mul -> return distance2 * distance - 1;
+      Distance2Div -> return distance / distance2 - 1;
+      else -> return 0f
     }
   }
 
-  public float GetCellular(float x, float y) {
+  fun GetCellular(x1: Float, y1: Float): Float {
+
+    var x = x1
+    var y = y1
+
     x *= m_frequency;
     y *= m_frequency;
 
-    switch (m_cellularReturnType) {
-      case CellValue:
-      case NoiseLookup:
-      case Distance:
-      return SingleCellular(x, y);
-      default:
-      return SingleCellular2Edge(x, y);
+    when (m_cellularReturnType) {
+      CellValue,NoiseLookup,Distance -> return SingleCellular(x, y);
+      else -> return SingleCellular2Edge(x, y);
     }
   }
 
-  private float SingleCellular(float x, float y) {
-    int xr = FastRound(x);
-    int yr = FastRound(y);
+  fun SingleCellular(x: Float, y: Float): Float {
+    var xr: Int = FastRound(x);
+    var yr: Int = FastRound(y);
 
-    float distance = 999999;
-    int xc = 0, yc = 0;
+    var distance = 999999f;
+    var xc: Int = 0
+    var yc: Int = 0;
 
-    switch (m_cellularDistanceFunction) {
-      default:
-      case Euclidean:
-      for (int xi = xr - 1; xi <= xr + 1; xi++) {
-      for (int yi = yr - 1; yi <= yr + 1; yi++) {
-      Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
+    when (m_cellularDistanceFunction) {
+      Manhattan -> {
+        for (xi in (xr - 1) .. (xr + 1)) {
+          for (yi in (yr - 1) .. (yr + 1)) {
+            var vec = CELL_2D [Hash2D(m_seed, xi, yi) and 255];
 
-      float vecX = xi - x + vec.x;
-      float vecY = yi - y + vec.y;
+            var vecX = xi -x + vec.x;
+            var vecY = yi -y + vec.y;
 
-      float newDistance = vecX * vecX + vecY * vecY;
+            var newDistance =(Math.abs(vecX) + Math.abs(vecY));
 
-      if (newDistance < distance) {
-        distance = newDistance;
-        xc = xi;
-        yc = yi;
+            if (newDistance < distance) {
+              distance = newDistance;
+              xc = xi;
+              yc = yi;
+            }
+          }
+        }
+      }
+      Natural -> {
+        for (xi in (xr - 1) .. (xr + 1)) {
+          for (yi in (yr - 1) .. (yr + 1)) {
+            var vec = CELL_2D [Hash2D(m_seed, xi, yi) and 255];
+
+            var vecX = xi -x + vec.x;
+            var vecY = yi -y + vec.y;
+
+            var newDistance =(Math.abs(vecX) + Math.abs(vecY)) + (vecX * vecX + vecY * vecY);
+
+            if (newDistance < distance) {
+              distance = newDistance;
+              xc = xi;
+              yc = yi;
+            }
+          }
+        }
+      }
+      else -> {
+        for (xi in (xr - 1) .. (xr + 1)) {
+          for (yi in (yr - 1) .. (yr + 1)) {
+            var vec = CELL_2D [Hash2D(m_seed, xi, yi) and 255];
+
+            var vecX = xi -x + vec.x;
+            var vecY = yi -y + vec.y;
+
+            var newDistance = vecX * vecX +vecY * vecY;
+
+            if (newDistance < distance) {
+              distance = newDistance;
+              xc = xi;
+              yc = yi;
+            }
+          }
+        }
       }
     }
-    }
-      break;
-      case Manhattan:
-      for (int xi = xr - 1; xi <= xr + 1; xi++) {
-      for (int yi = yr - 1; yi <= yr + 1; yi++) {
-      Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
 
-      float vecX = xi - x + vec.x;
-      float vecY = yi - y + vec.y;
+    when (m_cellularReturnType) {
+      CellValue -> return ValCoord2D(0, xc, yc);
 
-      float newDistance = (Math.abs(vecX) + Math.abs(vecY));
-
-      if (newDistance < distance) {
-        distance = newDistance;
-        xc = xi;
-        yc = yi;
+      NoiseLookup -> {
+        var vec = CELL_2D [Hash2D(m_seed, xc, yc) and 255];
+        return m_cellularNoiseLookup.GetNoise(xc + vec.x, yc + vec.y);
       }
-    }
-    }
-      break;
-      case Natural:
-      for (int xi = xr - 1; xi <= xr + 1; xi++) {
-      for (int yi = yr - 1; yi <= yr + 1; yi++) {
-      Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
-
-      float vecX = xi - x + vec.x;
-      float vecY = yi - y + vec.y;
-
-      float newDistance = (Math.abs(vecX) + Math.abs(vecY)) + (vecX * vecX + vecY * vecY);
-
-      if (newDistance < distance) {
-        distance = newDistance;
-        xc = xi;
-        yc = yi;
-      }
-    }
-    }
-      break;
-    }
-
-    switch (m_cellularReturnType) {
-      case CellValue:
-      return ValCoord2D(0, xc, yc);
-
-      case NoiseLookup:
-      Float2 vec = CELL_2D[Hash2D(m_seed, xc, yc) & 255];
-      return m_cellularNoiseLookup.GetNoise(xc + vec.x, yc + vec.y);
-
-      case Distance:
-      return distance - 1;
-      default:
-      return 0;
+      Distance -> return distance - 1;
+      else -> return 0f
     }
   }
 
-  private float SingleCellular2Edge(float x, float y) {
-    int xr = FastRound(x);
-    int yr = FastRound(y);
+  fun SingleCellular2Edge(x: Float, y: Float): Float {
+    var xr: Int = FastRound(x);
+    var yr: Int = FastRound(y);
 
-    float distance = 999999;
-    float distance2 = 999999;
+    var distance = 999999f
+    var distance2 = 999999f
 
-    switch (m_cellularDistanceFunction) {
-      default:
-      case Euclidean:
-      for (int xi = xr - 1; xi <= xr + 1; xi++) {
-      for (int yi = yr - 1; yi <= yr + 1; yi++) {
-      Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
+    when (m_cellularDistanceFunction) {
+      default,case Euclidean -> {
+        for (xi in (xr - 1) .. (xr + 1)) {
+          for (yi in (yr - 1) .. (yr + 1)) {
+            var vec = CELL_2D [Hash2D(m_seed, xi, yi) and 255];
 
-      float vecX = xi - x + vec.x;
-      float vecY = yi - y + vec.y;
+            var vecX = xi -x + vec.x;
+            var vecY = yi -y + vec.y;
 
-      float newDistance = vecX * vecX + vecY * vecY;
+            var newDistance = vecX * vecX +vecY * vecY;
 
-      distance2 = Math.max(Math.min(distance2, newDistance), distance);
-      distance = Math.min(distance, newDistance);
+            distance2 = Math.max(Math.min(distance2, newDistance), distance);
+            distance = Math.min(distance, newDistance);
+          }
+        }
+      }
+      Manhattan -> {
+        for (xi in (xr - 1) .. (xr + 1)) {
+          for (yi in (yr - 1) .. (yr + 1)) {
+            var vec = CELL_2D [Hash2D(m_seed, xi, yi) and 255];
+
+            var vecX = xi -x + vec.x;
+            var vecY = yi -y + vec.y;
+
+            var newDistance = Math . abs (vecX) + Math.abs(vecY);
+
+            distance2 = Math.max(Math.min(distance2, newDistance), distance);
+            distance = Math.min(distance, newDistance);
+          }
+        }
+      }
+      Natural -> {
+        for (xi in (xr - 1) .. (xr + 1)) {
+          for (yi in (yr - 1) .. (yr + 1)) {
+            var vec = CELL_2D [Hash2D(m_seed, xi, yi) and 255];
+
+            var vecX = xi -x + vec.x;
+            var vecY = yi -y + vec.y;
+
+            var newDistance =(Math.abs(vecX) + Math.abs(vecY)) + (vecX * vecX + vecY * vecY);
+
+            distance2 = Math.max(Math.min(distance2, newDistance), distance);
+            distance = Math.min(distance, newDistance);
+          }
+        }
+      }
     }
-    }
-      break;
-      case Manhattan:
-      for (int xi = xr - 1; xi <= xr + 1; xi++) {
-      for (int yi = yr - 1; yi <= yr + 1; yi++) {
-      Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
 
-      float vecX = xi - x + vec.x;
-      float vecY = yi - y + vec.y;
-
-      float newDistance = Math.abs(vecX) + Math.abs(vecY);
-
-      distance2 = Math.max(Math.min(distance2, newDistance), distance);
-      distance = Math.min(distance, newDistance);
-    }
-    }
-      break;
-      case Natural:
-      for (int xi = xr - 1; xi <= xr + 1; xi++) {
-      for (int yi = yr - 1; yi <= yr + 1; yi++) {
-      Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
-
-      float vecX = xi - x + vec.x;
-      float vecY = yi - y + vec.y;
-
-      float newDistance = (Math.abs(vecX) + Math.abs(vecY)) + (vecX * vecX + vecY * vecY);
-
-      distance2 = Math.max(Math.min(distance2, newDistance), distance);
-      distance = Math.min(distance, newDistance);
-    }
-    }
-      break;
-    }
-
-    switch (m_cellularReturnType) {
-      case Distance2:
-      return distance2 - 1;
-      case Distance2Add:
-      return distance2 + distance - 1;
-      case Distance2Sub:
-      return distance2 - distance - 1;
-      case Distance2Mul:
-      return distance2 * distance - 1;
-      case Distance2Div:
-      return distance / distance2 - 1;
-      default:
-      return 0;
+    when (m_cellularReturnType) {
+      Distance2 -> return distance2 - 1;
+      Distance2Add -> return distance2 + distance - 1;
+      Distance2Sub -> return distance2 - distance - 1;
+      Distance2Mul -> return distance2 * distance - 1;
+      Distance2Div -> return distance / distance2 - 1;
+      else -> return 0f
     }
   }
 
-  public void GradientPerturb(Vector3f v3) {
+  fun GradientPerturb(v3: Vector3f) {
     SingleGradientPerturb(m_seed, m_gradientPerturbAmp, m_frequency, v3);
   }
 
-  public void GradientPerturbFractal(Vector3f v3) {
-    int seed = m_seed;
-    float amp = m_gradientPerturbAmp * m_fractalBounding;
-    float freq = m_frequency;
+  fun GradientPerturbFractal(v3: Vector3f) {
+    var seed = m_seed;
+    var amp = m_gradientPerturbAmp * m_fractalBounding;
+    var freq = m_frequency;
 
     SingleGradientPerturb(seed, amp, m_frequency, v3);
 
-    for (int i = 1; i < m_octaves; i++) {
+    for (i in 1 until m_octaves) {
       freq *= m_lacunarity;
       amp *= m_gain;
       SingleGradientPerturb(++seed, amp, freq, v3);
     }
   }
 
-  private void SingleGradientPerturb(int seed, float perturbAmp, float frequency, Vector3f v3) {
-    float xf = v3.x * frequency;
-    float yf = v3.y * frequency;
-    float zf = v3.z * frequency;
+  fun SingleGradientPerturb(seed: Int, perturbAmp: Float, frequency: Float, v3: Vector3f) {
+    var xf = v3.x * frequency;
+    var yf = v3.y * frequency;
+    var zf = v3.z * frequency;
 
-    int x0 = FastFloor(xf);
-    int y0 = FastFloor(yf);
-    int z0 = FastFloor(zf);
-    int x1 = x0 + 1;
-    int y1 = y0 + 1;
-    int z1 = z0 + 1;
+    var x0: Int = FastFloor(xf);
+    var y0: Int = FastFloor(yf);
+    var z0: Int = FastFloor(zf);
+    var x1: Int = x0 + 1;
+    var y1: Int = y0 + 1;
+    var z1: Int = z0 + 1;
 
-    float xs, ys, zs;
-    switch (m_interp) {
-      default:
-      case Linear:
-      xs = xf - x0;
-      ys = yf - y0;
-      zs = zf - z0;
-      break;
-      case Hermite:
-      xs = InterpHermiteFunc(xf - x0);
-      ys = InterpHermiteFunc(yf - y0);
-      zs = InterpHermiteFunc(zf - z0);
-      break;
-      case Quintic:
-      xs = InterpQuinticFunc(xf - x0);
-      ys = InterpQuinticFunc(yf - y0);
-      zs = InterpQuinticFunc(zf - z0);
-      break;
+    var xs = 0f
+    var ys = 0f
+    var zs = 0f
+
+    when (m_interp) {
+      Hermite -> {
+        xs = InterpHermiteFunc(xf - x0);
+        ys = InterpHermiteFunc(yf - y0);
+        zs = InterpHermiteFunc(zf - z0);
+      }
+      Quintic -> {
+        xs = InterpQuinticFunc(xf - x0);
+        ys = InterpQuinticFunc(yf - y0);
+        zs = InterpQuinticFunc(zf - z0);
+      }
+      else -> {
+        xs = xf - x0;
+        ys = yf - y0;
+        zs = zf - z0;
+      }
     }
 
-    Float3 vec0 = CELL_3D[Hash3D(seed, x0, y0, z0) & 255];
-    Float3 vec1 = CELL_3D[Hash3D(seed, x1, y0, z0) & 255];
+    var vec0 = CELL_3D[Hash3D(seed, x0, y0, z0) and 255];
+    var vec1 = CELL_3D[Hash3D(seed, x1, y0, z0) and 255];
 
-    float lx0x = Lerp(vec0.x, vec1.x, xs);
-    float ly0x = Lerp(vec0.y, vec1.y, xs);
-    float lz0x = Lerp(vec0.z, vec1.z, xs);
+    var lx0x = Lerp(vec0.x, vec1.x, xs);
+    var ly0x = Lerp(vec0.y, vec1.y, xs);
+    var lz0x = Lerp(vec0.z, vec1.z, xs);
 
-    vec0 = CELL_3D[Hash3D(seed, x0, y1, z0) & 255];
-    vec1 = CELL_3D[Hash3D(seed, x1, y1, z0) & 255];
+    vec0 = CELL_3D[Hash3D(seed, x0, y1, z0) and 255];
+    vec1 = CELL_3D[Hash3D(seed, x1, y1, z0) and 255];
 
-    float lx1x = Lerp(vec0.x, vec1.x, xs);
-    float ly1x = Lerp(vec0.y, vec1.y, xs);
-    float lz1x = Lerp(vec0.z, vec1.z, xs);
+    var lx1x = Lerp(vec0.x, vec1.x, xs);
+    var ly1x = Lerp(vec0.y, vec1.y, xs);
+    var lz1x = Lerp(vec0.z, vec1.z, xs);
 
-    float lx0y = Lerp(lx0x, lx1x, ys);
-    float ly0y = Lerp(ly0x, ly1x, ys);
-    float lz0y = Lerp(lz0x, lz1x, ys);
+    var lx0y = Lerp(lx0x, lx1x, ys);
+    var ly0y = Lerp(ly0x, ly1x, ys);
+    var lz0y = Lerp(lz0x, lz1x, ys);
 
-    vec0 = CELL_3D[Hash3D(seed, x0, y0, z1) & 255];
-    vec1 = CELL_3D[Hash3D(seed, x1, y0, z1) & 255];
+    vec0 = CELL_3D[Hash3D(seed, x0, y0, z1) and 255];
+    vec1 = CELL_3D[Hash3D(seed, x1, y0, z1) and 255];
 
     lx0x = Lerp(vec0.x, vec1.x, xs);
     ly0x = Lerp(vec0.y, vec1.y, xs);
     lz0x = Lerp(vec0.z, vec1.z, xs);
 
-    vec0 = CELL_3D[Hash3D(seed, x0, y1, z1) & 255];
-    vec1 = CELL_3D[Hash3D(seed, x1, y1, z1) & 255];
+    vec0 = CELL_3D[Hash3D(seed, x0, y1, z1) and 255];
+    vec1 = CELL_3D[Hash3D(seed, x1, y1, z1) and 255];
 
     lx1x = Lerp(vec0.x, vec1.x, xs);
     ly1x = Lerp(vec0.y, vec1.y, xs);
@@ -2099,61 +2220,62 @@ class FastNoise {
     v3.z += Lerp(lz0y, Lerp(lz0x, lz1x, ys), zs) * perturbAmp;
   }
 
-  public void GradientPerturb(Vector2f v2) {
+  fun GradientPerturb(v2: Vector2f) {
     SingleGradientPerturb(m_seed, m_gradientPerturbAmp, m_frequency, v2);
   }
 
-  public void GradientPerturbFractal(Vector2f v2) {
-    int seed = m_seed;
-    float amp = m_gradientPerturbAmp * m_fractalBounding;
-    float freq = m_frequency;
+  fun GradientPerturbFractal(v2: Vector2f) {
+    var seed = m_seed;
+    var amp = m_gradientPerturbAmp * m_fractalBounding;
+    var freq = m_frequency;
 
     SingleGradientPerturb(seed, amp, m_frequency, v2);
 
-    for (int i = 1; i < m_octaves; i++) {
+    for (i in 1 until m_octaves) {
       freq *= m_lacunarity;
       amp *= m_gain;
       SingleGradientPerturb(++seed, amp, freq, v2);
     }
   }
 
-  private void SingleGradientPerturb(int seed, float perturbAmp, float frequency, Vector2f v2) {
-    float xf = v2.x * frequency;
-    float yf = v2.y * frequency;
+  fun SingleGradientPerturb(seed: Int, perturbAmp: Float, frequency: Float, v2: Vector2f) {
+    var xf = v2.x * frequency;
+    var yf = v2.y * frequency;
 
-    int x0 = FastFloor(xf);
-    int y0 = FastFloor(yf);
-    int x1 = x0 + 1;
-    int y1 = y0 + 1;
+    var x0: Int = FastFloor(xf);
+    var y0: Int = FastFloor(yf);
+    var x1: Int = x0 + 1;
+    var y1: Int = y0 + 1;
 
-    float xs, ys;
-    switch (m_interp) {
-      default:
-      case Linear:
-      xs = xf - x0;
-      ys = yf - y0;
-      break;
-      case Hermite:
-      xs = InterpHermiteFunc(xf - x0);
-      ys = InterpHermiteFunc(yf - y0);
-      break;
-      case Quintic:
-      xs = InterpQuinticFunc(xf - x0);
-      ys = InterpQuinticFunc(yf - y0);
-      break;
+    var xs = 0f
+    var ys = 0f
+
+    when (m_interp) {
+      Hermite -> {
+        xs = InterpHermiteFunc(xf - x0);
+        ys = InterpHermiteFunc(yf - y0);
+      }
+      Quintic -> {
+        xs = InterpQuinticFunc(xf - x0);
+        ys = InterpQuinticFunc(yf - y0);
+      }
+      else -> {
+        xs = xf - x0;
+        ys = yf - y0;
+      }
     }
 
-    Float2 vec0 = CELL_2D[Hash2D(seed, x0, y0) & 255];
-    Float2 vec1 = CELL_2D[Hash2D(seed, x1, y0) & 255];
+    var vec0 = CELL_2D[Hash2D(seed, x0, y0) and 255];
+    var vec1 = CELL_2D[Hash2D(seed, x1, y0) and 255];
 
-    float lx0x = Lerp(vec0.x, vec1.x, xs);
-    float ly0x = Lerp(vec0.y, vec1.y, xs);
+    var lx0x = Lerp(vec0.x, vec1.x, xs);
+    var ly0x = Lerp(vec0.y, vec1.y, xs);
 
-    vec0 = CELL_2D[Hash2D(seed, x0, y1) & 255];
-    vec1 = CELL_2D[Hash2D(seed, x1, y1) & 255];
+    vec0 = CELL_2D[Hash2D(seed, x0, y1) and 255];
+    vec1 = CELL_2D[Hash2D(seed, x1, y1) and 255];
 
-    float lx1x = Lerp(vec0.x, vec1.x, xs);
-    float ly1x = Lerp(vec0.y, vec1.y, xs);
+    var lx1x = Lerp(vec0.x, vec1.x, xs);
+    var ly1x = Lerp(vec0.y, vec1.y, xs);
 
     v2.x += Lerp(lx0x, lx1x, ys) * perturbAmp;
     v2.y += Lerp(ly0x, ly1x, ys) * perturbAmp;
