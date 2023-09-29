@@ -1,5 +1,6 @@
 package engine
 
+import org.joml.Math.*
 import org.joml.Vector2f
 import org.joml.Vector3f
 import java.lang.RuntimeException
@@ -635,7 +636,7 @@ class FastNoise {
     var z = z1
 
     var seed = m_seed
-    var sum = Math.abs(SingleValue(seed, x, y, z)) * 2 - 1
+    var sum = abs(SingleValue(seed, x, y, z)) * 2 - 1
     var amp = 1f
 
     for (i in 1 until m_octaves) {
@@ -644,7 +645,7 @@ class FastNoise {
       z *= m_lacunarity
 
       amp *= m_gain
-      sum += (Math.abs(SingleValue(++seed, x, y, z)) * 2 - 1) * amp
+      sum += (abs(SingleValue(++seed, x, y, z)) * 2 - 1) * amp
     }
 
     return sum * m_fractalBounding
@@ -657,7 +658,7 @@ class FastNoise {
     var z = z1
 
     var seed = m_seed
-    var sum = 1 - Math.abs(SingleValue(seed, x, y, z))
+    var sum = 1 - abs(SingleValue(seed, x, y, z))
     var amp = 1f
 
     for (i in 1 until m_octaves) {
@@ -666,7 +667,7 @@ class FastNoise {
       z *= m_lacunarity
 
       amp *= m_gain
-      sum -= (1 - Math.abs(SingleValue(++seed, x, y, z))) * amp
+      sum -= (1 - abs(SingleValue(++seed, x, y, z))) * amp
     }
 
     return sum
@@ -759,14 +760,14 @@ class FastNoise {
     var y = y1
 
     var seed = m_seed
-    var sum = Math.abs(SingleValue(seed, x, y)) * 2 - 1
+    var sum = abs(SingleValue(seed, x, y)) * 2 - 1
     var amp = 1f
 
     for (i in 1 until m_octaves) {
       x *= m_lacunarity
       y *= m_lacunarity
       amp *= m_gain
-      sum += (Math.abs(SingleValue(++seed, x, y)) * 2 - 1) * amp
+      sum += (abs(SingleValue(++seed, x, y)) * 2 - 1) * amp
     }
 
     return sum * m_fractalBounding
@@ -778,7 +779,7 @@ class FastNoise {
     var y = y1
 
     var seed = m_seed
-    var sum = 1 - Math.abs(SingleValue(seed, x, y))
+    var sum = 1 - abs(SingleValue(seed, x, y))
     var amp = 1f
 
     for (i in 1 until m_octaves) {
@@ -786,7 +787,7 @@ class FastNoise {
       y *= m_lacunarity
 
       amp *= m_gain
-      sum -= (1 - Math.abs(SingleValue(++seed, x, y))) * amp
+      sum -= (1 - abs(SingleValue(++seed, x, y))) * amp
     }
 
     return sum
@@ -874,7 +875,7 @@ class FastNoise {
     var z = z1
 
     var seed = m_seed
-    var sum = Math.abs(SinglePerlin(seed, x, y, z)) * 2 - 1
+    var sum = abs(SinglePerlin(seed, x, y, z)) * 2 - 1
     var amp = 1f
 
     for (i in 1 until m_octaves) {
@@ -883,7 +884,7 @@ class FastNoise {
       z *= m_lacunarity
 
       amp *= m_gain
-      sum += (Math.abs(SinglePerlin(++seed, x, y, z)) * 2 - 1) * amp
+      sum += (abs(SinglePerlin(++seed, x, y, z)) * 2 - 1) * amp
     }
 
     return sum * m_fractalBounding
@@ -896,7 +897,7 @@ class FastNoise {
     var z = z1
 
     var seed = m_seed
-    var sum = 1 - Math.abs(SinglePerlin(seed, x, y, z))
+    var sum = 1 - abs(SinglePerlin(seed, x, y, z))
     var amp = 1f
 
     for (i in 1 until m_octaves) {
@@ -905,7 +906,7 @@ class FastNoise {
       z *= m_lacunarity
 
       amp *= m_gain
-      sum -= (1 - Math.abs(SinglePerlin(++seed, x, y, z))) * amp
+      sum -= (1 - abs(SinglePerlin(++seed, x, y, z))) * amp
     }
 
     return sum
@@ -1005,7 +1006,7 @@ class FastNoise {
     var y = y1
 
     var seed = m_seed
-    var sum = Math.abs(SinglePerlin(seed, x, y)) * 2 - 1
+    var sum = abs(SinglePerlin(seed, x, y)) * 2 - 1
     var amp = 1f
 
     for (i in 1 until m_octaves) {
@@ -1013,7 +1014,7 @@ class FastNoise {
       y *= m_lacunarity
 
       amp *= m_gain
-      sum += (Math.abs(SinglePerlin(++seed, x, y)) * 2 - 1) * amp
+      sum += (abs(SinglePerlin(++seed, x, y)) * 2 - 1) * amp
     }
 
     return sum * m_fractalBounding
@@ -1025,7 +1026,7 @@ class FastNoise {
     var y = y1
 
     var seed = m_seed
-    var sum = 1 - Math.abs(SinglePerlin(seed, x, y))
+    var sum = 1 - abs(SinglePerlin(seed, x, y))
     var amp = 1f
 
     for (i in 1 until m_octaves) {
@@ -1033,7 +1034,7 @@ class FastNoise {
       y *= m_lacunarity
 
       amp *= m_gain
-      sum -= (1 - Math.abs(SinglePerlin(++seed, x, y))) * amp
+      sum -= (1 - abs(SinglePerlin(++seed, x, y))) * amp
     }
 
     return sum
@@ -1125,7 +1126,7 @@ class FastNoise {
     var z = z1
 
     var seed = m_seed
-    var sum = Math.abs(SingleSimplex(seed, x, y, z)) * 2 - 1
+    var sum = abs(SingleSimplex(seed, x, y, z)) * 2 - 1
     var amp = 1f
 
     for (i in 1 until m_octaves) {
@@ -1134,7 +1135,7 @@ class FastNoise {
       z *= m_lacunarity
 
       amp *= m_gain
-      sum += (Math.abs(SingleSimplex(++seed, x, y, z)) * 2 - 1) * amp
+      sum += (abs(SingleSimplex(++seed, x, y, z)) * 2 - 1) * amp
     }
 
     return sum * m_fractalBounding
@@ -1147,7 +1148,7 @@ class FastNoise {
     var z = z1
 
     var seed = m_seed
-    var sum = 1 - Math.abs(SingleSimplex(seed, x, y, z))
+    var sum = 1 - abs(SingleSimplex(seed, x, y, z))
     var amp = 1f
 
     for (i in 1 until m_octaves) {
@@ -1156,7 +1157,7 @@ class FastNoise {
       z *= m_lacunarity
 
       amp *= m_gain
-      sum -= (1 - Math.abs(SingleSimplex(++seed, x, y, z))) * amp
+      sum -= (1 - abs(SingleSimplex(++seed, x, y, z))) * amp
     }
 
     return sum
@@ -1327,7 +1328,7 @@ class FastNoise {
     var y = y1
 
     var seed = m_seed
-    var sum = Math.abs(SingleSimplex(seed, x, y)) * 2 - 1
+    var sum = abs(SingleSimplex(seed, x, y)) * 2 - 1
     var amp = 1f
 
     for (i in 1 until m_octaves) {
@@ -1335,7 +1336,7 @@ class FastNoise {
       y *= m_lacunarity
 
       amp *= m_gain
-      sum += (Math.abs(SingleSimplex(++seed, x, y)) * 2 - 1) * amp
+      sum += (abs(SingleSimplex(++seed, x, y)) * 2 - 1) * amp
     }
 
     return sum * m_fractalBounding
@@ -1347,7 +1348,7 @@ class FastNoise {
     var y = y1
 
     var seed = m_seed
-    var sum = 1 - Math.abs(SingleSimplex(seed, x, y))
+    var sum = 1 - abs(SingleSimplex(seed, x, y))
     var amp = 1f
 
     for (i in 1 until m_octaves) {
@@ -1355,7 +1356,7 @@ class FastNoise {
       y *= m_lacunarity
 
       amp *= m_gain
-      sum -= (1 - Math.abs(SingleSimplex(++seed, x, y))) * amp
+      sum -= (1 - abs(SingleSimplex(++seed, x, y))) * amp
     }
 
     return sum
@@ -1586,7 +1587,7 @@ class FastNoise {
     var z = z1
 
     var seed = m_seed
-    var sum = Math.abs(SingleCubic(seed, x, y, z)) * 2 - 1
+    var sum = abs(SingleCubic(seed, x, y, z)) * 2 - 1
     var amp = 1f
     var i = 0
 
@@ -1596,7 +1597,7 @@ class FastNoise {
       z *= m_lacunarity
 
       amp *= m_gain
-      sum += (Math.abs(SingleCubic(++seed, x, y, z)) * 2 - 1) * amp
+      sum += (abs(SingleCubic(++seed, x, y, z)) * 2 - 1) * amp
     }
 
     return sum * m_fractalBounding
@@ -1609,7 +1610,7 @@ class FastNoise {
     var z = z1
 
     var seed = m_seed
-    var sum = 1 - Math.abs(SingleCubic(seed, x, y, z))
+    var sum = 1 - abs(SingleCubic(seed, x, y, z))
     var amp = 1f
     var i = 0
 
@@ -1619,7 +1620,7 @@ class FastNoise {
       z *= m_lacunarity
 
       amp *= m_gain
-      sum -= (1 - Math.abs(SingleCubic(++seed, x, y, z))) * amp
+      sum -= (1 - abs(SingleCubic(++seed, x, y, z))) * amp
     }
 
     return sum
@@ -1722,7 +1723,7 @@ class FastNoise {
     var y = y1
 
     var seed = m_seed
-    var sum = Math.abs(SingleCubic(seed, x, y)) * 2 - 1
+    var sum = abs(SingleCubic(seed, x, y)) * 2 - 1
     var amp = 1f
     var i = 0
 
@@ -1731,7 +1732,7 @@ class FastNoise {
       y *= m_lacunarity
 
       amp *= m_gain
-      sum += (Math.abs(SingleCubic(++seed, x, y)) * 2 - 1) * amp
+      sum += (abs(SingleCubic(++seed, x, y)) * 2 - 1) * amp
     }
 
     return sum * m_fractalBounding
@@ -1743,7 +1744,7 @@ class FastNoise {
     var y = y1
 
     var seed = m_seed
-    var sum = 1 - Math.abs(SingleCubic(seed, x, y))
+    var sum = 1 - abs(SingleCubic(seed, x, y))
     var amp = 1f
     var i = 0
 
@@ -1752,7 +1753,7 @@ class FastNoise {
       y *= m_lacunarity
 
       amp *= m_gain
-      sum -= (1 - Math.abs(SingleCubic(++seed, x, y))) * amp
+      sum -= (1 - abs(SingleCubic(++seed, x, y))) * amp
     }
 
     return sum
@@ -1857,7 +1858,7 @@ class FastNoise {
               val vecY = yi -y + vec.y
               val vecZ = zi -z + vec.z
 
-              val newDistance = Math.abs (vecX) + Math.abs(vecY) + Math.abs(vecZ)
+              val newDistance = abs (vecX) + abs(vecY) + abs(vecZ)
 
               if (newDistance < distance) {
                 distance = newDistance
@@ -1879,7 +1880,7 @@ class FastNoise {
               val vecY = yi -y + vec.y
               val vecZ = zi -z + vec.z
 
-              val newDistance =(Math.abs(vecX) + Math.abs(vecY) + Math.abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ)
+              val newDistance =(abs(vecX) + abs(vecY) + abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ)
 
               if (newDistance < distance) {
                 distance = newDistance
@@ -1930,8 +1931,8 @@ class FastNoise {
 
               val newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ
 
-              distance2 = Math.max(Math.min(distance2, newDistance), distance)
-              distance = Math.min(distance, newDistance)
+              distance2 = max(min(distance2, newDistance), distance)
+              distance = min(distance, newDistance)
             }
           }
         }
@@ -1946,10 +1947,10 @@ class FastNoise {
               val vecY = yi -y + vec.y
               val vecZ = zi -z + vec.z
 
-              val newDistance = Math.abs (vecX) + Math.abs(vecY) + Math.abs(vecZ)
+              val newDistance = abs (vecX) + abs(vecY) + abs(vecZ)
 
-              distance2 = Math.max(Math.min(distance2, newDistance), distance)
-              distance = Math.min(distance, newDistance)
+              distance2 = max(min(distance2, newDistance), distance)
+              distance = min(distance, newDistance)
             }
           }
         }
@@ -1964,10 +1965,10 @@ class FastNoise {
               val vecY = yi -y + vec.y
               val vecZ = zi -z + vec.z
 
-              val newDistance =(Math.abs(vecX) + Math.abs(vecY) + Math.abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ)
+              val newDistance =(abs(vecX) + abs(vecY) + abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ)
 
-              distance2 = Math.max(Math.min(distance2, newDistance), distance)
-              distance = Math.min(distance, newDistance)
+              distance2 = max(min(distance2, newDistance), distance)
+              distance = min(distance, newDistance)
             }
           }
         }
@@ -2016,7 +2017,7 @@ class FastNoise {
             val vecX = xi -x + vec.x
             val vecY = yi -y + vec.y
 
-            val newDistance =(Math.abs(vecX) + Math.abs(vecY))
+            val newDistance =(abs(vecX) + abs(vecY))
 
             if (newDistance < distance) {
               distance = newDistance
@@ -2034,7 +2035,7 @@ class FastNoise {
             val vecX = xi -x + vec.x
             val vecY = yi -y + vec.y
 
-            val newDistance =(Math.abs(vecX) + Math.abs(vecY)) + (vecX * vecX + vecY * vecY)
+            val newDistance =(abs(vecX) + abs(vecY)) + (vecX * vecX + vecY * vecY)
 
             if (newDistance < distance) {
               distance = newDistance
@@ -2096,10 +2097,10 @@ class FastNoise {
             val vecX = xi -x + vec.x
             val vecY = yi -y + vec.y
 
-            val newDistance = Math . abs (vecX) + Math.abs(vecY)
+            val newDistance = abs(vecX) + abs(vecY)
 
-            distance2 = Math.max(Math.min(distance2, newDistance), distance)
-            distance = Math.min(distance, newDistance)
+            distance2 = max(min(distance2, newDistance), distance)
+            distance = min(distance, newDistance)
           }
         }
       }
@@ -2111,10 +2112,10 @@ class FastNoise {
             val vecX = xi -x + vec.x
             val vecY = yi -y + vec.y
 
-            val newDistance =(Math.abs(vecX) + Math.abs(vecY)) + (vecX * vecX + vecY * vecY)
+            val newDistance =(abs(vecX) + abs(vecY)) + (vecX * vecX + vecY * vecY)
 
-            distance2 = Math.max(Math.min(distance2, newDistance), distance)
-            distance = Math.min(distance, newDistance)
+            distance2 = max(min(distance2, newDistance), distance)
+            distance = min(distance, newDistance)
           }
         }
       }
@@ -2128,8 +2129,8 @@ class FastNoise {
 
             val newDistance = vecX * vecX +vecY * vecY
 
-            distance2 = Math.max(Math.min(distance2, newDistance), distance)
-            distance = Math.min(distance, newDistance)
+            distance2 = max(min(distance2, newDistance), distance)
+            distance = min(distance, newDistance)
           }
         }
       }
