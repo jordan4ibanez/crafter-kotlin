@@ -19,6 +19,8 @@ fun load() {
   shader.createUniforms(arrayOf("cameraMatrix", "objectMatrix"))
   shader.start("main")
 
+  window.setVsync(false)
+
   // Debug texture.
 
   worldAtlas.add("1", "./textures/debug.png")
@@ -55,8 +57,6 @@ fun load() {
 
 
 
-var timer = 0f
-var counter = 0
 var color = 0f
 var brighten = true
 var speed = 0.5f
@@ -74,11 +74,8 @@ fun update(dtime: Float) {
 //    regenerateWorldAtlas()
   }
 
-  timer += dtime
-
-  if (timer >= 1f) {
-    timer -= 1f
-    window.setTitle("Count: ${counter++}")
+  if (fpsUpdated()) {
+    window.setTitle("FPS: ${getFPS()}")
   }
 
   if (brighten) {
