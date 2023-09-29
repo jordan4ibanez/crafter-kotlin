@@ -1,9 +1,6 @@
 package engine
 
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.joml.Math
 import org.joml.Vector2i
 import org.joml.Vector2ic
@@ -27,16 +24,24 @@ private val generationInput = ConcurrentLinkedQueue<Vector2ic>()
 private val generationOutput = ConcurrentLinkedQueue<IntArray>()
 
 @OptIn(DelicateCoroutinesApi::class)
-internal suspend fun disperseChunkGenerators() {
-  coroutineScope {
-    repeat((Math.random() * 10).toInt()) { threadID ->
-      println("threadID: $threadID")
-      GlobalScope.launch {
-        val additional = Vector2i((Math.random() * 100).toInt(), (Math.random() * 100).toInt())
-        additional.print("${Math.random()}")
-        generationInput.add(additional)
-        println("size::: ${generationInput.size}")
-      }
-    }
-  }
+internal fun disperseChunkGenerators() {
+  //note: Wrapper function to make implementation cleaner.
+  // Shoot and forget.
+
+  // If there's nothing to be done, do nothing.
+  if (generationInput.isEmpty()) return
+  GlobalScope.launch {genChunk() }
+}
+
+fun genChunk() {
+  //note: Async double check.
+  if (generationInput.isEmpty()) return
+  val position = generationInput.remove()!!
+
+  //fixme: placeholder
+  val grass = 1
+  val dirt  = 2
+  val stone = 3
+
+
 }
