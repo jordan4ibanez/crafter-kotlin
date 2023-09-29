@@ -34,13 +34,27 @@ import org.joml.Vector3f;
 //
 
 
-class FastNoise {
+private enum class NoiseType {Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, Cellular, WhiteNoise, Cubic, CubicFractal}
+private enum class Interp {Linear, Hermite, Quintic}
+private enum class FractalType {FBM, Billow, RigidMulti}
+private enum class CellularDistanceFunction {Euclidean, Manhattan, Natural}
+private enum class CellularReturnType {CellValue, NoiseLookup, Distance, Distance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div}
 
-  enum class NoiseType {Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, Cellular, WhiteNoise, Cubic, CubicFractal}
-  enum class Interp {Linear, Hermite, Quintic}
-  enum class FractalType {FBM, Billow, RigidMulti}
-  enum class CellularDistanceFunction {Euclidean, Manhattan, Natural}
-  enum class CellularReturnType {CellValue, NoiseLookup, Distance, Distance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div}
+//note: This is here because intellij is absolutely struggling translating this file by hand.
+// It might not be necessary to have this!
+private val Value          = NoiseType.Value
+private val ValueFractal   = NoiseType.ValueFractal
+private val Perlin         = NoiseType.Perlin
+private val PerlinFractal  = NoiseType.PerlinFractal
+private val Simplex        = NoiseType.Simplex
+private val SimplexFractal = NoiseType.SimplexFractal
+private val Cellular       = NoiseType.Cellular
+private val WhiteNoise     = NoiseType.WhiteNoise
+private val Cubic          = NoiseType.Cubic
+private val CubicFractal   = NoiseType.CubicFractal
+
+
+class FastNoise {
 
 
   private var m_seed = 1337
@@ -419,159 +433,113 @@ class FastNoise {
     return (if ((hash and 4) == 0) -a else a) + (if ((hash and 2) == 0) -b else b) + (if ((hash and 1) == 0) -c else c)
   }
 
-  public fun GetNoise(x: Float, y: Float, z: Float): Float {
-    x *= m_frequency;
-    y *= m_frequency;
-    z *= m_frequency;
+  fun GetNoise(x1: Float, y1: Float, z1: Float): Float {
+    var x = x1 * m_frequency
+    var y = y1 * m_frequency
+    var z = z1 * m_frequency
 
-    switch (m_noiseType) {
-      case Value:
-      return SingleValue(m_seed, x, y, z);
-      case ValueFractal:
-      switch (m_fractalType) {
-        case FBM:
-        return SingleValueFractalFBM(x, y, z);
-        case Billow:
-        return SingleValueFractalBillow(x, y, z);
-        case RigidMulti:
-        return SingleValueFractalRigidMulti(x, y, z);
-        default:
-        return 0;
-      }
-      case Perlin:
-      return SinglePerlin(m_seed, x, y, z);
-      case PerlinFractal:
-      switch (m_fractalType) {
-        case FBM:
-        return SinglePerlinFractalFBM(x, y, z);
-        case Billow:
-        return SinglePerlinFractalBillow(x, y, z);
-        case RigidMulti:
-        return SinglePerlinFractalRigidMulti(x, y, z);
-        default:
-        return 0;
-      }
-      case Simplex:
-      return SingleSimplex(m_seed, x, y, z);
-      case SimplexFractal:
-      switch (m_fractalType) {
-        case FBM:
-        return SingleSimplexFractalFBM(x, y, z);
-        case Billow:
-        return SingleSimplexFractalBillow(x, y, z);
-        case RigidMulti:
-        return SingleSimplexFractalRigidMulti(x, y, z);
-        default:
-        return 0;
-      }
-      case Cellular:
-      switch (m_cellularReturnType) {
-        case CellValue:
-        case NoiseLookup:
-        case Distance:
-        return SingleCellular(x, y, z);
-        default:
-        return SingleCellular2Edge(x, y, z);
-      }
-      case WhiteNoise:
-      return GetWhiteNoise(x, y, z);
-      case Cubic:
-      return SingleCubic(m_seed, x, y, z);
-      case CubicFractal:
-      switch (m_fractalType) {
-        case FBM:
-        return SingleCubicFractalFBM(x, y, z);
-        case Billow:
-        return SingleCubicFractalBillow(x, y, z);
-        case RigidMulti:
-        return SingleCubicFractalRigidMulti(x, y, z);
-        default:
-        return 0;
-      }
-      default:
-      return 0;
+    when (m_noiseType) {
+      Value -> return SingleValue(m_seed, x, y, z)
+      ValueFractal ->
+        when(m_fractalType) {
+          FBM -> return SingleValueFractalFBM(x, y, z);
+          Billow ->  return SingleValueFractalBillow(x, y, z);
+          RigidMulti -> return SingleValueFractalRigidMulti(x, y, z);
+          else -> return 0f
+        }
+      Perlin -> return SinglePerlin(m_seed, x, y, z);
+      PerlinFractal ->
+        when (m_fractalType) {
+          FBM -> return SinglePerlinFractalFBM(x, y, z);
+          Billow -> return SinglePerlinFractalBillow(x, y, z);
+          RigidMulti ->  return SinglePerlinFractalRigidMulti(x, y, z);
+          else -> return 0f
+        }
+      Simplex -> return SingleSimplex(m_seed, x, y, z);
+      SimplexFractal ->
+        when (m_fractalType) {
+          FBM -> return SingleSimplexFractalFBM(x, y, z);
+          Billow -> return SingleSimplexFractalBillow(x, y, z);
+          RigidMulti -> return SingleSimplexFractalRigidMulti(x, y, z);
+          else -> return 0f
+        }
+      Cellular ->
+        when (m_cellularReturnType) {
+          case CellValue:
+          case NoiseLookup:
+          case Distance:
+          return SingleCellular(x, y, z);
+          else -> return SingleCellular2Edge(x, y, z);
+        }
+      WhiteNoise -> return GetWhiteNoise(x, y, z);
+      Cubic -> return SingleCubic(m_seed, x, y, z);
+      CubicFractal ->
+        when (m_fractalType) {
+          FBM -> return SingleCubicFractalFBM(x, y, z);
+          Billow -> return SingleCubicFractalBillow(x, y, z);
+          RigidMulti -> return SingleCubicFractalRigidMulti(x, y, z);
+          else -> return 0f
+        }
+      else -> return 0f
     }
   }
 
-  public float GetNoise(float x, float y) {
-    x *= m_frequency;
-    y *= m_frequency;
+  fun GetNoise(x1: Float, y1: Float): Float {
+    var x = x1 * m_frequency;
+    var y = y1 * m_frequency;
 
-    switch (m_noiseType) {
-      case Value:
-      return SingleValue(m_seed, x, y);
-      case ValueFractal:
-      switch (m_fractalType) {
-        case FBM:
-        return SingleValueFractalFBM(x, y);
-        case Billow:
-        return SingleValueFractalBillow(x, y);
-        case RigidMulti:
-        return SingleValueFractalRigidMulti(x, y);
-        default:
-        return 0;
-      }
-      case Perlin:
-      return SinglePerlin(m_seed, x, y);
-      case PerlinFractal:
-      switch (m_fractalType) {
-        case FBM:
-        return SinglePerlinFractalFBM(x, y);
-        case Billow:
-        return SinglePerlinFractalBillow(x, y);
-        case RigidMulti:
-        return SinglePerlinFractalRigidMulti(x, y);
-        default:
-        return 0;
-      }
-      case Simplex:
-      return SingleSimplex(m_seed, x, y);
-      case SimplexFractal:
-      switch (m_fractalType) {
-        case FBM:
-        return SingleSimplexFractalFBM(x, y);
-        case Billow:
-        return SingleSimplexFractalBillow(x, y);
-        case RigidMulti:
-        return SingleSimplexFractalRigidMulti(x, y);
-        default:
-        return 0;
-      }
-      case Cellular:
-      switch (m_cellularReturnType) {
-        case CellValue:
-        case NoiseLookup:
-        case Distance:
-        return SingleCellular(x, y);
-        default:
-        return SingleCellular2Edge(x, y);
-      }
-      case WhiteNoise:
-      return GetWhiteNoise(x, y);
-      case Cubic:
-      return SingleCubic(m_seed, x, y);
-      case CubicFractal:
-      switch (m_fractalType) {
-        case FBM:
-        return SingleCubicFractalFBM(x, y);
-        case Billow:
-        return SingleCubicFractalBillow(x, y);
-        case RigidMulti:
-        return SingleCubicFractalRigidMulti(x, y);
-        default:
-        return 0;
-      }
-      default:
-      return 0;
+    when (m_noiseType) {
+      Value -> return SingleValue(m_seed, x, y);
+      ValueFractal ->
+        when (m_fractalType) {
+          FBM ->
+          return SingleValueFractalFBM(x, y);
+          Billow ->
+          return SingleValueFractalBillow(x, y);
+          RigidMulti ->
+          return SingleValueFractalRigidMulti(x, y);
+          else -> return 0f
+        }
+      Perlin -> return SinglePerlin(m_seed, x, y);
+      PerlinFractal ->
+        when (m_fractalType) {
+          FBM -> return SinglePerlinFractalFBM(x, y);
+          Billow -> return SinglePerlinFractalBillow(x, y);
+          RigidMulti -> return SinglePerlinFractalRigidMulti(x, y);
+          else -> return 0f
+        }
+      Simplex -> return SingleSimplex(m_seed, x, y);
+      SimplexFractal ->
+        when (m_fractalType) {
+          FBM -> return SingleSimplexFractalFBM(x, y);
+          Billow -> return SingleSimplexFractalBillow(x, y);
+          RigidMulti -> return SingleSimplexFractalRigidMulti(x, y);
+          else -> return 0f
+        }
+      Cellular ->
+        when (m_cellularReturnType) {
+          CellValue, NoiseLookup, Distance -> return SingleCellular(x, y)
+          else -> return SingleCellular2Edge(x, y);
+        }
+      WhiteNoise -> return GetWhiteNoise(x, y);
+      Cubic ->return SingleCubic(m_seed, x, y);
+      CubicFractal ->
+        when (m_fractalType) {
+          FBM -> return SingleCubicFractalFBM(x, y);
+          Billow -> return SingleCubicFractalBillow(x, y);
+          RigidMulti -> return SingleCubicFractalRigidMulti(x, y);
+          else -> return 0f
+        }
+      else -> return 0f;
     }
   }
 
   // White Noise
 
-  private int FloatCast2Int(float f) {
-    int i = Float.floatToRawIntBits(f);
+  private FloatCast2Int(f: Float): Int {
+    val i = f.toRawBits()
 
-    return i ^ (i >> 16);
+    return i xor (i shr 16);
   }
 
   public float GetWhiteNoise(float x, float y, float z, float w) {
