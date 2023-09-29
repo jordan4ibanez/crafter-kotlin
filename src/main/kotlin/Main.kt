@@ -89,7 +89,7 @@ fun update(dtime: Float) {
 // All draw procedures go here. Consider this love.draw()
 var rotation = 0f
 fun draw() {
-  rotation += getDelta() * 50f
+//  rotation += getDelta() * 50f
 //  println(rotation)
   camera.updateCameraMatrix()
   camera.setObjectMatrix(Vector3f(0f, 0f, -1f), Vector3f(0f,toRadians(rotation), 0f))
