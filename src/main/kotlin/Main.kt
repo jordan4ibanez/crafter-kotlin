@@ -5,6 +5,7 @@ import org.joml.Math.toRadians
 import org.joml.Random
 import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE
+import org.lwjgl.glfw.GLFW.GLFW_KEY_R
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -68,6 +69,10 @@ fun update(dtime: Float) {
     return
   }
 
+  if (keyboard.isPressed(GLFW_KEY_R)) {
+    regenerateWorldAtlas()
+  }
+
   timer += dtime
 
   if (timer >= 1f) {
@@ -95,6 +100,17 @@ fun update(dtime: Float) {
 
 }
 
+fun regenerateWorldAtlas() {
+
+  worldAtlas.clear()
+  worldAtlas.add("1", "./textures/debug.png")
+  worldAtlas.add("blah", "./textures/text_box.png")
+  worldAtlas.add("fkalj", "./textures/test_thing.png")
+
+  texture.destroy("debug")
+  texture.create("debug", worldAtlas.flush(), worldAtlas.getSize(), worldAtlas.getChannels())
+  mesh.swapTexture("debug", "debug")
+}
 
 
 
