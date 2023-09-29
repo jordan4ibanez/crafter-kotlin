@@ -57,6 +57,10 @@ object mesh {
     return database.containsKey(name)
   }
 
+  fun swapTexture(name: String, newTextureName: String) {
+    safeGet(name).swapTexture(newTextureName)
+  }
+
   fun destroyAll() {
     database.forEach {(_, meshObject) ->
       // Debug info for now.
