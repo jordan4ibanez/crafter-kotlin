@@ -70,7 +70,8 @@ fun update(dtime: Float) {
   }
 
   if (keyboard.isPressed(GLFW_KEY_R)) {
-    regenerateWorldAtlas()
+    println("BLEH")
+//    regenerateWorldAtlas()
   }
 
   timer += dtime
@@ -100,17 +101,17 @@ fun update(dtime: Float) {
 
 }
 
-fun regenerateWorldAtlas() {
-
-  worldAtlas.clear()
-  worldAtlas.add("1", "./textures/debug.png")
-  worldAtlas.add("blah", "./textures/text_box.png")
-  worldAtlas.add("fkalj", "./textures/test_thing.png")
-
-  texture.destroy("debug")
-  texture.create("debug", worldAtlas.flush(), worldAtlas.getSize(), worldAtlas.getChannels())
-  mesh.swapTexture("debug", "debug")
-}
+//fun regenerateWorldAtlas() {
+//
+//  worldAtlas.clear()
+//  worldAtlas.add("1", "./textures/debug.png")
+//  worldAtlas.add("blah", "./textures/text_box.png")
+//  worldAtlas.add("fkalj", "./textures/test_thing.png")
+//
+//  texture.destroy("debug")
+//  texture.create("debug", worldAtlas.flush(), worldAtlas.getSize(), worldAtlas.getChannels())
+//  mesh.swapTexture("debug", "debug")
+//}
 
 
 
@@ -157,8 +158,11 @@ fun quit() {
 
 
 // Warning: gameLoop really should not be touched. Focus on the infrastructure around it before adding to it.
-tailrec fun gameLoop() {
+tailrec suspend fun gameLoop() {
+
   window.update()
+
+  doAllThreads()
 
   update(getDelta())
 
@@ -171,22 +175,15 @@ tailrec fun gameLoop() {
   return gameLoop()
 }
 
-val atomicCounter = AtomicInteger(0)
 
 //note: main is at the bottom because procedures should be put into the designated functions.
 // Try not to modify this. It's the literal base of the entire program.
 fun main(args: Array<String>) = runBlocking {
   println(args)
 
-  load()
-
   Random.newSeed()
 
-
-
-  blah()
-
-
+  load()
 
   gameLoop()
 
