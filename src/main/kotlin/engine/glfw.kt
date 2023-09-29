@@ -86,6 +86,9 @@ object glfw {
 
 
   private fun constructCallbacks() {
+
+    //note: window
+
     glfwSetFramebufferSizeCallback(window.pointer) { _, width, height ->
       println("Framebuffer was resized to: $width, $height")
       glViewport(0, 0, width, height)
@@ -96,6 +99,25 @@ object glfw {
       println("Window was moved to: $positionX, $positionY")
       window.position.set(positionX, positionY)
     }
+
+    //note: keyboard
+
+    glfwSetCharCallback(window.pointer) { _, codePoint ->
+      keyboard.lastKey = codePoint.toChar()
+    }
+
+    glfwSetKeyCallback(window.pointer) { _, key, scancode, action, mods ->
+      if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+        keyboard.setMemory(key)
+        keyboard.setCurrent(key, true)
+        keyboard.memoryFlush.add(key)
+      } else if (action == GLFW_RELEASE) {
+        //todo: this needs to be tested, these might need to be flipped
+        keyboard.setCurrent(key, false)
+        keyboard.setMemory(key)
+      }
+    }
+
   }
 
   fun getMonitorSize(): Vector2ic {
