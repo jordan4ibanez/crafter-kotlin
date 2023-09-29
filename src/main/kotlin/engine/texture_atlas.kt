@@ -24,7 +24,6 @@ val fontAtlas = Packer("fontAtlas")
 // note: Everything below this is just implementation.
 //  You only really talk to the two vals above.
 
-
 /*
 A texture packer that automates into an atlas.
 This is designed very strangely because it's meant to be an internal module.
