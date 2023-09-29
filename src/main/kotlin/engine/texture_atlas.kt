@@ -207,6 +207,19 @@ class Packer {
     )
   }
 
+  fun clear() {
+    textures.clear()
+//    canvas.destroy()
+    canvas.resize(16, 16)
+    canvas.allocate()
+    availableX.clear()
+    availableY.clear()
+    availableX.add(padding)
+    availableY.add(padding)
+    size.set(16, 16)
+    maxSize.set(0,0)
+  }
+
   fun add(name: String, fileLocation: String) {
     if (textures.containsKey(name)) throw RuntimeException("Packer: tried to add duplicate of $name")
     if (textures.containsKey(fileLocation)) throw RuntimeException("Packer: tried to add duplicate of $fileLocation")
@@ -274,10 +287,14 @@ class Packer {
     var bestX = padding
     var bestY = padding
 
+    println("HI THERE=================================")
+
 
     run exit@ {
       availableY.forEach yLoop@{ hmm ->
         val y = hmm!!
+
+        println(y)
 
         if (found) return@exit
 
@@ -309,6 +326,7 @@ class Packer {
           }
 
           if (!failed) {
+            println("found")
             found = true
             bestX = x
             bestY = y
