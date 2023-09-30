@@ -41,6 +41,9 @@ dependencies {
 
 //    implementation("org.jetbrains.kotlin", "kotlin-stdlib" ,"1.9.10")
 
+    implementation("org.openjdk.nashorn", "nashorn-core", "15.4")
+
+
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
 
     implementation("org.lwjgl", "lwjgl")
