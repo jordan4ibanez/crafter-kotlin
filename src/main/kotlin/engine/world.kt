@@ -29,6 +29,8 @@ private val generationInput = ConcurrentLinkedQueue<Vector2ic>()
 // Output from chunk generator coroutines goes into here.
 private val generationOutput = ConcurrentLinkedQueue<Pair<Vector2ic, IntArray>>()
 
+// note: API begins here
+
 fun generateChunk(x: Int, y: Int) {
   val key = Vector2i(x, y)
   if (data.containsKey(key) || generationInput.contains(key)) {
@@ -41,6 +43,80 @@ fun generateChunk(x: Int, y: Int) {
 fun chunkExists(posX: Int, posZ: Int): Boolean {
   return data.contains(Vector2i(posX, posZ))
 }
+
+// I lub extension functions
+fun Int.blockBits(block: Int): String {
+  val builder = StringBuilder()
+  for (i in 31 downTo 0) {
+    if ((i + 1) % 4 == 0) {
+      builder.append("|")
+    }
+    builder.append(if ((block and (1 shl i)) == 0) "0" else "1")
+  }
+  return builder.toString()
+}
+
+fun Int.getBlockID(): Int {
+  return this ushr 16
+}
+
+fun Int.getBlockLight(): Int {
+  return this shl 16 ushr 28
+}
+
+fun Int.getBlockState(): Int {
+  return this shl 20 ushr 28
+}
+
+infix fun Int.setBlockID(newID: Int): Int {
+  if (!(0..65535).contains(newID)) throw RuntimeException("passed in value larger than 16 bits to set id")
+  return combine(newID.shiftBlock(),this.parseBlockLight(),this.parseBlockState())
+}
+
+infix fun Int.setBlockLight(newLight: Int): Int {
+  if (!(0..15).contains(newLight)) throw RuntimeException("passed in value larger than 4 bits to set light")
+  return combine(this.parseBlockID(), newLight.shiftLight(), this.parseBlockState())
+}
+
+infix fun Int.setBlockState(newState: Int): Int {
+  if (!(0..15).contains(newState)) throw RuntimeException("passed in value larger than 4 bits to set state")
+  return combine(this.parseBlockID(), this.parseBlockLight(), newState.shiftState())
+}
+
+fun poop(cool: Int): Int {
+  return cool setBlockState 1 setBlockID 123 setBlockLight 14
+}
+
+// raw parsers, do not give out true value, they are bit container locks essentially.
+private fun Int.parseBlockID(): Int {
+  return this ushr 16 shl 16
+}
+private fun Int.parseBlockLight(): Int {
+  val i = this shl 16 ushr 16
+  return i ushr 12 shl 12
+}
+private fun Int.parseBlockState(): Int {
+  val i = this shl 20 ushr 20
+  return i ushr 8 shl 8
+}
+
+
+// shifters & combiner
+private fun Int.shiftBlock(): Int {
+  return this shl 16
+}
+private fun Int.shiftLight(): Int {
+  return this shl 12
+}
+private fun Int.shiftState(): Int {
+  return this shl 8
+}
+private fun Int.combine(blockID: Int, light: Int, state: Int): Int {
+  return blockID xor light xor state
+}
+
+
+// note: Internal begins here
 
 private fun safetGet(posX: Int, posZ: Int): IntArray {
   return data[Vector2i(posX, posZ)] ?: throw RuntimeException("world: tried to access nonexistent chunk: $posX, $posZ")
@@ -100,7 +176,7 @@ private fun genChunk() {
   val noise = Noise(seed)
 
   noise.setFrequency(biomeFrequency)
-  
+
   val dataArray = IntArray(WIDTH * HEIGHT * DEPTH)
   val index = 0
 
