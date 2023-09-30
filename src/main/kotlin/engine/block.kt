@@ -74,95 +74,107 @@ object block {
     //todo: Cannot put texture coords here. Need to be generated first
   }
 
+  // Translators
   private fun setInternalName(id: Int, internalName: String) {
     name[id] = internalName
   }
-
   fun setBlockID(name: String, newId: Int) {
     id[name] = newId
   }
 
+  // ID oriented.
   fun setBlockInventoryName(id: Int, newName: String) {
     inventoryName[id] = newName
   }
-
   fun setTextures(id: Int, newTextures: Array<String>) {
     if (newTextures.size != 6) throw RuntimeException("Tried to set block $name textures with ${newTextures.size} size.")
     textures[id] = newTextures
   }
-
   private fun setTextureCoords(id: Int, newCoords: HashMap<String, FloatArray>) {
     textureCoords[id] = newCoords
   }
-
   fun setDrawType(id: Int, newDrawType: DrawType) {
     drawType[id] = newDrawType
   }
-
   fun setWalkable(id: Int, isWalkable: Boolean) {
     walkable[id] = isWalkable
   }
-
   fun setLiquid(id: Int, isLiquid: Boolean) {
     liquid[id] = isLiquid
   }
-
   fun setFlow(id: Int, flowLevel: Int) {
     if (!(0..15).contains(flowLevel)) throw RuntimeException("Tried to set block $name with flow level $flowLevel (0..15)")
     flow[id] = flowLevel
   }
-
   fun setViscosity(id: Int, newViscosity: Int) {
     if (!(0..15).contains(newViscosity)) throw RuntimeException("Tried to set block $name with viscosity $newViscosity (0..15)")
     viscosity[id] = newViscosity
   }
-
   fun setClimbable(id: Int, isClimbable: Boolean) {
     climbable[id] = isClimbable
   }
-
   fun setSneakJumpClimbable(id: Int, isSneakJumpClimbable: Boolean) {
     sneakJumpClimbable[id] = isSneakJumpClimbable
   }
-
   fun setFalling(id: Int, isFalling: Boolean) {
     falling[id] = isFalling
   }
-
   fun setClear(id: Int, isClear: Boolean) {
     clear[id] = isClear
   }
-
   fun setDamagePerSecond(id: Int, dps: Int) {
     damagePerSecond[id] = dps
   }
-
   fun setLight(id: Int, newLight: Int) {
     if (!(0..15).contains(newLight)) throw RuntimeException("Tried to set block $name with viscosity $newLight (0..15)")
     light[id] = newLight
   }
 
+  // Name oriented
+  fun setBlockInventoryName(name: String, newName: String) = setBlockInventoryName(getID(name), newName)
+  fun setTextures(name: String, newTextures: Array<String>) = setTextures(getID(name), newTextures)
+  private fun setTextureCoords(name: String, newCoords: HashMap<String, FloatArray>) = setTextureCoords(getID(name), newCoords)
+  fun setDrawType(name: String, newDrawType: DrawType) = setDrawType(getID(name), newDrawType)
+  fun setWalkable(name: String, isWalkable: Boolean) = setWalkable(getID(name), isWalkable)
+  fun setLiquid(name: String, isLiquid: Boolean) = setLiquid(getID(name), isLiquid)
+  fun setFlow(name: String, flowLevel: Int) = setFlow(getID(name), flowLevel)
+  fun setViscosity(name: String, newViscosity: Int) = setViscosity(getID(name), newViscosity)
+  fun setClimbable(name: String, isClimbable: Boolean)  = setClimbable(getID(name), isClimbable)
+  fun setSneakJumpClimbable(name: String, isSneakJumpClimbable: Boolean) = setSneakJumpClimbable(getID(name), isSneakJumpClimbable)
+  fun setFalling(name: String, isFalling: Boolean) = setFalling(getID(name), isFalling)
+  fun setClear(name: String, isClear: Boolean) = setClear(getID(name), isClear)
+  fun setDamagePerSecond(name: String, dps: Int) = setDamagePerSecond(getID(name), dps)
+  fun setLight(name: String, newLight: Int) = setLight(getID(name), newLight)
+
 // note: getter api starts here.
 
-  // Required
+  //note: Required - throw errors
+
+  // Translators
   fun getID(name: String): Int {
     return id[name] ?: throw invalidThrow(name, "id")
   }
   fun getName(id: Int): String {
     return name[id] ?: throw invalidThrow(id, "name")
   }
-  // Name oriented
-  fun getInventoryName(name: String): String {
-    return inventoryName[name] ?: throw invalidThrow(name, "id")
+
+  // ID oriented
+  fun getInventoryName(id: Int): String {
+    return inventoryName[id] ?: throw invalidThrow(id, "id")
   }
-  fun getTextures(name: String): Array<String> {
-    return textures[name] ?: throw invalidThrow(name, "textures")
+  fun getTextures(id: Int): Array<String> {
+    return textures[id] ?: throw invalidThrow(id, "textures")
   }
-  fun getDrawType(name: String): DrawType {
-    return drawType[name] ?: throw invalidThrow(name, "drawType")
+  fun getDrawType(id: Int): DrawType {
+    return drawType[id] ?: throw invalidThrow(id, "drawType")
   }
 
-  // Optionals - defaults are set here.
+  // Name oriented
+  fun getInventoryName(name: String): String = getInventoryName(getID(name))
+  fun getTextures(name: String): Array<String> = getTextures(getID(name))
+  fun getDrawType(name: String): DrawType = getDrawType(getID(name))
+
+  //note: Optionals - defaults are set and returned here.
 
   // ID oriented.
   fun isWalkable(id: Int): Boolean {
@@ -197,36 +209,16 @@ object block {
   }
 
   // Name oriented.
-  fun isWalkable(name: String): Boolean {
-    return walkable[name] ?: true
-  }
-  fun isLiquid(name: String): Boolean {
-    return liquid[name] ?: false
-  }
-  fun getFlow(name: String): Int {
-    return flow[name] ?: 0
-  }
-  fun getViscosity(name: String): Int {
-    return viscosity[name] ?: 0
-  }
-  fun isClimbable(name: String): Boolean {
-    return climbable[name] ?: false
-  }
-  fun isSneakJumpClimbable(name: String): Boolean {
-    return sneakJumpClimbable[name] ?: false
-  }
-  fun isFalling(name: String): Boolean {
-    return falling[name] ?: false
-  }
-  fun isClear(name: String): Boolean {
-    return clear[name] ?: false
-  }
-  fun getDamagePerSecond(name: String): Int {
-    return damagePerSecond[name] ?: 0
-  }
-  fun getLight(name: String): Int {
-    return light[name] ?: 0
-  }
+  fun isWalkable(name: String): Boolean = isWalkable(getID(name))
+  fun isLiquid(name: String): Boolean = isLiquid(getID(name))
+  fun getFlow(name: String): Int = getFlow(getID(name))
+  fun getViscosity(name: String): Int = getViscosity(getID(name))
+  fun isClimbable(name: String): Boolean = isClimbable(getID(name))
+  fun isSneakJumpClimbable(name: String): Boolean = isSneakJumpClimbable(getID(name))
+  fun isFalling(name: String): Boolean = isFalling(getID(name))
+  fun isClear(name: String): Boolean = isClear(getID(name))
+  fun getDamagePerSecond(name: String): Int = getDamagePerSecond(getID(name))
+  fun getLight(name: String): Int = getLight(getID(name))
 
 
 
