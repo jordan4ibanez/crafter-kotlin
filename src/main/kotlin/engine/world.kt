@@ -28,8 +28,14 @@ private val generationInput = ConcurrentLinkedQueue<Vector2ic>()
 // Output from chunk generator coroutines goes into here.
 private val generationOutput = ConcurrentLinkedQueue<Pair<Vector2ic, IntArray>>()
 
-
-//note: Then it will go into hashmap<Vector2ic, IntArray>
+fun generateChunk(x: Int, y: Int) {
+  val key = Vector2i(x, y)
+  if (data.containsKey(key) || generationInput.contains(key)) {
+    println("Discarding generation $x, $y")
+    return
+  }
+  generationInput.add(key)
+}
 
 @OptIn(DelicateCoroutinesApi::class)
 internal fun disperseChunkGenerators() {
@@ -136,13 +142,4 @@ private fun processChunks() {
   //todo: process mesh here
 
   // done
-}
-
-fun generateChunk(x: Int, y: Int) {
-  val key = Vector2i(x, y)
-  if (data.containsKey(key) || generationInput.contains(key)) {
-    println("Discarding generation $x, $y")
-    return
-  }
-  generationInput.add(key)
 }
