@@ -67,9 +67,9 @@ object block {
     drawType: DrawType = DrawType.BLOCK
   ) {
     setBlockID(name, id)
-    setBlockInventoryName(name, inventoryName)
-    setTextures(name, textures)
-    setDrawType(name, drawType)
+    setBlockInventoryName(id, inventoryName)
+    setTextures(id, textures)
+    setDrawType(id, drawType)
     setInternalName(id, name)
     //todo: Cannot put texture coords here. Need to be generated first
   }
@@ -78,68 +78,68 @@ object block {
     name[id] = internalName
   }
 
-  fun setBlockInventoryName(name: String, newName: String) {
-    inventoryName[name] = newName
-  }
-
   fun setBlockID(name: String, newId: Int) {
     id[name] = newId
   }
 
-  fun setTextures(name: String, newTextures: Array<String>) {
+  fun setBlockInventoryName(id: Int, newName: String) {
+    inventoryName[id] = newName
+  }
+
+  fun setTextures(id: Int, newTextures: Array<String>) {
     if (newTextures.size != 6) throw RuntimeException("Tried to set block $name textures with ${newTextures.size} size.")
-    textures[name] = newTextures
+    textures[id] = newTextures
   }
 
-  private fun setTextureCoords(name: String, newCoords: HashMap<String, FloatArray>) {
-    textureCoords[name] = newCoords
+  private fun setTextureCoords(id: Int, newCoords: HashMap<String, FloatArray>) {
+    textureCoords[id] = newCoords
   }
 
-  fun setDrawType(name: String, newDrawType: DrawType) {
-    drawType[name] = newDrawType
+  fun setDrawType(id: Int, newDrawType: DrawType) {
+    drawType[id] = newDrawType
   }
 
-  fun setWalkable(name: String, isWalkable: Boolean) {
-    walkable[name] = isWalkable
+  fun setWalkable(id: Int, isWalkable: Boolean) {
+    walkable[id] = isWalkable
   }
 
-  fun setLiquid(name: String, isLiquid: Boolean) {
-    liquid[name] = isLiquid
+  fun setLiquid(id: Int, isLiquid: Boolean) {
+    liquid[id] = isLiquid
   }
 
-  fun setFlow(name: String, flowLevel: Int) {
+  fun setFlow(id: Int, flowLevel: Int) {
     if (!(0..15).contains(flowLevel)) throw RuntimeException("Tried to set block $name with flow level $flowLevel (0..15)")
-    flow[name] = flowLevel
+    flow[id] = flowLevel
   }
 
-  fun setViscosity(name: String, newViscosity: Int) {
+  fun setViscosity(id: Int, newViscosity: Int) {
     if (!(0..15).contains(newViscosity)) throw RuntimeException("Tried to set block $name with viscosity $newViscosity (0..15)")
-    viscosity[name] = newViscosity
+    viscosity[id] = newViscosity
   }
 
-  fun setClimbable(name: String, isClimbable: Boolean) {
-    climbable[name] = isClimbable
+  fun setClimbable(id: Int, isClimbable: Boolean) {
+    climbable[id] = isClimbable
   }
 
-  fun setSneakJumpClimbable(name: String, isSneakJumpClimbable: Boolean) {
-    sneakJumpClimbable[name] = isSneakJumpClimbable
+  fun setSneakJumpClimbable(id: Int, isSneakJumpClimbable: Boolean) {
+    sneakJumpClimbable[id] = isSneakJumpClimbable
   }
 
-  fun setFalling(name: String, isFalling: Boolean) {
-    falling[name] = isFalling
+  fun setFalling(id: Int, isFalling: Boolean) {
+    falling[id] = isFalling
   }
 
-  fun setClear(name: String, isClear: Boolean) {
-    clear[name] = isClear
+  fun setClear(id: Int, isClear: Boolean) {
+    clear[id] = isClear
   }
 
-  fun setDamagePerSecond(name: String, dps: Int) {
-    damagePerSecond[name] = dps
+  fun setDamagePerSecond(id: Int, dps: Int) {
+    damagePerSecond[id] = dps
   }
 
-  fun setLight(name: String, newLight: Int) {
+  fun setLight(id: Int, newLight: Int) {
     if (!(0..15).contains(newLight)) throw RuntimeException("Tried to set block $name with viscosity $newLight (0..15)")
-    light[name] = newLight
+    light[id] = newLight
   }
 
 // note: getter api starts here.
