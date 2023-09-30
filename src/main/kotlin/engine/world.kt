@@ -46,6 +46,15 @@ internal fun disperseChunkGenerators() {
       break
     }
   }
+  counter = 0
+  while (!generationOutput.isEmpty()) {
+    GlobalScope.launch { processChunks() }
+    // fixme: Needs a setting like maxChunkProcessesPerFrame or something
+    counter++
+    if (counter >= 10) {
+      break
+    }
+  }
 }
 
 private fun genChunk() {
@@ -112,9 +121,21 @@ private fun genChunk() {
 }
 
 
-private fun process() {
-  //todo:
-  // This will collect
+private fun processChunks() {
+  if (generationOutput.isEmpty()) return
+
+  val (position, chunkData) = generationOutput.remove()!!
+
+  data[position] = chunkData
+
+  val dataClone = chunkData.clone()
+
+  //fixme: needs a functional safe getter for the data hashmap
+  //get -x +x +z -z clones
+
+  //todo: process mesh here
+
+  // done
 }
 
 fun generateChunk(x: Int, y: Int) {
