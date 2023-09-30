@@ -185,9 +185,6 @@ private fun genChunk() {
   noise.setFrequency(biomeFrequency)
 
   val dataArray = IntArray(WIDTH * HEIGHT * DEPTH)
-  val index = 0
-
-//  println(noise.getNoise(random().toFloat() * 123f, random().toFloat() * 123f))
 
   for (x in 0 until WIDTH) {
     for (z in 0 until DEPTH) {
@@ -209,8 +206,7 @@ private fun genChunk() {
           0 setBlockID 0 setBlockID 15
         }
 
-        dataArray[index] = id
-
+        dataArray[posToIndex(x,y,z)] = id
       }
     }
   }
