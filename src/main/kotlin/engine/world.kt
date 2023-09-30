@@ -1,10 +1,8 @@
 package engine
 
 import kotlinx.coroutines.*
-import org.joml.Math
+import org.joml.*
 import org.joml.Math.random
-import org.joml.Vector2i
-import org.joml.Vector2ic
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -72,19 +70,13 @@ infix fun Int.setBlockID(newID: Int): Int {
   if (!(0..65535).contains(newID)) throw RuntimeException("passed in value larger than 16 bits to set id")
   return combine(newID.shiftBlock(),this.parseBlockLight(),this.parseBlockState())
 }
-
 infix fun Int.setBlockLight(newLight: Int): Int {
   if (!(0..15).contains(newLight)) throw RuntimeException("passed in value larger than 4 bits to set light")
   return combine(this.parseBlockID(), newLight.shiftLight(), this.parseBlockState())
 }
-
 infix fun Int.setBlockState(newState: Int): Int {
   if (!(0..15).contains(newState)) throw RuntimeException("passed in value larger than 4 bits to set state")
   return combine(this.parseBlockID(), this.parseBlockLight(), newState.shiftState())
-}
-
-fun poop(cool: Int): Int {
-  return cool setBlockState 1 setBlockID 123 setBlockLight 14
 }
 
 // raw parsers, do not give out true value, they are bit container locks essentially.
@@ -113,6 +105,21 @@ private fun Int.shiftState(): Int {
 }
 private fun Int.combine(blockID: Int, light: Int, state: Int): Int {
   return blockID xor light xor state
+}
+
+fun posToIndex(x: Int, y: Int, z: Int): Int {
+  return (y * yStride) + (z * DEPTH) + x;
+}
+fun posToIndex(pos: Vector3ic): Int {
+  return (pos.y() * yStride) + (pos.z() * DEPTH) + pos.x()
+}
+
+fun indexToPos(i: Int): Vector3ic {
+  return Vector3i(
+    i % WIDTH,
+    (i / yStride) % HEIGHT,
+    (i / DEPTH) % DEPTH
+  )
 }
 
 
@@ -192,20 +199,16 @@ private fun genChunk() {
 
       for (y in 0 until HEIGHT) {
 
-        // Starts off as air
-        var id = 0
-
-        if (y < height - 6) {
-          id = stone
+        val id = if (y < height - 6) {
+          0 setBlockID stone setBlockLight 0
         } else if (y < height - 1) {
-          id = dirt
+          0 setBlockID dirt setBlockLight 0
         } else if (y < height) {
-          id = grass
+          0 setBlockID grass setBlockLight 0
+        } else {
+          0 setBlockID 0 setBlockID 15
         }
 
-        //todo:
-        // Needs to use functional chunk api to assign into array
-        // for now, this is a test
         dataArray[index] = id
 
       }
