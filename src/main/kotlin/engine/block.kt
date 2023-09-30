@@ -9,13 +9,13 @@ Indexed by: Name literal OR translate through ID -> name literal
 */
 
 //note: con stands for container.
-private fun<T> con(): ConcurrentHashMap<String, T> {
-  return ConcurrentHashMap<String, T>()
+private fun<T> con(): ConcurrentHashMap<Int, T> {
+  return ConcurrentHashMap<Int, T>()
 }
 
 // Required components.
-private val id            = con<Int>()
-private val name          = ConcurrentHashMap<Int, String>()
+private val id            = ConcurrentHashMap<String, Int>()
+private val name          = con<String>()
 private val inventoryName = con<String>()
 private val textures      = con<Array<String>>()
 private val textureCoords = con<HashMap<String, FloatArray>>()
