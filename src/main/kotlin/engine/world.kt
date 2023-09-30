@@ -23,8 +23,6 @@ private var seed = 123_456_789
 // Chunk block data
 private val data = ConcurrentHashMap<Vector2ic, IntArray>()
 
-private val
-
 // Input into chunk generator goes into here.
 private val generationInput = ConcurrentLinkedQueue<Vector2ic>()
 // Output from chunk generator coroutines goes into here.
@@ -60,11 +58,9 @@ fun Int.blockBits(block: Int): String {
 fun Int.getBlockID(): Int {
   return this ushr 16
 }
-
 fun Int.getBlockLight(): Int {
   return this shl 16 ushr 28
 }
-
 fun Int.getBlockState(): Int {
   return this shl 20 ushr 28
 }
