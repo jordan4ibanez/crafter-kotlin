@@ -20,6 +20,8 @@ fun load() {
 
   window.setVsync(false)
 
+  api.initialize()
+
   // Debug texture.
 
   worldAtlas.add("1", "./textures/debug.png")
@@ -27,6 +29,7 @@ fun load() {
   worldAtlas.add("fkalj", "./textures/test_thing.png")
 
   texture.create("debug", worldAtlas.flush(), worldAtlas.getSize(), worldAtlas.getChannels())
+
 
   // Debug mesh.
   mesh.create3D(
