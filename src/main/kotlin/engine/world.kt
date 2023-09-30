@@ -5,6 +5,7 @@ import org.joml.Math
 import org.joml.Math.random
 import org.joml.Vector2i
 import org.joml.Vector2ic
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ConcurrentSkipListSet
@@ -21,7 +22,7 @@ private const val ARRAY_SIZE = WIDTH * HEIGHT * DEPTH
 
 private var seed = 123_456_789
 
-private val data = HashMap<Vector2ic, IntArray>()
+private val data = ConcurrentHashMap<Vector2ic, IntArray>()
 
 // Input into chunk generator goes into here.
 private val generationInput = ConcurrentLinkedQueue<Vector2ic>()
@@ -35,6 +36,22 @@ fun generateChunk(x: Int, y: Int) {
     return
   }
   generationInput.add(key)
+}
+
+fun chunkExists(posX: Int, posZ: Int): Boolean {
+  return data.contains(Vector2i(posX, posZ))
+}
+
+private fun safetGet(posX: Int, posZ: Int): IntArray {
+  return data[Vector2i(posX, posZ)] ?: throw RuntimeException("world: tried to access nonexistent chunk: $posX, $posZ")
+}
+
+private fun safeGetDeconstruct(posX: Int, posZ: Int): Pair<Boolean, IntArray> {
+  return if (chunkExists(posX, posZ)) {
+    Pair(true, safetGet(posX, posZ).clone())
+  } else {
+    Pair(false, IntArray(0))
+  }
 }
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -69,7 +86,7 @@ private fun genChunk() {
 
    val (xOffset, zOffset) = generationInput.remove()!!.destructure()
 
-  println("Generating: $xOffset, $zOffset")
+//  println("Generating: $xOffset, $zOffset")
 
   //fixme: placeholder
   val grass = 1
@@ -83,11 +100,7 @@ private fun genChunk() {
   val noise = Noise(seed)
 
   noise.setFrequency(biomeFrequency)
-
-  //note: At the moment, this is a controlled memory leak.
-  // A durability test.
-
-
+  
   val dataArray = IntArray(WIDTH * HEIGHT * DEPTH)
   val index = 0
 
@@ -134,12 +147,20 @@ private fun processChunks() {
 
   data[position] = chunkData
 
+  // Separate internal pointer
   val dataClone = chunkData.clone()
 
-  //fixme: needs a functional safe getter for the data hashmap
-  //get -x +x +z -z clones
-
-  //todo: process mesh here
+  buildChunkMesh(position.x(), position.y(), dataClone)
 
   // done
+}
+
+private fun buildChunkMesh(posX: Int, posZ: Int, chunkData: IntArray) {
+
+  val (leftExists, left) = safeGetDeconstruct(posX - 1, posZ)
+  val (rightExists, right) = safeGetDeconstruct(posX + 1, posZ)
+  val (backExists, back) = safeGetDeconstruct(posX, posZ + 1)
+  val (frontExists, front) = safeGetDeconstruct(posX, posZ - 1)
+
+  println("buildChunkMesh is running")
 }
