@@ -20,7 +20,10 @@ private const val ARRAY_SIZE = WIDTH * HEIGHT * DEPTH
 
 private var seed = 123_456_789
 
+// Chunk block data
 private val data = ConcurrentHashMap<Vector2ic, IntArray>()
+
+private val
 
 // Input into chunk generator goes into here.
 private val generationInput = ConcurrentLinkedQueue<Vector2ic>()
@@ -184,7 +187,7 @@ private fun genChunk() {
 
   noise.setFrequency(biomeFrequency)
 
-  val dataArray = IntArray(WIDTH * HEIGHT * DEPTH)
+  val dataArray = IntArray(ARRAY_SIZE)
 
   for (x in 0 until WIDTH) {
     for (z in 0 until DEPTH) {
