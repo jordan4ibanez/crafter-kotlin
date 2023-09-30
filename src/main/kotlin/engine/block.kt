@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap
 /*
 A concurrent component system to handle blocks.
 Basic functional interface.
-Indexed by: Name literal OR translate through ID -> name literal
+Indexed by: ID OR translate through name -> ID
 */
 
 //note: con stands for container.
