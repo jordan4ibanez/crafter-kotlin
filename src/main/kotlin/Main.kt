@@ -49,8 +49,13 @@ fun load() {
     intArrayOf(0, 1, 2, 0, 2, 3),
     // texture name.
     "debug"
-    )
+  )
 
+  for (x in -16 until 16) {
+    for (y in -16 until 16) {
+      generateChunk(x, y)
+    }
+  }
 }
 
 

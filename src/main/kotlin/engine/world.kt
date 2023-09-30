@@ -5,7 +5,9 @@ import org.joml.Math
 import org.joml.Math.random
 import org.joml.Vector2i
 import org.joml.Vector2ic
+import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.ConcurrentSkipListSet
 
 /*
 This is a data oriented approach to the mess that was in Java.
@@ -26,33 +28,38 @@ private val generationInput = ConcurrentLinkedQueue<Vector2ic>()
 // Output from chunk generator coroutines goes into here.
 private val generationOutput = ConcurrentLinkedQueue<Pair<Vector2ic, IntArray>>()
 
+
 //note: Then it will go into hashmap<Vector2ic, IntArray>
 
 @OptIn(DelicateCoroutinesApi::class)
 internal fun disperseChunkGenerators() {
   //note: Wrapper function to make implementation cleaner.
-  // Shoot and forget.
+  // Shoot and forget. More like a machine gun.
 
   // If there's nothing to be done, do nothing.
-//  if (generationInput.isEmpty()) return
-  GlobalScope.launch {genChunk() }
+  var counter = 0
+  while (!generationInput.isEmpty()) {
+    GlobalScope.launch { genChunk() }
+    // fixme: Needs a setting like maxChunkGensPerFrame or something
+    counter++
+    if (counter >= 10) {
+      break
+    }
+  }
 }
 
 private fun genChunk() {
   //note: Async double check.
+   if (generationInput.isEmpty()) return
 
-  //Fixme: Remember to re-enable this!
-  // if (generationInput.isEmpty()) return
-  // val position = generationInput.remove()!!
+   val (xOffset, zOffset) = generationInput.remove()!!.destructure()
+
+  println("Generating: $xOffset, $zOffset")
 
   //fixme: placeholder
   val grass = 1
   val dirt  = 2
   val stone = 3
-
-  // fixme: Needs to be passed in val
-  val xOffset = 0
-  val zOffset = 0
 
   val biomeFrequency = 0.1f
   val biomeScale = 1f
@@ -101,15 +108,20 @@ private fun genChunk() {
     }
   }
 
-  //Note: this will crash.
   generationOutput.add(Pair(Vector2i(1,2), dataArray))
-
-  println("size: ${generationOutput.size}")
-
 }
 
 
 private fun process() {
   //todo:
   // This will collect
+}
+
+fun generateChunk(x: Int, y: Int) {
+  val key = Vector2i(x, y)
+  if (data.containsKey(key) || generationInput.contains(key)) {
+    println("Discarding generation $x, $y")
+    return
+  }
+  generationInput.add(key)
 }
