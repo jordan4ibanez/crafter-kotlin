@@ -32,10 +32,10 @@ object api {
   }
 
   private fun runCode(rawCode: String) {
-    try { javaScript.eval(rawCode) } catch (e: Exception) { throw RuntimeException("api: $e") }
+    try { javaScript.eval(rawCode) } catch (e: Exception) { throw RuntimeException("(Javascript API error):\n$e") }
   }
 
   private fun invoke(functionName: String, vararg args: Any): Any {
-    try { return invoker.invokeFunction(functionName, args) } catch (e: Exception) { throw RuntimeException("api: $e") }
+    try { return invoker.invokeFunction(functionName, args) } catch (e: Exception) { throw RuntimeException("(Javascript API error):\n$e") }
   }
 }
