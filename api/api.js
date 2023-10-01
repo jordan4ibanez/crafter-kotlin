@@ -21,8 +21,6 @@ TODO: Figure out more things like mobs & items & entities
 TODO! VERY IMPORTANT! Add comments! See if there is a way to link the java documentation into javascript....somehow?
 */
 
-const global = globalThis
-
 /*
 API is the base of the API which loads up class variables into the crafter array.
 This allows for mods to index DIRECTLY into the engine without needing to be compiled.
@@ -72,6 +70,7 @@ const blockDefinition = []
   // const BlockDefinitionContainer = Java.type("engine.world.block.BlockDefinitionContainer")
   // const BiomeDefinitionContainer = Java.type("engine.world.biome.BiomeDefinitionContainer")
   const api = Java.type("engine.api").INSTANCE
+  const fileHelpers = Java.type("engine.File_helpersKt")
 
   // const ChunkStorage = Java.type("engine.world.chunk.ChunkStorage")
   // const ActionStorage = Java.type("engine.api.ActionStorage")
@@ -80,10 +79,10 @@ const blockDefinition = []
   // const BitManipulation = Java.type("engine.world.chunk.ChunkBitManipulation")
 
   // Lua equivalents.
-  //
-  const dofile = Java.type("engine.api.API").runFile
-  const readFileToString = Java.type("engine.utility.FileReader").getFileString
-  const math = Java.type("org.joml.Math")
+  // Shove these into the crafter array, then globalize them.
+  crafter.dofile = fileHelpers.runFile
+  crafter.getFileString = fileHelpers.getFileString
+  crafter.math = Java.type("org.joml.Math")
 
   // // Javascript level Block Definition registration function.
   // // This is why I avoid singletons, cannot reduce this.
@@ -237,6 +236,16 @@ const blockDefinition = []
   // blockData.setState = BitManipulation.setBlockState
 
 }()
+
+
+// Now globalize lua equivelents.
+const dofile = crafter.dofile
+const getFileString = crafter.getFileString
+const math = crafter.math
+
+// Kotlin equivelents.
+const println = print
+
 //
 // Air is reserved here
 // crafter.registerBlock(
