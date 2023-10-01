@@ -5,6 +5,10 @@ import javax.script.Compilable
 import javax.script.Invocable
 import javax.script.ScriptContext
 
+/*
+api works as a state machine.
+*/
+
 object api {
 
   //note: val for now, var when main menu gets put it so it can be reloaded. Or maybe not. We'll see.
@@ -15,9 +19,18 @@ object api {
 
   fun initialize() {
 
-    javaScript.eval("""
-      print("Hello, API!")
-    """.trimIndent())
 
+  }
+
+  private fun runFile(fileLocation: String) {
+    runCode(getFileString(fileLocation))
+  }
+
+  private fun runCode(rawCode: String) {
+    try { javaScript.eval(rawCode) } catch (e: Exception) { throw RuntimeException("api: $e") }
+  }
+
+  private fun invoke(functionName: String, vararg args: Any): Any {
+    try { return invoker.invokeFunction(functionName, args) } catch (e: Exception) { throw RuntimeException("api: $e") }
   }
 }
