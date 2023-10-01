@@ -39,3 +39,11 @@ object api {
     try { return invoker.invokeFunction(functionName, args) } catch (e: Exception) { throw RuntimeException("(Javascript API error):\n$e") }
   }
 }
+
+fun test() {
+  println("testFun")
+}
+
+class TestClass {
+  val x = 1
+}

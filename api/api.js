@@ -30,9 +30,9 @@ Possible implementations: Typescript (one day)
 
 // Lua equivalents.
 //
-const dofile = Java.type("org.crafter.engine.api.API").runFile
-const readFileToString = Java.type("org.crafter.engine.utility.FileReader").getFileString
-const math = Java.type("org.joml.Math")
+//const dofile = Java.type("org.crafter.engine.api.API").runFile
+//const readFileToString = Java.type("org.crafter.engine.utility.FileReader").getFileString
+//const math = Java.type("org.joml.Math")
 
 // Global java types assignment.
 //
@@ -75,7 +75,8 @@ const blockDefinition = []
     // Classes from the engine which will disappear after this scope.
 //    const BlockDefinitionContainer = Java.type("org.crafter.engine.world.block.BlockDefinitionContainer")
 //    const BiomeDefinitionContainer = Java.type("org.crafter.engine.world.biome.BiomeDefinitionContainer")
-    const API = Java.type("org.crafter.engine.api.API")
+    const API = Java.type("engine.api")
+    print(API)
 
 //    const ChunkStorage = Java.type("org.crafter.engine.world.chunk.ChunkStorage")
 //    const ActionStorage = Java.type("org.crafter.engine.api.ActionStorage")
