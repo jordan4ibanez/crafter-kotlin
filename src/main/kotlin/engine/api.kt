@@ -18,7 +18,7 @@ object api {
   private val invoker = javaScript as Invocable
 
   // One day
-//  private val tsCompiler =
+//  private val tsCompiler = something
 
   fun initialize() {
 
