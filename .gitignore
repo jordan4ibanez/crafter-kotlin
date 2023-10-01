@@ -47,3 +47,4 @@ bin/
 *.kts~
 .idea/gradle.xml
 .idea/misc.xml
+*.js~
