@@ -242,7 +242,7 @@ class Packer {
 
   private fun pack() {
     textures.values.forEach { textureCanvas ->
-      println("packing ${textureCanvas.name}  ======================")
+//      println("packing ${textureCanvas.name}  ======================")
       while(!tetrisPack(textureCanvas)) {
         val currentSize = canvas.size
         canvas.resize(currentSize.x + expansionAmount, currentSize.y + expansionAmount)
@@ -308,7 +308,7 @@ class Packer {
 
           if (newScore > bestScore) return@xLoop
 
-          println("($x | $y)")
+//          println("($x | $y)")
 
           if (x + thisWidth + padding >= maxX || y + thisHeight + padding >= maxY) return@xLoop
 
@@ -328,7 +328,7 @@ class Packer {
               otherY + otherHeight + padding > y &&
               otherY < y + thisHeight + padding) {
 
-              println("${textureCanvas.uuid} collided with ${other.uuid}")
+//              println("${textureCanvas.uuid} collided with ${other.uuid}")
 
               failed = true
               return@xLoop
@@ -336,7 +336,7 @@ class Packer {
           }
 
           if (!failed) {
-            println("found")
+//            println("found")
             found = true
             bestX = x
             bestY = y
@@ -347,7 +347,7 @@ class Packer {
       }
     }
 
-    println("final score: $bestScore")
+//    println("final score: $bestScore")
 
     if (!found) return false
 
