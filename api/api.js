@@ -28,22 +28,22 @@ Limitations: Ecmascript 6. Class architecture is not implemented into nashorn ye
 Possible implementations: Typescript (one day)
 */
 
-// Lua equivalents!
+// Lua equivalents.
 //
 const dofile = Java.type("org.crafter.engine.api.API").runFile
 const readFileToString = Java.type("org.crafter.engine.utility.FileReader").getFileString
 const math = Java.type("org.joml.Math")
 
-// Global java types assignment
+// Global java types assignment.
 //
-const BlockDefinition = Java.type("org.crafter.engine.world.block.BlockDefinition")
-const DrawType = Java.type("org.crafter.engine.world.block.DrawType")
-const BiomeDefinition = Java.type("org.crafter.engine.world.biome.BiomeDefinition")
-const Player = Java.type("org.crafter.game.entity.player.Player")
-// Script actions
-const OnJoin = Java.type("org.crafter.engine.api.actions.on_join.OnJoin")
-const OnTick = Java.type("org.crafter.engine.api.actions.on_tick.OnTick")
-const OnTimer = Java.type("org.crafter.engine.api.actions.on_timer.OnTimer")
+//const BlockDefinition = Java.type("org.crafter.engine.world.block.BlockDefinition")
+//const DrawType = Java.type("org.crafter.engine.world.block.DrawType")
+//const BiomeDefinition = Java.type("org.crafter.engine.world.biome.BiomeDefinition")
+//const Player = Java.type("org.crafter.game.entity.player.Player")
+// Script actions.
+//const OnJoin = Java.type("org.crafter.engine.api.actions.on_join.OnJoin")
+//const OnTick = Java.type("org.crafter.engine.api.actions.on_tick.OnTick")
+//const OnTimer = Java.type("org.crafter.engine.api.actions.on_timer.OnTimer")
 
 // JOML types
 //
