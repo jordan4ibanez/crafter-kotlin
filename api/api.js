@@ -21,6 +21,8 @@ TODO: Figure out more things like mobs & items & entities
 TODO! VERY IMPORTANT! Add comments! See if there is a way to link the java documentation into javascript....somehow?
 */
 
+const global = globalThis
+
 /*
 API is the base of the API which loads up class variables into the crafter array.
 This allows for mods to index DIRECTLY into the engine without needing to be compiled.
@@ -30,20 +32,20 @@ Possible implementations: Typescript (one day)
 
 // Lua equivalents.
 //
-//const dofile = Java.type("org.crafter.engine.api.API").runFile
-//const readFileToString = Java.type("org.crafter.engine.utility.FileReader").getFileString
-//const math = Java.type("org.joml.Math")
+const dofile = Java.type("engine.api.API").runFile
+const readFileToString = Java.type("engine.utility.FileReader").getFileString
+const math = Java.type("org.joml.Math")
 
 // Global java types assignment.
 //
-//const BlockDefinition = Java.type("org.crafter.engine.world.block.BlockDefinition")
-//const DrawType = Java.type("org.crafter.engine.world.block.DrawType")
-//const BiomeDefinition = Java.type("org.crafter.engine.world.biome.BiomeDefinition")
+//const BlockDefinition = Java.type("engine.world.block.BlockDefinition")
+//const DrawType = Java.type("engine.world.block.DrawType")
+//const BiomeDefinition = Java.type("engine.world.biome.BiomeDefinition")
 //const Player = Java.type("org.crafter.game.entity.player.Player")
 // Script actions.
-//const OnJoin = Java.type("org.crafter.engine.api.actions.on_join.OnJoin")
-//const OnTick = Java.type("org.crafter.engine.api.actions.on_tick.OnTick")
-//const OnTimer = Java.type("org.crafter.engine.api.actions.on_timer.OnTimer")
+//const OnJoin = Java.type("engine.api.actions.on_join.OnJoin")
+//const OnTick = Java.type("engine.api.actions.on_tick.OnTick")
+//const OnTimer = Java.type("engine.api.actions.on_timer.OnTimer")
 
 // JOML types
 //
@@ -57,11 +59,11 @@ const Vector3fc = Java.type("org.joml.Vector3fc")
 const Vector2ic = Java.type("org.joml.Vector2ic")
 const Vector3ic = Java.type("org.joml.Vector3ic")
 
-// Block Manipulator gets it's own table for minor performance and clarity.
-const blockManipulator = []
-
 // Very similar to minetest's api table, basically a clone of it in JS.
 const crafter = []
+
+// Block Manipulator gets it's own table for minor performance and clarity.
+const blockManipulator = []
 
 // Similar component to minetest's block manipulator data worker, but integrated into it's own table.
 const blockData = []
@@ -73,17 +75,15 @@ const blockDefinition = []
 !function(){
 
     // Classes from the engine which will disappear after this scope.
-//    const BlockDefinitionContainer = Java.type("org.crafter.engine.world.block.BlockDefinitionContainer")
-//    const BiomeDefinitionContainer = Java.type("org.crafter.engine.world.biome.BiomeDefinitionContainer")
+//    const BlockDefinitionContainer = Java.type("engine.world.block.BlockDefinitionContainer")
+//    const BiomeDefinitionContainer = Java.type("engine.world.biome.BiomeDefinitionContainer")
     const api = Java.type("engine.api").INSTANCE
-    print(api)
-    api.debugTest()
 
-//    const ChunkStorage = Java.type("org.crafter.engine.world.chunk.ChunkStorage")
-//    const ActionStorage = Java.type("org.crafter.engine.api.ActionStorage")
+//    const ChunkStorage = Java.type("engine.world.chunk.ChunkStorage")
+//    const ActionStorage = Java.type("engine.api.ActionStorage")
 //    const PlayerStorage = Java.type("org.crafter.game.entity.player.PlayerStorage")
-//    const Chunk = Java.type("org.crafter.engine.world.chunk.Chunk")
-//    const BitManipulation = Java.type("org.crafter.engine.world.chunk.ChunkBitManipulation")
+//    const Chunk = Java.type("engine.world.chunk.Chunk")
+//    const BitManipulation = Java.type("engine.world.chunk.ChunkBitManipulation")
 //
 //    // Javascript level Block Definition registration function.
 //    // This is why I avoid singletons, cannot reduce this.
