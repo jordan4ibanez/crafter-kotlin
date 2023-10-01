@@ -75,8 +75,9 @@ const blockDefinition = []
     // Classes from the engine which will disappear after this scope.
 //    const BlockDefinitionContainer = Java.type("org.crafter.engine.world.block.BlockDefinitionContainer")
 //    const BiomeDefinitionContainer = Java.type("org.crafter.engine.world.biome.BiomeDefinitionContainer")
-    const API = Java.type("engine.api")
-    print(API)
+    const api = Java.type("engine.api").INSTANCE
+    print(api)
+    api.debugTest()
 
 //    const ChunkStorage = Java.type("org.crafter.engine.world.chunk.ChunkStorage")
 //    const ActionStorage = Java.type("org.crafter.engine.api.ActionStorage")

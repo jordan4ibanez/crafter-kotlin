@@ -38,6 +38,10 @@ object api {
   private fun invoke(functionName: String, vararg args: Any): Any {
     try { return invoker.invokeFunction(functionName, args) } catch (e: Exception) { throw RuntimeException("(Javascript API error):\n$e") }
   }
+
+  fun debugTest() {
+    println("api debug successful.")
+  }
 }
 
 fun test() {
