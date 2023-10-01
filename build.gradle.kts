@@ -41,13 +41,8 @@ dependencies {
 
 //    implementation("org.jetbrains.kotlin", "kotlin-stdlib" ,"1.9.10")
 
-//    implementation("org.openjdk.nashorn", "nashorn-core", "15.4")
-
-    // KTS scripting language
-    implementation("org.jetbrains.kotlin", "kotlin-scripting-common")
-    implementation("org.jetbrains.kotlin", "kotlin-scripting-jvm")
-    implementation("org.jetbrains.kotlin", "kotlin-scripting-dependencies")
-    implementation("org.jetbrains.kotlin", "kotlin-scripting-dependencies-maven")
+    // JS scripting language
+    implementation("org.openjdk.nashorn", "nashorn-core", "15.4")
 
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
 
