@@ -164,9 +164,18 @@ internal fun disperseChunkGenerators() {
 
 private fun genChunk() {
   //note: Async double check.
-   if (generationInput.isEmpty()) return
+  if (generationInput.isEmpty()) return
 
-   val (xOffset, zOffset) = generationInput.remove()!!.destructure()
+  val gotten: Vector2ic
+
+  try {
+    gotten = generationInput.remove()!!
+  } catch (e: Exception) {
+    println("genChunk: failed.")
+    return
+  }
+
+  val (xOffset, zOffset) = gotten.destructure()
 
 //  println("Generating: $xOffset, $zOffset")
 
@@ -217,7 +226,16 @@ private fun genChunk() {
 private fun processChunks() {
   if (generationOutput.isEmpty()) return
 
-  val (position, chunkData) = generationOutput.remove()!!
+  val gotten: Pair<Vector2ic, IntArray>
+
+  try {
+    gotten = generationOutput.remove()!!
+  } catch (e: Exception) {
+    println("processChunks: failed.")
+    return
+  }
+
+  val (position, chunkData) = gotten
 
   data[position] = chunkData
 
@@ -236,5 +254,5 @@ private fun buildChunkMesh(posX: Int, posZ: Int, chunkData: IntArray) {
   val (backExists, back) = safeGetDeconstruct(posX, posZ + 1)
   val (frontExists, front) = safeGetDeconstruct(posX, posZ - 1)
 
-  println("buildChunkMesh is running")
+//  println("buildChunkMesh is running")
 }
