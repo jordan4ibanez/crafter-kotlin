@@ -31,7 +31,7 @@ Possible implementations: Typescript (one day)
 // Global java types assignment.
 //
 // const BlockDefinition = Java.type("engine.BlockDefinition")
-//const DrawType = Java.type("engine.world.block.DrawType")
+const DrawType = Java.type("engine.DrawType")
 //const BiomeDefinition = Java.type("engine.world.biome.BiomeDefinition")
 //const Player = Java.type("org.crafter.game.entity.player.Player")
 // Script actions.
@@ -66,10 +66,9 @@ const blockDefinition = [];
 // Auto executing lambda localized variable scope discards
 (function(){
 
-  // Classes from the engine which will disappear after this scope.
-  // const BlockDefinitionContainer = Java.type("engine.world.block.BlockDefinitionContainer")
-  // const BiomeDefinitionContainer = Java.type("engine.world.biome.BiomeDefinitionContainer")
+  // Objects from the engine which will be referenced after this scope ends.
   const api = Java.type("engine.api").INSTANCE
+  const block = Java.type("engine.block").INSTANCE
   const fileHelpers = Java.type("engine.File_helpersKt")
 
   // const ChunkStorage = Java.type("engine.world.chunk.ChunkStorage")
@@ -79,19 +78,18 @@ const blockDefinition = [];
   // const BitManipulation = Java.type("engine.world.chunk.ChunkBitManipulation")
 
   // Lua equivalents.
-  // Shove these into the crafter array, then globalize them.
+  // Shove these into the crafter array, then globalize themlater .
   crafter.dofile = function(fileDirectory) { api.runFile(fileDirectory) }
   crafter.loadstring = function(rawCode) { api.runCode(rawCode) }
-  crafter.test = function() { api.test() }
 
   crafter.getFileString = fileHelpers.getFileString
   crafter.math = Java.type("org.joml.Math")
 
-  // // Javascript level Block Definition registration function.
-  // // This is why I avoid singletons, cannot reduce this.
-  // crafter.registerBlock = function(newBlockDefinition) {
-  //     BlockDefinitionContainer.getMainInstance().registerBlock(newBlockDefinition)
-  // }
+  //fixme: id needs to be dispatched internally.
+  crafter.registerBlock = function(id, name, inventoryName, textures, drawtype) {
+     block.newBlock(id, name, inventoryName, textures, drawtype)
+  }
+
 
   // // Javascript level Biome Definition registration function.
   // // This is why I avoid singletons, cannot reduce this.

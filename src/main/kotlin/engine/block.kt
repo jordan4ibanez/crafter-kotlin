@@ -66,12 +66,15 @@ object block {
     textures: Array<String>,
     drawType: DrawType = DrawType.BLOCK
   ) {
+
+    //fixme: ID needs to be auto dispatched.
     setBlockID(name, id)
     setBlockInventoryName(id, inventoryName)
     setTextures(id, textures)
     setDrawType(id, drawType)
     setInternalName(id, name)
     //todo: Cannot put texture coords here. Need to be generated first
+    println("created block $name at $id with drawtype $drawType and inv name $inventoryName")
   }
 
   // Translators

@@ -41,10 +41,6 @@ object api {
     println(jsRawCode.toString())
   }
 
-  fun test() {
-    println("test wurk")
-  }
-
   private fun invoke(functionName: String, vararg args: Any): Any {
     try { return invoker.invokeFunction(functionName, args) } catch (e: Exception) { throw RuntimeException("(Javascript API error):\n$e") }
   }
