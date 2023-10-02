@@ -30,7 +30,7 @@ Possible implementations: Typescript (one day)
 
 // Global java types assignment.
 //
-const BlockDefinition = Java.type("engine.BlockDefinition")
+// const BlockDefinition = Java.type("engine.BlockDefinition")
 //const DrawType = Java.type("engine.world.block.DrawType")
 //const BiomeDefinition = Java.type("engine.world.biome.BiomeDefinition")
 //const Player = Java.type("org.crafter.game.entity.player.Player")
@@ -80,7 +80,10 @@ const blockDefinition = [];
 
   // Lua equivalents.
   // Shove these into the crafter array, then globalize them.
-  crafter.dofile = fileHelpers.runFile
+  crafter.dofile = function(fileDirectory) { api.runFile(fileDirectory) }
+  crafter.loadstring = function(rawCode) { api.runCode(rawCode) }
+  crafter.test = function() { api.test() }
+
   crafter.getFileString = fileHelpers.getFileString
   crafter.math = Java.type("org.joml.Math")
 
@@ -239,6 +242,7 @@ const blockDefinition = [];
 
 // Now globalize lua equivelents.
 const dofile = crafter.dofile;
+const loadstring = crafter.loadstring;
 const getFileString = crafter.getFileString;
 const math = crafter.math;
 

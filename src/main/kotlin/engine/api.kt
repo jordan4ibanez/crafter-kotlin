@@ -1,6 +1,7 @@
 package engine
 
 import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory
+import org.openjdk.nashorn.internal.objects.NativeArray
 import javax.script.Compilable
 import javax.script.Invocable
 import javax.script.ScriptContext
@@ -27,27 +28,25 @@ object api {
 
   }
 
-  private fun runFile(fileLocation: String) {
+  fun runFile(fileLocation: String) {
     runCode(getFileString(fileLocation))
   }
 
-  private fun runCode(rawCode: String) {
+  fun runCode(rawCode: String) {
     try { javaScript.eval(rawCode) } catch (e: Exception) { throw RuntimeException("(Javascript API error):\n$e") }
+  }
+
+  fun runCode(jsRawCode: NativeArray) {
+    println("output debug:")
+    println(jsRawCode.toString())
+  }
+
+  fun test() {
+    println("test wurk")
   }
 
   private fun invoke(functionName: String, vararg args: Any): Any {
     try { return invoker.invokeFunction(functionName, args) } catch (e: Exception) { throw RuntimeException("(Javascript API error):\n$e") }
   }
 
-  fun debugTest() {
-    println("api debug successful.")
-  }
-}
-
-fun test() {
-  println("testFun")
-}
-
-class TestClass {
-  val x = 1
 }
