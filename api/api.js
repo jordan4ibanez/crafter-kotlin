@@ -30,7 +30,7 @@ Possible implementations: Typescript (one day)
 
 // Global java types assignment.
 //
-//const BlockDefinition = Java.type("engine.world.block.BlockDefinition")
+const BlockDefinition = Java.type("engine.BlockDefinition")
 //const DrawType = Java.type("engine.world.block.DrawType")
 //const BiomeDefinition = Java.type("engine.world.biome.BiomeDefinition")
 //const Player = Java.type("org.crafter.game.entity.player.Player")
@@ -41,30 +41,30 @@ Possible implementations: Typescript (one day)
 
 // JOML types
 //
-const Vector2f = Java.type("org.joml.Vector2f")
-const Vector3f = Java.type("org.joml.Vector3f")
-const Vector2i = Java.type("org.joml.Vector2i")
-const Vector3i = Java.type("org.joml.Vector3i")
+const Vector2f = Java.type("org.joml.Vector2f");
+const Vector3f = Java.type("org.joml.Vector3f");
+const Vector2i = Java.type("org.joml.Vector2i");
+const Vector3i = Java.type("org.joml.Vector3i");
 // Readonly
-const Vector2fc = Java.type("org.joml.Vector2fc")
-const Vector3fc = Java.type("org.joml.Vector3fc")
-const Vector2ic = Java.type("org.joml.Vector2ic")
-const Vector3ic = Java.type("org.joml.Vector3ic")
+const Vector2fc = Java.type("org.joml.Vector2fc");
+const Vector3fc = Java.type("org.joml.Vector3fc");
+const Vector2ic = Java.type("org.joml.Vector2ic");
+const Vector3ic = Java.type("org.joml.Vector3ic");
 
 // Very similar to minetest's api table, basically a clone of it in JS.
-const crafter = []
+const crafter = [];
 
 // Block Manipulator gets it's own table for minor performance and clarity.
-const blockManipulator = []
+const blockManipulator = [];
 
 // Similar component to minetest's block manipulator data worker, but integrated into it's own table.
-const blockData = []
+const blockData = [];
 
 // Stores functions for the Block Definition Container.
-const blockDefinition = []
+const blockDefinition = [];
 
 // Auto executing lambda localized variable scope discards
-!function(){
+(function(){
 
   // Classes from the engine which will disappear after this scope.
   // const BlockDefinitionContainer = Java.type("engine.world.block.BlockDefinitionContainer")
@@ -235,16 +235,15 @@ const blockDefinition = []
   // // Returns: [int] Manipulated raw Block data.
   // blockData.setState = BitManipulation.setBlockState
 
-}()
-
+})();
 
 // Now globalize lua equivelents.
-const dofile = crafter.dofile
-const getFileString = crafter.getFileString
-const math = crafter.math
+const dofile = crafter.dofile;
+const getFileString = crafter.getFileString;
+const math = crafter.math;
 
 // Kotlin equivelents.
-const println = print
+const println = print;
 
 //
 // Air is reserved here
