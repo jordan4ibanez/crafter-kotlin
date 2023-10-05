@@ -18,7 +18,6 @@
 
 /*
 TODO: Figure out more things like mobs & items & entities
-TODO! VERY IMPORTANT! Add comments! See if there is a way to link the java documentation into javascript....somehow?
 */
 
 /*
@@ -30,7 +29,6 @@ Possible implementations: Typescript (one day)
 
 // Global java types assignment.
 //
-
 const api = Java.type("engine.api").INSTANCE
 const block = Java.type("engine.block").INSTANCE
 const fileHelpers = Java.type("engine.File_helpersKt")
@@ -104,7 +102,10 @@ const crafter = {
    */
   registerBlock: function(id, name, inventoryName, textures, drawtype) {
     block.newBlock(id, name, inventoryName, textures, drawtype)
-  }
-}
+  },
 
-crafter.registerBlock(0, "Air", "Air", ["air.png","air.png","air.png","air.png","air.png","air.png"], DrawType.AIR)
+};
+
+crafter.registerBlock(0, "Air", "Air", ["air.png","air.png","air.png","air.png","air.png","air.png"], DrawType.AIR);
+
+
