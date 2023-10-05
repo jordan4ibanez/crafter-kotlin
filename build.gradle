@@ -40,6 +40,8 @@ dependencies {
 
     // JS scripting language
     implementation "org.openjdk.nashorn:nashorn-core:15.4"
+    // Groovy scripting language
+    implementation 'org.apache.groovy:groovy-all:4.0.15'
 
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
