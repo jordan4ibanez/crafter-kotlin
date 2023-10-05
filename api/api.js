@@ -20,7 +20,7 @@ const DrawType = {
   BLOCK_BOX: Java.type("engine.DrawType").BLOCK_BOX,
   TORCH: Java.type("engine.DrawType").TORCH,
   LIQUID_SOURCE: Java.type("engine.DrawType").LIQUID_SOURCE,
-  LIQUID_FLOR: Java.type("engine.DrawType").LIQUID_FLOW,
+  LIQUID_FLOW: Java.type("engine.DrawType").LIQUID_FLOW,
   GLASS: Java.type("engine.DrawType").GLASS,
   PLANT: Java.type("engine.DrawType").PLANT,
   LEAVES: Java.type("engine.DrawType").LEAVES
