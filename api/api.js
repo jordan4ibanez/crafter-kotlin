@@ -78,7 +78,7 @@ const blockDefinition = [];
   // const BitManipulation = Java.type("engine.world.chunk.ChunkBitManipulation")
 
   // Lua equivalents.
-  // Shove these into the crafter array, then globalize themlater .
+  // Shove these into the crafter array, then globalize them later.
   crafter.dofile = function(fileDirectory) { api.runFile(fileDirectory) }
   crafter.loadstring = function(rawCode) { api.runCode(rawCode) }
 
@@ -238,13 +238,13 @@ const blockDefinition = [];
 
 })();
 
-// Now globalize lua equivelents.
+// Now globalize lua equivalents.
 const dofile = crafter.dofile;
 const loadstring = crafter.loadstring;
 const getFileString = crafter.getFileString;
 const math = crafter.math;
 
-// Kotlin equivelents.
+// Kotlin equivalents.
 const println = print;
 
 //
