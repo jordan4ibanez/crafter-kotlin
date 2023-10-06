@@ -14,4 +14,6 @@ fun initialize() {
 
   api.initialize()
 
+  blockIDCache.write()
+
 }

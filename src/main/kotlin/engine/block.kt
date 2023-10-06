@@ -1,7 +1,9 @@
 package engine
 
+import com.fasterxml.jackson.annotation.JsonTypeId
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.JsonNodeType
 import java.util.concurrent.ConcurrentHashMap
 
 /*
@@ -325,6 +327,12 @@ internal object blockIDCache {
     folderCheck()
   }
 
+  fun assign(name: String): Int {
+    if (name == "air" && !nameToIDMap.containsKey("air")) {
+      nameToIDMap[name] = 0
+    }
+    return getID(name)
+  }
   private fun folderCheck() {
     if (!isFolder(cacheFolder)) {
       println("blockIDCache: Creating cache folder.")
@@ -353,6 +361,29 @@ internal object blockIDCache {
 
       val type = value.nodeType
 
+      if (type != JsonNodeType.NUMBER) {
+        throw RuntimeException("blockIDCache: $key was type $type. Did you modify the cache?")
+      }
+
+      duplicateCheck(key)
+
+      val rawValue = value.asDouble()
+      val numericValue = value.asInt()
+
+      if ((rawValue * 100.0).toInt() != (numericValue * 100)) {
+        throw RuntimeException("blockIDCache: $key was floating. Did you modify the cache?")
+      }
+
+      // Automatically tick up the free slot for the next numeric value.
+      //! fixme: testme: this should automatically do this?
+      //! or, this should be ticked up to the next val with a gap check.
+      //! or, this should test the gotten value with the expected next value.
+      //! this needs to be tested with a broken cache!
+      if (numericValue >= nextFreeSlot) {
+        nextFreeSlot = numericValue + 1
+      }
+
+      nameToIDMap[key] = numericValue
     }
   }
 
@@ -371,6 +402,13 @@ internal object blockIDCache {
     if (nameToIDMap.contains(name)) {
       throw RuntimeException("blockIDCache: Duplicate detected. $name")
     }
+  }
+
+  fun write() {
+    println("blockIDCache: Writing cache.")
+    val mapper = ObjectMapper()
+    try { mapper.writeValue(makeFile(cacheFile), nameToIDMap) } catch (e: Exception) { throw RuntimeException("blockIDCache: Write error. $e") }
+    println("blockIDCache: Cache write successful.")
   }
 }
 
