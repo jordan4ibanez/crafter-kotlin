@@ -64,14 +64,12 @@ object block {
 // note: setter api begins here.
 
   fun newBlock(
-    id: Int,
     name: String,
     inventoryName: String,
     textures: Array<String>,
     drawType: DrawType = DrawType.BLOCK
   ) {
-
-    //fixme: ID needs to be auto dispatched.
+    val id = blockIDCache.assign(name)
     setBlockID(name, id)
     setBlockInventoryName(id, inventoryName)
     setTextures(id, textures)
@@ -325,11 +323,12 @@ internal object blockIDCache {
 
   fun initialize() {
     folderCheck()
+    fileCheck()
   }
 
   fun assign(name: String): Int {
-    if (name == "air" && !nameToIDMap.containsKey("air")) {
-      nameToIDMap[name] = 0
+    if (name.lowercase() == "air" && !nameToIDMap.containsKey("air")) {
+      nameToIDMap[name.lowercase()] = 0
     }
     return getID(name)
   }
