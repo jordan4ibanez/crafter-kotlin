@@ -12,15 +12,9 @@ import java.util.concurrent.atomic.AtomicInteger
 // Initialization procedure. Consider this love.load()
 fun load() {
 
-  glfw.initialize()
-  gl.initialize()
-  shader.create("main", "./shaders/main_shader.vert", "./shaders/main_shader.frag")
-  shader.createUniforms(arrayOf("cameraMatrix", "objectMatrix"))
-  shader.start("main")
+  initialize()
 
   window.setVsync(false)
-
-  api.initialize()
 
   // Debug texture.
 

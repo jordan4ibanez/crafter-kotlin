@@ -302,3 +302,31 @@ data class BlockDefinition(
     return result
   }
 }
+
+
+/**
+ * This object's soul purpose is to parse and map the block_cache.json file for the BlockDefinitionContainer to get
+ * existing block values, or to assign new block values!
+ * IDs are stored numerically, 0,1,2,3,4, etc. If there is a gap then there is a problem!
+ *!FIXME: This could be slow if there are thousands of blocks, consider using a database!
+ */
+private const val cacheFolder = "./cache"
+private const val jsonLocation = "./cache/block_cache.json"
+internal object blockIDCache {
+  private val nameToIDMap = HashMap<String, Int>()
+  // 0 is reserved for air.
+  private var nextFreeSlot = 1
+
+  private val nothing = initialize()
+
+  fun initialize() {
+    println("HELLO DERE BEBE")
+    if (!isFolder(cacheFolder)) {
+      println("THAT IS NOT A FOLDER EVERYBODY PANIC!")
+      makeFolder(cacheFolder)
+    } else {
+      println("ye, that folder is a FOLDER YEHAJDFJF")
+    }
+  }
+}
+
