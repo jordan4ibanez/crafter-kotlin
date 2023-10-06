@@ -1,6 +1,7 @@
 package engine
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import java.util.concurrent.ConcurrentHashMap
 
 /*
@@ -312,7 +313,7 @@ data class BlockDefinition(
  *!FIXME: This could be slow if there are thousands of blocks, consider using a database!
  */
 private const val cacheFolder = "./cache"
-private const val jsonLocation = "./cache/block_cache.json"
+private const val cacheFile = "./cache/block_cache.json"
 internal object blockIDCache {
 
   private val nameToIDMap = HashMap<String, Int>()
@@ -334,13 +335,24 @@ internal object blockIDCache {
   }
 
   private fun fileCheck() {
-    if (isFile(jsonLocation)) {
+    if (isFile(cacheFile)) {
       println("blockIDCache: Parsing cache file.")
-
+      try { processJSONNodes(ObjectMapper().readTree(getFileString(cacheFile))) } catch (e: Exception) { throw RuntimeException("blockIDCache: $e") }
     }
   }
 
   private fun processJSONNodes(nodes: JsonNode) {
+    // Crawl the JSON tree.
+
+    val keys: MutableIterator<String> = nodes.fieldNames() ?: throw RuntimeException("blockIDCache: Failed to get JSON keys.")
+
+    val test: MutableIterator<JsonNode> = nodes.elements() ?: throw RuntimeException("blockIDCache: Failed to get JSON elements.")
+
+    keys.asSequence().zip(test.asSequence()).forEach {
+      val (key, value) = it
+
+
+    }
 
   }
 
