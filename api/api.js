@@ -225,12 +225,12 @@ const block = {
   /**
    * Set a blocks light level.
    * @param {number | string} key ID or name.
-   * @param {*} newLight 
+   * @param {number} newLight 
    */
   setLight: function(key, newLight) {
     jvmBlockController.setLight(key, newLight)
   },
-  
+
 
 };
 
