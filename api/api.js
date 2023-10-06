@@ -78,12 +78,12 @@ const crafter = {
    * @param {Array<string>} textures 
    * @param {DrawType} drawtype 
    */
-  registerBlock: function(id, name, inventoryName, textures, drawtype) {
-    block.newBlock(id, name, inventoryName, textures, drawtype)
+  registerBlock: function(name, inventoryName, textures, drawtype) {
+    block.newBlock(name, inventoryName, textures, drawtype)
   },
 
 };
 
-crafter.registerBlock(0, "Air", "Air", ["air.png","air.png","air.png","air.png","air.png","air.png"], DrawType.AIR);
+crafter.registerBlock("air", "air", ["air.png","air.png","air.png","air.png","air.png","air.png"], DrawType.AIR);
 
 
