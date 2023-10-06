@@ -2,11 +2,8 @@ package engine
 
 import kotlinx.coroutines.*
 import org.joml.*
-import org.joml.Math.random
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.ConcurrentSkipListSet
 
 /*
 This is a data oriented approach to the mess that was in Java.
@@ -211,7 +208,7 @@ private fun genChunk() {
         } else if (y < height) {
           0 setBlockID grass setBlockLight 0
         } else {
-          0 setBlockID 0 setBlockID 15
+          0 setBlockID 0 setBlockLight 15
         }
 
         dataArray[posToIndex(x,y,z)] = id
