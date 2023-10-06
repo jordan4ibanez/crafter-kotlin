@@ -29,6 +29,28 @@ const DrawType = {
   LEAVES: Java.type("engine.DrawType").LEAVES
 };
 
+/**
+ * A java record that holds the data for a block definition.
+ * If you want to create one, you MUST include all properties, in order.
+ * @property {number} id
+ * @property {string} name
+ * @property {string} inventoryName
+ * @property {Array<string>} textures
+ * @property {DrawType} drawType
+ * @property {boolean} walkable
+ * @property {boolean} liquid
+ * @property {number} flow
+ * @property {number} viscosity
+ * @property {boolean} climbable
+ * @property {boolean} sneakJumpClimbable
+ * @property {boolean} falling
+ * @property {boolean} clear
+ * @property {number} damagePerSecond
+ * @property {number} light
+ */
+const BlockDefinition = Java.type("engine.BlockDefinition")
+
+
 // Lua equivalents
 //
 /**
@@ -368,7 +390,7 @@ const block = {
     return jvmBlockController.getLight(key)
   },
 
-  
+
 
 
 
