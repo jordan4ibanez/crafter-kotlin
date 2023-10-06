@@ -1,6 +1,5 @@
 package engine
 
-import com.fasterxml.jackson.annotation.JsonTypeId
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeType
@@ -63,15 +62,15 @@ object block {
 
 // note: setter api begins here.
 
-  fun newBlock(
+  fun register(
     name: String,
     inventoryName: String,
     textures: Array<String>,
     drawType: DrawType = DrawType.BLOCK
   ) {
     val id = blockIDCache.assign(name)
-    setBlockID(name, id)
-    setBlockInventoryName(id, inventoryName)
+    setID(name, id)
+    setInventoryName(id, inventoryName)
     setTextures(id, textures)
     setDrawType(id, drawType)
     setInternalName(id, name)
@@ -83,12 +82,12 @@ object block {
   private fun setInternalName(id: Int, internalName: String) {
     name[id] = internalName
   }
-  fun setBlockID(name: String, newId: Int) {
+  private fun setID(name: String, newId: Int) {
     id[name] = newId
   }
 
   // ID oriented.
-  fun setBlockInventoryName(id: Int, newName: String) {
+  fun setInventoryName(id: Int, newName: String) {
     inventoryName[id] = newName
   }
   fun setTextures(id: Int, newTextures: Array<String>) {
@@ -136,7 +135,7 @@ object block {
   }
 
   // Name oriented
-  fun setBlockInventoryName(name: String, newName: String) = setBlockInventoryName(getID(name), newName)
+  fun setInventoryName(name: String, newName: String) = setInventoryName(getID(name), newName)
   fun setTextures(name: String, newTextures: Array<String>) = setTextures(getID(name), newTextures)
   private fun setTextureCoords(name: String, newCoords: HashMap<String, FloatArray>) = setTextureCoords(getID(name), newCoords)
   fun setDrawType(name: String, newDrawType: DrawType) = setDrawType(getID(name), newDrawType)
@@ -241,6 +240,7 @@ object block {
   }
 
 }
+
 
 @JvmRecord
 data class BlockDefinition(
