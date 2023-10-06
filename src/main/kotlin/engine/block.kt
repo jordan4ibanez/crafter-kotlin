@@ -351,11 +351,26 @@ internal object blockIDCache {
     keys.asSequence().zip(test.asSequence()).forEach {
       val (key, value) = it
 
+      val type = value.nodeType
 
     }
-
   }
 
+  private fun getID(name: String): Int {
+    return nameToIDMap[name] ?: tickUp(name)
+  }
 
+  private fun tickUp(name: String): Int {
+    val newID = nextFreeSlot
+    nameToIDMap[name] = newID
+    nextFreeSlot++
+    return newID
+  }
+
+  private fun duplicateCheck(name: String) {
+    if (nameToIDMap.contains(name)) {
+      throw RuntimeException("blockIDCache: Duplicate detected. $name")
+    }
+  }
 }
 
