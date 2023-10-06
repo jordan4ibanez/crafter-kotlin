@@ -8,8 +8,9 @@ Possible implementations: Typescript (one day)
 // Global java types assignment.
 //
 const api = Java.type("engine.api").INSTANCE
-const block = Java.type("engine.block").INSTANCE
+const jvmBlockController = Java.type("engine.block").INSTANCE
 const fileHelpers = Java.type("engine.File_helpersKt")
+const RuntimeException = Java.type("java.lang.RuntimeException")
 
 /**
  * A block DrawType enumerator.
@@ -56,6 +57,7 @@ const math = Java.type("org.joml.Math");
 const println = print;
 
 // JOML types
+//
 // Mutable.
 const Vector2f = Java.type("org.joml.Vector2f");
 const Vector3f = Java.type("org.joml.Vector3f");
@@ -67,23 +69,58 @@ const Vector3fc = Java.type("org.joml.Vector3fc");
 const Vector2ic = Java.type("org.joml.Vector2ic");
 const Vector3ic = Java.type("org.joml.Vector3ic");
 
+// Custom JS types.
+//
+// ? todo:
+
+//? I'm not sure what crafter object interface should hold yet.
 const crafter = {
-
-  //!fixme: id needs to be dispatched internally.
-  /**
-   * Register a block into the game.
-   * @param {number} id 
-   * @param {string} name 
-   * @param {string} inventoryName 
-   * @param {Array<string>} textures 
-   * @param {DrawType} drawtype 
-   */
-  registerBlock: function(name, inventoryName, textures, drawtype) {
-    block.newBlock(name, inventoryName, textures, drawtype)
-  },
-
 };
 
-crafter.registerBlock("air", "air", ["air.png","air.png","air.png","air.png","air.png","air.png"], DrawType.AIR);
+
+/**
+ * Functional interface into the engine's block definitions.
+ */
+const requiredBlockProperties = ["name", "inventoryName", "textures", "drawtype"];
+const optionalBlockProperties = ["walkable", "liquid", "flow", "viscosity", "climbable", "sneakJumpClimbable", "falling", "clear", "damagePerSecond", "light"]
+
+const block = {
+  
+  /**
+   * Define a block definition via an object.
+   * d stands for "definition".
+   * Please see the following constants for more info
+   * @constant requiredBlockProperties
+   * @constant optionalBlockProperties.
+   * @param {Object} d Definition Object. 
+   */
+  register: function(d) {
+    
+    //* This is essentially functional hidden behind OOP.
+    
+    for (key of requiredBlockProperties) {
+      if (!d.hasOwnProperty(key)) {
+        throw RuntimeException(`API: Definition missing ${key}`)
+      }
+    }
+    jvmBlockController.register(d.name, d.inventoryName, d.textures, d.drawtype)
+
+    // Now assign optionals.
+    for (key of optionalBlockProperties) {
+      if (d.hasOwnProperty(key)) {
+        // Then it gets injected here automatically
+      }
+    }
+
+  }
+
+}
+
+block.register({
+  name: "air",
+  inventoryName: "air",
+  textures: ["air.png","air.png","air.png","air.png","air.png","air.png"],
+  drawtype: DrawType.AIR
+})
 
 
