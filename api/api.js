@@ -92,7 +92,7 @@ const block = {
    * Please see the following constants for more info
    * @constant requiredBlockProperties
    * @constant optionalBlockProperties.
-   * @param {Object} d Definition Object. 
+   * @param {object} d Definition Object. 
    */
   register: function(d) {
     
