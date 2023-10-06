@@ -5,13 +5,12 @@ fun initialize() {
 
   glfw.initialize()
   gl.initialize()
-  blockIDCache.initialize()
 
   shader.create("main", "./shaders/main_shader.vert", "./shaders/main_shader.frag")
   shader.createUniforms(arrayOf("cameraMatrix", "objectMatrix"))
   shader.start("main")
 
-
+  blockIDCache.initialize()
 
   api.initialize()
 
