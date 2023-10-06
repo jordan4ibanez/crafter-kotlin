@@ -1,5 +1,6 @@
 package engine
 
+import com.fasterxml.jackson.databind.JsonNode
 import java.util.concurrent.ConcurrentHashMap
 
 /*
@@ -313,20 +314,36 @@ data class BlockDefinition(
 private const val cacheFolder = "./cache"
 private const val jsonLocation = "./cache/block_cache.json"
 internal object blockIDCache {
+
   private val nameToIDMap = HashMap<String, Int>()
   // 0 is reserved for air.
   private var nextFreeSlot = 1
 
-  private val nothing = initialize()
 
   fun initialize() {
-    println("HELLO DERE BEBE")
+    folderCheck()
+  }
+
+  private fun folderCheck() {
     if (!isFolder(cacheFolder)) {
-      println("THAT IS NOT A FOLDER EVERYBODY PANIC!")
+      println("blockIDCache: Creating cache folder.")
       makeFolder(cacheFolder)
     } else {
-      println("ye, that folder is a FOLDER YEHAJDFJF")
+      println("blockIDCache: Cache folder exists.")
     }
   }
+
+  private fun fileCheck() {
+    if (isFile(jsonLocation)) {
+      println("blockIDCache: Parsing cache file.")
+
+    }
+  }
+
+  private fun processJSONNodes(nodes: JsonNode) {
+
+  }
+
+
 }
 
