@@ -40,8 +40,11 @@ dependencies {
 
     // JS scripting language
     implementation "org.openjdk.nashorn:nashorn-core:15.4"
-    // Groovy scripting language
-//    implementation 'org.apache.groovy:groovy-all:4.0.15'
+
+    // JSON helper
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.14.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.2'
 
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
