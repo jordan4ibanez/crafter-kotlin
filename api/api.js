@@ -390,11 +390,14 @@ const block = {
     return jvmBlockController.getLight(key)
   },
 
-
-
-
-
-
+  /**
+   * Get an entire block definition as a BlockDefinition object.
+   * @param {number | string} key ID or name.
+   * @returns {BlockDefinition}
+   */
+  get: function(key) {
+    return jvmBlockController.get(key)
+  }
 };
 
 
@@ -405,3 +408,5 @@ block.register({
   textures: ["air.png","air.png","air.png","air.png","air.png","air.png"],
   drawtype: DrawType.AIR
 })
+
+println(block.get("air"))
