@@ -14,6 +14,8 @@ const RuntimeException = Java.type("java.lang.RuntimeException")
 
 /**
  * A block DrawType enumerator.
+ * @readonly
+ * @enum {number}
  */
 const DrawType = {
   AIR: Java.type("engine.DrawType").AIR,
@@ -231,6 +233,145 @@ const block = {
     jvmBlockController.setLight(key, newLight)
   },
 
+  /**
+   * Get a block ID from name.
+   * @param {string} name 
+   * @returns {number} 
+   */
+  getID: function(name) {
+    return jvmBlockController.getID(name)
+  },
+
+  /**
+   * Get a block name from ID.
+   * @param {number} id
+   * @returns {string}
+   */
+  getName: function(id) {
+    return jvmBlockController.getName(id)
+  },
+
+  /**
+   * Get a blocks inventory name.
+   * @param {number | string} key ID or name.
+   * @returns {string}
+   */
+  getInventoryName: function(key) {
+    return jvmBlockController.getInventoryName(key)
+  },
+
+  /**
+   * Get a blocks texture array.
+   * @param {number | string} key ID or name.
+   * @returns {Array<string>}
+   */
+  getTextures: function(key) {
+    return jvmBlockController.getTextures(key)
+  },
+
+  /**
+   * Get a blocks drawtype.
+   * @param {number | string} key ID or name.
+   * @returns {DrawType}
+   */
+  getDrawType: function(key) {
+    return jvmBlockController.getDrawType(key)
+  },
+
+  /**
+   * Get if a block is walkable.
+   * @param {number | string} key ID or name.
+   * @returns {boolean}
+   */
+  isWalkable: function(key) {
+    return jvmBlockController.isWalkable(key)
+  },
+
+  /**
+   * Get if a block is a liquid.
+   * @param {number | string} key ID or name. 
+   * @returns {boolean}
+   */
+  isLiquid: function(key) {
+    return jvmBlockController.isLiquid(key)
+  },
+
+  /**
+   * Get the flow level of a block. Higher flows faster.
+   * @param {number | string} key ID or name. 
+   * @returns {number}
+   */
+  getFlow: function(key) {
+    return jvmBlockController.getFlow(key)
+  },
+
+  /**
+   * Get the viscosity of a block. Higher is harder to move through.
+   * @param {number | string} key ID or name.
+   * @returns {number}
+   */
+  getViscosity: function(key) {
+    return jvmBlockController.getViscosity(key)
+  },
+
+  /**
+   * Get if a block is normally climbable.
+   * @param {number | string} key ID or name.
+   * @returns {boolean}
+   */
+  isClimbable: function(key) {
+    return jvmBlockController.isClimbable(key)
+  },
+
+  /**
+   * Get if a block is climbable with sneak and jump.
+   * @param {number | string} key ID or name.
+   * @returns {boolean}
+   */
+  isSneakJumpClimbable: function(key) {
+    return jvmBlockController.isSneakJumpClimbable(key)
+  },
+
+  /**
+   * Get if a block is affected by gravity.
+   * @param {number | string} key ID or name.
+   * @returns {boolean}
+   */
+  isFalling: function(key) {
+    return jvmBlockController.isFalling(key)
+  },
+
+  /**
+   * Get if light passes through a block.
+   * @param {number | string} key ID or name.
+   * @returns {boolean}
+   */
+  isClear: function(key) {
+    return jvmBlockController.isClear(key)
+  },
+
+  /**
+   * Get how much a block damages entities per second.
+   * @param {number | string} key ID or name.
+   * @returns {number}
+   */
+  getDamagePerSecond: function(key) {
+    return jvmBlockController.getDamagePerSecond(key)
+  },
+
+  /**
+   * Get the light level of a block.
+   * @param {number | string} key ID or name.
+   * @returns {number}
+   */
+  getLight: function(key) {
+    return jvmBlockController.getLight(key)
+  },
+
+  
+
+
+
 
 };
 
@@ -242,5 +383,3 @@ block.register({
   textures: ["air.png","air.png","air.png","air.png","air.png","air.png"],
   drawtype: DrawType.AIR
 })
-
-
