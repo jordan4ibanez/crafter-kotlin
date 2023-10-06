@@ -2,9 +2,8 @@
 import("../../api/api")
 
 const modDir = crafter.getCurrentModDirectory() + "/";
-const modFiles = ["blocks", "biomes", "scriptingTest"];
 
 // Load up all the separate mod files.
-for (const modFile of modFiles) {
-    dofile(modDir + modFile + ".js")
+for (const modFile of ["blocks", "biomes", "scriptingTest"]) {
+  dofile(modDir + modFile + ".js");
 }
