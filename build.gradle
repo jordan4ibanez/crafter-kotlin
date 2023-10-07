@@ -1,4 +1,4 @@
-//import org.gradle.internal.os.OperatingSystem
+import org.gradle.internal.os.OperatingSystem
 
 plugins {
     id "groovy"
@@ -8,70 +8,81 @@ plugins {
 
 project.ext.lwjglVersion = "3.3.3"
 project.ext.jomlVersion = "1.10.5"
-project.ext.lwjglNatives = "natives-linux"
+project.ext.lwjglNatives = //if (true) {return "natives-linux"}
+ "natives-linux"
 
 //final group = "org.example"
 //final version = "1.0-SNAPSHOT"
 
+def test() {
+  print("ye")
+}
 
-//def lwjglNatives = switch (new Tuple(System.getProperty("os.name"), System.getProperty("os.arch"))) {
-////    case "Linux":
-////    case "FreeBSD":
-////    case "SunOS":
-////    case "Unit" : return "natives-linux"; break
-////    case "Mac OS X":
-////    case "Darwin": "natives-macos"; break
-//    case "Windows" -> "natives-windows"
-//    default -> "null"//throw new Error("Unrecognized or unsupported platform. Please set \"lwjglNatives\" manually")
-//}
+def testing = {
+
+  test()
+  return true
+}.call()
+print("OS: $testing")
+
+switch (new Tuple(System.getProperty("os.name"), System.getProperty("os.arch"))) {
+  case "Linux":
+  case "FreeBSD":
+  case "SunOS":
+  case "Unit" : project.ext.lwjglNatives = "natives-linux"; break;
+  case "Mac OS X":
+  case "Darwin": "natives-macos"; project.ext.lwjglNatives = "natives-mac"; break;
+  case "Windows": project.ext.lwjglNatives = "natives-windows"; break
+  default: throw new Error("Unrecognized or unsupported platform. Please set \"lwjglNatives\" manually")
+}
 
 repositories {
-    mavenCentral()
+  mavenCentral()
 }
 
 dependencies {
 
-    testImplementation "org.jetbrains.kotlin:kotlin-test:1.9.10"
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:1.9.10"
+  testImplementation "org.jetbrains.kotlin:kotlin-test:1.9.10"
+//     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:1.9.10"
 
-    runtimeOnly "org.jetbrains.kotlin:kotlin-reflect:1.9.10"
+  runtimeOnly "org.jetbrains.kotlin:kotlin-reflect:1.9.10"
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
 
-    // JS scripting language
-    implementation "org.openjdk.nashorn:nashorn-core:15.4"
+  // JS scripting language
+  implementation "org.openjdk.nashorn:nashorn-core:15.4"
 
-    // JSON helper
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.14.2'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.2'
+  // JSON helper
+  implementation 'com.fasterxml.jackson.core:jackson-core:2.14.2'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+  implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.2'
 
-    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+  implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
-    implementation "org.lwjgl:lwjgl"
-    implementation "org.lwjgl:lwjgl-assimp"
-    implementation "org.lwjgl:lwjgl-glfw"
-    implementation "org.lwjgl:lwjgl-openal"
-    implementation "org.lwjgl:lwjgl-opengl"
-    implementation "org.lwjgl:lwjgl-stb"
+  implementation "org.lwjgl:lwjgl"
+  implementation "org.lwjgl:lwjgl-assimp"
+  implementation "org.lwjgl:lwjgl-glfw"
+  implementation "org.lwjgl:lwjgl-openal"
+  implementation "org.lwjgl:lwjgl-opengl"
+  implementation "org.lwjgl:lwjgl-stb"
 
-    runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
-    implementation "org.joml:joml:$jomlVersion"
+  runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
+  implementation "org.joml:joml:$jomlVersion"
 }
 
 tasks.test {
-    useJUnitPlatform()
+  useJUnitPlatform()
 }
 
 kotlin {
-    jvmToolchain(17)
+  jvmToolchain(17)
 }
 
 application {
-    mainClass.set("MainKt")
+  mainClass.set("MainKt")
 }
