@@ -38,18 +38,16 @@ object mesh {
   }
 
   fun create3D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, light: FloatArray, textureName: String) {
-    val meshObject = MeshObject(name, positions, textureCoords, indices, light, textureName, true)
+    internalCreate(name, positions, textureCoords, indices, light, textureName, true)
   }
 
-  fun create2D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String) {
-    val meshObject = MeshObject(name, positions, textureCoords, indices, textureName, false)
-    safePut(name, meshObject)
-  }
+  fun create2D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String): Int =
+    internalCreate(name, positions, textureCoords, indices, textureName, false)
 
-  private fun internalCreate(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String, is3D: Boolean) =
+  private fun internalCreate(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String, is3D: Boolean): Int =
     internalCreate(name, positions, textureCoords, indices, FloatArray(0), textureName, is3D)
 
-  private fun internalCreate(newName: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, colors: FloatArray, textureName: String, is3D: Boolean) {
+  private fun internalCreate(newName: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, colors: FloatArray, textureName: String, is3D: Boolean): Int {
     val newID: Int
     val newPositionsID: Int
     val newTextureCoordsID: Int
@@ -85,6 +83,7 @@ object mesh {
     //todo: bones go here.
     // Finally unbind the VAO.
     glBindVertexArray(0)
+    return newID
   }
 
   fun draw(name: String) {
