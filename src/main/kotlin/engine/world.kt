@@ -153,31 +153,20 @@ internal fun disperseChunkGenerators() {
   // Shoot and forget. More like a machine gun.
 
   // If there's nothing to be done, do nothing.
-  var counter = 0
-  while (!dataGenerationInput.isEmpty()) {
+
+  for (i in 0 .. MAX_CHUNK_GENS_PER_FRAME) {
+    if (dataGenerationInput.isEmpty()) break
     GlobalScope.launch { genChunk() }
-    counter++
-    if (counter >= MAX_CHUNK_GENS_PER_FRAME) {
-      break
-    }
   }
 
-  counter = 0
-  while (!meshGenerationOutput.isEmpty()) {
+  for (i in 0 .. MAX_CHUNK_MESH_PROCS_PER_FRAME) {
+    if (meshGenerationOutput.isEmpty()) break
     receiveChunkMeshes()
-    counter++
-    if (counter >= MAX_CHUNK_MESH_PROCS_PER_FRAME) {
-      break
-    }
   }
 
-  counter = 0
-  while (!dataGenerationOutput.isEmpty()) {
+  for (i in 0 .. MAX_CHUNK_PROCS_PER_FRAME) {
+    if (dataGenerationOutput.isEmpty()) break
     GlobalScope.launch { processChunks() }
-    counter++
-    if (counter >= MAX_CHUNK_PROCS_PER_FRAME) {
-      break
-    }
   }
 }
 
