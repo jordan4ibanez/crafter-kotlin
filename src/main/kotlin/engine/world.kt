@@ -26,19 +26,19 @@ private val data = ConcurrentHashMap<Vector2ic, IntArray>()
 private val meshIDs = HashMap<Vector2ic, Array<String>>()
 
 // Input into chunk generator goes into here.
-private val generationInput = ConcurrentLinkedQueue<Vector2ic>()
+private val dataGenerationInput = ConcurrentLinkedQueue<Vector2ic>()
 // Output from chunk generator coroutines goes into here.
-private val generationOutput = ConcurrentLinkedQueue<Pair<Vector2ic, IntArray>>()
+private val dataGenerationOutput = ConcurrentLinkedQueue<Pair<Vector2ic, IntArray>>()
 
 // note: API begins here
 
 fun generateChunk(x: Int, y: Int) {
   val key = Vector2i(x, y)
-  if (data.containsKey(key) || generationInput.contains(key)) {
+  if (data.containsKey(key) || dataGenerationInput.contains(key)) {
     println("Discarding generation $x, $y")
     return
   }
-  generationInput.add(key)
+  dataGenerationInput.add(key)
 }
 
 fun chunkExists(posX: Int, posZ: Int): Boolean {
@@ -145,7 +145,7 @@ internal fun disperseChunkGenerators() {
 
   // If there's nothing to be done, do nothing.
   var counter = 0
-  while (!generationInput.isEmpty()) {
+  while (!dataGenerationInput.isEmpty()) {
     GlobalScope.launch { genChunk() }
     // fixme: Needs a setting like maxChunkGensPerFrame or something
     counter++
@@ -154,7 +154,7 @@ internal fun disperseChunkGenerators() {
     }
   }
   counter = 0
-  while (!generationOutput.isEmpty()) {
+  while (!dataGenerationOutput.isEmpty()) {
     GlobalScope.launch { processChunks() }
     // fixme: Needs a setting like maxChunkProcessesPerFrame or something
     counter++
@@ -166,12 +166,12 @@ internal fun disperseChunkGenerators() {
 
 private fun genChunk() {
   //note: Async double check.
-  if (generationInput.isEmpty()) return
+  if (dataGenerationInput.isEmpty()) return
 
   val gotten: Vector2ic
 
   try {
-    gotten = generationInput.remove()!!
+    gotten = dataGenerationInput.remove()!!
   } catch (e: Exception) {
     println("genChunk: failed.")
     return
@@ -221,17 +221,17 @@ private fun genChunk() {
     }
   }
 
-  generationOutput.add(Pair(Vector2i(1,2), dataArray))
+  dataGenerationOutput.add(Pair(Vector2i(1,2), dataArray))
 }
 
 
 private fun processChunks() {
-  if (generationOutput.isEmpty()) return
+  if (dataGenerationOutput.isEmpty()) return
 
   val gotten: Pair<Vector2ic, IntArray>
 
   try {
-    gotten = generationOutput.remove()!!
+    gotten = dataGenerationOutput.remove()!!
   } catch (e: Exception) {
     println("processChunks: failed.")
     return
