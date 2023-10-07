@@ -19,16 +19,16 @@ import java.nio.IntBuffer
 // mesh works as a factory, container, and namespace. All in one.
 object mesh {
 
-  val id = HashMap<String, Int>()
-  val name = HashMap<Int, String>()
-  val positionsID = HashMap<Int, Int>()
-  val textureCoordsID = HashMap<Int, Int>()
-  val indicesVboID = HashMap<Int, Int>()
-  val indicesCount = HashMap<Int, Int>()
-  val textureID = HashMap<Int, Int>()
+  private val id = HashMap<String, Int>()
+  private val name = HashMap<Int, String>()
+  private val positionsID = HashMap<Int, Int>()
+  private val textureCoordsID = HashMap<Int, Int>()
+  private val indicesVboID = HashMap<Int, Int>()
+  private val indicesCount = HashMap<Int, Int>()
+  private val textureID = HashMap<Int, Int>()
   //? note: Optionals.
-  val colorsID = HashMap<Int, Int>()
-  val bonesID = HashMap<Int, Int>()
+  private val colorsID = HashMap<Int, Int>()
+  private val bonesID = HashMap<Int, Int>()
 
   // note: 3D and 2D are explicit here to make code more readable.
 
@@ -46,6 +46,47 @@ object mesh {
     safePut(name, meshObject)
   }
 
+  private fun internalCreate(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String, is3D: Boolean) =
+    internalCreate(name, positions, textureCoords, indices, FloatArray(0), textureName, is3D)
+
+  private fun internalCreate(newName: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, colors: FloatArray, textureName: String, is3D: Boolean) {
+    val newID: Int
+    val newPositionsID: Int
+    val newTextureCoordsID: Int
+    val newIndicesVboID: Int
+    val newIndicesCount: Int = indices.size
+    val newTextureID: Int
+    //? note: Optionals.
+    val newColorsID: Int
+//    val newBonesID: Int
+    // Check texture existence before continuing.
+    try { newTextureID = texture.getID(textureName) } catch (e: RuntimeException) { throw RuntimeException("mesh: Tried to use nonexistent texture. $textureName") }
+    newID = glGenVertexArrays()
+    // GL State machine Object assignment begin.
+    glBindVertexArray(newID)
+    // Store the width of the components. Vector3f or Vector2f, basically.
+    val componentWidth = if (is3D) 3 else 2
+    // Required.
+    newPositionsID     = uploadFloatArray(positions, 0, componentWidth)
+    newTextureCoordsID = uploadFloatArray(textureCoords, 1, 2)
+    newIndicesVboID    = uploadIndices(indices)
+    // Optionals.
+    newColorsID = if (colors.isNotEmpty()) uploadFloatArray(colors, 2, 4) else 0
+    // All required data has been created. Store.
+    id[newName] = newID
+    name[newID] = newName
+    positionsID[newID] = newPositionsID
+    textureCoordsID[newID] = newTextureCoordsID
+    indicesVboID[newID] = newIndicesVboID
+    indicesCount[newID] = newIndicesCount
+    textureID[newID] = newTextureID
+    // All optional data has been created. Store.
+    if (newColorsID != 0) colorsID[newID] = newColorsID
+    //todo: bones go here.
+    // Finally unbind the VAO.
+    glBindVertexArray(0)
+  }
+
   fun draw(name: String) {
     drawMesh(safeGet(name))
   }
@@ -58,21 +99,106 @@ object mesh {
     safeDestroy(name)
   }
 
-  fun getID(name: String): Int {
-    return safeGet(name).vaoID
+  fun exists(id: Int): Boolean {
+    return name.containsKey(id)
   }
-
-  fun getName(vaoID: Int): String {
-    return safeGet(vaoID).name
-  }
-
   fun exists(name: String): Boolean {
-    return database.containsKey(name)
+    return id.containsKey(name)
   }
 
-  fun swapTexture(name: String, newTextureName: String) {
-    safeGet(name).swapTexture(newTextureName)
+  fun getID(name: String): Int {
+    return id[name] ?: throwNonExistent("ID", name)
   }
+  fun getName(id: Int): String {
+    return name[id] ?: throw RuntimeException("mesh: Tried to get non-existent name. $id")
+  }
+
+  fun getPositionsID(id: Int): Int {
+    return positionsID[id] ?: throwNonExistent("positions", id)
+  }
+  fun getPositionsID(name: String): Int {
+    return positionsID[getID(name)] ?: throwNonExistent("positions", name)
+  }
+
+  fun getTextureCoordsID(id: Int): Int {
+    return textureCoordsID[id] ?: throwNonExistent("texture coords", id)
+  }
+  fun getTextureCoordsID(name: String): Int {
+    return textureCoordsID[getID(name)] ?: throwNonExistent("texture coords", name)
+  }
+
+  fun getIndicesVboID(id: Int): Int {
+    return indicesVboID[id] ?: throwNonExistent("indices VBO", id)
+  }
+  fun getIndicesVboID(name: String): Int {
+    return indicesVboID[getID(name)] ?: throwNonExistent("indices VBO", name)
+  }
+
+  fun getIndicesCount(id: Int): Int {
+    return indicesCount[id] ?: throwNonExistent("indices count", id)
+  }
+  fun getIndicesCount(name: String): Int {
+    return indicesCount[getID(name)] ?: throwNonExistent("indices count", name)
+  }
+
+  fun getTextureID(id: Int): Int {
+    return textureID[id] ?: throwNonExistent("texture ID", id)
+  }
+  fun getTextureID(name: String): Int {
+    return textureID[getID(name)] ?: throwNonExistent("texture ID", name)
+  }
+
+  fun colorsExists(id: Int): Boolean {
+    return colorsID.containsKey(id)
+  }
+  fun colorsExist(name: String): Boolean {
+    return colorsID.containsKey(getID(name))
+  }
+
+  fun getColorsID(id: Int): Int {
+    return colorsID[id] ?: throwNonExistent("colors ID", id)
+  }
+  fun getColorsID(name: String): Int {
+    return colorsID[getID(name)] ?: throwNonExistent("colors ID", name)
+  }
+
+  fun bonesExist(id: Int): Boolean {
+    return bonesID.containsKey(id)
+  }
+  fun bonesExist(name: String): Boolean {
+    return bonesID.containsKey(getID(name))
+  }
+
+  fun getBonesID(id: Int): Int {
+    return bonesID[id] ?: throwNonExistent("bones ID", id)
+  }
+  fun getBonesID(name: String): Int {
+    return bonesID[getID(name)] ?: throwNonExistent("bones ID", name)
+  }
+
+//  fun getBonesID(id: Int): Int {
+//    return bonesID
+//  }
+
+
+
+  private fun throwNonExistent(thing: String, name: String): Int {
+    throw RuntimeException("mesh: Tried to get non-existent $thing. $name")
+    return -1
+  }
+  private fun throwNonExistent(thing: String, id: Int): Int {
+    throw RuntimeException("mesh: Tried to get non-existent $thing. $id")
+    return -1
+  }
+
+
+  fun swapTexture(id: Int, newTextureName: String) {
+    textureID[id] = texture.getID(newTextureName)
+  }
+  fun swapTexture(name: String, newTextureName: String) =
+    swapTexture(getID(name), newTextureName)
+
+
 
   fun destroyAll() {
     database.forEach {(_, meshObject) ->
@@ -127,40 +253,7 @@ object mesh {
 //  val colorsID: Int
 ////  val bones: Int
 //
-//  constructor(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String, is3D: Boolean):
-//    this(name, positions, textureCoords, indices, FloatArray(0), textureName, is3D)
-//
-//  constructor(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, colors: FloatArray, textureName: String, is3D: Boolean) {
-//
-//    // Check texture existence before continuing.
-//    try {
-//      textureID = texture.getID(textureName)
-//    } catch (e: RuntimeException) {
-//      throw RuntimeException("Mesh: Tried to use nonexistent texture. $textureName")
-//    }
-//
-//    this.name = name
-//    indicesCount = indices.size
-//
-//    vaoID = glGenVertexArrays()
-//
-//    // GL State machine Object assignment begin.
-//    glBindVertexArray(vaoID)
-//
-//    // Store the width of the components. Vector3f or Vector2f, basically.
-//    val componentWidth = if (is3D) 3 else 2
-//
-//    positionsID     = uploadFloatArray(positions, 0, componentWidth)
-//    textureCoordsID = uploadFloatArray(textureCoords, 1, 2)
-//    indicesVboID    = uploadIndices(indices)
-//
-//    //optionals
-//    colorsID = if (colors.isNotEmpty()) uploadFloatArray(colors, 2, 4) else 0
-//
-//
-//    // Finally unbind the VAO.
-//    glBindVertexArray(0)
-//  }
+
 //
 //  fun swapTexture(name: String) {
 //    val newTextureID: Int
