@@ -332,8 +332,16 @@ object texture {
   // But, in the future we will want textures to be able to be cleared from GL memory.
   // This is designed for that.
 
-  private val database = HashMap<String, TextureObject>()
-  private val idDatabase = HashMap<Int, String>()
+  //note: Functional, data-oriented.
+
+  private val nameRecord = HashSet<String>()
+  private val name = HashMap<Int, String>()
+  private val size = HashMap<Int, Vector2ic>()
+  private val floatingSize = HashMap<Int, Vector2fc>()
+  private val channels = HashMap<Int, Int>()
+
+//  private val database = HashMap<String, TextureObject>()
+//  private val idDatabase = HashMap<Int, String>()
 
   fun create(fileLocation: String) {
     val textureObject = TextureObject(fileLocation)
@@ -429,47 +437,46 @@ object texture {
     database.remove(name)
     idDatabase.remove(id)
   }
-}
 
-private class TextureObject {
-  val name: String
-  val id: Int
-  val size: Vector2i = Vector2i()
-  val floatingSize: Vector2f = Vector2f()
-  val channels: Int
+//  constructor(name: String, buffer: ByteBuffer, size: Vector2ic, channels: Int) {
+//
+//    // Clones a texture.
+//
+//    this.name = name
+//    this.size.set(size)
+//    this.floatingSize.set(size.x().toFloat(), size.y().toFloat())
+//    this.channels = channels
+//
+//    id = uploadTextureBuffer(name, size, buffer)
+//
+//    //note: This does not destroy the buffer because the buffer could still be in use!
+//  }
 
-  constructor(name: String, buffer: ByteBuffer, size: Vector2ic, channels: Int) {
+  private fun internalCreate(fileLocation: String): Int {
 
-    // Clones a texture.
-
-    this.name = name
-    this.size.set(size)
-    this.floatingSize.set(size.x().toFloat(), size.y().toFloat())
-    this.channels = channels
-
-    id = uploadTextureBuffer(name, size, buffer)
-
-    //note: This does not destroy the buffer because the buffer could still be in use!
-  }
-
-  constructor(fileLocation: String) {
+    //? note: Returns texture ID
 
     // Creates a GL texture from a file location.
 
-    name = fileLocation
+    val (buffer, width, height, newChannels) = constructTextureFromFile(fileLocation)
 
-    val (buffer, width, height, channels) = constructTextureFromFile(fileLocation)
+    val newSize = Vector2i(width, height)
+    val newFloatingSize = Vector2f(width.toFloat(), height.toFloat())
 
-    size.set(width,height)
-    floatingSize.set(width.toFloat(),height.toFloat())
-    this.channels = channels
-
-    id = uploadTextureBuffer(name, size, buffer)
+    val id = uploadTextureBuffer(fileLocation, newSize, buffer)
 
     destroyTextureBuffer(buffer)
+    // All required data has been created. Store.
+
+    name[id] = fileLocation
+    size[id] = newSize
+    floatingSize[id] = newFloatingSize
+    channels[id] = newChannels
+
+    return id
   }
 
-  constructor(name: String, fileLocation: String) {
+  private fun internalCreate(newName: String, fileLocation: String) {
     // Creates a GL texture from a file location with a custom name.
 
     this.name = name
@@ -483,6 +490,12 @@ private class TextureObject {
     id = uploadTextureBuffer(name, size, buffer)
 
     destroyTextureBuffer(buffer)
+  }
+
+  private fun checkDuplicate(name: String) {
+    if (nameRecord.contains(name)) {
+      throw RuntimeException("texture: Attempted to store duplicate of $name")
+    }
   }
 }
 
