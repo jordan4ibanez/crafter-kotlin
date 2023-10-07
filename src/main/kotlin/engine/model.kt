@@ -18,9 +18,22 @@ import java.nio.IntBuffer
 
 // mesh works as a factory, container, and namespace. All in one.
 object mesh {
-  // FIXME: Data orient this!
-  private val database = HashMap<String, MeshObject>()
-  private val idDatabase = HashMap<Int, String>()
+
+  val id = HashMap<String, Int>()
+  val name = HashMap<Int, String>()
+  val positionsID = HashMap<Int, Int>()
+  val textureCoordsID = HashMap<Int, Int>()
+  val indicesVboID = HashMap<Int, Int>()
+  val indicesCount = HashMap<Int, Int>()
+  val textureID = HashMap<Int, Int>()
+  //? note: Optionals.
+  val colorsID = HashMap<Int, Int>()
+  val bonesID = HashMap<Int, Int>()
+
+
+//  // FIXME: Data orient this!
+//  private val database = HashMap<String, MeshObject>()
+//  private val idDatabase = HashMap<Int, String>()
 
   // note: 3D and 2D are explicit here to make code more readable.
 
