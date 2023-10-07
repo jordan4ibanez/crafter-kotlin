@@ -32,14 +32,11 @@ object mesh {
 
   // note: 3D and 2D are explicit here to make code more readable.
 
-  fun create3D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String) {
-    val meshObject = MeshObject(name, positions, textureCoords, indices, textureName, true)
-    safePut(name, meshObject)
-  }
+  fun create3D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String): Int =
+    internalCreate(name, positions, textureCoords, indices, textureName, true)
 
-  fun create3D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, light: FloatArray, textureName: String) {
+  fun create3D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, light: FloatArray, textureName: String): Int =
     internalCreate(name, positions, textureCoords, indices, light, textureName, true)
-  }
 
   fun create2D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String): Int =
     internalCreate(name, positions, textureCoords, indices, textureName, false)
