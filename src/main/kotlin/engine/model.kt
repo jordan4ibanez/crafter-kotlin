@@ -334,187 +334,154 @@ object texture {
 
   //note: Functional, data-oriented.
 
-  private val nameRecord = HashSet<String>()
+  private val id = HashMap<String, Int>()
   private val name = HashMap<Int, String>()
   private val size = HashMap<Int, Vector2ic>()
   private val floatingSize = HashMap<Int, Vector2fc>()
   private val channels = HashMap<Int, Int>()
 
-//  private val database = HashMap<String, TextureObject>()
-//  private val idDatabase = HashMap<Int, String>()
-
-  fun create(fileLocation: String) {
-    val textureObject = TextureObject(fileLocation)
-    safePut(fileLocation, textureObject)
-    println("texture: Created texture $fileLocation at ${textureObject.id}")
+  fun create(fileLocation: String): Int {
+    //? note: Returns texture ID.
+    val id = internalCreate(fileLocation)
+    println("texture: Created texture $fileLocation at $id")
+    return id
   }
 
-  fun create(name: String, fileLocation: String) {
-    val textureObject = TextureObject(name, fileLocation)
-    safePut(name, textureObject)
-    println("texture: Created texture $name at ${textureObject.id}")
+  fun create(name: String, fileLocation: String): Int {
+    //? note: Returns texture ID.
+    val id = internalCreate(name, fileLocation)
+    println("texture: Created texture $name at $id")
+    return id
   }
 
-  fun create(name: String, buffer: ByteBuffer, size: Vector2ic, channels: Int) {
-    val textureObject = TextureObject(name, buffer, size, channels)
-    safePut(name, textureObject)
-    println("texture: Created texture $name at ${textureObject.id}")
+  fun create(name: String, buffer: ByteBuffer, size: Vector2ic, channels: Int): Int {
+    //? note: Returns texture ID.
+    val id = internalCreate(name, buffer, size, channels)
+    println("texture: Created texture $name at $id")
+    return id
   }
 
-  fun destroy(name: String) {
-    safeDestroy(name)
+  fun exists(id: Int): Boolean {
+    return name.containsKey(id)
+  }
+  fun exists(name: String): Boolean {
+    return id.containsKey(name)
   }
 
   fun destroy(id: Int) {
     safeDestroy(id)
   }
+  fun destroy(name: String) {
+    safeDestroy(getID(name))
+  }
 
   fun getID(name: String): Int {
-    return safeGet(name).id
+    return id[name] ?: throw RuntimeException("texture: Tried to get non-existent ID. $name")
   }
-
-  fun getSize(name: String): Vector2ic {
-    return safeGet(name).size
-  }
-
-  fun getFloatingSize(name: String): Vector2fc {
-    return safeGet(name).floatingSize
-  }
-
-  fun getChannels(name: String): Int {
-    return safeGet(name).channels
-  }
-
   fun getName(id: Int): String {
-    return safeGet(id).name
+    return name[id] ?: throw RuntimeException("texture: Tried to get non-existent name. $id")
   }
 
-  fun exists(name: String): Boolean {
-    return database.containsKey(name)
+
+  fun getSize(id: Int): Vector2ic {
+    return size[id] ?: throw RuntimeException("texture: Tried to get non-existent size. $id")
+  }
+  fun getSize(name: String): Vector2ic {
+    return size[getID(name)] ?: throw RuntimeException("texture: Tried to get non-existent size. $name")
   }
 
-  fun exists(id: Int): Boolean {
-    return idDatabase.containsKey(id)
+  fun getFloatingSize(id: Int): Vector2fc {
+    return floatingSize[id] ?: throw RuntimeException("texture: Tried to get non-existent floating size. $id")
+  }
+  fun getFloatingSize(name: String): Vector2fc {
+    return floatingSize[getID(name)] ?: throw RuntimeException("texture: Tried to get non-existent floating size. $name")
+  }
+
+  fun getChannels(id: Int): Int {
+    return channels[id] ?: throw RuntimeException("texture: Tried to get non-existent channels. $id")
+  }
+  fun getChannels(name: String): Int {
+    return channels[getID(name)] ?: throw RuntimeException("texture: Tried to get non-existent channels. $name")
   }
 
   fun destroyAll() {
-    database.forEach { (_, textureObject) ->
+    //? note: This is for end of program life, but could also be used for texture packs.
+    name.keys.forEach { id ->
       // Debug info for now.
-      println("texture: Destroying ${textureObject.id} | ${textureObject.name}")
-      destroyTexture(textureObject.id)
+      println("texture: Destroying $id | ${getName(id)}")
+      destroyTexture(id)
     }
+    name.clear()
+    size.clear()
+    floatingSize.clear()
+    channels.clear()
   }
 
-  private fun safePut(name: String, textureObject: TextureObject) {
-    if (database.containsKey(name)) throw RuntimeException("texture: Attempted to overwrite existing texture. $name")
-    database[name] = textureObject
-    idDatabase[textureObject.id] = name
-  }
-
-  private fun safeGet(name: String): TextureObject {
-    // A handy utility to prevent unwanted behavior.
-    return database[name] ?: throw RuntimeException("texture: Attempted to index nonexistent texture. $name")
-  }
-
-  private fun safeGet(id: Int): TextureObject {
-    // A handy utility to prevent unwanted behavior.
-    val name = idDatabase[id] ?: throw RuntimeException("texture: Attempted to index nonexistent ID. $id")
-    return safeGet(name)
-  }
-
-  private fun safeDestroy(name: String) {
-    // This is safe because it will error out if this texture does not exist automatically.
-    val id = safeGet(name).id
-    destroyTexture(id)
-    database.remove(name)
-    idDatabase.remove(id)
-  }
-
-  private fun safeDestroy(id: Int) {
-    // This is safe because it will error out if this texture does not exist automatically.
-    val name = safeGet(id).name
-    destroyTexture(id)
-    database.remove(name)
-    idDatabase.remove(id)
-  }
-
-
-  //Fixme: Break this repetitive code down into functions! That's why we have functions!
-  // Functions!!
   private fun internalCreate(newName: String, buffer: ByteBuffer, originalSize: Vector2ic, newChannels: Int): Int {
-
+    checkDuplicate(newName)
     //? note: Returns texture ID.
-
     // Clones a texture.
     val newSize = Vector2i(originalSize)
     val newFloatingSize = Vector2f(newSize.x().toFloat(), newSize.y().toFloat())
-
-    val id = uploadTextureBuffer(newName, newSize, buffer)
-
-    //note: This does not destroy the buffer because the buffer could still be in use!
-
+    val newID = uploadTextureBuffer(newName, newSize, buffer)
+    //? note: This does not destroy the buffer because the buffer could still be in use!
     // All required data has been created. Store.
-    name[id] = newName
-    size[id] = newSize
-    floatingSize[id] = newFloatingSize
-    channels[id] = newChannels
-
-    return id
+    put(newID, newName, newSize, newFloatingSize, newChannels)
+    return newID
   }
 
   private fun internalCreate(fileLocation: String): Int {
-
+    checkDuplicate(fileLocation)
     //? note: Returns texture ID.
-
     // Creates a GL texture from a file location.
-
     val (buffer, width, height, newChannels) = constructTextureFromFile(fileLocation)
-
     val newSize = Vector2i(width, height)
     val newFloatingSize = Vector2f(width.toFloat(), height.toFloat())
-
-    val id = uploadTextureBuffer(fileLocation, newSize, buffer)
-
+    val newID = uploadTextureBuffer(fileLocation, newSize, buffer)
     destroyTextureBuffer(buffer)
     // All required data has been created. Store.
-
-    name[id] = fileLocation
-    size[id] = newSize
-    floatingSize[id] = newFloatingSize
-    channels[id] = newChannels
-
-    return id
+    put(newID, fileLocation, newSize, newFloatingSize, newChannels)
+    return newID
   }
 
   private fun internalCreate(newName: String, fileLocation: String): Int {
-
+    checkDuplicate(newName)
     //? note: Returns texture ID.
-
     // Creates a GL texture from a file location with a custom name.
-
     val (buffer, width, height, newChannels) = constructTextureFromFile(fileLocation)
-
     val newSize = Vector2i(width,height)
     val newFloatingSize = Vector2f(width.toFloat(),height.toFloat())
-
-    val id = uploadTextureBuffer(newName, newSize, buffer)
-
+    val newID = uploadTextureBuffer(newName, newSize, buffer)
     destroyTextureBuffer(buffer)
-
     // All required data has been created. Store.
+    put(newID, newName, newSize, newFloatingSize, newChannels)
+    return newID
+  }
 
-    name[id] = fileLocation
-    size[id] = newSize
-    floatingSize[id] = newFloatingSize
-    channels[id] = newChannels
+  private fun put(newID: Int, newName: String, newSize: Vector2ic, newFloatingSize: Vector2fc, newChannels: Int) {
+    id[newName] = newID
+    name[newID] = newName
+    size[newID] = newSize
+    floatingSize[newID] = newFloatingSize
+    channels[newID] = newChannels
+  }
 
-    return id
+  private fun safeDestroy(newID: Int) {
+    // This is safe because it will error out if this texture does not exist automatically.
+    destroyTexture(newID)
+    val gottenName = name[newID] ?: throw RuntimeException("texture: Tried to destroy non-existent ID, $newID")
+    id.remove(gottenName)
+    name.remove(newID)
+    size.remove(newID)
+    floatingSize.remove(newID)
+    channels.remove(newID)
   }
 
   private fun checkDuplicate(name: String) {
-    if (nameRecord.contains(name)) {
-      throw RuntimeException("texture: Attempted to store duplicate of $name")
-    }
+    if (id.contains(name)) throw RuntimeException("texture: Attempted to store duplicate of $name")
+  }
+  private fun checkDuplicate(id: Int) {
+    if (name.containsKey(id)) throw RuntimeException("texture: Attempted to store duplicate of $id")
   }
 }
 
