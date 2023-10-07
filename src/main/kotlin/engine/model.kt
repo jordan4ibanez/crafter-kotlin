@@ -334,6 +334,10 @@ object texture {
 
   //note: Functional, data-oriented.
 
+  @JvmRecord
+  private data class TextureData(val buffer: ByteBuffer, val width: Int, val height: Int, val channels: Int)
+
+
   private val id = HashMap<String, Int>()
   private val name = HashMap<Int, String>()
   private val size = HashMap<Int, Vector2ic>()
@@ -417,6 +421,8 @@ object texture {
     channels.clear()
   }
 
+  //? note: Begin internal complex API elements.
+
   private fun internalCreate(newName: String, buffer: ByteBuffer, originalSize: Vector2ic, newChannels: Int): Int {
     checkDuplicate(newName)
     //? note: Returns texture ID.
@@ -483,65 +489,62 @@ object texture {
   private fun checkDuplicate(id: Int) {
     if (name.containsKey(id)) throw RuntimeException("texture: Attempted to store duplicate of $id")
   }
-}
 
-@JvmRecord
-private data class TextureData(val buffer: ByteBuffer, val width: Int, val height: Int, val channels: Int)
+  private fun constructTextureFromFile(fileLocation: String): TextureData {
 
-private fun constructTextureFromFile(fileLocation: String): TextureData {
+    val stack: MemoryStack = try {
+      MemoryStack.stackPush()
+    } catch (e: RuntimeException) {
+      throw RuntimeException("constructTextureFromFile: Failed to push memory stack.")
+    }
+    val stackWidth: IntBuffer = stack.mallocInt(1)
+    val stackHeight: IntBuffer = stack.mallocInt(1)
+    val stackChannels: IntBuffer = stack.mallocInt(1)
 
-  val stack: MemoryStack = try {
-    MemoryStack.stackPush()
-  } catch (e: RuntimeException) {
-    throw RuntimeException("constructTextureFromFile: Failed to push memory stack.")
+    val buffer: ByteBuffer = stbi_load(fileLocation, stackWidth, stackHeight, stackChannels, 4) ?: throw RuntimeException("STBI: Failed to load texture. $fileLocation")
+    val width = stackWidth.get(0)
+    val height = stackWidth.get(0)
+    val channels = stackChannels.get(0)
+    return TextureData(buffer, width, height, channels)
   }
-  val stackWidth: IntBuffer = stack.mallocInt(1)
-  val stackHeight: IntBuffer = stack.mallocInt(1)
-  val stackChannels: IntBuffer = stack.mallocInt(1)
 
-  val buffer: ByteBuffer = stbi_load(fileLocation, stackWidth, stackHeight, stackChannels, 4) ?: throw RuntimeException("STBI: Failed to load texture. $fileLocation")
-  val width = stackWidth.get(0)
-  val height = stackWidth.get(0)
-  val channels = stackChannels.get(0)
-  return TextureData(buffer, width, height, channels)
-}
-
-// This makes the STBI call very explicit.
-private fun destroyTextureBuffer(buffer: ByteBuffer) {
-  stbi_image_free(buffer)
-}
-
-private fun uploadTextureBuffer(name: String, size: Vector2ic, buffer: ByteBuffer): Int {
-
-  val textureID = glGenTextures();
-
-  glBindTexture(GL_TEXTURE_2D, textureID);
-
-  // Enable texture clamping to edge
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-
-  // Border color is nothing - This is a GL REQUIRED float
-  val borderColor = floatArrayOf(0f,0f,0f,0f)
-
-  glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-
-  // Add in nearest neighbor texture filtering
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.x(), size.y(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-
-  // If this gets called, the driver most likely has an issue.
-  if (!glIsTexture(textureID)) {
-    throw RuntimeException("Texture: OpenGL failed to upload $name into GPU memory!")
+  // This makes the STBI call very explicit.
+  private fun destroyTextureBuffer(buffer: ByteBuffer) {
+    stbi_image_free(buffer)
   }
-  glGenerateMipmap(GL_TEXTURE_2D);
 
-  return textureID
-}
+  private fun uploadTextureBuffer(name: String, size: Vector2ic, buffer: ByteBuffer): Int {
 
-private fun destroyTexture(id: Int) {
-  glDeleteTextures(id)
+    val textureID = glGenTextures();
+
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Enable texture clamping to edge
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+    // Border color is nothing - This is a GL REQUIRED float
+    val borderColor = floatArrayOf(0f,0f,0f,0f)
+
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+    // Add in nearest neighbor texture filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.x(), size.y(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+    // If this gets called, the driver most likely has an issue.
+    if (!glIsTexture(textureID)) {
+      throw RuntimeException("Texture: OpenGL failed to upload $name into GPU memory!")
+    }
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    return textureID
+  }
+
+  private fun destroyTexture(id: Int) {
+    glDeleteTextures(id)
+  }
 }
