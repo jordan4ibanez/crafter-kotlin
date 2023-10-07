@@ -83,16 +83,25 @@ object mesh {
     return newID
   }
 
+  fun draw(id: Int) {
+    drawMesh(id)
+  }
   fun draw(name: String) {
-    drawMesh(safeGet(name))
+    drawMesh(getID(name))
   }
 
+  fun drawLines(id: Int) {
+    drawMeshLineMode(id)
+  }
   fun drawLines(name: String) {
-    drawMeshLineMode(safeGet(name))
+    drawMeshLineMode(getID(name))
   }
 
+  fun destroy(id: Int) {
+    try { destroyMesh(id) } catch (e: Exception) { throw RuntimeException("mesh: Tried to destroy non-existent mesh. $id\n$e") }
+  }
   fun destroy(name: String) {
-    safeDestroy(name)
+    try { destroyMesh(getID(name)) } catch (e: Exception) { throw RuntimeException("mesh: Tried to destroy non-existent mesh. $name\n$e") }
   }
 
   fun exists(id: Int): Boolean {
@@ -176,25 +185,11 @@ object mesh {
 //    return bonesID
 //  }
 
-
-
-  private fun throwNonExistent(thing: String, name: String): Int {
-    throw RuntimeException("mesh: Tried to get non-existent $thing. $name")
-    return -1
-  }
-  private fun throwNonExistent(thing: String, id: Int): Int {
-    throw RuntimeException("mesh: Tried to get non-existent $thing. $id")
-    return -1
-  }
-
-
   fun swapTexture(id: Int, newTextureName: String) {
     textureID[id] = texture.getID(newTextureName)
   }
   fun swapTexture(name: String, newTextureName: String) =
     swapTexture(getID(name), newTextureName)
-
-
 
   fun destroyAll() {
     id.values.forEach { gottenID: Int ->
@@ -204,31 +199,19 @@ object mesh {
     }
   }
 
-  //  private fun safeDestroy(name: String) {
-  //    // This is safe because it will error out if this texture does not exist automatically.
-  //    val meshObject = safeGet(name)
-  //    destroyMesh(meshObject)
-  //    database.remove(name)
-  //    idDatabase.remove(meshObject.vaoID)
-  //  }
-
-
-  private fun drawMesh(meshObject: MeshObject) {
+  private fun drawMesh(newID: Int) {
     //note: There were a few things in the Java version, see about implementing them again.
-
-    glBindTexture(GL_TEXTURE_2D, meshObject.textureID)
-    glBindVertexArray(meshObject.vaoID)
-    glDrawElements(GL_TRIANGLES, meshObject.indicesCount, GL_UNSIGNED_INT, 0)
-
+    glBindTexture(GL_TEXTURE_2D, getTextureID(newID))
+    glBindVertexArray(newID)
+    glDrawElements(GL_TRIANGLES, getIndicesCount(newID), GL_UNSIGNED_INT, 0)
     //note: Unbinding is optional. Done for safety.
     glBindVertexArray(0)
   }
 
-  private fun drawMeshLineMode(meshObject: MeshObject) {
-    glBindTexture(GL_TEXTURE_2D, meshObject.textureID)
-    glBindVertexArray(meshObject.vaoID)
-    glDrawElements(GL_LINES, meshObject.indicesCount, GL_UNSIGNED_INT, 0)
-
+  private fun drawMeshLineMode(newID: Int) {
+    glBindTexture(GL_TEXTURE_2D, getTextureID(newID))
+    glBindVertexArray(newID)
+    glDrawElements(GL_LINES, getIndicesCount(newID), GL_UNSIGNED_INT, 0)
     //note: Unbinding is optional. Done for safety.
     glBindVertexArray(0)
   }
@@ -238,35 +221,27 @@ object mesh {
     // glslPosition: The "(location = X)" in the fragment shader.
     // componentWidth: 2 = Vec2, 3 = Vec3, etc
     // Returns the VBO ID.
-
     lateinit var buffer: FloatBuffer
     val newID: Int
-
     try {
       buffer = memAllocFloat(floatArray.size)
       buffer.put(floatArray).flip()
-
       newID = glGenBuffers()
-
       // Bind, push, and set pointer
       glBindBuffer(GL_ARRAY_BUFFER, newID)
       glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
       // Not normalized (false), no stride (0), pointer index (0).
       glVertexAttribPointer(glslPosition, componentWidth, GL_FLOAT, false, 0, 0)
-
       // Enable the GLSL array.
       glEnableVertexAttribArray(glslPosition)
-
       // Unbind the array buffer.
       glBindBuffer(GL_ARRAY_BUFFER, 0)
-
     } catch (e: Exception) {
       throw RuntimeException("uploadFloatArray: Failed to upload. $e")
     } finally {
       // Free to C float* (float[]) or else there will be a massive memory leak.
       memFree(buffer)
     }
-
     return newID
   }
 
@@ -275,65 +250,49 @@ object mesh {
     // glslPosition: The "(location = X)" in the fragment shader.
     // componentWidth: 2 = Vec2, 3 = Vec3, etc
     // Returns the VBO ID.
-
     lateinit var buffer: IntBuffer
     val newID: Int
-
     try {
       buffer = memAllocInt(intArray.size)
       buffer.put(intArray).flip()
-
       newID = glGenBuffers()
-
       // Bind, push, and set pointer
       glBindBuffer(GL_ARRAY_BUFFER, newID)
       glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
       // Not normalized (false), no stride (0), pointer index (0).
       glVertexAttribIPointer(glslPosition, componentWidth, GL_INT, 0, 0)
-
       // Enable the GLSL array.
       glEnableVertexAttribArray(glslPosition)
-
       // Unbind the array buffer.
       glBindBuffer(GL_ARRAY_BUFFER, 0)
-
     } catch (e: Exception) {
       throw RuntimeException("uploadIntArray: Failed to upload. $e")
     } finally {
       // Free to C int* (int[]) or else there will be a massive memory leak.
       memFree(buffer)
     }
-
     return newID
   }
 
   private fun uploadIndices(indicesArray: IntArray): Int {
     // OpenGL is a state machine. Uploading raw indices array to VAO state.
     // Returns the indices ID.
-
     lateinit var buffer: IntBuffer
     val newID: Int
-
     try {
-
       newID = glGenBuffers()
-
       buffer = memAllocInt(indicesArray.size)
       buffer.put(indicesArray).flip()
-
       // Not normalized (false), no stride (0), pointer index (0).
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, newID)
       glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
-
       // note: Do not unbind GL_ELEMENT_ARRAY_BUFFER
-
     } catch (e: Exception) {
       throw RuntimeException("uploadIndices: Failed to upload. $e")
     } finally {
       // Free to C int* (int[]) or else there will be a massive memory leak.
       memFree(buffer)
     }
-
     return newID
   }
 
@@ -382,6 +341,16 @@ object mesh {
       throw RuntimeException("destroyVBO: Failed to destroy vbo. $vboID | $vboName")
     }
   }
+
+  private fun throwNonExistent(thing: String, name: String): Int {
+    throw RuntimeException("mesh: Tried to get non-existent $thing. $name")
+    return -1
+  }
+  private fun throwNonExistent(thing: String, id: Int): Int {
+    throw RuntimeException("mesh: Tried to get non-existent $thing. $id")
+    return -1
+  }
+
 }
 
 
