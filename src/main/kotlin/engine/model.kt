@@ -30,11 +30,6 @@ object mesh {
   val colorsID = HashMap<Int, Int>()
   val bonesID = HashMap<Int, Int>()
 
-
-//  // FIXME: Data orient this!
-//  private val database = HashMap<String, MeshObject>()
-//  private val idDatabase = HashMap<Int, String>()
-
   // note: 3D and 2D are explicit here to make code more readable.
 
   fun create3D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String) {
