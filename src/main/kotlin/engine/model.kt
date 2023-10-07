@@ -16,7 +16,7 @@ import java.nio.IntBuffer
 
 //note: Mesh functions
 
-// mesh works as a factory, container, and namespace. All in one.
+// mesh works as a component system and namespace.
 object mesh {
 
   private val id = HashMap<String, Int>()
