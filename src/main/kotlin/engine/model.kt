@@ -197,37 +197,22 @@ object mesh {
 
 
   fun destroyAll() {
-    database.forEach {(_, meshObject) ->
+    id.values.forEach { gottenID: Int ->
       // Debug info for now.
-      println("mesh: Destroying ${meshObject.vaoID} | ${meshObject.name}")
-      destroyMesh(meshObject)
+      println("mesh: Destroying $gottenID | ${getName(gottenID)}")
+      destroyMesh(gottenID)
     }
   }
 
-  private fun safePut(name: String, meshObject: MeshObject) {
-    if (database.containsKey(name)) throw RuntimeException("mesh: Attempted to overwrite existing mesh. $name")
-    database[name] = meshObject
-    idDatabase[meshObject.vaoID] = name
-  }
+//  private fun safeDestroy(name: String) {
+//    // This is safe because it will error out if this texture does not exist automatically.
+//    val meshObject = safeGet(name)
+//    destroyMesh(meshObject)
+//    database.remove(name)
+//    idDatabase.remove(meshObject.vaoID)
+//  }
 
-  private fun safeGet(name: String): MeshObject {
-    // A handy utility to prevent unwanted behavior.
-    return database[name] ?: throw RuntimeException("mesh: Attempted to index nonexistent mesh. $name")
-  }
 
-  private fun safeGet(vaoID: Int): MeshObject {
-    // A handy utility to prevent unwanted behavior.
-    val name = idDatabase[vaoID] ?: throw RuntimeException("mesh: Attempted to index nonexistent vaoID. $vaoID")
-    return safeGet(name)
-  }
-
-  private fun safeDestroy(name: String) {
-    // This is safe because it will error out if this texture does not exist automatically.
-    val meshObject = safeGet(name)
-    destroyMesh(meshObject)
-    database.remove(name)
-    idDatabase.remove(meshObject.vaoID)
-  }
 }
 
 //todo: this will be interesting
