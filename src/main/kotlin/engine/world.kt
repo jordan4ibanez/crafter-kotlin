@@ -30,6 +30,11 @@ private val dataGenerationInput = ConcurrentLinkedQueue<Vector2ic>()
 // Output from chunk generator coroutines goes into here.
 private val dataGenerationOutput = ConcurrentLinkedQueue<Pair<Vector2ic, IntArray>>()
 
+// Input into the chunk mesh generator goes into here.
+private val meshGenerationInput = ConcurrentLinkedQueue<Vector3ic>()
+// Output from the chunk mesh generator goes into here.
+private val meshGenerationOutput = ConcurrentLinkedQueue<Pair<Vector3ic>, ChunkMesh>()
+
 // note: API begins here
 
 fun generateChunk(x: Int, y: Int) {
@@ -250,6 +255,9 @@ private fun processChunks() {
 }
 
 //? note: Begin chunk mesh internal api.
+
+@JvmRecord
+data class ChunkMesh(val positions: FloatArray, val textureCoords: FloatArray, val indices: IntArray)// todo:, light: FloatArray)
 
 private fun meshIDExists(pos: Vector2ic): Boolean {
   return meshIDs.containsKey(pos)
