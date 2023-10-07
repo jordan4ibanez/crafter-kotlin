@@ -15,11 +15,15 @@ private const val DEPTH = 16
 private const val yStride = WIDTH * DEPTH
 private const val ARRAY_SIZE = WIDTH * HEIGHT * DEPTH
 
+private const val MESH_ARRAY_SIZE = 8
+
 private var seed = 123_456_789
 
 // Chunk block data
 //! todo: upgrade to LongArray! This will allow either 24 bit or 32 bit limit for chunks!
 private val data = ConcurrentHashMap<Vector2ic, IntArray>()
+
+private val meshIDs = HashMap<Vector2ic, Array<String>>()
 
 // Input into chunk generator goes into here.
 private val generationInput = ConcurrentLinkedQueue<Vector2ic>()
@@ -122,13 +126,13 @@ fun indexToPos(i: Int): Vector3ic {
 
 // note: Internal begins here
 
-private fun safetGet(posX: Int, posZ: Int): IntArray {
+private fun safetGetData(posX: Int, posZ: Int): IntArray {
   return data[Vector2i(posX, posZ)] ?: throw RuntimeException("world: tried to access nonexistent chunk: $posX, $posZ")
 }
 
-private fun safeGetDeconstruct(posX: Int, posZ: Int): Pair<Boolean, IntArray> {
+private fun safeGetDataDeconstruct(posX: Int, posZ: Int): Pair<Boolean, IntArray> {
   return if (chunkExists(posX, posZ)) {
-    Pair(true, safetGet(posX, posZ).clone())
+    Pair(true, safetGetData(posX, posZ).clone())
   } else {
     Pair(false, IntArray(0))
   }
@@ -245,12 +249,25 @@ private fun processChunks() {
   // done
 }
 
+//? note: Begin chunk mesh internal api.
+
+private fun meshIDExists(pos: Vector2ic): Boolean {
+  return meshIDs.containsKey(pos)
+}
+private fun safetGetMeshIDArray(pos: Vector2ic): Array<String> {
+  return meshIDs[pos] ?: throw RuntimeException("world: tried to access nonexistent chunk mesh: ${pos.x()}, ${pos.y()}")
+}
+
+private fun receiveChunkMeshes() {
+  //todo: This will automatically upload the generated chunks via the mesh interface.
+}
+
 private fun buildChunkMesh(posX: Int, posZ: Int, chunkData: IntArray) {
 
-  val (leftExists, left) = safeGetDeconstruct(posX - 1, posZ)
-  val (rightExists, right) = safeGetDeconstruct(posX + 1, posZ)
-  val (backExists, back) = safeGetDeconstruct(posX, posZ + 1)
-  val (frontExists, front) = safeGetDeconstruct(posX, posZ - 1)
+  val (leftExists, left) = safeGetDataDeconstruct(posX - 1, posZ)
+  val (rightExists, right) = safeGetDataDeconstruct(posX + 1, posZ)
+  val (backExists, back) = safeGetDataDeconstruct(posX, posZ + 1)
+  val (frontExists, front) = safeGetDataDeconstruct(posX, posZ - 1)
 
 //  println("buildChunkMesh is running")
 }
