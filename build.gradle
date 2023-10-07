@@ -1,9 +1,9 @@
 import org.gradle.internal.os.OperatingSystem
 
 plugins {
-    id "groovy"
-    id "org.jetbrains.kotlin.jvm" version "1.9.10"
-    id "application"
+  id "groovy"
+  id "org.jetbrains.kotlin.jvm" version "1.9.10"
+  id "application"
 }
 
 project.ext.lwjglVersion = "3.3.3"
