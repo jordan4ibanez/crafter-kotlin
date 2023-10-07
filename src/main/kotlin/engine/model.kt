@@ -18,6 +18,7 @@ import java.nio.IntBuffer
 
 // mesh works as a factory, container, and namespace. All in one.
 object mesh {
+  // FIXME: Data orient this!
   private val database = HashMap<String, MeshObject>()
   private val idDatabase = HashMap<Int, String>()
 
@@ -26,6 +27,10 @@ object mesh {
   fun create3D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String) {
     val meshObject = MeshObject(name, positions, textureCoords, indices, textureName, true)
     safePut(name, meshObject)
+  }
+
+  fun create3D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, light: FloatArray, textureName: String) {
+    val meshObject = MeshObject(name, positions, textureCoords, indices, light, textureName, true)
   }
 
   fun create2D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String) {
@@ -101,6 +106,8 @@ object mesh {
 //}
 
 private class MeshObject {
+
+  //! FIXME: data orient this!
   val name: String
   val vaoID: Int
   val positionsID: Int
@@ -109,10 +116,13 @@ private class MeshObject {
   val indicesCount: Int
   var textureID: Int
   // Optionals.
+  val colorsID: Int
 //  val bones: Int
-//  val colors: Int
 
-  constructor(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String, is3D: Boolean) {
+  constructor(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String, is3D: Boolean):
+    this(name, positions, textureCoords, indices, FloatArray(0), textureName, is3D)
+
+  constructor(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, colors: FloatArray, textureName: String, is3D: Boolean) {
 
     // Check texture existence before continuing.
     try {
@@ -135,6 +145,10 @@ private class MeshObject {
     positionsID     = uploadFloatArray(positions, 0, componentWidth)
     textureCoordsID = uploadFloatArray(textureCoords, 1, 2)
     indicesVboID    = uploadIndices(indices)
+
+    //optionals
+    colorsID = if (colors.isNotEmpty()) uploadFloatArray(colors, 2, 4) else 0
+
 
     // Finally unbind the VAO.
     glBindVertexArray(0)
@@ -281,6 +295,7 @@ private fun destroyMesh(meshObject: MeshObject) {
 
   destroyVBO(meshObject.positionsID, 0, "positions")
   destroyVBO(meshObject.textureCoordsID, 1, "texture coords")
+  destroyVBO(meshObject.colorsID, 2, "colors")
   destroyVBO(meshObject.indicesVboID, -1, "indices")
 
   // Todo: destroy the bones and colors VBO
