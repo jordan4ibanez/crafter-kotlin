@@ -19,6 +19,10 @@ private const val MESH_ARRAY_SIZE = 8
 
 private var seed = 123_456_789
 
+private const val MAX_CHUNK_GENS_PER_FRAME = 10
+private const val MAX_CHUNK_MESH_PROCS_PER_FRAME = 10
+private const val MAX_CHUNK_PROCS_PER_FRAME = 10
+
 // Chunk block data
 //! todo: upgrade to LongArray! This will allow either 24 bit or 32 bit limit for chunks!
 private val data = ConcurrentHashMap<Vector2ic, IntArray>()
@@ -33,7 +37,7 @@ private val dataGenerationOutput = ConcurrentLinkedQueue<Pair<Vector2ic, IntArra
 // Input into the chunk mesh generator goes into here.
 private val meshGenerationInput = ConcurrentLinkedQueue<Vector3ic>()
 // Output from the chunk mesh generator goes into here.
-private val meshGenerationOutput = ConcurrentLinkedQueue<Pair<Vector3ic>, ChunkMesh>()
+private val meshGenerationOutput = ConcurrentLinkedQueue<Pair<Vector3ic, ChunkMesh>>()
 
 // note: API begins here
 
@@ -152,18 +156,26 @@ internal fun disperseChunkGenerators() {
   var counter = 0
   while (!dataGenerationInput.isEmpty()) {
     GlobalScope.launch { genChunk() }
-    // fixme: Needs a setting like maxChunkGensPerFrame or something
     counter++
-    if (counter >= 10) {
+    if (counter >= MAX_CHUNK_GENS_PER_FRAME) {
       break
     }
   }
+
+  counter = 0
+  while (!meshGenerationOutput.isEmpty()) {
+    receiveChunkMeshes()
+    counter++
+    if (counter >= MAX_CHUNK_MESH_PROCS_PER_FRAME) {
+      break
+    }
+  }
+
   counter = 0
   while (!dataGenerationOutput.isEmpty()) {
     GlobalScope.launch { processChunks() }
-    // fixme: Needs a setting like maxChunkProcessesPerFrame or something
     counter++
-    if (counter >= 10) {
+    if (counter >= MAX_CHUNK_PROCS_PER_FRAME) {
       break
     }
   }
@@ -249,7 +261,7 @@ private fun processChunks() {
   // Separate internal pointer
   val dataClone = chunkData.clone()
 
-  buildChunkMesh(position.x(), position.y(), dataClone)
+  fullBuildChunkMesh(position.x(), position.y(), dataClone)
 
   // done
 }
@@ -257,7 +269,7 @@ private fun processChunks() {
 //? note: Begin chunk mesh internal api.
 
 @JvmRecord
-data class ChunkMesh(val positions: FloatArray, val textureCoords: FloatArray, val indices: IntArray)// todo:, light: FloatArray)
+data class ChunkMesh(val positions: FloatArray, val textureCoords: FloatArray, val indices: IntArray)// todo: this needs to be built into the mesh interface, light: FloatArray)
 
 private fun meshIDExists(pos: Vector2ic): Boolean {
   return meshIDs.containsKey(pos)
@@ -270,8 +282,8 @@ private fun receiveChunkMeshes() {
   //todo: This will automatically upload the generated chunks via the mesh interface.
 }
 
-private fun buildChunkMesh(posX: Int, posZ: Int, chunkData: IntArray) {
-
+private fun fullBuildChunkMesh(posX: Int, posZ: Int, chunkData: IntArray) {
+  //? note: This builds out the initial chunk mesh components.
   val (leftExists, left) = safeGetDataDeconstruct(posX - 1, posZ)
   val (rightExists, right) = safeGetDataDeconstruct(posX + 1, posZ)
   val (backExists, back) = safeGetDataDeconstruct(posX, posZ + 1)
