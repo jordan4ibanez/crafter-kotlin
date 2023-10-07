@@ -471,7 +471,8 @@ private class TextureObject {
   }
 }
 
-data class TextureData(val buffer: ByteBuffer, val width: Int, val height: Int, val channels: Int)
+@JvmRecord
+private data class TextureData(val buffer: ByteBuffer, val width: Int, val height: Int, val channels: Int)
 
 private fun constructTextureFromFile(fileLocation: String): TextureData {
 
