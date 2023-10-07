@@ -113,65 +113,65 @@ object mesh {
 //
 //}
 
-private class MeshObject {
-
-  //! FIXME: data orient this!
-  val name: String
-  val vaoID: Int
-  val positionsID: Int
-  val textureCoordsID: Int
-  val indicesVboID: Int
-  val indicesCount: Int
-  var textureID: Int
-  // Optionals.
-  val colorsID: Int
-//  val bones: Int
-
-  constructor(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String, is3D: Boolean):
-    this(name, positions, textureCoords, indices, FloatArray(0), textureName, is3D)
-
-  constructor(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, colors: FloatArray, textureName: String, is3D: Boolean) {
-
-    // Check texture existence before continuing.
-    try {
-      textureID = texture.getID(textureName)
-    } catch (e: RuntimeException) {
-      throw RuntimeException("Mesh: Tried to use nonexistent texture. $textureName")
-    }
-
-    this.name = name
-    indicesCount = indices.size
-
-    vaoID = glGenVertexArrays()
-
-    // GL State machine Object assignment begin.
-    glBindVertexArray(vaoID)
-
-    // Store the width of the components. Vector3f or Vector2f, basically.
-    val componentWidth = if (is3D) 3 else 2
-
-    positionsID     = uploadFloatArray(positions, 0, componentWidth)
-    textureCoordsID = uploadFloatArray(textureCoords, 1, 2)
-    indicesVboID    = uploadIndices(indices)
-
-    //optionals
-    colorsID = if (colors.isNotEmpty()) uploadFloatArray(colors, 2, 4) else 0
-
-
-    // Finally unbind the VAO.
-    glBindVertexArray(0)
-  }
-
-  fun swapTexture(name: String) {
-    val newTextureID: Int
-    try {
-      newTextureID = texture.getID(name)
-    } catch (e: Exception) {
-      throw RuntimeException("Mesh: Attempted to hotswap to nonexistent texture. $name")
-    }
-    textureID = newTextureID
-  }
-}
+//private class MeshObject {
+//
+//  //! FIXME: data orient this!
+//  val name: String
+//  val vaoID: Int
+//  val positionsID: Int
+//  val textureCoordsID: Int
+//  val indicesVboID: Int
+//  val indicesCount: Int
+//  var textureID: Int
+//  // Optionals.
+//  val colorsID: Int
+////  val bones: Int
+//
+//  constructor(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String, is3D: Boolean):
+//    this(name, positions, textureCoords, indices, FloatArray(0), textureName, is3D)
+//
+//  constructor(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, colors: FloatArray, textureName: String, is3D: Boolean) {
+//
+//    // Check texture existence before continuing.
+//    try {
+//      textureID = texture.getID(textureName)
+//    } catch (e: RuntimeException) {
+//      throw RuntimeException("Mesh: Tried to use nonexistent texture. $textureName")
+//    }
+//
+//    this.name = name
+//    indicesCount = indices.size
+//
+//    vaoID = glGenVertexArrays()
+//
+//    // GL State machine Object assignment begin.
+//    glBindVertexArray(vaoID)
+//
+//    // Store the width of the components. Vector3f or Vector2f, basically.
+//    val componentWidth = if (is3D) 3 else 2
+//
+//    positionsID     = uploadFloatArray(positions, 0, componentWidth)
+//    textureCoordsID = uploadFloatArray(textureCoords, 1, 2)
+//    indicesVboID    = uploadIndices(indices)
+//
+//    //optionals
+//    colorsID = if (colors.isNotEmpty()) uploadFloatArray(colors, 2, 4) else 0
+//
+//
+//    // Finally unbind the VAO.
+//    glBindVertexArray(0)
+//  }
+//
+//  fun swapTexture(name: String) {
+//    val newTextureID: Int
+//    try {
+//      newTextureID = texture.getID(name)
+//    } catch (e: Exception) {
+//      throw RuntimeException("Mesh: Attempted to hotswap to nonexistent texture. $name")
+//    }
+//    textureID = newTextureID
+//  }
+//}
 
 private fun drawMesh(meshObject: MeshObject) {
   //note: There were a few things in the Java version, see about implementing them again.
