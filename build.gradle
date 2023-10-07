@@ -8,33 +8,14 @@ plugins {
 
 project.ext.lwjglVersion = "3.3.3"
 project.ext.jomlVersion = "1.10.5"
-project.ext.lwjglNatives = //if (true) {return "natives-linux"}
- "natives-linux"
+switch (OperatingSystem.current()) {
+  case OperatingSystem.LINUX:   project.ext.lwjglNatives = "natives-linux";   break
+  case OperatingSystem.MAC_OS:  project.ext.lwjglNatives = "natives-macos";   break
+  case OperatingSystem.WINDOWS: project.ext.lwjglNatives = "natives-windows"; break
+}
 
 //final group = "org.example"
 //final version = "1.0-SNAPSHOT"
-
-def test() {
-  print("ye")
-}
-
-def testing = {
-
-  test()
-  return true
-}.call()
-print("OS: $testing")
-
-switch (new Tuple(System.getProperty("os.name"), System.getProperty("os.arch"))) {
-  case "Linux":
-  case "FreeBSD":
-  case "SunOS":
-  case "Unit" : project.ext.lwjglNatives = "natives-linux"; break;
-  case "Mac OS X":
-  case "Darwin": "natives-macos"; project.ext.lwjglNatives = "natives-mac"; break;
-  case "Windows": project.ext.lwjglNatives = "natives-windows"; break
-  default: throw new Error("Unrecognized or unsupported platform. Please set \"lwjglNatives\" manually")
-}
 
 repositories {
   mavenCentral()
