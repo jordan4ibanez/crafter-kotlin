@@ -18,6 +18,7 @@ private const val ARRAY_SIZE = WIDTH * HEIGHT * DEPTH
 private var seed = 123_456_789
 
 // Chunk block data
+//! todo: upgrade to LongArray! This will allow either 24 bit or 32 bit limit for chunks!
 private val data = ConcurrentHashMap<Vector2ic, IntArray>()
 
 // Input into chunk generator goes into here.
