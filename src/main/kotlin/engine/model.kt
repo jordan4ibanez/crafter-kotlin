@@ -144,7 +144,7 @@ object mesh {
     return textureID[getID(name)] ?: throwNonExistent("texture ID", name)
   }
 
-  fun colorsExists(id: Int): Boolean {
+  fun colorsExist(id: Int): Boolean {
     return colorsID.containsKey(id)
   }
   fun colorsExist(name: String): Boolean {
@@ -211,8 +211,6 @@ object mesh {
   //    database.remove(name)
   //    idDatabase.remove(meshObject.vaoID)
   //  }
-
-
 
 
   private fun drawMesh(meshObject: MeshObject) {
@@ -339,25 +337,38 @@ object mesh {
     return newID
   }
 
-  private fun destroyMesh(meshObject: MeshObject) {
-
-    glBindVertexArray(meshObject.vaoID)
-
-    destroyVBO(meshObject.positionsID, 0, "positions")
-    destroyVBO(meshObject.textureCoordsID, 1, "texture coords")
-    destroyVBO(meshObject.colorsID, 2, "colors")
-    destroyVBO(meshObject.indicesVboID, -1, "indices")
-
-    // Todo: destroy the bones and colors VBO
-
+  private fun destroyMesh(newID: Int) {
+    val newPositionsID = getPositionsID(newID)
+    val newTextureCoordsID = getTextureCoordsID(newID)
+    val newIndicesVboID = getIndicesVboID(newID)
+    val hasColors = colorsExist(newID)
+    val newColorsID = if (hasColors) getColorsID(newID) else 0
+    val hasBones = bonesExist(newID)
+    val newBonesID = if (hasBones) getBonesID(newID) else 0
+    glBindVertexArray(newID)
+    destroyVBO(newPositionsID, 0, "positions")
+    destroyVBO(newTextureCoordsID, 1, "texture coords")
+    destroyVBO(newColorsID, 2, "colors")
+    // Todo: destroy the bones
+    destroyVBO(newIndicesVboID, -1, "indices")
     // Now unbind.
     glBindVertexArray(0)
-
-    // Then destroy the VBO.
-    glDeleteVertexArrays(meshObject.vaoID)
-    if (glIsVertexArray(meshObject.vaoID)) {
-      throw RuntimeException("destroyMesh: Failed to destroy VAO ${meshObject.vaoID} | ${meshObject.name}")
+    // Then destroy the VAO.
+    glDeleteVertexArrays(newID)
+    if (glIsVertexArray(newID)) {
+      throw RuntimeException("destroyMesh: Failed to destroy VAO $newID | ${getName(newID)}")
     }
+    // GPU memory is clear. Delete CPU memory.
+    val newName = getName(newID)
+    id.remove(newName)
+    name.remove(newID)
+    positionsID.remove(newID)
+    textureCoordsID.remove(newID)
+    indicesVboID.remove(newID)
+    indicesCount.remove(newID)
+    textureID.remove(newID)
+    if (hasColors) colorsID.remove(newID)
+    if (hasBones) bonesID.remove(newID)
   }
 
   private fun destroyVBO(vboID: Int, glslPosition: Int, vboName: String) {
