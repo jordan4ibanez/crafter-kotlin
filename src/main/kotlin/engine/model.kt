@@ -204,203 +204,172 @@ object mesh {
     }
   }
 
-//  private fun safeDestroy(name: String) {
-//    // This is safe because it will error out if this texture does not exist automatically.
-//    val meshObject = safeGet(name)
-//    destroyMesh(meshObject)
-//    database.remove(name)
-//    idDatabase.remove(meshObject.vaoID)
-//  }
+  //  private fun safeDestroy(name: String) {
+  //    // This is safe because it will error out if this texture does not exist automatically.
+  //    val meshObject = safeGet(name)
+  //    destroyMesh(meshObject)
+  //    database.remove(name)
+  //    idDatabase.remove(meshObject.vaoID)
+  //  }
 
 
-}
 
-//todo: this will be interesting
-//private class TexturelessMesh {
-//
-//}
 
-//private class MeshObject {
-//
-//  //! FIXME: data orient this!
-//  val name: String
-//  val vaoID: Int
-//  val positionsID: Int
-//  val textureCoordsID: Int
-//  val indicesVboID: Int
-//  val indicesCount: Int
-//  var textureID: Int
-//  // Optionals.
-//  val colorsID: Int
-////  val bones: Int
-//
+  private fun drawMesh(meshObject: MeshObject) {
+    //note: There were a few things in the Java version, see about implementing them again.
 
-//
-//  fun swapTexture(name: String) {
-//    val newTextureID: Int
-//    try {
-//      newTextureID = texture.getID(name)
-//    } catch (e: Exception) {
-//      throw RuntimeException("Mesh: Attempted to hotswap to nonexistent texture. $name")
-//    }
-//    textureID = newTextureID
-//  }
-//}
+    glBindTexture(GL_TEXTURE_2D, meshObject.textureID)
+    glBindVertexArray(meshObject.vaoID)
+    glDrawElements(GL_TRIANGLES, meshObject.indicesCount, GL_UNSIGNED_INT, 0)
 
-private fun drawMesh(meshObject: MeshObject) {
-  //note: There were a few things in the Java version, see about implementing them again.
-
-  glBindTexture(GL_TEXTURE_2D, meshObject.textureID)
-  glBindVertexArray(meshObject.vaoID)
-  glDrawElements(GL_TRIANGLES, meshObject.indicesCount, GL_UNSIGNED_INT, 0)
-
-  //note: Unbinding is optional. Done for safety.
-  glBindVertexArray(0)
-}
-
-private fun drawMeshLineMode(meshObject: MeshObject) {
-  glBindTexture(GL_TEXTURE_2D, meshObject.textureID)
-  glBindVertexArray(meshObject.vaoID)
-  glDrawElements(GL_LINES, meshObject.indicesCount, GL_UNSIGNED_INT, 0)
-
-  //note: Unbinding is optional. Done for safety.
-  glBindVertexArray(0)
-}
-
-private fun uploadFloatArray(floatArray: FloatArray, glslPosition: Int, componentWidth: Int): Int {
-  // OpenGL is a state machine. Uploading float array to current VAO state.
-  // glslPosition: The "(location = X)" in the fragment shader.
-  // componentWidth: 2 = Vec2, 3 = Vec3, etc
-  // Returns the VBO ID.
-
-  lateinit var buffer: FloatBuffer
-  val newID: Int
-
-  try {
-    buffer = memAllocFloat(floatArray.size)
-    buffer.put(floatArray).flip()
-
-    newID = glGenBuffers()
-
-    // Bind, push, and set pointer
-    glBindBuffer(GL_ARRAY_BUFFER, newID)
-    glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
-    // Not normalized (false), no stride (0), pointer index (0).
-    glVertexAttribPointer(glslPosition, componentWidth, GL_FLOAT, false, 0, 0)
-
-    // Enable the GLSL array.
-    glEnableVertexAttribArray(glslPosition)
-
-    // Unbind the array buffer.
-    glBindBuffer(GL_ARRAY_BUFFER, 0)
-
-  } catch (e: Exception) {
-    throw RuntimeException("uploadFloatArray: Failed to upload. $e")
-  } finally {
-    // Free to C float* (float[]) or else there will be a massive memory leak.
-    memFree(buffer)
+    //note: Unbinding is optional. Done for safety.
+    glBindVertexArray(0)
   }
 
-  return newID
-}
+  private fun drawMeshLineMode(meshObject: MeshObject) {
+    glBindTexture(GL_TEXTURE_2D, meshObject.textureID)
+    glBindVertexArray(meshObject.vaoID)
+    glDrawElements(GL_LINES, meshObject.indicesCount, GL_UNSIGNED_INT, 0)
 
-private fun uploadIntArray(intArray: IntArray, glslPosition: Int, componentWidth: Int): Int {
-  // OpenGL is a state machine. Uploading int array to current VAO state.
-  // glslPosition: The "(location = X)" in the fragment shader.
-  // componentWidth: 2 = Vec2, 3 = Vec3, etc
-  // Returns the VBO ID.
-
-  lateinit var buffer: IntBuffer
-  val newID: Int
-
-  try {
-    buffer = memAllocInt(intArray.size)
-    buffer.put(intArray).flip()
-
-    newID = glGenBuffers()
-
-    // Bind, push, and set pointer
-    glBindBuffer(GL_ARRAY_BUFFER, newID)
-    glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
-    // Not normalized (false), no stride (0), pointer index (0).
-    glVertexAttribIPointer(glslPosition, componentWidth, GL_INT, 0, 0)
-
-    // Enable the GLSL array.
-    glEnableVertexAttribArray(glslPosition)
-
-    // Unbind the array buffer.
-    glBindBuffer(GL_ARRAY_BUFFER, 0)
-
-  } catch (e: Exception) {
-    throw RuntimeException("uploadIntArray: Failed to upload. $e")
-  } finally {
-    // Free to C int* (int[]) or else there will be a massive memory leak.
-    memFree(buffer)
+    //note: Unbinding is optional. Done for safety.
+    glBindVertexArray(0)
   }
 
-  return newID
-}
+  private fun uploadFloatArray(floatArray: FloatArray, glslPosition: Int, componentWidth: Int): Int {
+    // OpenGL is a state machine. Uploading float array to current VAO state.
+    // glslPosition: The "(location = X)" in the fragment shader.
+    // componentWidth: 2 = Vec2, 3 = Vec3, etc
+    // Returns the VBO ID.
 
-private fun uploadIndices(indicesArray: IntArray): Int {
-  // OpenGL is a state machine. Uploading raw indices array to VAO state.
-  // Returns the indices ID.
+    lateinit var buffer: FloatBuffer
+    val newID: Int
 
-  lateinit var buffer: IntBuffer
-  val newID: Int
+    try {
+      buffer = memAllocFloat(floatArray.size)
+      buffer.put(floatArray).flip()
 
-  try {
+      newID = glGenBuffers()
 
-    newID = glGenBuffers()
+      // Bind, push, and set pointer
+      glBindBuffer(GL_ARRAY_BUFFER, newID)
+      glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
+      // Not normalized (false), no stride (0), pointer index (0).
+      glVertexAttribPointer(glslPosition, componentWidth, GL_FLOAT, false, 0, 0)
 
-    buffer = memAllocInt(indicesArray.size)
-    buffer.put(indicesArray).flip()
+      // Enable the GLSL array.
+      glEnableVertexAttribArray(glslPosition)
 
-    // Not normalized (false), no stride (0), pointer index (0).
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, newID)
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
+      // Unbind the array buffer.
+      glBindBuffer(GL_ARRAY_BUFFER, 0)
 
-    // note: Do not unbind GL_ELEMENT_ARRAY_BUFFER
+    } catch (e: Exception) {
+      throw RuntimeException("uploadFloatArray: Failed to upload. $e")
+    } finally {
+      // Free to C float* (float[]) or else there will be a massive memory leak.
+      memFree(buffer)
+    }
 
-  } catch (e: Exception) {
-    throw RuntimeException("uploadIndices: Failed to upload. $e")
-  } finally {
-    // Free to C int* (int[]) or else there will be a massive memory leak.
-    memFree(buffer)
+    return newID
   }
 
-  return newID
-}
+  private fun uploadIntArray(intArray: IntArray, glslPosition: Int, componentWidth: Int): Int {
+    // OpenGL is a state machine. Uploading int array to current VAO state.
+    // glslPosition: The "(location = X)" in the fragment shader.
+    // componentWidth: 2 = Vec2, 3 = Vec3, etc
+    // Returns the VBO ID.
 
-private fun destroyMesh(meshObject: MeshObject) {
+    lateinit var buffer: IntBuffer
+    val newID: Int
 
-  glBindVertexArray(meshObject.vaoID)
+    try {
+      buffer = memAllocInt(intArray.size)
+      buffer.put(intArray).flip()
 
-  destroyVBO(meshObject.positionsID, 0, "positions")
-  destroyVBO(meshObject.textureCoordsID, 1, "texture coords")
-  destroyVBO(meshObject.colorsID, 2, "colors")
-  destroyVBO(meshObject.indicesVboID, -1, "indices")
+      newID = glGenBuffers()
 
-  // Todo: destroy the bones and colors VBO
+      // Bind, push, and set pointer
+      glBindBuffer(GL_ARRAY_BUFFER, newID)
+      glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
+      // Not normalized (false), no stride (0), pointer index (0).
+      glVertexAttribIPointer(glslPosition, componentWidth, GL_INT, 0, 0)
 
-  // Now unbind.
-  glBindVertexArray(0)
+      // Enable the GLSL array.
+      glEnableVertexAttribArray(glslPosition)
 
-  // Then destroy the VBO.
-  glDeleteVertexArrays(meshObject.vaoID)
-  if (glIsVertexArray(meshObject.vaoID)) {
-    throw RuntimeException("destroyMesh: Failed to destroy VAO ${meshObject.vaoID} | ${meshObject.name}")
+      // Unbind the array buffer.
+      glBindBuffer(GL_ARRAY_BUFFER, 0)
+
+    } catch (e: Exception) {
+      throw RuntimeException("uploadIntArray: Failed to upload. $e")
+    } finally {
+      // Free to C int* (int[]) or else there will be a massive memory leak.
+      memFree(buffer)
+    }
+
+    return newID
   }
-}
 
-private fun destroyVBO(vboID: Int, glslPosition: Int, vboName: String) {
-  // This is used so that the indices array doesn't cause problems.
-  if (glslPosition >= 0) {
-    glDisableVertexAttribArray(glslPosition)
+  private fun uploadIndices(indicesArray: IntArray): Int {
+    // OpenGL is a state machine. Uploading raw indices array to VAO state.
+    // Returns the indices ID.
+
+    lateinit var buffer: IntBuffer
+    val newID: Int
+
+    try {
+
+      newID = glGenBuffers()
+
+      buffer = memAllocInt(indicesArray.size)
+      buffer.put(indicesArray).flip()
+
+      // Not normalized (false), no stride (0), pointer index (0).
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, newID)
+      glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
+
+      // note: Do not unbind GL_ELEMENT_ARRAY_BUFFER
+
+    } catch (e: Exception) {
+      throw RuntimeException("uploadIndices: Failed to upload. $e")
+    } finally {
+      // Free to C int* (int[]) or else there will be a massive memory leak.
+      memFree(buffer)
+    }
+
+    return newID
   }
-  glDeleteBuffers(vboID)
-  if (glIsBuffer(vboID)) {
-    // Debug info for now.
-    throw RuntimeException("destroyVBO: Failed to destroy vbo. $vboID | $vboName")
+
+  private fun destroyMesh(meshObject: MeshObject) {
+
+    glBindVertexArray(meshObject.vaoID)
+
+    destroyVBO(meshObject.positionsID, 0, "positions")
+    destroyVBO(meshObject.textureCoordsID, 1, "texture coords")
+    destroyVBO(meshObject.colorsID, 2, "colors")
+    destroyVBO(meshObject.indicesVboID, -1, "indices")
+
+    // Todo: destroy the bones and colors VBO
+
+    // Now unbind.
+    glBindVertexArray(0)
+
+    // Then destroy the VBO.
+    glDeleteVertexArrays(meshObject.vaoID)
+    if (glIsVertexArray(meshObject.vaoID)) {
+      throw RuntimeException("destroyMesh: Failed to destroy VAO ${meshObject.vaoID} | ${meshObject.name}")
+    }
+  }
+
+  private fun destroyVBO(vboID: Int, glslPosition: Int, vboName: String) {
+    // This is used so that the indices array doesn't cause problems.
+    if (glslPosition >= 0) {
+      glDisableVertexAttribArray(glslPosition)
+    }
+    glDeleteBuffers(vboID)
+    if (glIsBuffer(vboID)) {
+      // Debug info for now.
+      throw RuntimeException("destroyVBO: Failed to destroy vbo. $vboID | $vboName")
+    }
   }
 }
 
