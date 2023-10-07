@@ -438,23 +438,33 @@ object texture {
     idDatabase.remove(id)
   }
 
-//  constructor(name: String, buffer: ByteBuffer, size: Vector2ic, channels: Int) {
-//
-//    // Clones a texture.
-//
-//    this.name = name
-//    this.size.set(size)
-//    this.floatingSize.set(size.x().toFloat(), size.y().toFloat())
-//    this.channels = channels
-//
-//    id = uploadTextureBuffer(name, size, buffer)
-//
-//    //note: This does not destroy the buffer because the buffer could still be in use!
-//  }
+
+  //Fixme: Break this repetitive code down into functions! That's why we have functions!
+  // Functions!!
+  private fun internalCreate(newName: String, buffer: ByteBuffer, originalSize: Vector2ic, newChannels: Int): Int {
+
+    //? note: Returns texture ID.
+
+    // Clones a texture.
+    val newSize = Vector2i(originalSize)
+    val newFloatingSize = Vector2f(newSize.x().toFloat(), newSize.y().toFloat())
+
+    val id = uploadTextureBuffer(newName, newSize, buffer)
+
+    //note: This does not destroy the buffer because the buffer could still be in use!
+
+    // All required data has been created. Store.
+    name[id] = newName
+    size[id] = newSize
+    floatingSize[id] = newFloatingSize
+    channels[id] = newChannels
+
+    return id
+  }
 
   private fun internalCreate(fileLocation: String): Int {
 
-    //? note: Returns texture ID
+    //? note: Returns texture ID.
 
     // Creates a GL texture from a file location.
 
@@ -476,20 +486,29 @@ object texture {
     return id
   }
 
-  private fun internalCreate(newName: String, fileLocation: String) {
+  private fun internalCreate(newName: String, fileLocation: String): Int {
+
+    //? note: Returns texture ID.
+
     // Creates a GL texture from a file location with a custom name.
 
-    this.name = name
+    val (buffer, width, height, newChannels) = constructTextureFromFile(fileLocation)
 
-    val (buffer, width, height, channels) = constructTextureFromFile(fileLocation)
+    val newSize = Vector2i(width,height)
+    val newFloatingSize = Vector2f(width.toFloat(),height.toFloat())
 
-    size.set(width,height)
-    floatingSize.set(width.toFloat(),height.toFloat())
-    this.channels = channels
-
-    id = uploadTextureBuffer(name, size, buffer)
+    val id = uploadTextureBuffer(newName, newSize, buffer)
 
     destroyTextureBuffer(buffer)
+
+    // All required data has been created. Store.
+
+    name[id] = fileLocation
+    size[id] = newSize
+    floatingSize[id] = newFloatingSize
+    channels[id] = newChannels
+
+    return id
   }
 
   private fun checkDuplicate(name: String) {
