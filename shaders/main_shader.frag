@@ -4,7 +4,7 @@
 // This is just your standard old glsl shader.
 
 in vec2 outputTextureCoordinate;
-//in vec4 newColoring;
+in vec4 newColoring;
 
 out vec4 fragColor;
 
