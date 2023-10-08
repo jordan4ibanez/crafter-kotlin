@@ -264,7 +264,29 @@ data class ChunkMesh(
   val textureCoords: FloatArray,
   val indices: IntArray,
   val light: FloatArray
-)
+) {
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+
+    other as ChunkMesh
+
+    if (!positions.contentEquals(other.positions)) return false
+    if (!textureCoords.contentEquals(other.textureCoords)) return false
+    if (!indices.contentEquals(other.indices)) return false
+    if (!light.contentEquals(other.light)) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = positions.contentHashCode()
+    result = 31 * result + textureCoords.contentHashCode()
+    result = 31 * result + indices.contentHashCode()
+    result = 31 * result + light.contentHashCode()
+    return result
+  }
+}
 
 fun renderWorld() {
   val worker3 = Vector3f()
