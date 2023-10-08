@@ -17,7 +17,13 @@ object api {
   private val bindings = javaScript.getBindings(ScriptContext.ENGINE_SCOPE)
   private val compiler = javaScript as Compilable
   private val invoker = javaScript as Invocable
-  private var currentFile = ""
+  private const val MOD_PATH = "./mods/"
+  /**Holds the current mod name for debugging purposes.*/
+  private var currentModName = ""
+  /**Holds the current mod file for debugging purposes.*/
+  private var currentModFile = ""
+  /**Holds the current mod folder for debugging purposes.*/
+  private var currentModFolder = ""
 
   // One day.
 //  private val tsCompiler = something
@@ -27,18 +33,32 @@ object api {
     // Create the api.
     runFile("./api/api.js")
 
+    loadTextures()
 
   }
 
   private fun loadTextures() {
+    getFolderList(MOD_PATH).forEach { thisFolder: String ->
+      //? note: For now, we will assume the mod is called the folder name. In a bit: The conf will be implemented.
+      currentModName = thisFolder
+      currentModFolder = "$MOD_PATH$thisFolder/"
+      if (!isFolder(thisFolder)) throw RuntimeException("api: Something strange has gone wrong with loading textures.\nFolder $thisFolder does not exist.")
+      loadBlockTextures()
+      loadIndividualTextures()
+    }
+    //! todo: flush the texture atlas into a texture. "worldAtlas"
+  }
+
+  private fun loadBlockTextures() {
+    val textureDirectory = "$currentModFile/textures/"
+    if (!isFolder(textureDirectory)) { println("api: $currentModName has no textures folder. Skipping"); return }
+    val blockTextureDirectory = "$textureDirectory/blocks/"
+
+
 
   }
 
-  private fun loadBlockTextures(directory: String) {
-
-  }
-
-  private fun loadIndividualTextures(directory: String) {
+  private fun loadIndividualTextures() {
 
   }
 
@@ -48,15 +68,15 @@ object api {
   }
 
   fun runCode(rawCode: String) {
-    try { javaScript.eval(rawCode) } catch (e: Exception) { throw RuntimeException("(Javascript API error in $currentFile):\n$e") }
+    try { javaScript.eval(rawCode) } catch (e: Exception) { throw RuntimeException("(Javascript API error in $currentModFile):\n$e") }
   }
 
   private fun invoke(functionName: String, vararg args: Any): Any {
-    try { return invoker.invokeFunction(functionName, args) } catch (e: Exception) { throw RuntimeException("(Javascript API error in $currentFile):\n$e") }
+    try { return invoker.invokeFunction(functionName, args) } catch (e: Exception) { throw RuntimeException("(Javascript API error in $currentModFile):\n$e") }
   }
 
   private fun setCurrentFile(fileLocation: String) {
-    currentFile = fileLocation
+    currentModFile = fileLocation
   }
 
   //note: These two probably aren't going to be used but I'm including them anyways just in case.
@@ -66,7 +86,7 @@ object api {
   }
 
   fun compileCode(rawCode: String): CompiledScript {
-    return try { compiler.compile(rawCode) } catch (e: Exception) { throw RuntimeException("(Javascript API error in $currentFile):\n$e") }
+    return try { compiler.compile(rawCode) } catch (e: Exception) { throw RuntimeException("(Javascript API error in $currentModFile):\n$e") }
   }
 
 

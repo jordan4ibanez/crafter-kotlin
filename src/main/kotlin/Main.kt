@@ -120,8 +120,8 @@ fun draw() {
 //  rotation += getDelta() * 50f
 //  println(rotation)
   camera.updateCameraMatrix()
-  camera.setObjectMatrix(Vector3f(0f, 0f, -1f), Vector3f(0f,toRadians(rotation), 0f))
-  mesh.draw("debug")
+//  camera.setObjectMatrix(Vector3f(0f, 0f, -1f), Vector3f(0f,toRadians(rotation), 0f))
+//  mesh.draw("debug")
 
 }
 
