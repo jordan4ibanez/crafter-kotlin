@@ -46,7 +46,6 @@ object api {
       loadBlockTextures()
       loadIndividualTextures()
     }
-    //! todo: flush the texture atlas into a texture. "worldAtlas"
 
     // Finally, flush the world atlas into the GPU.
     texture.create("worldAtlas", worldAtlas.flush(), worldAtlas.getSize(), worldAtlas.getChannels())
@@ -66,7 +65,14 @@ object api {
   }
 
   private fun loadIndividualTextures() {
-
+    val textureDirectory = "$currentModFolder/textures"
+    if (!isFolder(textureDirectory)) { println("api: $currentModName has no textures folder. Skipping."); return }
+    getFileList(textureDirectory)
+      .filter { it.contains(".png") }
+      .ifEmpty { println("api: $currentModName has no textures in folder. Skipping."); return }
+      .forEach { foundTexture: String ->
+        texture.create(foundTexture, "$textureDirectory/$foundTexture")
+      }
   }
 
   fun runFile(fileLocation: String) {
