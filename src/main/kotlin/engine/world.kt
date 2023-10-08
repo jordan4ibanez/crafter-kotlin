@@ -20,9 +20,9 @@ private const val MESH_ARRAY_SIZE = 8
 
 private var seed = 123_456_789
 
-private const val MAX_CHUNK_GENS_PER_FRAME = 10
-private const val MAX_CHUNK_MESH_PROCS_PER_FRAME = 10
-private const val MAX_CHUNK_PROCS_PER_FRAME = 10
+private const val MAX_CHUNK_GENS_PER_FRAME = 5
+private const val MAX_CHUNK_MESH_PROCS_PER_FRAME = 5
+private const val MAX_CHUNK_PROCS_PER_FRAME = 5
 
 // Chunk block data
 //! todo: upgrade to LongArray! This will allow either 24 bit or 32 bit limit for chunks!
@@ -259,7 +259,7 @@ private fun processChunks() {
 //? note: Begin chunk mesh internal api.
 
 @JvmRecord
-data class ChunkMesh(val positions: FloatArray, val textureCoords: FloatArray, val indices: IntArray)// todo: this needs to be built into the mesh interface, light: FloatArray)
+data class ChunkMesh(val positions: FloatArray, val textureCoords: FloatArray, val indices: IntArray, val light: FloatArray)
 
 private fun meshIDExists(pos: Vector2ic): Boolean {
   return meshIDs.containsKey(pos)
@@ -282,13 +282,15 @@ private fun fullBuildChunkMesh(posX: Int, posZ: Int, chunkData: IntArray) {
 //  println("buildChunkMesh is running")
 
 //  ArrayList<Float>
-  val positions = ArrayList<Float>()
-  val textureCoords = ArrayList<Float>()
-  val indices = ArrayList<Int>()
-  val colors = ArrayList<Float>()
+
 
 
   for (i in 0 until MESH_ARRAY_SIZE) {
+    val positions = ArrayList<Float>()
+    val textureCoords = ArrayList<Float>()
+    val indices = ArrayList<Int>()
+    val colors = ArrayList<Float>()
+
     buildMesh(
       i, chunkData, leftExists, left,
       rightExists, right,
@@ -297,9 +299,10 @@ private fun fullBuildChunkMesh(posX: Int, posZ: Int, chunkData: IntArray) {
       positions, textureCoords,
       indices, colors
     )
+    meshGenerationOutput.add(Pair(Vector3i(posX, i, posZ), ChunkMesh(positions.toFloatArray(), textureCoords.toFloatArray(), indices.toIntArray(), colors.toFloatArray())))
   }
 
-
+//  println("complete")
 }
 
 private fun buildMesh(
