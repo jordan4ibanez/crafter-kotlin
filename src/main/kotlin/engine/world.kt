@@ -229,7 +229,7 @@ private fun genChunk() {
     }
   }
 
-  dataGenerationOutput.add(Pair(Vector2i(1,2), dataArray))
+  dataGenerationOutput.add(Pair(gotten, dataArray))
 }
 
 
@@ -267,6 +267,19 @@ data class ChunkMesh(
   val light: FloatArray
 )
 
+fun renderWorld() {
+  val worker3 = Vector3f()
+  meshIDs.forEach { (position: Vector2ic, array: IntArray) ->
+    array.forEachIndexed { height, id ->
+      if (id == 0) return@forEachIndexed
+      worker3.set((position.x() * WIDTH).toFloat(), (height * Y_SLICE_HEIGHT).toFloat() , (position.y() * DEPTH).toFloat())
+      camera.setObjectMatrix(worker3)
+      mesh.draw(id)
+//      println("drawing: ${position.x()}, ${position.y()}")
+    }
+  }
+}
+
 private fun meshIDExists(pos: Vector2ic): Boolean {
   return meshIDs.containsKey(pos)
 }
@@ -278,6 +291,7 @@ private fun putOrCreatePutMesh(pos: Vector3ic, id: Int) {
   val key = Vector2i(pos.x(), pos.z())
   if (!meshIDs.containsKey(key)) meshIDs[key] = IntArray(MESH_ARRAY_SIZE)
   meshIDs[key]!![pos.y()] = id
+//  println("put ${pos.x()} ${pos.z()} into ${pos.y()}")
 }
 
 private fun receiveChunkMeshes() {
