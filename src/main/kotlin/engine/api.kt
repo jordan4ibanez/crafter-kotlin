@@ -42,7 +42,7 @@ object api {
       //? note: For now, we will assume the mod is called the folder name. In a bit: The conf will be implemented.
       currentModName = thisFolder
       currentModFolder = "$MOD_PATH$thisFolder/"
-      if (!isFolder(thisFolder)) throw RuntimeException("api: Something strange has gone wrong with loading textures.\nFolder $thisFolder does not exist.")
+      if (!isFolder(currentModFolder)) throw RuntimeException("api: Something strange has gone wrong with loading textures.\nFolder $thisFolder does not exist.")
       loadBlockTextures()
       loadIndividualTextures()
     }
@@ -51,10 +51,11 @@ object api {
 
   private fun loadBlockTextures() {
     val textureDirectory = "$currentModFile/textures/"
-    if (!isFolder(textureDirectory)) { println("api: $currentModName has no textures folder. Skipping"); return }
+    if (!isFolder(textureDirectory)) { println("api: $currentModName has no textures folder. Skipping."); return }
     val blockTextureDirectory = "$textureDirectory/blocks/"
-
-
+    if (!isFolder(blockTextureDirectory)) { println("api: $currentModName has no block textures folder. Skipping.") ; return }
+    val foundFiles = getFileList(blockTextureDirectory)
+    println(foundFiles.joinToString())
 
   }
 
