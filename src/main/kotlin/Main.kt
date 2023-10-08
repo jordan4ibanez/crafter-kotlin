@@ -7,7 +7,6 @@ import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE
 import org.lwjgl.glfw.GLFW.GLFW_KEY_R
 import java.util.concurrent.ConcurrentLinkedDeque
-import java.util.concurrent.atomic.AtomicInteger
 
 // Initialization procedure. Consider this love.load()
 fun load() {
@@ -160,7 +159,7 @@ tailrec suspend fun gameLoop() {
 
   window.update()
 
-  doAllThreads()
+  launchAllThreads()
 
   update(getDelta())
 
