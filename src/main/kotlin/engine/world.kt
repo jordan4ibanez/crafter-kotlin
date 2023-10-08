@@ -208,17 +208,19 @@ private fun genChunk() {
     for (z in 0 until DEPTH) {
 
       //note: +0.5 because the output is -0.5 to 0.5
-      val calculatedNoise = noise.getSimplex(x + xOffset.toFloat(), z + zOffset.toFloat()) + 0.5f
+      val calculatedNoise = noise.getSimplex(x * xOffset.toFloat(), z * zOffset.toFloat()) + 0.5f
 
-      val height = (calculatedNoise * biomeScale) + biomeBaseHeight
+      val height = ((calculatedNoise * biomeScale) + biomeBaseHeight).toInt()
+
+      println(height)
 
       for (y in 0 until HEIGHT) {
 
         val id = if (y < height - 6) {
           0 setBlockID stone setBlockLight 0
-        } else if (y < height - 1) {
-          0 setBlockID dirt setBlockLight 0
         } else if (y < height) {
+          0 setBlockID dirt setBlockLight 0
+        } else if (y == height) {
           0 setBlockID grass setBlockLight 0
         } else {
           0 setBlockID 0 setBlockLight 15
@@ -305,8 +307,8 @@ private fun fullBuildChunkMesh(posX: Int, posZ: Int, chunkData: IntArray) {
   //? note: This builds out the initial chunk mesh components.
   val (leftExists, left) = safeGetDataDeconstruct(posX - 1, posZ)
   val (rightExists, right) = safeGetDataDeconstruct(posX + 1, posZ)
-  val (backExists, back) = safeGetDataDeconstruct(posX, posZ + 1)
   val (frontExists, front) = safeGetDataDeconstruct(posX, posZ - 1)
+  val (backExists, back) = safeGetDataDeconstruct(posX, posZ + 1)
 
 //  println("buildChunkMesh is running")
 
@@ -403,10 +405,10 @@ private fun blockDrawTypeAssembly(
     else -> {
       // Attach face.
       putPositions(
-        1f + overProvision + x, 1f + overProvision + y, 0f + z,
-        1f + overProvision + x, 0f - overProvision + y, 0f + z,
-        0f - overProvision + x, 0f - overProvision + y, 0f + z,
-        0f - overProvision + x, 1f + overProvision + y, 0f + z
+        0f + x, 1f + overProvision + y, 0f - overProvision + z,
+        0f + x, 0f - overProvision + y, 0f - overProvision + z,
+        0f + x, 0f - overProvision + y, 1f + overProvision + z,
+        0f + x, 1f + overProvision + y, 1f + overProvision + z
       )
       putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[0])
       putIndices()
