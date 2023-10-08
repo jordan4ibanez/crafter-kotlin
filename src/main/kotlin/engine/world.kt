@@ -305,7 +305,8 @@ private fun buildMesh(
   rightExists: Boolean, rightChunk: IntArray,
   backExists: Boolean, backChunk: IntArray,
   frontExists: Boolean, frontChunk: IntArray,
-  positions: ArrayList<Float>, textureCoords: ArrayList<Float>,
+  positions: ArrayList<Float>,
+  textureCoords: ArrayList<Float>,
   indices: ArrayList<Int>,
   colors: ArrayList<Float>
 ) {
