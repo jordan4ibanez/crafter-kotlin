@@ -27,27 +27,27 @@ fun load() {
 
 
   // Debug mesh.
-//  mesh.create3D(
-//    "debug",
-//    // positions.
-//    floatArrayOf(
-//      -0.5f,  0.5f, 0f,
-//      -0.5f, -0.5f, 0f,
-//       0.5f, -0.5f, 0f,
-//       0.5f,  0.5f, 0f
-//    ),
-//    // texture coords.
-//    floatArrayOf(
-//      0f, 0f,
-//      0f, 1f,
-//      1f, 1f,
-//      1f, 0f
-//    ),
-//    // indices.
-//    intArrayOf(0, 1, 2, 0, 2, 3),
-//    // texture name.
-//    "debug"
-//  )
+  mesh.create3D(
+    "debug",
+    // positions.
+    floatArrayOf(
+      -0.5f,  0.5f, 0f,
+      -0.5f, -0.5f, 0f,
+       0.5f, -0.5f, 0f,
+       0.5f,  0.5f, 0f
+    ),
+    // texture coords.
+    floatArrayOf(
+      0f, 0f,
+      0f, 1f,
+      1f, 1f,
+      1f, 0f
+    ),
+    // indices.
+    intArrayOf(0, 1, 2, 0, 2, 3),
+    // texture name.
+    "worldAtlas"
+  )
 
   for (x in -16 until 16) {
     for (y in -16 until 16) {
@@ -120,8 +120,8 @@ fun draw() {
 //  rotation += getDelta() * 50f
 //  println(rotation)
   camera.updateCameraMatrix()
-//  camera.setObjectMatrix(Vector3f(0f, 0f, -1f), Vector3f(0f,toRadians(rotation), 0f))
-//  mesh.draw("debug")
+  camera.setObjectMatrix(Vector3f(0f, 0f, -1f), Vector3f(0f,toRadians(rotation), 0f))
+  mesh.draw("debug")
 
 }
 
