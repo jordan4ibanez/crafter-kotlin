@@ -50,7 +50,7 @@ object api {
   }
 
   private fun loadBlockTextures() {
-    val textureDirectory = "$currentModFile/textures/"
+    val textureDirectory = "$currentModFolder/textures/"
     if (!isFolder(textureDirectory)) { println("api: $currentModName has no textures folder. Skipping."); return }
     val blockTextureDirectory = "$textureDirectory/blocks/"
     if (!isFolder(blockTextureDirectory)) { println("api: $currentModName has no block textures folder. Skipping.") ; return }
