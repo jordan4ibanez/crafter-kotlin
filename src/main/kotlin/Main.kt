@@ -49,8 +49,10 @@ fun load() {
     "worldAtlas"
   )
 
-  for (x in -16 until 16) {
-    for (y in -16 until 16) {
+  val renderDistance = 5
+
+  for (x in -renderDistance until renderDistance) {
+    for (y in -renderDistance until renderDistance) {
       generateChunk(x, y)
     }
   }
