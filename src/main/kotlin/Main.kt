@@ -123,6 +123,8 @@ fun draw() {
   camera.setObjectMatrix(Vector3f(0f, 0f, -1f), Vector3f(0f,toRadians(rotation), 0f))
   mesh.draw("debug")
 
+  renderWorld()
+
 }
 
 
