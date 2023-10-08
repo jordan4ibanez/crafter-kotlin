@@ -19,13 +19,26 @@ object api {
   private val invoker = javaScript as Invocable
   private var currentFile = ""
 
-  // One day
+  // One day.
 //  private val tsCompiler = something
 
   fun initialize() {
 
-    // create the api.
+    // Create the api.
     runFile("./api/api.js")
+
+
+  }
+
+  private fun loadTextures() {
+
+  }
+
+  private fun loadBlockTextures(directory: String) {
+
+  }
+
+  private fun loadIndividualTextures(directory: String) {
 
   }
 

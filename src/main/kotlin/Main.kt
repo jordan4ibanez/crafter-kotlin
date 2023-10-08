@@ -17,35 +17,37 @@ fun load() {
 
   // Debug texture.
 
-  worldAtlas.add("1", "./textures/debug.png")
-  worldAtlas.add("blah", "./textures/text_box.png")
-  worldAtlas.add("fkalj", "./textures/test_thing.png")
+  //todo: This is the basis for how world atlas is implemented into the game.
 
-  texture.create("debug", worldAtlas.flush(), worldAtlas.getSize(), worldAtlas.getChannels())
+//  worldAtlas.add("1", "./textures/debug.png")
+//  worldAtlas.add("blah", "./textures/text_box.png")
+//  worldAtlas.add("fkalj", "./textures/test_thing.png")
+//
+//  texture.create("debug", worldAtlas.flush(), worldAtlas.getSize(), worldAtlas.getChannels())
 
 
   // Debug mesh.
-  mesh.create3D(
-    "debug",
-    // positions.
-    floatArrayOf(
-      -0.5f,  0.5f, 0f,
-      -0.5f, -0.5f, 0f,
-       0.5f, -0.5f, 0f,
-       0.5f,  0.5f, 0f
-    ),
-    // texture coords.
-    floatArrayOf(
-      0f, 0f,
-      0f, 1f,
-      1f, 1f,
-      1f, 0f
-    ),
-    // indices.
-    intArrayOf(0, 1, 2, 0, 2, 3),
-    // texture name.
-    "debug"
-  )
+//  mesh.create3D(
+//    "debug",
+//    // positions.
+//    floatArrayOf(
+//      -0.5f,  0.5f, 0f,
+//      -0.5f, -0.5f, 0f,
+//       0.5f, -0.5f, 0f,
+//       0.5f,  0.5f, 0f
+//    ),
+//    // texture coords.
+//    floatArrayOf(
+//      0f, 0f,
+//      0f, 1f,
+//      1f, 1f,
+//      1f, 0f
+//    ),
+//    // indices.
+//    intArrayOf(0, 1, 2, 0, 2, 3),
+//    // texture name.
+//    "debug"
+//  )
 
   for (x in -16 until 16) {
     for (y in -16 until 16) {
