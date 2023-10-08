@@ -2,6 +2,7 @@ package engine
 
 import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL14.*
 import org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS
 import org.lwjgl.opengl.GLCapabilities
 import org.lwjgl.opengl.GLUtil.setupDebugMessageCallback
@@ -26,6 +27,15 @@ object gl {
     glDepthMask(true)
     glEnable(GL_DEPTH_TEST)
     glDepthFunc(GL_LESS)
+
+    val enableAlphaBlend = false
+
+    if (enableAlphaBlend) {
+      glEnable(GL_BLEND);
+      glBlendEquation(GL_FUNC_ADD);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+    }
 
     //todo: this has to be implemented before it's used
 //    glDepthRange(camera near, camera far)
