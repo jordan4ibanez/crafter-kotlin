@@ -193,12 +193,12 @@ private fun genChunk() {
   val dirt  = block.getID("crafter:dirt")
   val stone = block.getID("crafter:stone")
 
-  val biomeFrequency = 0.1f
-  val biomeScale = 1f
+  val biomeFrequency = 0.01f
+  val biomeScale = 20f
   val biomeBaseHeight = 60
 
   val noise = Noise(seed)
-
+  noise.setNoiseType(NoiseType.Simplex)
   noise.setFrequency(biomeFrequency)
 
   val dataArray = IntArray(ARRAY_SIZE)
@@ -207,7 +207,8 @@ private fun genChunk() {
     for (z in 0 until DEPTH) {
 
       //note: +0.5 because the output is -0.5 to 0.5
-      val calculatedNoise = noise.getSimplex(x * xOffset.toFloat(), z * zOffset.toFloat()) + 0.5f
+      println(x + xOffset)
+      val calculatedNoise = noise.getSimplex((x + (xOffset * WIDTH)).toFloat(), (z + (zOffset * DEPTH)).toFloat()) + 0.5f
 
       val height = ((calculatedNoise * biomeScale) + biomeBaseHeight).toInt()
 
