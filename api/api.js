@@ -97,6 +97,10 @@ const Vector3ic = Java.type("org.joml.Vector3ic");
 //
 
 const crafter = {
+  /**
+   * Get the root directory of your mod.
+   * @returns {string}
+   */
   getCurrentModDirectory: function() {
     return api.getCurrentModDirectory()
   },
