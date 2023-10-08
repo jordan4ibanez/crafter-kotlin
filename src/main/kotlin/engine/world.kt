@@ -354,15 +354,15 @@ private fun blockDrawTypeAssembly(
   colors: ArrayList<Float>
 ) {
 
-  val overProvisioning = 0.00001f;
-  fun putPositions(vararg pos: Float) = pos.forEach { positions.add(it) }
-
+  val OVER_PROVISION = 0.00001f;
+  fun putPositions(vararg pos: Float) = positions.addAll(pos.asSequence())
+  fun putTextureCoords(pos: FloatArray) = textureCoords.addAll(pos.asSequence())
   val iOrder = intArrayOf(0,1,2,2,3,0)
   fun putIndices() {
     val currentSize = (indices.size / 6) * 4
     iOrder.forEach { indices.add(it + currentSize) }
   }
-  fun putColors(light: Float) { for (i in 0 until 4) colors.add(light) }
+  fun putColors(light: Float) = (0 until 4).forEach { _ -> colors.add(light) }
 
   // Left.
   when (block.getDrawType(left.getBlockID())) {
@@ -370,13 +370,99 @@ private fun blockDrawTypeAssembly(
     else -> {
       // Attach face.
       putPositions(
-        1f + overProvisioning + x, 1f + overProvisioning + y, 0f + z,
-        1f + overProvisioning + x, 0f - overProvisioning + y, 0f + z,
-        0f - overProvisioning + x, 0f - overProvisioning + y, 0f + z,
-        0f - overProvisioning + x, 1f + overProvisioning + y, 0f + z
+        1f + OVER_PROVISION + x, 1f + OVER_PROVISION + y, 0f + z,
+        1f + OVER_PROVISION + x, 0f - OVER_PROVISION + y, 0f + z,
+        0f - OVER_PROVISION + x, 0f - OVER_PROVISION + y, 0f + z,
+        0f - OVER_PROVISION + x, 1f + OVER_PROVISION + y, 0f + z
       )
+      putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[0])
       putIndices()
-      putColors(1f)
+      putColors(left.getBlockLight().toFloat() / 15f)
+    }
+  }
+
+  // Right.
+  when (block.getDrawType(right.getBlockID())) {
+    DrawType.BLOCK -> {/*do nothing*/}
+    else -> {
+      // Attach face.
+      putPositions(
+        1f + x, 1f + OVER_PROVISION + y, 1f + OVER_PROVISION + z,
+        1f + x, 0f - OVER_PROVISION + y, 1f + OVER_PROVISION + z,
+        1f + x, 0f - OVER_PROVISION + y, 0f - OVER_PROVISION + z,
+        1f + x, 1f + OVER_PROVISION + y, 0f - OVER_PROVISION + z
+      )
+      putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[1])
+      putIndices()
+      putColors(right.getBlockLight().toFloat() / 15f)
+    }
+  }
+
+  // Front.
+  when (block.getDrawType(front.getBlockID())) {
+    DrawType.BLOCK -> {/*do nothing*/}
+    else -> {
+      // Attach face.
+      putPositions(
+        1f + OVER_PROVISION + x, 1f + OVER_PROVISION + y, 0f + z,
+        1f + OVER_PROVISION + x, 0f - OVER_PROVISION + y, 0f + z,
+        0f - OVER_PROVISION + x, 0f - OVER_PROVISION + y, 0f + z,
+        0f - OVER_PROVISION + x, 1f + OVER_PROVISION + y, 0f + z
+      )
+      putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[2])
+      putIndices()
+      putColors(front.getBlockLight().toFloat() / 15f)
+    }
+  }
+
+  // Back.
+  when (block.getDrawType(back.getBlockID())) {
+    DrawType.BLOCK -> {/*do nothing*/}
+    else -> {
+      // Attach face.
+      putPositions(
+        0f - OVER_PROVISION + x, 1f + OVER_PROVISION + y, 1f + z,
+        0f - OVER_PROVISION + x, 0f - OVER_PROVISION + y, 1f + z,
+        1f + OVER_PROVISION + x, 0f - OVER_PROVISION + y, 1f + z,
+        1f + OVER_PROVISION + x, 1f + OVER_PROVISION + y, 1f + z
+      )
+      putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[3])
+      putIndices()
+      putColors(back.getBlockLight().toFloat() / 15f)
+    }
+  }
+
+  // Bottom.
+  when (block.getDrawType(bottom.getBlockID())) {
+    DrawType.BLOCK -> {/*do nothing*/}
+    else -> {
+      // Attach face.
+      putPositions(
+        1f + OVER_PROVISION + x, 0f + y, 1f + OVER_PROVISION + z,
+        0f - OVER_PROVISION + x, 0f + y, 1f + OVER_PROVISION + z,
+        0f - OVER_PROVISION + x, 0f + y, 0f - OVER_PROVISION + z,
+        1f + OVER_PROVISION + x, 0f + y, 0f - OVER_PROVISION + z
+      )
+      putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[4])
+      putIndices()
+      putColors(bottom.getBlockLight().toFloat() / 15f)
+    }
+  }
+
+  // Top.
+  when (block.getDrawType(top.getBlockID())) {
+    DrawType.BLOCK -> {/*do nothing*/}
+    else -> {
+      // Attach face.
+      putPositions(
+        1f + OVER_PROVISION + x, 1f + y, 0f - OVER_PROVISION + z,
+        0f - OVER_PROVISION + x, 1f + y, 0f - OVER_PROVISION + z,
+        0f - OVER_PROVISION + x, 1f + y, 1f + OVER_PROVISION + z,
+        1f + OVER_PROVISION + x, 1f + y, 1f + OVER_PROVISION + z
+      )
+      putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[4])
+      putIndices()
+      putColors(top.getBlockLight().toFloat() / 15f)
     }
   }
 

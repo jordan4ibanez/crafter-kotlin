@@ -182,6 +182,11 @@ object block {
   fun getTextures(id: Int): Array<String> {
     return textures[id] ?: throw invalidThrow(id, "textures")
   }
+  internal fun getTextureCoords(id: Int): Array<FloatArray> {
+    //! Note: This would crash anyways, ignore cast issue.
+    //? note: This has no name oriented counterpart.
+    return textureCoords[id] ?: invalidThrow(id, "texture coords") as Array<FloatArray>
+  }
   fun getDrawType(id: Int): DrawType {
     return drawType[id] ?: throw invalidThrow(id, "drawType")
   }
