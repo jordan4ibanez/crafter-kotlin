@@ -129,7 +129,7 @@ const block = {
     
     for (key of requiredBlockProperties) {
       if (!d.hasOwnProperty(key)) {
-        throw RuntimeException(`API: Definition missing ${key}`)
+        throw new RuntimeException(`\nAPI: Definition missing ${key}`)
       }
     }
     jvmBlockController.register(d.name, d.inventoryName, d.textures, d.drawtype)
