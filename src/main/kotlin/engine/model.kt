@@ -194,7 +194,7 @@ object mesh {
   fun destroyAll() {
     id.values.forEach { gottenID: Int ->
       // Debug info for now.
-      println("mesh: Destroying $gottenID | ${getName(gottenID)}")
+//      println("mesh: Destroying $gottenID | ${getName(gottenID)}")
       destroyMesh(gottenID)
     }
   }
@@ -378,21 +378,21 @@ object texture {
   fun create(fileLocation: String): Int {
     //? note: Returns texture ID.
     val id = internalCreate(fileLocation)
-    println("texture: Created texture $fileLocation at $id")
+//    println("texture: Created texture $fileLocation at $id")
     return id
   }
 
   fun create(name: String, fileLocation: String): Int {
     //? note: Returns texture ID.
     val id = internalCreate(name, fileLocation)
-    println("texture: Created texture $name at $id")
+//    println("texture: Created texture $name at $id")
     return id
   }
 
   fun create(name: String, buffer: ByteBuffer, size: Vector2ic, channels: Int): Int {
     //? note: Returns texture ID.
     val id = internalCreate(name, buffer, size, channels)
-    println("texture: Created texture $name at $id")
+//    println("texture: Created texture $name at $id")
     return id
   }
 
@@ -443,7 +443,7 @@ object texture {
     //? note: This is for end of program life, but could also be used for texture packs.
     name.keys.forEach { id ->
       // Debug info for now.
-      println("texture: Destroying $id | ${getName(id)}")
+//      println("texture: Destroying $id | ${getName(id)}")
       destroyTexture(id)
     }
     name.clear()

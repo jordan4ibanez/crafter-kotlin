@@ -264,7 +264,7 @@ class Packer {
       val sizeX = textureCanvas.size.x
       val sizeY = textureCanvas.size.y
 
-      textureCanvas.size.print("$name | $posX | $posY")
+      // textureCanvas.size.print("$name | $posX | $posY")
 
       for (x in 0 until sizeX) {
         for (y in 0 until sizeY) {

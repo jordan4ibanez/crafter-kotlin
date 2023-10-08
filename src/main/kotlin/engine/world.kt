@@ -2,6 +2,7 @@ package engine
 
 import kotlinx.coroutines.*
 import org.joml.*
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -28,7 +29,7 @@ private const val MAX_CHUNK_PROCS_PER_FRAME = 5
 //! todo: upgrade to LongArray! This will allow either 24 bit or 32 bit limit for chunks!
 private val data = ConcurrentHashMap<Vector2ic, IntArray>()
 
-private val meshIDs = HashMap<Vector2ic, Array<String>>()
+private val meshIDs = HashMap<Vector2ic, IntArray>()
 
 // Input into chunk generator goes into here.
 private val dataGenerationInput = ConcurrentLinkedQueue<Vector2ic>()
@@ -259,17 +260,31 @@ private fun processChunks() {
 //? note: Begin chunk mesh internal api.
 
 @JvmRecord
-data class ChunkMesh(val positions: FloatArray, val textureCoords: FloatArray, val indices: IntArray, val light: FloatArray)
+data class ChunkMesh(
+  val positions: FloatArray,
+  val textureCoords: FloatArray,
+  val indices: IntArray,
+  val light: FloatArray
+)
 
 private fun meshIDExists(pos: Vector2ic): Boolean {
   return meshIDs.containsKey(pos)
 }
-private fun safetGetMeshIDArray(pos: Vector2ic): Array<String> {
+private fun safetGetMeshIDArray(pos: Vector2ic): IntArray {
   return meshIDs[pos] ?: throw RuntimeException("world: tried to access nonexistent chunk mesh: ${pos.x()}, ${pos.y()}")
 }
 
+private fun putOrCreatePutMesh(pos: Vector3ic, id: Int) {
+  val key = Vector2i(pos.x(), pos.z())
+  if (!meshIDs.containsKey(key)) meshIDs[key] = IntArray(MESH_ARRAY_SIZE)
+  meshIDs[key]!![pos.y()] = id
+}
+
 private fun receiveChunkMeshes() {
-  //todo: This will automatically upload the generated chunks via the mesh interface.
+  val (position, data) = meshGenerationOutput.remove()
+  val uuid = UUID.randomUUID().toString()
+  val id = mesh.create3D(uuid, data.positions, data.textureCoords, data.indices, data.light, "worldAtlas")
+  putOrCreatePutMesh(position, id)
 }
 
 private fun fullBuildChunkMesh(posX: Int, posZ: Int, chunkData: IntArray) {

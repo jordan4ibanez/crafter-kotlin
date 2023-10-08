@@ -75,7 +75,7 @@ object block {
     setDrawType(id, drawType)
     setInternalName(id, name)
     //todo: Cannot put texture coords here. Need to be generated first
-    println("created block $name at $id with drawtype $drawType and inv name $inventoryName")
+//    println("created block $name at $id with drawtype $drawType and inv name $inventoryName")
   }
 
   internal fun updateTextureCoords() {
