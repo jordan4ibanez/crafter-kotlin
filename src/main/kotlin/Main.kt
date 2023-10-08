@@ -56,6 +56,8 @@ fun load() {
       generateChunk(x, y)
     }
   }
+
+  mouse.capture()
 }
 
 
@@ -67,6 +69,8 @@ var speed = 0.5f
 
 // All general logic goes here. Consider this love.update()
 fun update(dtime: Float) {
+
+  camera.freeCam()
 
   if (keyboard.isDown(GLFW_KEY_ESCAPE)){
    window.close()
