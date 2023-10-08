@@ -79,7 +79,16 @@ object block {
   }
 
   internal fun updateTextureCoords() {
-
+    textures.forEach {
+      val output = Array(6) { FloatArray(8) }
+      val (id: Int, textureNames: Array<String>) = it
+      textureNames.forEachIndexed { outerIndex, textureName ->
+        worldAtlas.getQuadOf(textureName).forEachIndexed { innerIndex, value ->
+          output[outerIndex][innerIndex] = value
+        }
+      }
+      textureCoords[id] = output
+    }
   }
 
   // Translators
