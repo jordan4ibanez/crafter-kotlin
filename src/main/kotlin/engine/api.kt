@@ -41,22 +41,28 @@ object api {
     getFolderList(MOD_PATH).forEach { thisFolder: String ->
       //? note: For now, we will assume the mod is called the folder name. In a bit: The conf will be implemented.
       currentModName = thisFolder
-      currentModFolder = "$MOD_PATH$thisFolder/"
+      currentModFolder = "$MOD_PATH$thisFolder"
       if (!isFolder(currentModFolder)) throw RuntimeException("api: Something strange has gone wrong with loading textures.\nFolder $thisFolder does not exist.")
       loadBlockTextures()
       loadIndividualTextures()
     }
     //! todo: flush the texture atlas into a texture. "worldAtlas"
+
+    // Finally, flush the world atlas into the GPU.
+    texture.create("worldAtlas", worldAtlas.flush(), worldAtlas.getSize(), worldAtlas.getChannels())
   }
 
   private fun loadBlockTextures() {
-    val textureDirectory = "$currentModFolder/textures/"
+    val textureDirectory = "$currentModFolder/textures"
     if (!isFolder(textureDirectory)) { println("api: $currentModName has no textures folder. Skipping."); return }
-    val blockTextureDirectory = "$textureDirectory/blocks/"
+    val blockTextureDirectory = "$textureDirectory/blocks"
     if (!isFolder(blockTextureDirectory)) { println("api: $currentModName has no block textures folder. Skipping.") ; return }
-    val foundFiles = getFileList(blockTextureDirectory)
-    println(foundFiles.joinToString())
-
+    getFileList(blockTextureDirectory)
+      .filter { it.contains(".png") }
+      .ifEmpty { println("api: $currentModName has no block textures in folder. Skipping."); return }
+      .forEach { foundTexture: String ->
+        worldAtlas.add(foundTexture, "$blockTextureDirectory/$foundTexture")
+      }
   }
 
   private fun loadIndividualTextures() {
