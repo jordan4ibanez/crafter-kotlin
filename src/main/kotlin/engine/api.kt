@@ -35,6 +35,23 @@ object api {
 
     loadTextures()
 
+    loadMods()
+
+  }
+
+  private fun loadMods() {
+    getFolderList(MOD_PATH).forEach { thisFolder: String ->
+      //? note: For now, we will assume the mod is called the folder name. In a bit: The conf will be implemented.
+      currentModName = thisFolder
+      currentModFolder = "$MOD_PATH$thisFolder"
+      if (!isFolder(currentModFolder)) throw RuntimeException("api: Something strange has gone wrong with loading mods.\nFolder $thisFolder does not exist.")
+
+      //!todo: check mod.json existence here!
+
+      val currentMain = "$currentModFolder/main.js"
+      if (!isFile(currentMain)) throw RuntimeException("api: $currentModName does not contain a main.js!")
+      runFile(currentMain)
+    }
   }
 
   private fun loadTextures() {
