@@ -47,6 +47,8 @@ object api {
       if (!isFolder(currentModFolder)) throw RuntimeException("api: Something strange has gone wrong with loading mods.\nFolder $thisFolder does not exist.")
 
       //!todo: check mod.json existence here!
+      //!fixme: implement config checker!!
+      //!fixme: currentModName is set here!
 
       val currentMain = "$currentModFolder/main.js"
       if (!isFile(currentMain)) throw RuntimeException("api: $currentModName does not contain a main.js!")
