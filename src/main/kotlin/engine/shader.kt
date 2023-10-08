@@ -183,7 +183,7 @@ private fun compileSourceCode(programID: Int, sourceCodeLocation: String, shader
   glCompileShader(shaderID)
 
   if (glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE) {
-    throw RuntimeException("compileSourceCode: Error compiling. ${glGetShaderInfoLog(shaderID)}")
+    throw RuntimeException("compileSourceCode: Error compiling.\n${glGetShaderInfoLog(shaderID)}")
   }
 
   glAttachShader(programID, shaderID)
@@ -195,7 +195,7 @@ private fun link(programID: Int, vertexID: Int, fragmentID: Int) {
   glLinkProgram(programID)
 
   if (glGetProgrami(programID, GL_LINK_STATUS) == GL_FALSE) {
-    throw RuntimeException("link: Failed to link program. ${glGetProgramInfoLog(programID)}")
+    throw RuntimeException("link: Failed to link program.\n${glGetProgramInfoLog(programID)}")
   }
 
   glDetachShader(programID, vertexID)
@@ -208,6 +208,6 @@ private fun link(programID: Int, vertexID: Int, fragmentID: Int) {
   glValidateProgram(programID)
 
   if (glGetProgrami(programID, GL_VALIDATE_STATUS) == GL_FALSE) {
-    throw RuntimeException("link: Validation failed. ${glGetProgramInfoLog(programID)}")
+    throw RuntimeException("link: Validation failed.\n${glGetProgramInfoLog(programID)}")
   }
 }
