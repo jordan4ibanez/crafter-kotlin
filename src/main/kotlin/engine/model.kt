@@ -192,7 +192,10 @@ object mesh {
     swapTexture(getID(name), newTextureName)
 
   fun destroyAll() {
-    id.values.forEach { gottenID: Int ->
+    //? Note: This avoid a concurrent modification exception. We have to collect IDs, then modify the container.
+    val collector = ArrayList<Int>()
+    id.values.forEach{ collector.add(it) }
+    collector.forEach { gottenID: Int ->
       // Debug info for now.
 //      println("mesh: Destroying $gottenID | ${getName(gottenID)}")
       destroyMesh(gottenID)
