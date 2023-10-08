@@ -281,13 +281,21 @@ private fun fullBuildChunkMesh(posX: Int, posZ: Int, chunkData: IntArray) {
 
 //  println("buildChunkMesh is running")
 
+//  ArrayList<Float>
+  val positions = ArrayList<Float>()
+  val textureCoords = ArrayList<Float>()
+  val indices = ArrayList<Int>()
+  val colors = ArrayList<Float>()
+
+
   for (i in 0 until MESH_ARRAY_SIZE) {
     buildMesh(
       posX, i, posZ, chunkData,
       leftExists, left,
       rightExists, right,
       backExists, back,
-      frontExists, front
+      frontExists, front,
+      positions, textureCoords, indices, colors
     )
   }
 }
@@ -297,7 +305,11 @@ private fun buildMesh(
   leftExists: Boolean, leftChunk: IntArray,
   rightExists: Boolean, rightChunk: IntArray,
   backExists: Boolean, backChunk: IntArray,
-  frontExists: Boolean, frontChunk: IntArray
+  frontExists: Boolean, frontChunk: IntArray,
+  positions: ArrayList<Float>,
+  textureCoords: ArrayList<Float>,
+  indices: ArrayList<Int>,
+  colors: ArrayList<Float>
 ) {
 
   for (y in (Y_SLICE_HEIGHT * posY) until (Y_SLICE_HEIGHT * (posY + 1))) {
@@ -306,16 +318,17 @@ private fun buildMesh(
         val currentBlock = chunkData[posToIndex(x,y,z)]
         if (currentBlock.getBlockID() == 0) continue
 
-        val left = detectNeighbor(x,y,z,0,chunkData,leftExists,leftChunk)
-        val right = detectNeighbor(x,y,z,1,chunkData,rightExists,rightChunk)
-        val front = detectNeighbor(x,y,z,2,chunkData,frontExists,frontChunk)
-        val back = detectNeighbor(x,y,z,3,chunkData,backExists,backChunk)
-        val bottom = detectNeighbor(x,y,z,4, chunkData,false, IntArray(0))
-        val top = detectNeighbor(x,y,z,5, chunkData,false,IntArray(0))
-
         when (block.getDrawType(currentBlock.getBlockID())) {
           DrawType.AIR -> continue
-          DrawType.BLOCK -> {}
+          DrawType.BLOCK -> {
+            val left = detectNeighbor(x,y,z,0,chunkData,leftExists,leftChunk)
+            val right = detectNeighbor(x,y,z,1,chunkData,rightExists,rightChunk)
+            val front = detectNeighbor(x,y,z,2,chunkData,frontExists,frontChunk)
+            val back = detectNeighbor(x,y,z,3,chunkData,backExists,backChunk)
+            val bottom = detectNeighbor(x,y,z,4, chunkData,false, IntArray(0))
+            val top = detectNeighbor(x,y,z,5, chunkData,false,IntArray(0))
+            blockDrawTypeAssembly(x,y,z, currentBlock, left, right, front, back, bottom, top, positions, textureCoords, indices, colors)
+          }
           DrawType.BLOCK_BOX -> TODO()
           DrawType.TORCH -> TODO()
           DrawType.LIQUID_SOURCE -> TODO()
@@ -327,6 +340,46 @@ private fun buildMesh(
       }
     }
   }
+}
+
+private fun blockDrawTypeAssembly(
+  x: Int, y: Int, z: Int,
+  currentBlock: Int,
+  left: Int, right: Int,
+  front: Int, back: Int,
+  bottom: Int, top: Int,
+  positions: ArrayList<Float>,
+  textureCoords: ArrayList<Float>,
+  indices: ArrayList<Int>,
+  colors: ArrayList<Float>
+) {
+
+  val overProvisioning = 0.00001f;
+  fun putPositions(vararg pos: Float) = pos.forEach { positions.add(it) }
+
+  val iOrder = intArrayOf(0,1,2,2,3,0)
+  fun putIndices() {
+    val currentSize = (indices.size / 6) * 4
+    iOrder.forEach { indices.add(it + currentSize) }
+  }
+  fun putColors(light: Float) { for (i in 0 until 4) colors.add(light) }
+
+  // Left.
+  when (block.getDrawType(left.getBlockID())) {
+    DrawType.BLOCK -> {/*do nothing*/}
+    else -> {
+      // Attach face.
+      putPositions(
+        1f + overProvisioning + x, 1f + overProvisioning + y, 0f + z,
+        1f + overProvisioning + x, 0f - overProvisioning + y, 0f + z,
+        0f - overProvisioning + x, 0f - overProvisioning + y, 0f + z,
+        0f - overProvisioning + x, 1f + overProvisioning + y, 0f + z
+      )
+      putIndices()
+      putColors(1f)
+    }
+  }
+
 }
 
 private fun detectNeighbor(
@@ -358,11 +411,11 @@ private fun detectNeighbor(
         1 -> posToIndex(x - WIDTH,y,z)
         2 -> posToIndex(x,y,z + DEPTH)
         3 -> posToIndex(x,y,z - DEPTH)
-        4,5 -> 0
+        4,5 -> 0 setBlockLight 15 //! fixme: current natural light when time is implemented!
         else -> throw RuntimeException("detectNeighbor: How 3??")
       }
       neighbor[index]
-    } else { 0 }
+    } else { 0 }  //! fixme: current natural light when time is implemented!
   } else {
     val index = when (dir) {
       0 -> posToIndex(x - 1,y,z)
