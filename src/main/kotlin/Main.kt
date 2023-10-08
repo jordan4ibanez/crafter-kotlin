@@ -46,7 +46,7 @@ fun load() {
     // indices.
     intArrayOf(0, 1, 2, 0, 2, 3),
     // texture name.
-    "worldAtlas.png"
+    "worldAtlas"
   )
 
   for (x in -16 until 16) {
