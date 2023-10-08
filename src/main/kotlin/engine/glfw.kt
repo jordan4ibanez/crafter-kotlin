@@ -63,6 +63,10 @@ object glfw {
       window.frameBufferSize.set(x[0], y[0])
     }
 
+    // Mouse raw motion support
+    if (glfwRawMouseMotionSupported()) {
+      glfwSetInputMode(window.pointer, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE)
+    }
 
   }
 
@@ -115,6 +119,19 @@ object glfw {
         //todo: this needs to be tested, these might need to be flipped
         keyboard.setCurrent(key, false)
         keyboard.setMemory(key)
+      }
+    }
+
+    // Note: Mouse.
+    glfwSetCursorPosCallback(window.pointer) { _, posX, posY ->
+      mouse.position.set(posX, posY)
+    }
+
+    glfwSetCursorEnterCallback(window.pointer) { _, entered ->
+      // Only reset to -1 when mouse leaves.
+      if (!entered) {
+        println("mouse: resetting position to -1, -1")
+        mouse.position.set(-1f, -1f)
       }
     }
 
