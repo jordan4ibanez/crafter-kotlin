@@ -21,7 +21,7 @@ private val id            = ConcurrentHashMap<String, Int>()
 private val name          = con<String>()
 private val inventoryName = con<String>()
 private val textures      = con<Array<String>>()
-private val textureCoords = con<HashMap<String, FloatArray>>()
+private val textureCoords = con<Array<FloatArray>>()
 private val drawType      = con<DrawType>()
 
 // Optional components.
@@ -78,6 +78,10 @@ object block {
     println("created block $name at $id with drawtype $drawType and inv name $inventoryName")
   }
 
+  internal fun updateTextureCoords() {
+
+  }
+
   // Translators
   private fun setInternalName(id: Int, internalName: String) {
     name[id] = internalName
@@ -94,7 +98,7 @@ object block {
     if (newTextures.size != 6) throw RuntimeException("Tried to set block $name textures with ${newTextures.size} size.")
     textures[id] = newTextures
   }
-  private fun setTextureCoords(id: Int, newCoords: HashMap<String, FloatArray>) {
+  private fun setTextureCoords(id: Int, newCoords: Array<FloatArray>) {
     textureCoords[id] = newCoords
   }
   fun setDrawType(id: Int, newDrawType: DrawType) {
@@ -137,7 +141,7 @@ object block {
   // Name oriented
   fun setInventoryName(name: String, newName: String) = setInventoryName(getID(name), newName)
   fun setTextures(name: String, newTextures: Array<String>) = setTextures(getID(name), newTextures)
-  private fun setTextureCoords(name: String, newCoords: HashMap<String, FloatArray>) = setTextureCoords(getID(name), newCoords)
+  private fun setTextureCoords(name: String, newCoords: Array<FloatArray>) = setTextureCoords(getID(name), newCoords)
   fun setDrawType(name: String, newDrawType: DrawType) = setDrawType(getID(name), newDrawType)
   fun setWalkable(name: String, isWalkable: Boolean) = setWalkable(getID(name), isWalkable)
   fun setLiquid(name: String, isLiquid: Boolean) = setLiquid(getID(name), isLiquid)

@@ -37,6 +37,9 @@ object api {
 
     loadMods()
 
+    // This maps the block definitions to the world atlas that was just created.
+    block.updateTextureCoords()
+
   }
 
   private fun loadMods() {
