@@ -28,7 +28,7 @@ object gl {
     glEnable(GL_DEPTH_TEST)
     glDepthFunc(GL_LESS)
 
-    val enableAlphaBlend = true
+    val enableAlphaBlend = false
 
     if (enableAlphaBlend) {
       glEnable(GL_BLEND);
