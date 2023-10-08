@@ -78,6 +78,8 @@ object mouse {
 
   internal fun isCaptured(): Boolean = glfwGetInputMode(window.pointer, GLFW_CURSOR) == GLFW_CURSOR_DISABLED
 
+  internal fun toggleCapture() = if (isCaptured()) release() else capture()
+
   private fun doReset() {
     delta.zero()
     //! FIXME: move this to the center of the window instead of the top left.

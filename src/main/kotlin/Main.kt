@@ -4,8 +4,7 @@ import org.joml.Math.random
 import org.joml.Math.toRadians
 import org.joml.Random
 import org.joml.Vector3f
-import org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE
-import org.lwjgl.glfw.GLFW.GLFW_KEY_R
+import org.lwjgl.glfw.GLFW.*
 import java.util.concurrent.ConcurrentLinkedDeque
 
 // Initialization procedure. Consider this love.load()
@@ -75,6 +74,10 @@ fun update(dtime: Float) {
   if (keyboard.isDown(GLFW_KEY_ESCAPE)){
    window.close()
     return
+  }
+
+  if (keyboard.isPressed(GLFW_KEY_F1)) {
+    mouse.toggleCapture()
   }
 
   if (keyboard.isPressed(GLFW_KEY_R)) {
