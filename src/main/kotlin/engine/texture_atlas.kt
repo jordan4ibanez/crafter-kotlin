@@ -227,7 +227,7 @@ class Packer {
     if (textures.containsKey(name)) throw RuntimeException("Packer: tried to add duplicate of $name")
     if (textures.containsKey(fileLocation)) throw RuntimeException("Packer: tried to add duplicate of $fileLocation")
     textures[name] = Canvas(name, fileLocation)
-    println("Packer[${this.name}]: added $fileLocation as $name")
+//    println("Packer[${this.name}]: added $fileLocation as $name")
   }
 
   fun debugPrintCanvas() {
