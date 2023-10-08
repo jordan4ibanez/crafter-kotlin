@@ -290,24 +290,22 @@ private fun fullBuildChunkMesh(posX: Int, posZ: Int, chunkData: IntArray) {
 
   for (i in 0 until MESH_ARRAY_SIZE) {
     buildMesh(
-      posX, i, posZ, chunkData,
-      leftExists, left,
+      i, chunkData, leftExists, left,
       rightExists, right,
       backExists, back,
       frontExists, front,
-      positions, textureCoords, indices, colors
+      positions, textureCoords,
+      indices, colors
     )
   }
 }
 
 private fun buildMesh(
-  posX: Int, posY: Int, posZ: Int, chunkData: IntArray,
-  leftExists: Boolean, leftChunk: IntArray,
+  posY: Int, chunkData: IntArray, leftExists: Boolean, leftChunk: IntArray,
   rightExists: Boolean, rightChunk: IntArray,
   backExists: Boolean, backChunk: IntArray,
   frontExists: Boolean, frontChunk: IntArray,
-  positions: ArrayList<Float>,
-  textureCoords: ArrayList<Float>,
+  positions: ArrayList<Float>, textureCoords: ArrayList<Float>,
   indices: ArrayList<Int>,
   colors: ArrayList<Float>
 ) {
