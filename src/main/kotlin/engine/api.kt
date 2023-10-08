@@ -98,7 +98,13 @@ object api {
   }
 
   fun runCode(rawCode: String) {
-    try { javaScript.eval(rawCode) } catch (e: Exception) { throw RuntimeException("(Javascript API error in $currentModFile):\n$e") }
+    //? note: Import is great for getting the JSDoc working, but it crashes in Nashorn. Get it out.
+    val cleanedCode = rawCode
+      .split("\r?\n|\r".toRegex())
+      // There could be instances of "    import("blah")", fix this.
+      .filter { !it.trim().startsWith("import") }
+      .joinToString("\n")
+    try { javaScript.eval(cleanedCode) } catch (e: Exception) { throw RuntimeException("(Javascript API error in $currentModFile):\n$e") }
   }
 
   private fun invoke(functionName: String, vararg args: Any): Any {
