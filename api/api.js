@@ -32,6 +32,7 @@ const DrawType = {
 /**
  * A java record that holds the data for a block definition.
  * If you want to create one, you MUST include all properties, in order.
+ * @class
  * @property {number} id
  * @property {string} name
  * @property {string} inventoryName
@@ -110,10 +111,31 @@ const crafter = {
 /**
  * Functional interface into the engine's block definitions.
  */
-const requiredBlockProperties = ["name", "inventoryName", "textures", "drawtype"];
-const optionalBlockProperties = ["walkable", "liquid", "flow", "viscosity", "climbable", "sneakJumpClimbable", "falling", "clear", "damagePerSecond", "light"]
+const requiredBlockProperties = ["name", "inventoryName", "textures"];
 
+/**
+ * Block interface.
+ */
 const block = {
+  
+  optionalBlockProperties: null,
+  initOptionalBlockProperties: function() {
+    //* Object needs to be created before referencing self.
+    if (!block.optionalBlockProperties) {
+      block.optionalBlockProperties = {
+        "walkable": block.setWalkable,
+        "liquid": block.setLiquid,
+        "flow": block.setFlow,
+        "viscosity": block.setViscosity,
+        "climbable": block.setClimbable,
+        "sneakJumpClimbable": block.setSneakJumpClimbable,
+        "falling": block.setFalling,
+        "clear": block.setClear,
+        "damagePerSecond": block.setDamagePerSecond,
+        "light": block.setLight
+      };
+    }
+  },
   
   /**
    * Define a block definition via an object.
@@ -126,18 +148,20 @@ const block = {
   register: function(d) {
     
     //* This is essentially functional hidden behind OOP.
+    this.initOptionalBlockProperties();
     
     for (key of requiredBlockProperties) {
       if (!d.hasOwnProperty(key)) {
-        throw new RuntimeException(`\nAPI: Definition missing ${key}`)
+        throw new RuntimeException(`\nAPI: Definition missing ${key}`);
       }
     }
-    jvmBlockController.register(d.name, d.inventoryName, d.textures, d.drawtype)
+    jvmBlockController.register(d.name, d.inventoryName, d.textures, d.drawtype || DrawType.BLOCK);
 
     // Now assign optionals.
-    for (key of optionalBlockProperties) {
+    for (key in this.optionalBlockProperties) {
       if (d.hasOwnProperty(key)) {
-        // Then it gets injected here automatically
+        // Then it gets injected here automatically.
+        this.optionalBlockProperties[key](d.name, d[key]);
       }
     }
   },
