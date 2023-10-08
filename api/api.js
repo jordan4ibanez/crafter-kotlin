@@ -95,10 +95,11 @@ const Vector3ic = Java.type("org.joml.Vector3ic");
 
 // Custom JS types.
 //
-// ? todo:
 
-//? I'm not sure what crafter object interface should hold yet.
 const crafter = {
+  getCurrentModDirectory: function() {
+    return api.getCurrentModDirectory()
+  },
 };
 
 
@@ -409,4 +410,4 @@ block.register({
   drawtype: DrawType.AIR
 })
 
-println(block.get("air"))
+// println(block.get("air"))

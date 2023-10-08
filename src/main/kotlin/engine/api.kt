@@ -92,6 +92,10 @@ object api {
       }
   }
 
+  fun getCurrentModDirectory(): String {
+    return currentModFolder
+  }
+
   fun runFile(fileLocation: String) {
     setCurrentFile(fileLocation)
     runCode(getFileString(fileLocation))
