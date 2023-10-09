@@ -595,9 +595,9 @@ private fun detectNeighbor(
   return if (!(0 until containmentLimit).contains(containmentCheck)) {
     if (neighborExists) {
       val index = when (dir) {
-        0 -> posToIndex(WIDTH, y, z)
+        0 -> posToIndex(WIDTH - 1, y, z)
         1 -> posToIndex(0, y, z)
-        2 -> posToIndex(x, y, DEPTH)
+        2 -> posToIndex(x, y, DEPTH - 1)
         3 -> posToIndex(x, y, 0)
         4, 5 -> 0 setBlockLight 15 //! fixme: current natural light when time is implemented!
         else -> throw RuntimeException("detectNeighbor: How 3??")
