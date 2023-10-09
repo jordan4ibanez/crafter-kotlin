@@ -62,6 +62,14 @@ object window {
     return glfwGetWindowAttrib(pointer, GLFW_MAXIMIZED) == GLFW_TRUE
   }
 
+  fun maximize() {
+    glfwMaximizeWindow(pointer)
+  }
+
+  fun unMaximize() {
+    glfwRestoreWindow(pointer)
+  }
+
   fun isFocused(): Boolean {
     return glfwGetWindowAttrib(pointer, GLFW_FOCUSED) == GLFW_TRUE
   }
