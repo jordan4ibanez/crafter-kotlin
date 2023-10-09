@@ -108,6 +108,15 @@ fun Vector3f.print(debugInfo: String? = null) {
   println(result)
 }
 
+fun Vector3ic.print(debugInfo: String? = null) {
+  val result = finalizeVectorSerialization("Vector3ic", debugInfo, this.destructureToString())
+  println(result)
+}
+fun Vector3i.print(debugInfo: String? = null) {
+  val result = finalizeVectorSerialization("Vector3i", debugInfo, this.destructureToString())
+  println(result)
+}
+
 fun Vector4fc.print(debugInfo: String? = null) {
   val result = finalizeVectorSerialization("Vector4fc", debugInfo, this.destructureToString())
   println(result)
