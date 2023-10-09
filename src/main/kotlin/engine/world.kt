@@ -158,22 +158,25 @@ internal fun disperseChunkGenerators() {
 
   // If there's nothing to be done, do nothing.
 
-  for (i in 0 .. MAX_CHUNK_MESH_PROCS_PER_FRAME) {
+  // As more chunks gen, this gets slower, speed it up.
+  val multiplier = ceil(getDelta() * 1_000).toInt() * 2
+
+  for (i in 0 .. MAX_CHUNK_MESH_PROCS_PER_FRAME * multiplier) {
     if (meshGenerationOutput.isEmpty()) break
     receiveChunkMeshes()
   }
 
-  for (i in 0 .. MAX_CHUNK_MESH_UPDATES_PER_FRAME) {
+  for (i in 0 .. MAX_CHUNK_MESH_UPDATES_PER_FRAME * multiplier) {
     if (meshGenerationInput.isEmpty()) break
     GlobalScope.launch { processMeshUpdate() }
   }
 
-  for (i in 0 .. MAX_CHUNK_GENS_PER_FRAME) {
+  for (i in 0 .. MAX_CHUNK_GENS_PER_FRAME * multiplier) {
     if (dataGenerationInput.isEmpty()) break
     GlobalScope.launch { genChunk() }
   }
 
-  for (i in 0 .. MAX_CHUNK_PROCS_PER_FRAME) {
+  for (i in 0 .. MAX_CHUNK_PROCS_PER_FRAME * multiplier) {
     if (dataGenerationOutput.isEmpty()) break
     GlobalScope.launch { processChunks() }
   }
