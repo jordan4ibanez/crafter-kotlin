@@ -207,7 +207,6 @@ private fun genChunk() {
     for (z in 0 until DEPTH) {
 
       //note: +0.5 because the output is -0.5 to 0.5
-      println(x + xOffset)
       val calculatedNoise = noise.getSimplex((x + (xOffset * WIDTH)).toFloat(), (z + (zOffset * DEPTH)).toFloat()) + 0.5f
 
       val height = ((calculatedNoise * biomeScale) + biomeBaseHeight).toInt()
@@ -234,6 +233,8 @@ private fun genChunk() {
 
 
 private fun processChunks() {
+
+  //? note: This is where the generated chunks are received.
   if (dataGenerationOutput.isEmpty()) return
 
   val gotten: Pair<Vector2ic, IntArray>
@@ -249,10 +250,15 @@ private fun processChunks() {
 
   data[position] = chunkData
 
+  // Fire off neighbor updates.
+  fullNeighborUpdate(position.x(), position.y())
+
   // Separate internal pointer
   val dataClone = chunkData.clone()
 
   fullBuildChunkMesh(position.x(), position.y(), dataClone)
+
+
 
   // done
 }
@@ -260,7 +266,7 @@ private fun processChunks() {
 //? note: Begin chunk mesh internal api.
 
 @JvmRecord
-data class ChunkMesh(
+private data class ChunkMesh(
   val positions: FloatArray,
   val textureCoords: FloatArray,
   val indices: IntArray,
@@ -287,6 +293,13 @@ data class ChunkMesh(
     result = 31 * result + light.contentHashCode()
     return result
   }
+}
+
+private fun fullNeighborUpdate(x: Int, z: Int) {
+  if (chunkExists(x + 1, z)) for (y in 0 until MESH_ARRAY_SIZE) addMeshUpdate(x + 1, y, z)
+  if (chunkExists(x - 1, z)) for (y in 0 until MESH_ARRAY_SIZE) addMeshUpdate(x - 1, y, z)
+  if (chunkExists(x, z + 1)) for (y in 0 until MESH_ARRAY_SIZE) addMeshUpdate(x, y, z + 1)
+  if (chunkExists(x, z - 1)) for (y in 0 until MESH_ARRAY_SIZE) addMeshUpdate(x, y, z - 1)
 }
 
 fun renderWorld() {
@@ -316,6 +329,10 @@ private fun putOrCreatePutMesh(pos: Vector3ic, id: Int) {
 //  println("put ${pos.x()} ${pos.z()} into ${pos.y()}")
 }
 
+fun addMeshUpdate(x: Int, y: Int, z: Int) {
+  meshGenerationInput.add(Vector3i(x,y,z))
+}
+
 private fun receiveChunkMeshes() {
   val (position, data) = meshGenerationOutput.remove()
   val uuid = UUID.randomUUID().toString()
@@ -329,12 +346,6 @@ private fun fullBuildChunkMesh(posX: Int, posZ: Int, chunkData: IntArray) {
   val (rightExists, right) = safeGetDataDeconstruct(posX + 1, posZ)
   val (frontExists, front) = safeGetDataDeconstruct(posX, posZ - 1)
   val (backExists, back) = safeGetDataDeconstruct(posX, posZ + 1)
-
-//  println("buildChunkMesh is running")
-
-//  ArrayList<Float>
-
-
 
   for (i in 0 until MESH_ARRAY_SIZE) {
     val positions = ArrayList<Float>()
