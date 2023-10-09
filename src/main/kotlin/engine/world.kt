@@ -333,7 +333,11 @@ private fun safetGetMeshIDArray(pos: Vector2ic): IntArray {
 private fun putOrCreatePutMesh(pos: Vector3ic, id: Int) {
   val key = Vector2i(pos.x(), pos.z())
   if (!meshIDs.containsKey(key)) meshIDs[key] = IntArray(MESH_ARRAY_SIZE)
-  meshIDs[key]!![pos.y()] = id
+  val currentArray = meshIDs[key]!!
+  if (currentArray[pos.y()] != 0) {
+    mesh.destroy(currentArray[pos.y()])
+  }
+  currentArray[pos.y()] = id
 //  println("put ${pos.x()} ${pos.z()} into ${pos.y()}")
 }
 
