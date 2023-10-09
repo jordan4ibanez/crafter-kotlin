@@ -322,6 +322,7 @@ object mesh {
     }
     // GPU memory is clear. Delete CPU memory.
     val newName = getName(newID)
+//    println("mesh: destroying $newName")
     id.remove(newName)
     name.remove(newID)
     positionsID.remove(newID)
