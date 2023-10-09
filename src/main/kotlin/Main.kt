@@ -48,7 +48,7 @@ fun load() {
     "worldAtlas"
   )
 
-  val renderDistance = 5
+  val renderDistance = 8
 
   for (x in -renderDistance until renderDistance) {
     for (y in -renderDistance until renderDistance) {
@@ -57,6 +57,8 @@ fun load() {
   }
 
   mouse.capture()
+
+  window.maximize()
 }
 
 
