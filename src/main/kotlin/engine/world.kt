@@ -157,11 +157,6 @@ internal fun disperseChunkGenerators() {
 
   // If there's nothing to be done, do nothing.
 
-  for (i in 0 .. MAX_CHUNK_GENS_PER_FRAME) {
-    if (dataGenerationInput.isEmpty()) break
-    GlobalScope.launch { genChunk() }
-  }
-
   for (i in 0 .. MAX_CHUNK_MESH_PROCS_PER_FRAME) {
     if (meshGenerationOutput.isEmpty()) break
     receiveChunkMeshes()
@@ -170,6 +165,11 @@ internal fun disperseChunkGenerators() {
   for (i in 0 .. MAX_CHUNK_MESH_UPDATES_PER_FRAME) {
     if (meshGenerationInput.isEmpty()) break
     GlobalScope.launch { processMeshUpdate() }
+  }
+
+  for (i in 0 .. MAX_CHUNK_GENS_PER_FRAME) {
+    if (dataGenerationInput.isEmpty()) break
+    GlobalScope.launch { genChunk() }
   }
 
   for (i in 0 .. MAX_CHUNK_PROCS_PER_FRAME) {
@@ -374,7 +374,7 @@ private fun processMeshUpdate() {
   val dataClone: IntArray = try {
     safetGetData(posX, posZ).clone()
   } catch (e: Exception) {
-    println("processMeshUpdate: Data race failure.")
+    println("processMeshUpdate: $posX, $posZ does not exist.")
     return
   }
 
@@ -402,7 +402,8 @@ private fun processMeshUpdate() {
 }
 
 private fun buildMesh(
-  posY: Int, chunkData: IntArray, leftExists: Boolean, leftChunk: IntArray,
+  posY: Int, chunkData: IntArray,
+  leftExists: Boolean, leftChunk: IntArray,
   rightExists: Boolean, rightChunk: IntArray,
   backExists: Boolean, backChunk: IntArray,
   frontExists: Boolean, frontChunk: IntArray,
