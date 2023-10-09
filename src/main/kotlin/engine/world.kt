@@ -23,7 +23,7 @@ private var seed = 123_456_789
 
 private const val MAX_CHUNK_GENS_PER_FRAME = 5
 private const val MAX_CHUNK_MESH_PROCS_PER_FRAME = 5
-private const val MAX_CHUNK_MESH_UPDATES_PER_FRAME = 7
+private const val MAX_CHUNK_MESH_UPDATES_PER_FRAME = 5
 private const val MAX_CHUNK_PROCS_PER_FRAME = 5
 
 // Chunk block data
@@ -370,9 +370,9 @@ private fun processMeshUpdate() {
 //  pos.print("gotten")
 
   val dataClone: IntArray = try {
-    safetGetData(posX, posZ).clone()
+    data[Vector2i(posX, posZ)]!!.clone()
   } catch (e: Exception) {
-    println("processMeshUpdate: $posX, $posZ does not exist.")
+//    println("processMeshUpdate: $posX, $posZ does not exist.")
     return
   }
 
@@ -410,8 +410,6 @@ private fun buildMesh(
   indices: ArrayList<Int>,
   colors: ArrayList<Float>
 ) {
-
-  println("backExists? $backExists")
 
   for (y in (Y_SLICE_HEIGHT * posY) until (Y_SLICE_HEIGHT * (posY + 1))) {
     for (z in 0 until DEPTH) {
@@ -597,23 +595,25 @@ private fun detectNeighbor(
   return if (!(0 until containmentLimit).contains(containmentCheck)) {
     if (neighborExists) {
       val index = when (dir) {
-        0 -> posToIndex(x + WIDTH,y,z)
-        1 -> posToIndex(x - WIDTH,y,z)
-        2 -> posToIndex(x,y,z + DEPTH)
-        3 -> posToIndex(x,y,z - DEPTH)
-        4,5 -> 0 setBlockLight 15 //! fixme: current natural light when time is implemented!
+        0 -> posToIndex(WIDTH, y, z)
+        1 -> posToIndex(0, y, z)
+        2 -> posToIndex(x, y, DEPTH)
+        3 -> posToIndex(x, y, 0)
+        4, 5 -> 0 setBlockLight 15 //! fixme: current natural light when time is implemented!
         else -> throw RuntimeException("detectNeighbor: How 3??")
       }
       neighbor[index]
-    } else { 0 setBlockLight 15 }  //! fixme: current natural light when time is implemented!
+    } else {
+      0 setBlockLight 15
+    }  //! fixme: current natural light when time is implemented!
   } else {
     val index = when (dir) {
-      0 -> posToIndex(x - 1,y,z)
-      1 -> posToIndex(x + 1,y,z)
-      2 -> posToIndex(x,y,z - 1)
-      3 -> posToIndex(x,y,z + 1)
-      4 -> posToIndex(x,y - 1, z)
-      5 -> posToIndex(x,y + 1, z)
+      0 -> posToIndex(x - 1, y, z)
+      1 -> posToIndex(x + 1, y, z)
+      2 -> posToIndex(x, y, z - 1)
+      3 -> posToIndex(x, y, z + 1)
+      4 -> posToIndex(x, y - 1, z)
+      5 -> posToIndex(x, y + 1, z)
       else -> throw RuntimeException("detectNeighbor: How 4??")
     }
     chunkData[index]
