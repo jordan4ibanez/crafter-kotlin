@@ -143,11 +143,9 @@ private fun safetGetData(posX: Int, posZ: Int): IntArray {
 }
 
 private fun safeGetDataDeconstructClone(posX: Int, posZ: Int): Pair<Boolean, IntArray> {
-  return if (chunkExists(posX, posZ)) {
-    Pair(true, safetGetData(posX, posZ).clone())
-  } else {
-    Pair(false, IntArray(0))
-  }
+  val gottenData = try { data[Vector2i(posX, posZ)]!!.clone() } catch (e: Exception){ IntArray(0) }
+  val exists = gottenData.isNotEmpty()
+  return Pair(exists, gottenData)
 }
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -413,6 +411,8 @@ private fun buildMesh(
   colors: ArrayList<Float>
 ) {
 
+  println("backExists? $backExists")
+
   for (y in (Y_SLICE_HEIGHT * posY) until (Y_SLICE_HEIGHT * (posY + 1))) {
     for (z in 0 until DEPTH) {
       for (x in 0 until WIDTH) {
@@ -605,7 +605,7 @@ private fun detectNeighbor(
         else -> throw RuntimeException("detectNeighbor: How 3??")
       }
       neighbor[index]
-    } else { 0 }  //! fixme: current natural light when time is implemented!
+    } else { 0 setBlockLight 15 }  //! fixme: current natural light when time is implemented!
   } else {
     val index = when (dir) {
       0 -> posToIndex(x - 1,y,z)
