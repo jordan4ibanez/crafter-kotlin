@@ -23,6 +23,7 @@ private var seed = 123_456_789
 
 private const val MAX_CHUNK_GENS_PER_FRAME = 5
 private const val MAX_CHUNK_MESH_PROCS_PER_FRAME = 5
+private const val MAX_CHUNK_MESH_UPDATES_PER_FRAME = 7
 private const val MAX_CHUNK_PROCS_PER_FRAME = 5
 
 // Chunk block data
@@ -141,7 +142,7 @@ private fun safetGetData(posX: Int, posZ: Int): IntArray {
   return data[Vector2i(posX, posZ)] ?: throw RuntimeException("world: tried to access nonexistent chunk: $posX, $posZ")
 }
 
-private fun safeGetDataDeconstruct(posX: Int, posZ: Int): Pair<Boolean, IntArray> {
+private fun safeGetDataDeconstructClone(posX: Int, posZ: Int): Pair<Boolean, IntArray> {
   return if (chunkExists(posX, posZ)) {
     Pair(true, safetGetData(posX, posZ).clone())
   } else {
@@ -166,6 +167,11 @@ internal fun disperseChunkGenerators() {
     receiveChunkMeshes()
   }
 
+  for (i in 0 .. MAX_CHUNK_MESH_UPDATES_PER_FRAME) {
+    if (meshGenerationInput.isEmpty()) break
+    GlobalScope.launch { processMeshUpdate() }
+  }
+
   for (i in 0 .. MAX_CHUNK_PROCS_PER_FRAME) {
     if (dataGenerationOutput.isEmpty()) break
     GlobalScope.launch { processChunks() }
@@ -181,7 +187,7 @@ private fun genChunk() {
   try {
     gotten = dataGenerationInput.remove()!!
   } catch (e: Exception) {
-    println("genChunk: failed.")
+    println("genChunk: Data race failure.")
     return
   }
 
@@ -235,6 +241,8 @@ private fun genChunk() {
 private fun processChunks() {
 
   //? note: This is where the generated chunks are received.
+  //? note: Fires off 8 chunk mesh generations. External thread.
+
   if (dataGenerationOutput.isEmpty()) return
 
   val gotten: Pair<Vector2ic, IntArray>
@@ -242,7 +250,7 @@ private fun processChunks() {
   try {
     gotten = dataGenerationOutput.remove()!!
   } catch (e: Exception) {
-    println("processChunks: failed.")
+    println("processChunks: Data race failure.")
     return
   }
 
@@ -250,17 +258,12 @@ private fun processChunks() {
 
   data[position] = chunkData
 
-  // Fire off neighbor updates.
-  fullNeighborUpdate(position.x(), position.y())
+  // Fire off current chunk mesh updates.
+  fullMeshUpdate(position.x(), position.y())
 
-  // Separate internal pointer
-  val dataClone = chunkData.clone()
+  // Fire off neighbor chunk mesh updates.
+  fullNeighborMeshUpdate(position.x(), position.y())
 
-  fullBuildChunkMesh(position.x(), position.y(), dataClone)
-
-
-
-  // done
 }
 
 //? note: Begin chunk mesh internal api.
@@ -295,11 +298,15 @@ private data class ChunkMesh(
   }
 }
 
-private fun fullNeighborUpdate(x: Int, z: Int) {
-  if (chunkExists(x + 1, z)) for (y in 0 until MESH_ARRAY_SIZE) addMeshUpdate(x + 1, y, z)
-  if (chunkExists(x - 1, z)) for (y in 0 until MESH_ARRAY_SIZE) addMeshUpdate(x - 1, y, z)
-  if (chunkExists(x, z + 1)) for (y in 0 until MESH_ARRAY_SIZE) addMeshUpdate(x, y, z + 1)
-  if (chunkExists(x, z - 1)) for (y in 0 until MESH_ARRAY_SIZE) addMeshUpdate(x, y, z - 1)
+private fun fullMeshUpdate(x: Int, z: Int) {
+  for (y in 0 until MESH_ARRAY_SIZE) addMeshUpdate(x, y, z)
+}
+
+private fun fullNeighborMeshUpdate(x: Int, z: Int) {
+  for (y in 0 until MESH_ARRAY_SIZE) addMeshUpdate(x + 1, y, z)
+  for (y in 0 until MESH_ARRAY_SIZE) addMeshUpdate(x - 1, y, z)
+  for (y in 0 until MESH_ARRAY_SIZE) addMeshUpdate(x, y, z + 1)
+  for (y in 0 until MESH_ARRAY_SIZE) addMeshUpdate(x, y, z - 1)
 }
 
 fun renderWorld() {
@@ -334,37 +341,64 @@ fun addMeshUpdate(x: Int, y: Int, z: Int) {
 }
 
 private fun receiveChunkMeshes() {
+
+  //? note: This receives the generated meshes. Uploads them into GPU. Main thread.
+
   val (position, data) = meshGenerationOutput.remove()
   val uuid = UUID.randomUUID().toString()
   val id = mesh.create3D(uuid, data.positions, data.textureCoords, data.indices, data.light, "worldAtlas")
   putOrCreatePutMesh(position, id)
 }
 
-private fun fullBuildChunkMesh(posX: Int, posZ: Int, chunkData: IntArray) {
-  //? note: This builds out the initial chunk mesh components.
-  val (leftExists, left) = safeGetDataDeconstruct(posX - 1, posZ)
-  val (rightExists, right) = safeGetDataDeconstruct(posX + 1, posZ)
-  val (frontExists, front) = safeGetDataDeconstruct(posX, posZ - 1)
-  val (backExists, back) = safeGetDataDeconstruct(posX, posZ + 1)
+private fun processMeshUpdate() {
 
-  for (i in 0 until MESH_ARRAY_SIZE) {
-    val positions = ArrayList<Float>()
-    val textureCoords = ArrayList<Float>()
-    val indices = ArrayList<Int>()
-    val colors = ArrayList<Float>()
+  //? note: Process one element in the input queue. External thread.
 
-    buildMesh(
-      i, chunkData, leftExists, left,
-      rightExists, right,
-      backExists, back,
-      frontExists, front,
-      positions, textureCoords,
-      indices, colors
-    )
-    meshGenerationOutput.add(Pair(Vector3i(posX, i, posZ), ChunkMesh(positions.toFloatArray(), textureCoords.toFloatArray(), indices.toIntArray(), colors.toFloatArray())))
+  if (meshGenerationInput.isEmpty()) return
+
+  val pos: Vector3ic
+
+  try {
+    pos = meshGenerationInput.remove()!!
+  } catch (e: Exception) {
+    println("processMeshUpdate: Data race failure.")
+    return
   }
 
-//  println("complete")
+  val posX = pos.x()
+  val posY = pos.y()
+  val posZ = pos.z()
+
+//  pos.print("gotten")
+
+  val dataClone: IntArray = try {
+    safetGetData(posX, posZ).clone()
+  } catch (e: Exception) {
+    println("processMeshUpdate: Data race failure.")
+    return
+  }
+
+  val (leftExists, left) = safeGetDataDeconstructClone(posX - 1, posZ)
+  val (rightExists, right) = safeGetDataDeconstructClone(posX + 1, posZ)
+  val (frontExists, front) = safeGetDataDeconstructClone(posX, posZ - 1)
+  val (backExists, back) = safeGetDataDeconstructClone(posX, posZ + 1)
+
+  val positions = ArrayList<Float>()
+  val textureCoords = ArrayList<Float>()
+  val indices = ArrayList<Int>()
+  val colors = ArrayList<Float>()
+
+  buildMesh(
+    pos.y(), dataClone, leftExists, left,
+    rightExists, right,
+    backExists, back,
+    frontExists, front,
+    positions, textureCoords,
+    indices, colors
+  )
+
+  meshGenerationOutput.add(Pair(Vector3i(posX, posY, posZ), ChunkMesh(positions.toFloatArray(), textureCoords.toFloatArray(), indices.toIntArray(), colors.toFloatArray())))
+
 }
 
 private fun buildMesh(
