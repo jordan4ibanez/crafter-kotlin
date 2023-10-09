@@ -405,6 +405,9 @@ private fun processMeshUpdate() {
     indices, colors
   )
 
+  // If it's empty don't do anything
+  if (positions.isEmpty()) return
+
   meshGenerationOutput.add(Pair(Vector3i(posX, posY, posZ), ChunkMesh(positions.toFloatArray(), textureCoords.toFloatArray(), indices.toIntArray(), colors.toFloatArray())))
 
 }
