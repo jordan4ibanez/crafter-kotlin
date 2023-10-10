@@ -47,15 +47,10 @@ fun load() {
     // texture name.
     "worldAtlas"
   )
-//  for (x in -renderDistance until renderDistance) {
-//    for (y in -renderDistance until renderDistance) {
-//      world.generateChunk(x, y)
-//    }
-//  }
 
   mouse.capture()
 
-//  window.maximize()
+  window.maximize()
 }
 
 
