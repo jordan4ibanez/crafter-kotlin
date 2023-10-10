@@ -52,7 +52,7 @@ fun load() {
 
   for (x in -renderDistance until renderDistance) {
     for (y in -renderDistance until renderDistance) {
-      generateChunk(x, y)
+      world.generateChunk(x, y)
     }
   }
 
@@ -134,7 +134,7 @@ fun draw() {
   camera.setObjectMatrix(Vector3f(0f, 0f, -1f), Vector3f(0f,toRadians(rotation), 0f))
   mesh.draw("debug")
 
-  renderWorld()
+  world.renderChunks()
 
 }
 
