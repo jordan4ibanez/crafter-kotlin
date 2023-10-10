@@ -316,9 +316,9 @@ private fun fullNeighborMeshUpdate(x: Int, z: Int) {
 fun renderWorld() {
   val worker3 = Vector3f()
   meshIDs.forEach { (position: Vector2ic, array: IntArray) ->
-    array.forEachIndexed { height, id ->
-      if (id == 0) return@forEachIndexed
-      worker3.set((position.x() * WIDTH).toFloat(), (height * Y_SLICE_HEIGHT).toFloat() , (position.y() * DEPTH).toFloat())
+    array.forEach { id ->
+      if (id == 0) return@forEach
+      worker3.set((position.x() * WIDTH).toFloat(), 0f, (position.y() * DEPTH).toFloat())
       camera.setObjectMatrix(worker3)
       mesh.draw(id)
 //      println("drawing: ${position.x()}, ${position.y()}")
@@ -482,19 +482,16 @@ private fun blockDrawTypeAssembly(
   }
   fun putColors(light: Float) = (0 until 4).forEach { _ -> colors.add(light) }
 
-  // Meshes Y position is moved when rendering. Localize.
-  val yLocal = y.mod(Y_SLICE_HEIGHT)
-
   // Left.
   when (block.getDrawType(left.getBlockID())) {
     DrawType.BLOCK -> {/*do nothing*/}
     else -> {
       // Attach face.
       putPositions(
-        0f + x, 1f + overProvision + yLocal, 0f - overProvision + z,
-        0f + x, 0f - overProvision + yLocal, 0f - overProvision + z,
-        0f + x, 0f - overProvision + yLocal, 1f + overProvision + z,
-        0f + x, 1f + overProvision + yLocal, 1f + overProvision + z
+        0f + x, 1f + overProvision + y, 0f - overProvision + z,
+        0f + x, 0f - overProvision + y, 0f - overProvision + z,
+        0f + x, 0f - overProvision + y, 1f + overProvision + z,
+        0f + x, 1f + overProvision + y, 1f + overProvision + z
       )
       putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[0])
       putIndices()
@@ -508,10 +505,10 @@ private fun blockDrawTypeAssembly(
     else -> {
       // Attach face.
       putPositions(
-        1f + x, 1f + overProvision + yLocal, 1f + overProvision + z,
-        1f + x, 0f - overProvision + yLocal, 1f + overProvision + z,
-        1f + x, 0f - overProvision + yLocal, 0f - overProvision + z,
-        1f + x, 1f + overProvision + yLocal, 0f - overProvision + z
+        1f + x, 1f + overProvision + y, 1f + overProvision + z,
+        1f + x, 0f - overProvision + y, 1f + overProvision + z,
+        1f + x, 0f - overProvision + y, 0f - overProvision + z,
+        1f + x, 1f + overProvision + y, 0f - overProvision + z
       )
       putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[1])
       putIndices()
@@ -525,10 +522,10 @@ private fun blockDrawTypeAssembly(
     else -> {
       // Attach face.
       putPositions(
-        1f + overProvision + x, 1f + overProvision + yLocal, 0f + z,
-        1f + overProvision + x, 0f - overProvision + yLocal, 0f + z,
-        0f - overProvision + x, 0f - overProvision + yLocal, 0f + z,
-        0f - overProvision + x, 1f + overProvision + yLocal, 0f + z
+        1f + overProvision + x, 1f + overProvision + y, 0f + z,
+        1f + overProvision + x, 0f - overProvision + y, 0f + z,
+        0f - overProvision + x, 0f - overProvision + y, 0f + z,
+        0f - overProvision + x, 1f + overProvision + y, 0f + z
       )
       putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[2])
       putIndices()
@@ -542,10 +539,10 @@ private fun blockDrawTypeAssembly(
     else -> {
       // Attach face.
       putPositions(
-        0f - overProvision + x, 1f + overProvision + yLocal, 1f + z,
-        0f - overProvision + x, 0f - overProvision + yLocal, 1f + z,
-        1f + overProvision + x, 0f - overProvision + yLocal, 1f + z,
-        1f + overProvision + x, 1f + overProvision + yLocal, 1f + z
+        0f - overProvision + x, 1f + overProvision + y, 1f + z,
+        0f - overProvision + x, 0f - overProvision + y, 1f + z,
+        1f + overProvision + x, 0f - overProvision + y, 1f + z,
+        1f + overProvision + x, 1f + overProvision + y, 1f + z
       )
       putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[3])
       putIndices()
@@ -559,10 +556,10 @@ private fun blockDrawTypeAssembly(
     else -> {
       // Attach face.
       putPositions(
-        1f + overProvision + x, 0f + yLocal, 1f + overProvision + z,
-        0f - overProvision + x, 0f + yLocal, 1f + overProvision + z,
-        0f - overProvision + x, 0f + yLocal, 0f - overProvision + z,
-        1f + overProvision + x, 0f + yLocal, 0f - overProvision + z
+        1f + overProvision + x, 0f + y, 1f + overProvision + z,
+        0f - overProvision + x, 0f + y, 1f + overProvision + z,
+        0f - overProvision + x, 0f + y, 0f - overProvision + z,
+        1f + overProvision + x, 0f + y, 0f - overProvision + z
       )
       putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[4])
       putIndices()
@@ -576,10 +573,10 @@ private fun blockDrawTypeAssembly(
     else -> {
       // Attach face.
       putPositions(
-        1f + overProvision + x, 1f + yLocal, 0f - overProvision + z,
-        0f - overProvision + x, 1f + yLocal, 0f - overProvision + z,
-        0f - overProvision + x, 1f + yLocal, 1f + overProvision + z,
-        1f + overProvision + x, 1f + yLocal, 1f + overProvision + z
+        1f + overProvision + x, 1f + y, 0f - overProvision + z,
+        0f - overProvision + x, 1f + y, 0f - overProvision + z,
+        0f - overProvision + x, 1f + y, 1f + overProvision + z,
+        1f + overProvision + x, 1f + y, 1f + overProvision + z
       )
       putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[5])
       putIndices()
