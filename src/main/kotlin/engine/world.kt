@@ -16,7 +16,7 @@ object world {
   private const val WIDTH = 16
   private const val HEIGHT = 128
   private const val DEPTH = 16
-  private const val yStride = WIDTH * DEPTH
+  private const val Y_STRIDE = WIDTH * DEPTH
   private const val ARRAY_SIZE = WIDTH * HEIGHT * DEPTH
 
   private const val Y_SLICE_HEIGHT = 16
@@ -135,17 +135,17 @@ object world {
   }
 
   fun posToIndex(x: Int, y: Int, z: Int): Int {
-    return (y * yStride) + (z * DEPTH) + x;
+    return (y * Y_STRIDE) + (z * DEPTH) + x;
   }
 
   fun posToIndex(pos: Vector3ic): Int {
-    return (pos.y() * yStride) + (pos.z() * DEPTH) + pos.x()
+    return (pos.y() * Y_STRIDE) + (pos.z() * DEPTH) + pos.x()
   }
 
   fun indexToPos(i: Int): Vector3ic {
     return Vector3i(
       i % WIDTH,
-      (i / yStride) % HEIGHT,
+      (i / Y_STRIDE) % HEIGHT,
       (i / DEPTH) % DEPTH
     )
   }
