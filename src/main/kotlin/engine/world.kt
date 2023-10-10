@@ -342,9 +342,16 @@ object world {
   fun renderChunks() {
     val worker3 = Vector3f()
     meshIDs.forEach { (position: Vector2ic, array: IntArray) ->
-      array.forEach inner@ { id ->
+      array.forEachIndexed inner@ { y,id ->
         if (id == 0) return@inner
-        worker3.set((position.x() * WIDTH).toFloat(), 0f, (position.y() * DEPTH).toFloat())
+
+        val renderX = (position.x() * WIDTH).toFloat()
+        val testY   = (y * Y_SLICE_HEIGHT).toFloat()
+        val renderZ = (position.y() * DEPTH).toFloat()
+
+        if (!collision.chunkMeshWithinFrustum(renderX, testY, renderZ)) return@inner
+
+        worker3.set(renderX, 0f, renderZ)
         camera.setObjectMatrix(worker3)
         mesh.draw(id)
 //      println("drawing: ${position.x()}, ${position.y()}")

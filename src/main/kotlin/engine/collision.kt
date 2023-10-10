@@ -16,7 +16,7 @@ object collision {
 
     //? note: Simulate the calculation that happens in GLSL on the cpu.
     return intersection
-      .set(workerMatrix.set(camera.getCameraMatrix()).mul(camera.getObjectMatrix()))
+      .set(workerMatrix.set(camera.getCameraMatrix()).mul(chunkMatrix))
       .testAab(
         min.set(0f,0f,0f),
         max.set(world.getChunkWidthFloat(),world.getChunkHeightFloat(),world.getChunkDepthFloat())
