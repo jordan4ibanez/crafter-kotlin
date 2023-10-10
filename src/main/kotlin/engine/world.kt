@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.math.ceil
 
 /*
-This is a data oriented approach to the mess that was in Java.
+This is a data oriented and functional approach to the mess that was in Java.
 */
 object world {
   private const val WIDTH = 16

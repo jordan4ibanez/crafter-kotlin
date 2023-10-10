@@ -40,7 +40,7 @@ object gl {
     //todo: this has to be implemented before it's used
 //    glDepthRange(camera near, camera far)
 
-    val enableCulling = false
+    val enableCulling = true
 
     if (enableCulling) {
       glEnable(GL_CULL_FACE)

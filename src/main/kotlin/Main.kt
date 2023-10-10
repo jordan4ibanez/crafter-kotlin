@@ -48,7 +48,7 @@ fun load() {
     "worldAtlas"
   )
 
-  val renderDistance = 8
+  val renderDistance = 32
 
   for (x in -renderDistance until renderDistance) {
     for (y in -renderDistance until renderDistance) {
