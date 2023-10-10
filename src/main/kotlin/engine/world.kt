@@ -353,9 +353,16 @@ private fun receiveChunkMeshes() {
   //? note: This receives the generated meshes. Uploads them into GPU. Main thread.
 
   val (position, data) = meshGenerationOutput.remove()
-  val uuid = UUID.randomUUID().toString()
-  val id = mesh.create3D(uuid, data.positions, data.textureCoords, data.indices, data.light, "worldAtlas")
-  putOrCreatePutMesh(position, id)
+
+  if (data.positions.isEmpty()) {
+    //? note: received a deletion update.
+    putOrCreatePutMesh(position, 0)
+  } else {
+    //? note: received a normal update.
+    val uuid = UUID.randomUUID().toString()
+    val id = mesh.create3D(uuid, data.positions, data.textureCoords, data.indices, data.light, "worldAtlas")
+    putOrCreatePutMesh(position, id)
+  }
 }
 
 private fun processMeshUpdate() {
@@ -405,8 +412,7 @@ private fun processMeshUpdate() {
     indices, colors
   )
 
-  // If it's empty don't do anything
-  if (positions.isEmpty()) return
+  //? note: We have to send blank meshes to the output so they can be deleted in gpu memory.
 
   meshGenerationOutput.add(Pair(Vector3i(posX, posY, posZ), ChunkMesh(positions.toFloatArray(), textureCoords.toFloatArray(), indices.toIntArray(), colors.toFloatArray())))
 
