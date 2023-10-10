@@ -4,10 +4,12 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.joml.*
+import org.joml.Math.abs
+import org.joml.Math.ceil
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
-import kotlin.math.ceil
+import kotlin.collections.ArrayDeque
 
 /*
 This is a data oriented and functional approach to the mess that was in Java.
@@ -61,10 +63,66 @@ object world {
   fun generateChunk(x: Int, y: Int) {
     val key = Vector2i(x, y)
     if (data.containsKey(key) || dataGenerationInput.contains(key)) {
-      println("Discarding generation $x, $y")
+//      println("Discarding generation $x, $y")
       return
     }
     dataGenerationInput.add(key)
+  }
+
+  internal fun cleanAndGenerationScan() {
+    val clientChunkPosition = clientPlayer.getChunkPosition()
+    val renderDistance = camera.getRenderDistance()
+
+    println("update")
+
+    val (currentX, currentZ) = clientChunkPosition.destructure()
+
+    discardOldChunks(currentX, currentZ, renderDistance)
+
+    for (rad in 0 .. renderDistance) {
+      for (x in (currentX - rad) .. (currentX + rad)) {
+        for (z in (currentZ - rad) .. (currentZ + rad)) {
+          val currentKey = Vector2i(x, z)
+          if (!data.contains(currentKey)) generateChunk(x,z)
+        }
+      }
+    }
+  }
+
+  private fun discardOldChunks(currentX: Int, currentZ: Int, renderDistance: Int) {
+
+    val dataDestructionQueue = ArrayDeque<Vector2ic>()
+    data.forEach { (key: Vector2ic, _) ->
+      val (x,z) = key.destructure()
+      if (abs(x - currentX) > renderDistance || abs(z - currentZ) > renderDistance) {
+        dataDestructionQueue.add(key)
+      }
+    }
+    dataDestructionQueue.forEach {
+      data.remove(it)
+    }
+
+    //? note: due to concurrency, we must also check the mesh list.
+    dataDestructionQueue.clear()
+    meshIDs.forEach { (key: Vector2ic, _) ->
+      val (x,z) = key.destructure()
+      if (abs(x - currentX) > renderDistance || abs(z - currentZ) > renderDistance) {
+        dataDestructionQueue.add(key)
+      }
+    }
+
+    dataDestructionQueue.forEach {
+      if (meshIDs.containsKey(it)) {
+        meshIDs[it]!!.forEach { id ->
+          if (id != 0) {
+            mesh.destroy(id)
+          }
+        }
+      }
+      meshIDs.remove(it)
+    }
+
+    dataDestructionQueue.clear()
   }
 
   fun chunkExists(posX: Int, posZ: Int): Boolean {
