@@ -20,11 +20,13 @@ object camera {
   private val objectMatrix = Matrix4f()
   private val guiCameraMatrix = Matrix4f()
   private val guiObjectMatrix = Matrix4f()
-  private val position = Vector3f(0f,0f,0f)
+  private val position = Vector3f(0f,78f,0f)
   private val rotation = Vector3f(0f,0f,0f)
 
   private val workerVector3f = Vector3f()
   private val workerVector3f2 = Vector3f()
+
+  private var renderDistance = 10
 
   // Movement vals. fixme: Why the HECK are there so many variables to do basic movement??
   private val inputMovement = Vector3f()
@@ -106,6 +108,8 @@ object camera {
     return workerVector3f
   }
 
+  fun getRenderDistance(): Int = renderDistance
+
   fun setPosition(newPosition: Vector3fc) {
     position.set(newPosition)
   }
@@ -136,7 +140,7 @@ object camera {
     if (keyboard.isDown(GLFW_KEY_LEFT_SHIFT)) inputMovement.y -= 1f
 
     val yaw = newCameraRotation.y
-    val movementDelta = getDelta() * 50f
+    val movementDelta = getDelta() * 150f
 
     // Layered fixme: Why is this layered??
     cameraMovementX.zero()
@@ -154,6 +158,6 @@ object camera {
     cameraPosition.add(finalCameraMovement, newCameraPosition)
 
     setPosition(newCameraPosition)
-    clientPlayer.position.set(newCameraRotation)
+    clientPlayer.setPosition(newCameraPosition)
   }
 }
