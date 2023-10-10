@@ -11,7 +11,7 @@ object collision {
   private val min = Vector3f()
   private val max = Vector3f()
 
-  internal fun chunkMeshIsInView(x: Float, y: Float, z: Float): Boolean {
+  internal fun chunkMeshWithinFrustum(x: Float, y: Float, z: Float): Boolean {
     updateChunkMatrix(x,y,z)
 
     //? note: Simulate the calculation that happens in GLSL on the cpu.
@@ -19,7 +19,7 @@ object collision {
       .set(workerMatrix.set(camera.getCameraMatrix()).mul(camera.getObjectMatrix()))
       .testAab(
         min.set(0f,0f,0f),
-        max.set(0f,0f,0f)
+        max.set(world.getChunkWidthFloat(),world.getChunkHeightFloat(),world.getChunkDepthFloat())
       )
 
   }

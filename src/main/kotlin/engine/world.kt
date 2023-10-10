@@ -49,6 +49,15 @@ object world {
 
 // note: API begins here
 
+  fun getChunkWidth(): Int = WIDTH
+  fun getChunkWidthFloat(): Float = WIDTH.toFloat()
+
+  fun getChunkHeight(): Int = HEIGHT
+  fun getChunkHeightFloat(): Float = HEIGHT.toFloat()
+
+  fun getChunkDepth(): Int = DEPTH
+  fun getChunkDepthFloat(): Float = DEPTH.toFloat()
+
   fun generateChunk(x: Int, y: Int) {
     val key = Vector2i(x, y)
     if (data.containsKey(key) || dataGenerationInput.contains(key)) {
@@ -62,7 +71,6 @@ object world {
     return data.contains(Vector2i(posX, posZ))
   }
 
-  // I lub extension functions
   fun Int.blockBits(block: Int): String {
     val builder = StringBuilder()
     for (i in 31 downTo 0) {
