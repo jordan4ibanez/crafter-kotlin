@@ -154,5 +154,6 @@ object camera {
     cameraPosition.add(finalCameraMovement, newCameraPosition)
 
     setPosition(newCameraPosition)
+    clientPlayer.position.set(newCameraRotation)
   }
 }
