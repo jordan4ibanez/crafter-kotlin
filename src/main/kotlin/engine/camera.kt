@@ -3,6 +3,7 @@ package engine
 import org.joml.Math
 import org.joml.Math.*
 import org.joml.Matrix4f
+import org.joml.Matrix4fc
 import org.joml.Vector2fc
 import org.joml.Vector3f
 import org.joml.Vector3fc
@@ -94,6 +95,9 @@ object camera {
 
     shader.setUniform("objectMatrix", guiObjectMatrix)
   }
+
+  fun getCameraMatrix(): Matrix4fc = cameraMatrix
+  fun getObjectMatrix(): Matrix4fc = objectMatrix
 
   fun getHorizontalDirection(yaw: Float): Vector3fc {
     workerVector3f.zero()
