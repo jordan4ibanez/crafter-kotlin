@@ -9,6 +9,7 @@ Possible implementations: Typescript (one day)
 //
 const api = Java.type("engine.api").INSTANCE
 const jvmBlockController = Java.type("engine.block").INSTANCE
+const entity = Java.type("engine.entity").INSTANCE
 const fileHelpers = Java.type("engine.File_helpersKt")
 const RuntimeException = Java.type("java.lang.RuntimeException")
 
@@ -81,7 +82,7 @@ const math = Java.type("org.joml.Math");
 //
 const println = print;
 
-// JOML types
+// JOML types.
 //
 // Mutable.
 const Vector2f = Java.type("org.joml.Vector2f");
@@ -93,6 +94,14 @@ const Vector2fc = Java.type("org.joml.Vector2fc");
 const Vector3fc = Java.type("org.joml.Vector3fc");
 const Vector2ic = Java.type("org.joml.Vector2ic");
 const Vector3ic = Java.type("org.joml.Vector3ic");
+
+
+entity.register({
+  x: 1,
+  i: function() {
+    print("ye")
+  }
+})
 
 // Custom JS types.
 //
