@@ -15,16 +15,16 @@ const entity = {
 
 entity.registerGeneric({
   name: "crafter:debug",
-  blah: function() {
+  onLoad: function() {
     println("hello, I AM A CRAFTER ENTITY!")
-    println(this.self.x)
   },
   onStep: function(dtime) {
-    println(`dtime is: ${dtime + 0.1}`)
-    // println(dtime)
-    println(self.x)
-  }
-  // onstep: 1
+    println(dtime)
+    this.set("hi", [1, 2, 3])
+    this.get("hi").forEach(element => {
+      println(element)
+    });
+  },
 })
 
 entity.spawn("crafter:debug")

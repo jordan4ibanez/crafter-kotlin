@@ -79,7 +79,6 @@ object entity {
     }
 
     fun executeDefMethodIfExists(method: String, vararg args: Any) {
-
       val currentDef = def[definitionName] ?: throw RuntimeException("GenericJavaScriptEntity: Definition $definitionName was somehow deleted.")
       //? note: * is the spread operator. Ant matcher. Kotlin vararg -> Java vararg, basically.
       val currentMethod = (currentDef[method] ?: return println("GenericJavaScriptEntity: Method $method does not exist, skipping."))
@@ -114,7 +113,7 @@ object entity {
     val testingEntity = GenericJavaScriptEntity("crafter:debug")
     testingEntity.self["x"] = 5
 
-    testingEntity.executeDefMethodIfExists("blah")
+    testingEntity.executeDefMethodIfExists("onStep", getDelta())
 
     //! note: This is how you run generic functions.
 //    (definition["blah"] as ScriptObjectMirror).call(null, )
