@@ -53,6 +53,8 @@ object entity {
     if (rawObj.isFunction) {
       //todo: note: functional calls via some type of function interface.
       rawObj.call(null, definition)
+    } else {
+      throw RuntimeException("registerGeneric: Don't modify the JavaScript API. https://youtu.be/PozOqxEWnCo")
     }
 
     if (!definition.containsKey("name")) throw RuntimeException("entity: Entity is missing name.")
