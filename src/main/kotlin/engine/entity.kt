@@ -28,7 +28,7 @@ object entity {
 
   // Instance of an entity in game.
   class GenericJavaScriptEntity {
-    //? note: The "selfness" of an entity. In JS, `this.` gets replaced with `this.self.` This is purely for unlimited modularity in JS. Do not use outside of it.
+    //? note: The "selfness" of an entity. In JS, `this.` gets replaced with `this.self.` This is purely for unlimited modularity in JS. Do not use outside of JS unless you like crashes.
     val self = HashMap<String, Any>()
     val position = Vector3f()
     val size = Vector2f()
@@ -36,12 +36,14 @@ object entity {
     private val entityID: String = UUID.randomUUID().toString()
 
     constructor(definitionName: String) {
+      if (!def.containsKey(definitionName)) throw RuntimeException("GenericJavaScriptEntity: Created an undefined entity.")
       // Need to be able to get the js functions & mesh somehow, talk to hashmap below.
       this.definitionName = definitionName
     }
 
-    fun executeDefMethod(vararg args: Any) {
-
+    fun executeDefMethodIfExists(method: String, vararg args: Any) {
+      val currentDef = def[definitionName] ?: throw RuntimeException("GenericJavaScriptEntity: Definition $definitionName was somehow deleted.")
+      ((currentDef[method] ?: return println("GenericJavaScriptEntity: Method $method does not exist, skipping.")) as ScriptObjectMirror).call(this, args)
     }
   }
 
@@ -66,28 +68,26 @@ object entity {
     val name = definition["name"]!! as String
 
     def[name] = definition
-//    jsFunctions[name] = rawObj
 
     println("entity: Registered $name")
 
     val testingEntity = GenericJavaScriptEntity("crafter:debug")
     testingEntity.self["x"] = 5
 
-//    println(jsFunctions[name]!!)
-    (def[name]!!["blah"] as ScriptObjectMirror).call(testingEntity)
+    testingEntity.executeDefMethodIfExists("onStep", getDelta())
 
     //! note: This is how you run generic functions.
 //    (definition["blah"] as ScriptObjectMirror).call(null, )
 
   }
 
-  private fun Any.executeDefMethod() {
-
-  }
-
-  fun executeFunWithThis(definitionName: String, obj: Any, vararg args: Any) {
-     val gotten = def[definitionName] ?: throw RuntimeException("executeFun")
-  }
+//  private fun Any.executeDefMethod() {
+//
+//  }
+//
+//  fun executeFunWithThis(definitionName: String, obj: Any, vararg args: Any) {
+//     val gotten = def[definitionName] ?: throw RuntimeException("executeFun")
+//  }
 
 
   fun spawn(name: String) {
