@@ -2,23 +2,29 @@ package engine
 
 import org.joml.Vector2f
 import org.joml.Vector3f
-import org.openjdk.nashorn.api.scripting.JSObject
 import org.openjdk.nashorn.api.scripting.ScriptObjectMirror
-import org.openjdk.nashorn.internal.objects.Global
-import org.openjdk.nashorn.internal.runtime.Context
-import org.openjdk.nashorn.internal.runtime.PropertyMap
-import org.openjdk.nashorn.internal.runtime.ScriptFunction
-import org.openjdk.nashorn.internal.runtime.ScriptObject
-import java.lang.Exception
-import java.lang.reflect.Type
-import java.util.Objects
-import java.util.UUID
-import javax.script.ScriptContext
-import kotlin.jvm.internal.Reflection
-import kotlin.reflect.KCallable
+import java.util.*
 
 
 object entity {
+
+  /*
+  If you can understand what's going on here, you deserve a medal.
+  Basically, this is a 4D game of chess, but with data.
+  JS creates the object which we are not only using raw, but we're using processed.
+  Kotlin can talk to the JS object to run methods via it's method calls.
+  But we are using the anonymous object as a class definition to treat the GenericJavaScriptEntity as a true generic.
+  A GJSE can literally transfer entity defs on the fly, it is completely unbound. This is to allow JS scripting to do some absolutely crazy shit.
+
+  This is why the API transmogrifies `this.` to `this.self.`
+  In JS your methods aren't talking to JS objects, they're talking to kotlin JVM native objects!
+  */
+
+  // Definition.
+  private val def = HashMap<String, HashMap<String, Any>>()
+  private val meshes = HashMap<String, String>()
+
+  // Instances.
 
   // Instance of an entity in game.
   class GenericJavaScriptEntity {
@@ -33,13 +39,11 @@ object entity {
       // Need to be able to get the js functions & mesh somehow, talk to hashmap below.
       this.definitionName = definitionName
     }
+
+    fun executeDefMethod(vararg args: Any) {
+
+    }
   }
-
-  // Definition.
-  private val def = HashMap<String, HashMap<String, Any>>()
-  private val meshes = HashMap<String, String>()
-
-  // Instances.
 
 
 
@@ -77,6 +81,13 @@ object entity {
 
   }
 
+  private fun Any.executeDefMethod() {
+
+  }
+
+  fun executeFunWithThis(definitionName: String, obj: Any, vararg args: Any) {
+     val gotten = def[definitionName] ?: throw RuntimeException("executeFun")
+  }
 
 
   fun spawn(name: String) {
