@@ -31,6 +31,7 @@ object api {
   fun initialize() {
 
     // Create the api.
+    currentModFolder = "./api"
     runFile("./api/api.js")
 
     loadTextures()
