@@ -1,6 +1,7 @@
 package engine
 
 import org.joml.Vector2f
+import org.joml.Vector2fc
 import org.joml.Vector3f
 import org.joml.Vector3fc
 import org.openjdk.nashorn.api.scripting.ScriptObjectMirror
@@ -30,15 +31,14 @@ object entity {
   // Instance of an entity in game.
   class GenericJavaScriptEntity {
     //? note: The "selfness" of an entity. In JS, `this.` gets replaced with `this.self.` This is purely for unlimited modularity in JS. Do not use outside of JS unless you like crashes.
-    val self = HashMap<String, Any>()
+    val self = HashMap<String, Any?>()
+
+    // Engine components.
     val position = Vector3f()
     val size = Vector2f()
+
     private val definitionName: String
     private val entityID: String = UUID.randomUUID().toString()
-
-    operator fun self() {
-
-    }
 
     constructor(definitionName: String) {
       if (!def.containsKey(definitionName)) throw RuntimeException("GenericJavaScriptEntity: Created an undefined entity.")
@@ -58,8 +58,21 @@ object entity {
       when (key) {
         "position" -> {
           when (value) {
-            is Vector3f, is Vector3fc -> {position.set(value as Vector3fc)}
-            else -> throw RuntimeException("GenericJavaScriptEntity: Cannot set position to ${(try{value!!.javaClass}catch(e:Exception){null})}. It is Vector3f or Vector3fc.")
+            is Vector3fc -> {position.set(value)}
+            else -> throw RuntimeException("GenericJavaScriptEntity: Cannot set position to ${(try{value!!.javaClass}catch(e:Exception){null})}. It is Vector3f.")
+          }
+        }
+        "size" -> {
+          when (value) {
+            is Vector2fc -> {size.set(value)}
+            else -> throw RuntimeException("GenericJavaScriptEntity: Cannot set size to ${try{value!!.javaClass}catch(e:Exception){null}}. It is Vector2f.")
+          }
+        }
+        else -> {
+          // Make it work like JS.
+          when (value) {
+            null -> self.remove(key)
+            else -> self[key] = value
           }
         }
       }
@@ -67,15 +80,12 @@ object entity {
 
     fun executeDefMethodIfExists(method: String, vararg args: Any) {
 
-      this["test"] = 5
-
       val currentDef = def[definitionName] ?: throw RuntimeException("GenericJavaScriptEntity: Definition $definitionName was somehow deleted.")
       //? note: * is the spread operator. Ant matcher. Kotlin vararg -> Java vararg, basically.
-      with (currentDef[method] ?: return println("GenericJavaScriptEntity: Method $method does not exist, skipping.")) {
-        when {
-          this is ScriptObjectMirror -> this.call(this, *args)
-          else -> println("GenericJavaScriptEntity: $method is data, not a method. Skipping.")
-        }
+      val currentMethod = (currentDef[method] ?: return println("GenericJavaScriptEntity: Method $method does not exist, skipping."))
+      when (currentMethod) {
+        is ScriptObjectMirror -> currentMethod.call(this, *args)
+        else -> println("GenericJavaScriptEntity: $method is data, not a method. Skipping.")
       }
     }
   }
@@ -104,7 +114,7 @@ object entity {
     val testingEntity = GenericJavaScriptEntity("crafter:debug")
     testingEntity.self["x"] = 5
 
-    testingEntity.executeDefMethodIfExists("onStep", getDelta())
+    testingEntity.executeDefMethodIfExists("blah")
 
     //! note: This is how you run generic functions.
 //    (definition["blah"] as ScriptObjectMirror).call(null, )
@@ -115,7 +125,7 @@ object entity {
   fun spawn(name: String) {
 //    val test = ScriptObject()
     val definition = def[name]!!
-    definition.forEach { key, value ->
+    definition.forEach { (_, value) ->
       when (value) {
         is ScriptObjectMirror -> {
           // check if function here
