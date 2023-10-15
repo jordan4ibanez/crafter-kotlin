@@ -1,5 +1,6 @@
 package engine
 
+import org.joml.Vector2f
 import org.joml.Vector3f
 import org.openjdk.nashorn.api.scripting.JSObject
 import org.openjdk.nashorn.api.scripting.ScriptObjectMirror
@@ -11,6 +12,7 @@ import org.openjdk.nashorn.internal.runtime.ScriptObject
 import java.lang.Exception
 import java.lang.reflect.Type
 import java.util.Objects
+import java.util.UUID
 import javax.script.ScriptContext
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KCallable
@@ -18,12 +20,29 @@ import kotlin.reflect.KCallable
 
 object entity {
 
+  // Instance of an entity in game.
+  class GenericJavaScriptEntity {
+    //? note: The "selfness" of an entity. In JS, `this.` gets replaced with `this.self.` This is purely for unlimited modularity in JS. Do not use outside of it.
+    val self = HashMap<String, Any>()
+    val position = Vector3f()
+    val size = Vector2f()
+    private val definitionName: String
+    private val entityID: String = UUID.randomUUID().toString()
+
+    constructor(definitionName: String) {
+      // Need to be able to get the js functions & mesh somehow, talk to hashmap below.
+      this.definitionName = definitionName
+    }
+  }
+
   // Definition.
-  private val def = HashMap<String, Any>()
+  private val def = HashMap<String, HashMap<String, Any>>()
+  private val meshes = HashMap<String, String>()
 
   // Instances.
-  private val genericData = HashMap<String, Any>()
-  private val position = HashMap<String, Vector3f>()
+
+
+
 
 
   fun registerGeneric(rawObj: ScriptObjectMirror) {
@@ -36,37 +55,27 @@ object entity {
       rawObj.call(null, definition)
     }
 
+    if (!definition.containsKey("name")) throw RuntimeException("entity: Entity is missing name.")
+    if (definition["name"]!! !is String) throw RuntimeException("entity: Entity name for ${definition["name"]} must be a string.")
+    val name = definition["name"]!! as String
 
+    def[name] = definition
+//    jsFunctions[name] = rawObj
+
+    println("entity: Registered $name")
+
+    val testingEntity = GenericJavaScriptEntity("crafter:debug")
+    testingEntity.self["x"] = 5
+
+//    println(jsFunctions[name]!!)
+    (def[name]!!["blah"] as ScriptObjectMirror).call(testingEntity)
+
+    //! note: This is how you run generic functions.
+//    (definition["blah"] as ScriptObjectMirror).call(null, )
 
   }
 
-  class JSEntity {
 
-  }
-
-  private fun convert(rawObj: Any): Any {
-    return when (rawObj) {
-      is ScriptObjectMirror -> {
-        if (rawObj.isArray) {
-          val list = ArrayList<Any>()
-          rawObj.forEach { _,value ->
-            list.add(convert(value))
-          }
-          list
-        } else {
-          val map = HashMap<String, Any>()
-          rawObj.forEach { key, value ->
-            map[key] = convert(value)
-          }
-          map
-        }
-      }
-      //? note: It is already a java type.
-      else -> {
-        rawObj
-      }
-    }
-  }
 
   fun spawn(name: String) {
 //    val test = ScriptObject()
