@@ -15,7 +15,7 @@ object camera {
   private var sensitivity = 1f / 500f
   private var FOV: Float = toRadians(60f)
   private var zNear = 0.1f
-  private var zFar = 1000f
+  private var zFar = 300f
   private val cameraMatrix = Matrix4f()
   private val objectMatrix = Matrix4f()
   private val guiCameraMatrix = Matrix4f()
@@ -49,6 +49,8 @@ object camera {
     shader.setUniform("cameraMatrix", cameraMatrix)
   }
 
+  fun getZNear(): Float = zNear
+  fun getZFar(): Float = zFar
 
 
   fun setObjectMatrix(position: Vector3fc) {
