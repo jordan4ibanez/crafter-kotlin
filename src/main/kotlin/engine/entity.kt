@@ -43,12 +43,15 @@ object entity {
 
     fun executeDefMethodIfExists(method: String, vararg args: Any) {
       val currentDef = def[definitionName] ?: throw RuntimeException("GenericJavaScriptEntity: Definition $definitionName was somehow deleted.")
-      ((currentDef[method] ?: return println("GenericJavaScriptEntity: Method $method does not exist, skipping.")) as ScriptObjectMirror).call(this, args)
+      //? note: * is the spread operator. Ant matcher. Kotlin vararg -> Java vararg, basically.
+      with (currentDef[method] ?: return println("GenericJavaScriptEntity: Method $method does not exist, skipping.")) {
+        when {
+          this is ScriptObjectMirror -> this.call(this, *args)
+          else -> println("GenericJavaScriptEntity: $method is data, not a method. Skipping.")
+        }
+      }
     }
   }
-
-
-
 
 
   fun registerGeneric(rawObj: ScriptObjectMirror) {
@@ -71,27 +74,30 @@ object entity {
 
     println("entity: Registered $name")
 
-    val testingEntity = GenericJavaScriptEntity("crafter:debug")
-    testingEntity.self["x"] = 5
-
-    testingEntity.executeDefMethodIfExists("onStep", getDelta())
+//    val testingEntity = GenericJavaScriptEntity("crafter:debug")
+//    testingEntity.self["x"] = 5
+//
+//    testingEntity.executeDefMethodIfExists("onStep", getDelta())
 
     //! note: This is how you run generic functions.
 //    (definition["blah"] as ScriptObjectMirror).call(null, )
 
   }
 
-//  private fun Any.executeDefMethod() {
-//
-//  }
-//
-//  fun executeFunWithThis(definitionName: String, obj: Any, vararg args: Any) {
-//     val gotten = def[definitionName] ?: throw RuntimeException("executeFun")
-//  }
-
 
   fun spawn(name: String) {
 //    val test = ScriptObject()
+    val definition = def[name]!!
+    definition.forEach { key, value ->
+      when (value) {
+        is ScriptObjectMirror -> {
+          // check if function here
+        }
+        else -> {
+          // add default data here
+        }
+      }
+    }
   }
 
   fun decoratePosition(rawObj: ScriptObjectMirror) {

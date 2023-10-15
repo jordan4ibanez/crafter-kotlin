@@ -7,6 +7,9 @@ const entity = {
         internalDef[key] = definition[key]
       }
     })
+  },
+  spawn: function(name) {
+    internalEntity.spawn(name)
   }
 }
 
@@ -16,4 +19,11 @@ entity.registerGeneric({
     println("hello, I AM A CRAFTER ENTITY!")
     println(this.self.x)
   },
+  onStep: function(dtime) {
+    println(`dtime is: ${dtime + 0.1}`)
+    // println(dtime)
+  }
+  // onstep: 1
 })
+
+entity.spawn("crafter:debug")
