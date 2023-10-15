@@ -9,9 +9,9 @@ Possible implementations: Typescript (one day)
 //
 const api = Java.type("engine.api").INSTANCE
 const jvmBlockController = Java.type("engine.block").INSTANCE
-const entity = Java.type("engine.entity").INSTANCE
 const fileHelpers = Java.type("engine.File_helpersKt")
 const RuntimeException = Java.type("java.lang.RuntimeException")
+
 
 /**
  * A block DrawType enumerator.
@@ -95,13 +95,6 @@ const Vector3fc = Java.type("org.joml.Vector3fc");
 const Vector2ic = Java.type("org.joml.Vector2ic");
 const Vector3ic = Java.type("org.joml.Vector3ic");
 
-
-entity.register({
-  x: 1,
-  i: function() {
-    print("ye")
-  }
-})
 
 // Custom JS types.
 //
@@ -448,3 +441,7 @@ block.register({
 })
 
 // println(block.get("air"))
+
+// A bit ironic it's called this in the API.
+const currentDir = crafter.getCurrentModDirectory()
+dofile(`${currentDir}/entity.js`)
