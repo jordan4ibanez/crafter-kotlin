@@ -4,7 +4,6 @@ import org.joml.Vector2f
 import org.joml.Vector2fc
 import org.joml.Vector2i
 import org.joml.Vector2ic
-import org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER
 import org.lwjgl.opengl.GL30.*
 import org.lwjgl.stb.STBImage.stbi_image_free
 import org.lwjgl.stb.STBImage.stbi_load
@@ -574,7 +573,7 @@ object texture {
     if (!glIsTexture(textureID)) {
       throw RuntimeException("Texture: OpenGL failed to upload $name into GPU memory!")
     }
-    glGenerateMipmap(GL_TEXTURE_2D);
+    glGenerateMipmap(GL_TEXTURE_2D)
 
     return textureID
   }
