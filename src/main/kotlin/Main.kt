@@ -48,9 +48,9 @@ fun load() {
     "worldAtlas"
   )
 
-  mouse.capture()
+//  mouse.capture()
 
-  window.maximize()
+//  window.maximize()
 }
 
 
