@@ -1,7 +1,6 @@
 package engine
 
 import org.lwjgl.opengl.GL.createCapabilities
-import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL14.*
 import org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS
 import org.lwjgl.opengl.GLCapabilities
@@ -38,7 +37,7 @@ object gl {
     }
 
     //todo: this has to be implemented before it's used
-//    glDepthRange(camera near, camera far)
+    glDepthRange(camera.getZNear().toDouble(), camera.getZFar().toDouble())
 
     val enableCulling = true
 
