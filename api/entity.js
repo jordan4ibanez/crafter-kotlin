@@ -22,6 +22,7 @@ entity.registerGeneric({
   onStep: function(dtime) {
     println(`dtime is: ${dtime + 0.1}`)
     // println(dtime)
+    println(self.x)
   }
   // onstep: 1
 })

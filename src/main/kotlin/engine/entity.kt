@@ -2,6 +2,7 @@ package engine
 
 import org.joml.Vector2f
 import org.joml.Vector3f
+import org.joml.Vector3fc
 import org.openjdk.nashorn.api.scripting.ScriptObjectMirror
 import java.util.*
 
@@ -16,7 +17,7 @@ object entity {
   But we are using the anonymous object as a class definition to treat the GenericJavaScriptEntity as a true generic.
   A GJSE can literally transfer entity defs on the fly, it is completely unbound. This is to allow JS scripting to do some absolutely crazy shit.
 
-  This is why the API transmogrifies `this.` to `this.self.`
+  This is why the API transmogrifies `self.` to `this.self.`
   In JS your methods aren't talking to JS objects, they're talking to kotlin JVM native objects!
   */
 
@@ -35,13 +36,39 @@ object entity {
     private val definitionName: String
     private val entityID: String = UUID.randomUUID().toString()
 
+    operator fun self() {
+
+    }
+
     constructor(definitionName: String) {
       if (!def.containsKey(definitionName)) throw RuntimeException("GenericJavaScriptEntity: Created an undefined entity.")
       // Need to be able to get the js functions & mesh somehow, talk to hashmap below.
       this.definitionName = definitionName
     }
 
+    operator fun get(key: String): Any? {
+      return when (key) {
+        "position" -> this.position
+        "size" -> this.size
+        else -> self[key]
+      }
+    }
+
+    operator fun set(key: String, value: Any?) {
+      when (key) {
+        "position" -> {
+          when (value) {
+            is Vector3f, is Vector3fc -> {position.set(value as Vector3fc)}
+            else -> throw RuntimeException("GenericJavaScriptEntity: Cannot set position to ${(try{value!!.javaClass}catch(e:Exception){null})}. It is Vector3f or Vector3fc.")
+          }
+        }
+      }
+    }
+
     fun executeDefMethodIfExists(method: String, vararg args: Any) {
+
+      this["test"] = 5
+
       val currentDef = def[definitionName] ?: throw RuntimeException("GenericJavaScriptEntity: Definition $definitionName was somehow deleted.")
       //? note: * is the spread operator. Ant matcher. Kotlin vararg -> Java vararg, basically.
       with (currentDef[method] ?: return println("GenericJavaScriptEntity: Method $method does not exist, skipping.")) {
@@ -74,10 +101,10 @@ object entity {
 
     println("entity: Registered $name")
 
-//    val testingEntity = GenericJavaScriptEntity("crafter:debug")
-//    testingEntity.self["x"] = 5
-//
-//    testingEntity.executeDefMethodIfExists("onStep", getDelta())
+    val testingEntity = GenericJavaScriptEntity("crafter:debug")
+    testingEntity.self["x"] = 5
+
+    testingEntity.executeDefMethodIfExists("onStep", getDelta())
 
     //! note: This is how you run generic functions.
 //    (definition["blah"] as ScriptObjectMirror).call(null, )
