@@ -39,7 +39,7 @@ object api {
   fun initialize() {
 
     // Create the api.
-    runFile("api.groovy")
+    runFile("_api.groovy")
 
     loadTextures()
 
@@ -117,5 +117,9 @@ object api {
 
   fun dofile(fileLocation: String) {
     runFile("$fileLocation.groovy")
+  }
+
+  fun stringArrayOf(vararg args: String): Array<String> {
+    return arrayOf(*args)
   }
 }
