@@ -39,12 +39,27 @@ object entity {
 
     private val definitionName: String
     private val size = Vector2f()
+    private val collideable: Boolean
 
 
     constructor(definitionName: String) {
       if (!def.containsKey(definitionName)) throw RuntimeException("GenericJavaScriptEntity: Created an undefined entity.")
       // Need to be able to get the js functions & mesh somehow, talk to hashmap below.
       this.definitionName = definitionName
+
+      val definition = def[definitionName] ?: throw RuntimeException("entity: Tried to spawn non-existent entity. $definitionName")
+      collideable = definition["collideable"] as Boolean || true
+
+      definition.forEach { (_, value) ->
+        when (value) {
+          is ScriptObjectMirror -> {
+            // check if function here
+          }
+          else -> {
+            // add default data here
+          }
+        }
+      }
     }
 
     operator fun get(key: String): Any? {
@@ -123,21 +138,7 @@ object entity {
 
 
   fun spawn(name: String) {
-
-    val definition = def[name] ?: throw RuntimeException("entity: Tried to spawn non-existent entity. $name")
-
-    definition.forEach { (_, value) ->
-      when (value) {
-        is ScriptObjectMirror -> {
-          // check if function here
-        }
-        else -> {
-          // add default data here
-        }
-      }
-    }
-
-
+    //! todo: spawn goes here
   }
 
   fun decoratePosition(rawObj: ScriptObjectMirror) {
