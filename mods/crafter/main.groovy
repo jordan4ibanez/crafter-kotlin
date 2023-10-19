@@ -3,9 +3,10 @@ package crafter
 import org.joml.Vector3f
 import engine.api
 
-println("Hi from groooovy")
-final blah = new Vector3f(1,2,3)
+final api = api.INSTANCE
 
-println(blah.x())
+final String currentDir = api.getCurrentModDirectory()
 
-println("main mod is loaded")
+["blocks"].forEach {
+    api.dofile("crafter/$it")
+}
