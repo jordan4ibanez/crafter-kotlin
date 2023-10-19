@@ -4,9 +4,6 @@ package engine
 
 import groovy.lang.Binding
 import groovy.util.GroovyScriptEngine
-import org.codehaus.groovy.jsr223.GroovyScriptEngineFactory
-import javax.script.Compilable
-import javax.script.Invocable
 
 /*
 api works as a state machine.
@@ -26,13 +23,15 @@ object api {
 
 //  note: val for now, var when main menu gets put it so it can be reloaded. Or maybe not. We'll see.
 
-//  private const val MOD_PATH = "./mods/"
+  private const val MOD_BASE_FOLDER = "./mods"
   /**Holds the current mod name for debugging purposes.*/
   private var currentModName = ""
   /**Holds the current mod file for debugging purposes.*/
   private var currentModFile = ""
   /**Holds the current mod folder for debugging purposes.*/
   private var currentModFolder = ""
+  /**Holds the folder directory literal*/
+  private var currentDirectoryLiteral = ""
 
   // One day.
 //  private val tsCompiler = something
@@ -53,28 +52,30 @@ object api {
   }
 
   private fun loadMods() {
-    getFolderList(MOD_PATH).forEach { thisFolder: String ->
+    getFolderList(MOD_BASE_FOLDER).forEach { thisFolder: String ->
       //? note: For now, we will assume the mod is called the folder name. In a bit: The conf will be implemented.
       currentModName = thisFolder
-//      currentModFolder = "$MOD_PATH$thisFolder"
-      if (!isFolder(currentModFolder)) throw RuntimeException("api: Something strange has gone wrong with loading mods.\nFolder $thisFolder does not exist.")
+      currentDirectoryLiteral = "$MOD_BASE_FOLDER/$thisFolder"
+      if (!isFolder(currentDirectoryLiteral)) throw RuntimeException("api: Something strange has gone wrong with loading mods.\nFolder $thisFolder does not exist.")
 
       //!todo: check mod.json existence here!
       //!fixme: implement config checker!!
       //!fixme: currentModName is set here!
 
-      val currentMain = "$currentModFolder/main.groovy"
-      if (!isFile(currentMain)) throw RuntimeException("api: $currentModName does not contain a main.js!")
-      runFile(currentMain)
+      val currentMain = "$currentDirectoryLiteral/main.groovy"
+      if (!isFile(currentMain)) throw RuntimeException("api: $currentModName does not contain a main.groovy!")
+      runFile("$currentModName/main.groovy")
     }
   }
 
   private fun loadTextures() {
-    getFolderList(MOD_PATH).forEach { thisFolder: String ->
+    getFolderList(MOD_BASE_FOLDER).forEach { thisFolder: String ->
       //? note: For now, we will assume the mod is called the folder name. In a bit: The conf will be implemented.
       currentModName = thisFolder
-      currentModFolder = "$MOD_PATH$thisFolder"
-      if (!isFolder(currentModFolder)) throw RuntimeException("api: Something strange has gone wrong with loading textures.\nFolder $thisFolder does not exist.")
+      currentModFolder = thisFolder
+      currentDirectoryLiteral = "$MOD_BASE_FOLDER/$thisFolder"
+      println(currentDirectoryLiteral)
+      if (!isFolder(currentDirectoryLiteral)) throw RuntimeException("api: Something strange has gone wrong with loading textures.\nFolder $thisFolder does not exist.")
       loadBlockTextures()
       loadIndividualTextures()
     }
@@ -84,7 +85,7 @@ object api {
   }
 
   private fun loadBlockTextures() {
-    val textureDirectory = "$currentModFolder/textures"
+    val textureDirectory = "$MOD_BASE_FOLDER/$currentModFolder/textures"
     if (!isFolder(textureDirectory)) { println("api: $currentModName has no textures folder. Skipping."); return }
     val blockTextureDirectory = "$textureDirectory/blocks"
     if (!isFolder(blockTextureDirectory)) { println("api: $currentModName has no block textures folder. Skipping.") ; return }
@@ -97,7 +98,7 @@ object api {
   }
 
   private fun loadIndividualTextures() {
-    val textureDirectory = "$currentModFolder/textures"
+    val textureDirectory = "$MOD_BASE_FOLDER/$currentModFolder/textures"
     if (!isFolder(textureDirectory)) { println("api: $currentModName has no textures folder. Skipping."); return }
     getFileList(textureDirectory)
       .filter { it.contains(".png") }
@@ -112,34 +113,6 @@ object api {
   }
 
   fun runFile(fileLocation: String) {
-    try { engine.run(fileLocation, sharedData) } catch (e: Exception) { throw RuntimeException("(Javascript API error in $currentModFile):\n$e") }
-//    setCurrentFile(fileLocation)
-//    runCode(getFileString(fileLocation))
+    try { engine.run(fileLocation, sharedData) } catch (e: Exception) { throw RuntimeException("(Groovy API error in $currentModFile):\n$e") }
   }
-
-//  fun runCode(rawCode: String) {
-//    //? note: Import is great for getting the JSDoc working, but it crashes in Nashorn. Get it out.
-//    try { engine.run(rawCode, sharedData) } catch (e: Exception) { throw RuntimeException("(Javascript API error in $currentModFile):\n$e") }
-//  }
-
-//  private fun invoke(functionName: String, vararg args: Any): Any {
-//    try { return engine.run(functionName, args) } catch (e: Exception) { throw RuntimeException("(Javascript API error in $currentModFile):\n$e") }
-//  }
-
-  private fun setCurrentFile(fileLocation: String) {
-    currentModFile = fileLocation
-  }
-
-  //note: These two probably aren't going to be used but I'm including them anyways just in case.
-
-//  fun compileFile(fileLocation: String): CompiledScript {
-//    return compileCode(getFileString(fileLocation))
-//  }
-
-//  fun compileCode(rawCode: String): CompiledScript {
-//    return try { compiler.compile(rawCode) } catch (e: Exception) { throw RuntimeException("(Javascript API error in $currentModFile):\n$e") }
-//  }
-
-
-
 }

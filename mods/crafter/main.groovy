@@ -8,3 +8,4 @@ final blah = new Vector3f(1,2,3)
 
 println(blah.x())
 
+println("main mod is loaded")
