@@ -1,3 +1,4 @@
 # Crafter Kotlin
- That's right! Another version of Crafter.
- Java burnt me out to a crisp.
+
+To get API Groovy autocomplete working in intellij
+you must make sure that the mods folder is marked as a sources root.
