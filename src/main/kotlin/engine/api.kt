@@ -39,7 +39,6 @@ object api {
   fun initialize() {
 
     // Create the api.
-//    currentModFolder = "./api"
     runFile("api.groovy")
 
     loadTextures()
@@ -55,6 +54,7 @@ object api {
     getFolderList(MOD_BASE_FOLDER).forEach { thisFolder: String ->
       //? note: For now, we will assume the mod is called the folder name. In a bit: The conf will be implemented.
       currentModName = thisFolder
+      currentModFolder = thisFolder
       currentDirectoryLiteral = "$MOD_BASE_FOLDER/$thisFolder"
       if (!isFolder(currentDirectoryLiteral)) throw RuntimeException("api: Something strange has gone wrong with loading mods.\nFolder $thisFolder does not exist.")
 
@@ -74,7 +74,6 @@ object api {
       currentModName = thisFolder
       currentModFolder = thisFolder
       currentDirectoryLiteral = "$MOD_BASE_FOLDER/$thisFolder"
-      println(currentDirectoryLiteral)
       if (!isFolder(currentDirectoryLiteral)) throw RuntimeException("api: Something strange has gone wrong with loading textures.\nFolder $thisFolder does not exist.")
       loadBlockTextures()
       loadIndividualTextures()
@@ -114,5 +113,9 @@ object api {
 
   fun runFile(fileLocation: String) {
     try { engine.run(fileLocation, sharedData) } catch (e: Exception) { throw RuntimeException("(Groovy API error in $currentModFile):\n$e") }
+  }
+
+  fun dofile(fileLocation: String) {
+    runFile("$fileLocation.groovy")
   }
 }
