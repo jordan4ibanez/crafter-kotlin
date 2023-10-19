@@ -104,7 +104,7 @@ object block {
     inventoryName[id] = newName
   }
   fun setTextures(id: Int, newTextures: Array<String>) {
-    if (newTextures.size != 6) throw RuntimeException("Tried to set block $name textures with ${newTextures.size} size.")
+    if (newTextures.size != 6) throw RuntimeException("Tried to set block $id textures with ${newTextures.size} size.")
     textures[id] = newTextures
   }
   private fun setTextureCoords(id: Int, newCoords: Array<FloatArray>) {
