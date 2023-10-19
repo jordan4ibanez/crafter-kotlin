@@ -29,7 +29,7 @@ object entity {
   // Instances.
 
   // Instance of an entity in game.
-  class GenericJavaScriptEntity {
+  class JSEntity {
     //? note: The "selfness" of an entity. In JS, `this.` gets replaced with `this.self.` This is purely for unlimited modularity in JS. Do not use outside of JS unless you like crashes.
     val self = HashMap<String, Any?>()
 
@@ -90,7 +90,7 @@ object entity {
   }
 
 
-  fun registerGeneric(rawObj: ScriptObjectMirror) {
+  fun register(rawObj: ScriptObjectMirror) {
 
     // Definition is consumed mutably by the rawObj call below.
     val definition = HashMap<String, Any>()
@@ -99,7 +99,7 @@ object entity {
       //todo: note: functional calls via some type of function interface.
       rawObj.call(null, definition)
     } else {
-      throw RuntimeException("registerGeneric: Don't modify the JavaScript API. https://youtu.be/PozOqxEWnCo")
+      throw RuntimeException("register: Don't modify the JavaScript API. https://youtu.be/PozOqxEWnCo")
     }
 
     if (!definition.containsKey("name")) throw RuntimeException("entity: Entity is missing name.")
@@ -110,7 +110,7 @@ object entity {
 
     println("entity: Registered $name")
 
-    val testingEntity = GenericJavaScriptEntity("crafter:debug")
+    val testingEntity = JSEntity("crafter:debug")
     testingEntity.self["x"] = 5
 
     testingEntity.executeDefMethodIfExists("onStep", getDelta())

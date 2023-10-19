@@ -1,8 +1,8 @@
 const internalEntity = Java.type("engine.entity").INSTANCE
 
 const entity = {
-  registerGeneric: function(definition) {
-    internalEntity.registerGeneric((internalDef) => {
+  register: function(definition) {
+    internalEntity.register((internalDef) => {
       for (const key of Object.keys(definition)) {
         internalDef[key] = definition[key]
       }
@@ -13,17 +13,17 @@ const entity = {
   }
 }
 
-entity.registerGeneric({
+entity.register({
   name: "crafter:debug",
+  onSpawn: function() {
+
+  },
   onLoad: function() {
     println("hello, I AM A CRAFTER ENTITY!")
   },
   onStep: function(dtime) {
     println(dtime)
     this.set("hi", [1, 2, 3])
-    this.get("hi").forEach(element => {
-      println(element)
-    });
   },
 })
 
