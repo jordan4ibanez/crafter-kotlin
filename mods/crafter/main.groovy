@@ -4,6 +4,6 @@ import engine.api
 
 final api = api.INSTANCE
 
-["blocks"].forEach {
+["blocks", "entities"].forEach {
     api.dofile("crafter/$it")
 }
