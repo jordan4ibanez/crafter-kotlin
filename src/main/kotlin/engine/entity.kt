@@ -26,19 +26,20 @@ object entity {
   private val def = HashMap<String, HashMap<String, Any>>()
   private val meshes = HashMap<String, String>()
 
-  // Instances.
+  open class PointEntity {
+    //? note: Point entity has no collision with other objects. It only collides with the world.
+    //? note: Point entities are mainly used for particles.
+    val position = Vector3f()
+    private val entityID: String = UUID.randomUUID().toString()
+  }
 
-  // Instance of an entity in game.
-  class JSEntity {
+  class Entity : PointEntity {
     //? note: The "selfness" of an entity. In JS, `this.` gets replaced with `this.self.` This is purely for unlimited modularity in JS. Do not use outside of JS unless you like crashes.
     val self = HashMap<String, Any?>()
 
-    // Engine components.
-    val position = Vector3f()
-    val size = Vector2f()
-
     private val definitionName: String
-    private val entityID: String = UUID.randomUUID().toString()
+    private val size = Vector2f()
+
 
     constructor(definitionName: String) {
       if (!def.containsKey(definitionName)) throw RuntimeException("GenericJavaScriptEntity: Created an undefined entity.")
@@ -122,8 +123,9 @@ object entity {
 
 
   fun spawn(name: String) {
-//    val test = ScriptObject()
-    val definition = def[name]!!
+
+    val definition = def[name] ?: throw RuntimeException("entity: Tried to spawn non-existent entity. $name")
+
     definition.forEach { (_, value) ->
       when (value) {
         is ScriptObjectMirror -> {
@@ -134,29 +136,11 @@ object entity {
         }
       }
     }
+
+
   }
 
   fun decoratePosition(rawObj: ScriptObjectMirror) {
     rawObj["position"] = Vector3f()
   }
 }
-
-//? note: This is from prototyping.
-//    decoratePosition(rawObj)
-//
-////    val test = ScriptObjectMirror(rawObj)
-//
-//    println("if is: ${rawObj.isExtensible}")
-//
-//    rawObj.callMember("test", 1)
-//
-//    rawObj.forEach {
-//      val (key, value) = it
-//      println("$key, $value")
-//      println("val is: ${value.javaClass}")
-//      when (value) {
-//        is ScriptObjectMirror -> {
-//          println("the thing: ${it.value.javaClass}")
-//        }
-//      }
-//    }
