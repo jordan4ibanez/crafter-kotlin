@@ -31,13 +31,19 @@ open class GroovyEntity : PointEntity {
   private val rotation = Vector3f()
 
   fun getPosition(): Vector3fc = position
-  open fun setPosition(newPosition: Vector3fc) = position.set(newPosition)
+  open fun setPosition(newPosition: Vector3fc) {
+    position.set(newPosition)
+  }
 
   fun getSize(): Vector2fc = size
-  fun setSize(newSize: Vector2fc) = size.set(newSize)
+  open fun setSize(newSize: Vector2fc) {
+    size.set(newSize)
+  }
 
   fun getRotation(): Vector3fc = rotation
-  fun setRotation(newRotation: Vector3fc) = rotation.set(newRotation)
+  open fun setRotation(newRotation: Vector3fc) {
+    rotation.set(newRotation)
+  }
 
   constructor(pos: Vector3fc) : super(pos)
   open fun onSpawn() {}
