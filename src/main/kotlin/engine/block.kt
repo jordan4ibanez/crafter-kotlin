@@ -35,6 +35,7 @@ private val falling            = con<Boolean>()
 private val clear              = con<Boolean>()
 private val damagePerSecond    = con<Int>()
 private val light              = con<Int>()
+private val floats             = con<Boolean>()
 
 enum class DrawType(val data: Int) {
   AIR(0),
@@ -152,6 +153,9 @@ object block {
     if (!(0..15).contains(newLight)) throw RuntimeException("Tried to set block $name with viscosity $newLight (0..15)")
     light[id] = newLight
   }
+  fun setFloats(id: Int, doesFloat: Boolean) {
+    floats[id] = doesFloat
+  }
 
   // Name oriented
   fun setInventoryName(name: String, newName: String) = setInventoryName(getID(name), newName)
@@ -168,6 +172,7 @@ object block {
   fun setClear(name: String, isClear: Boolean) = setClear(getID(name), isClear)
   fun setDamagePerSecond(name: String, dps: Int) = setDamagePerSecond(getID(name), dps)
   fun setLight(name: String, newLight: Int) = setLight(getID(name), newLight)
+  fun setFloats(name: String, doesFloat: Boolean) = setFloats(getID(name), doesFloat)
 
 // note: getter api starts here.
 
@@ -235,6 +240,9 @@ object block {
   fun getLight(id: Int): Int {
     return light[id] ?: 0
   }
+  fun doesFloat(id: Int): Boolean {
+    return floats[id] ?: false
+  }
 
   // Name oriented.
   fun isWalkable(name: String): Boolean = isWalkable(getID(name))
@@ -247,10 +255,11 @@ object block {
   fun isClear(name: String): Boolean = isClear(getID(name))
   fun getDamagePerSecond(name: String): Int = getDamagePerSecond(getID(name))
   fun getLight(name: String): Int = getLight(getID(name))
+  fun doesFloat(name: String): Boolean = doesFloat(getID(name))
 
   // The OOP raw getter.
   fun get(id: Int): BlockDefinition {
-    return BlockDefinition(id, getName(id), getInventoryName(id), getTextures(id), getDrawType(id), isWalkable(id), isLiquid(id), getFlow(id), getViscosity(id), isClimbable(id), isSneakJumpClimbable(id), isFalling(id), isClear(id), getDamagePerSecond(id), getLight(id))
+    return BlockDefinition(id, getName(id), getInventoryName(id), getTextures(id), getDrawType(id), isWalkable(id), isLiquid(id), getFlow(id), getViscosity(id), isClimbable(id), isSneakJumpClimbable(id), isFalling(id), isClear(id), getDamagePerSecond(id), getLight(id), doesFloat(id))
   }
   fun get(name: String): BlockDefinition = get(getID(name))
 
@@ -282,7 +291,8 @@ data class BlockDefinition(
   val falling: Boolean,
   val clear: Boolean,
   val damagePerSecond: Int,
-  val light: Int
+  val light: Int,
+  val floats: Boolean
 ) {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -305,6 +315,7 @@ data class BlockDefinition(
     if (clear != other.clear) return false
     if (damagePerSecond != other.damagePerSecond) return false
     if (light != other.light) return false
+    if (floats != other.floats) return false
 
     return true
   }
