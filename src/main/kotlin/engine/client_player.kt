@@ -6,7 +6,7 @@ import org.joml.Vector3f
 import org.joml.Vector3fc
 import kotlin.math.floor
 
-object clientPlayer : GroovyEntity(Vector3f(0f,0f,0f)) {
+object clientPlayer : Mob(Vector3f(0f,0f,0f)) {
   //? note: this will create a bug that if you're sitting at the exact corner of the world, it doesn't auto scan. Who cares.
   private val oldChunkPosition = Vector2i(Int.MAX_VALUE, Int.MAX_VALUE)
   private val currentChunkPosition = Vector2i()
