@@ -74,6 +74,15 @@ tasks.test {
   useJUnitPlatform()
 }
 
+sourceSets {
+  main {
+    java {
+      srcDir("mods")
+      exclude("*")
+    }
+  }
+}
+
 kotlin {
   jvmToolchain(17)
 }
