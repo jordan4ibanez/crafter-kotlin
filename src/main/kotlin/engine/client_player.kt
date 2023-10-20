@@ -13,7 +13,7 @@ object clientPlayer {
   private val currentChunkPosition = Vector2i()
 
   //! Fixme: TURN THIS OFF!
-  private var payloaded = false
+//  private var payloaded = false
 
 
   fun setPosition(newPos: Vector3fc) {
@@ -23,9 +23,9 @@ object clientPlayer {
     currentChunkPosition.set(x,z)
 //    println("$x, $z")
     //! FIXME: TURN THIS OFF!
-    if (currentChunkPosition != oldChunkPosition && !payloaded) {
+    if (currentChunkPosition != oldChunkPosition /*&& !payloaded*/) {
       world.cleanAndGenerationScan()
-      payloaded = true
+//      payloaded = true
     }
     oldChunkPosition.set(currentChunkPosition)
   }
