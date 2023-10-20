@@ -1,9 +1,11 @@
 package engine
 
 import org.joml.Vector2f
+import org.joml.Vector2fc
 import org.joml.Vector3f
 import org.joml.Vector3fc
 import java.util.UUID
+import java.util.Vector
 
 open class PointEntity {
 
@@ -25,8 +27,18 @@ class Particle : PointEntity {
 open class GroovyEntity : PointEntity {
   open val name = "undefined"
   val uuid = UUID.randomUUID().toString()
-  val size = Vector2f()
-  val rotation = Vector2f()
+  private val size = Vector2f()
+  private val rotation = Vector3f()
+
+  fun getPosition(): Vector3fc = position
+  open fun setPosition(newPosition: Vector3fc) = position.set(newPosition)
+
+  fun getSize(): Vector2fc = size
+  fun setSize(newSize: Vector2fc) = size.set(newSize)
+
+  fun getRotation(): Vector3fc = rotation
+  fun setRotation(newRotation: Vector3fc) = rotation.set(newRotation)
+
   constructor(pos: Vector3fc) : super(pos)
   open fun onSpawn() {}
   open fun onDespawn() {}
