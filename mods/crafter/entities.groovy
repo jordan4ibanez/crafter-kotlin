@@ -9,8 +9,8 @@ final entity = entity.INSTANCE
 
 class Pig extends Mob {
 
-  Pig() {
-    super("pig or something")
+  Pig(Vector3fc pos) {
+    super(pos)
   }
 
   @Override
@@ -19,5 +19,7 @@ class Pig extends Mob {
   }
 }
 
-entity.testing("crafter:pig", () -> {println("hi, I am a groovy pig")})
+entity.testing("crafter:pig", (pos) -> {
+  return new Pig(pos)
+})
 
