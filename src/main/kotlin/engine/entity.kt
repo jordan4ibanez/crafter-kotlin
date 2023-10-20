@@ -41,7 +41,7 @@ open class Mob : GroovyEntity {
 
 object entity {
 
-  val generics = HashMap<String, Class<GroovyEntity>>()
+  val generics = HashMap<String, (Vector3fc) -> GroovyEntity>()
   val mobSpawners = HashMap<String, (Vector3fc) -> Mob>()
 
   val blah: () -> Unit = fun() {
@@ -52,22 +52,24 @@ object entity {
 //    val boof: Mob = (blueprint.declaredConstructors[0]!!.newInstance(Vector3f(0f,0f,0f)) as Mob?)!!
 //    boof.onStep(getDelta())
 
-    println("THIS IS GETTING CALLED!")
-
     mobSpawners[name] = spawnMechanism
 
 
     //todo: remove this, this is prototyping
-    val mechanism = mobSpawners[name] ?: throw RuntimeException("Mob $name does not exist.")
-
-    val testEntity = mechanism(Vector3f(1f,2f,3f))
-
-    testEntity.onStep(getDelta())
-
+//    val mechanism = mobSpawners[name] ?: throw RuntimeException("Mob $name does not exist.")
+//
+//    val testEntity = mechanism(Vector3f(1f,2f,3f))
+//
+//    testEntity.onStep(getDelta())
   }
 
-  fun registerGeneric(name: String, blueprint: Class<GroovyEntity>) {
-    generics[name] = blueprint
+//  fun registerGeneric(name: String, blueprint: Class<GroovyEntity>) {
+//    generics[name] = blueprint
+//  }
+
+  fun spawnMob(name: String, pos: Vector3fc) {
+    val spawnMechanism = mobSpawners[name] ?: throw RuntimeException("entity: Can't spawn mob $name, $name doesn't exist.")
+    spawnMechanism(pos)
   }
 
   fun spawnGeneric(name: String) {
