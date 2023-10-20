@@ -112,6 +112,7 @@ object api {
   }
 
   fun runFile(fileLocation: String) {
+    currentModFile = fileLocation
     try { engine.run(fileLocation, sharedData) } catch (e: Exception) { throw RuntimeException("(Groovy API error in $currentModFile):\n$e") }
   }
 
