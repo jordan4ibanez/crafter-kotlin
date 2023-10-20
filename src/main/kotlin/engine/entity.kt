@@ -20,7 +20,6 @@ open class PointEntity {
 }
 
 class Particle : PointEntity {
-
   constructor(pos: Vector3fc) : super(pos)
 }
 
@@ -69,8 +68,12 @@ open class Mob : GroovyEntity {
 }
 
 open class Player : Mob {
+  override val classifier = "player"
+  val name: String
 
-  constructor(pos: Vector3fc) : super(pos)
+  constructor(pos: Vector3fc, name: String) : super(pos) {
+    this.name = name
+  }
 }
 
 object entity {
