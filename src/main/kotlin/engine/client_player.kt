@@ -14,7 +14,12 @@ object clientPlayer : Player(Vector3f(0f,0f,0f), "singleplayer") {
   private val oldChunkPosition = Vector2i(Int.MAX_VALUE, Int.MAX_VALUE)
   private val currentChunkPosition = Vector2i()
 
-  //! Fixme: TURN THIS OFF!
+  init {
+    // Automatically add in the client player into players
+    entity.addPlayer(this)
+  }
+
+  // Future note: This can be used to turn off the automatic chunk generation (for prototyping and generation debugging).
 //  private var payloaded = false
 
   override fun setPosition(newPosition: Vector3fc) {
@@ -23,7 +28,7 @@ object clientPlayer : Player(Vector3f(0f,0f,0f), "singleplayer") {
     val z: Int = floor(newPosition.z() / world.getChunkDepth()).toInt()
     currentChunkPosition.set(x,z)
 //    println("$x, $z")
-    //! FIXME: TURN THIS OFF!
+
     if (currentChunkPosition != oldChunkPosition /*&& !payloaded*/) {
       world.cleanAndGenerationScan()
 //      payloaded = true

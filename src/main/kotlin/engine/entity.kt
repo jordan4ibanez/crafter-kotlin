@@ -129,16 +129,30 @@ object entity {
   fun spawnMob(name: String, pos: Vector3fc) {
     val spawnMechanism = mobSpawners[name] ?: throw RuntimeException("entity: Can't spawn mob $name, $name doesn't exist.")
     val mob = spawnMechanism(pos)
+    println("entity: Storing mob $name at id ${mob.uuid}")
     mobs[mob.uuid] = mob
   }
-  fun removeMob(uuid: String) {
+  fun storeMob(uuid: String) {
+    // todo: storing procedure goes here.
+    println("todo: implement mob storing procedure.")
+    deleteMob(uuid)
+  }
+  fun deleteMob(uuid: String) {
+    println("entity: Deleting mob $uuid")
     mobs.remove(uuid)
   }
 
-  fun addPlayer(player: Player) {
+  fun spawnPlayer(player: Player) {
+    println("entity: Storing player ${player.name}")
     players[player.name] = player
   }
-  fun removePlayer(name: String) {
+  fun storePlayer(name: String) {
+    // todo: storing procedure goes here.
+    print("todo: implement player storing procedure.")
+    deletePlayer(name)
+  }
+  fun deletePlayer(name: String) {
+    println("entity: Deleting player $name")
     players.remove(name)
   }
 
