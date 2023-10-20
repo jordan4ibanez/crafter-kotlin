@@ -25,7 +25,8 @@ class Particle : PointEntity {
 }
 
 open class GroovyEntity : PointEntity {
-  open val name = "undefined"
+  // Thanks, GreenXenith!
+  open val classifier = "undefined"
   val uuid = UUID.randomUUID().toString()
   private val size = Vector2f()
   private val rotation = Vector3f()
@@ -67,6 +68,11 @@ open class Mob : GroovyEntity {
   open fun onHit() {}
 }
 
+open class Player : Mob {
+
+  constructor(pos: Vector3fc) : super(pos)
+}
+
 object entity {
 
   val generics = HashMap<String, (Vector3fc) -> GroovyEntity>()
@@ -87,7 +93,7 @@ object entity {
     val testEntity = spawnMob("crafter:pig", Vector3f(1f,2f,3f))
 //
     testEntity.onStep(getDelta())
-    println(testEntity.name)
+    println(testEntity.classifier)
     println(testEntity.uuid)
   }
 
