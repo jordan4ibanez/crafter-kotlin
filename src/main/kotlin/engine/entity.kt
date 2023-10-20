@@ -47,7 +47,7 @@ object entity {
   val blah: () -> Unit = fun() {
   }
 
-  fun testing(name: String, spawnMechanism: (Vector3fc) -> Mob) {
+  fun registerMobSpawner(name: String, spawnMechanism: (Vector3fc) -> Mob) {
 //    val boof: Mob = (blueprint.declaredConstructors[0]!!.newInstance(Vector3f(0f,0f,0f)) as Mob?)!!
 //    boof.onStep(getDelta())
 

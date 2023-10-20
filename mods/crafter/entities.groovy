@@ -20,7 +20,7 @@ class Pig extends Mob {
   }
 }
 
-entity.testing("crafter:pig", (pos) -> {
+entity.registerMobSpawner("crafter:pig", (pos) -> {
   return new Pig(pos)
 })
 
