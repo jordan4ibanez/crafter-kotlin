@@ -6,7 +6,7 @@ import org.joml.Vector3f
 import org.joml.Vector3fc
 import kotlin.math.floor
 
-object clientPlayer : Mob(Vector3f(0f,0f,0f)) {
+object clientPlayer : Player(Vector3f(0f,0f,0f), "singleplayer") {
 
   override val classifier = "hi"
 

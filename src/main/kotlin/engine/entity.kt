@@ -69,7 +69,7 @@ open class Mob : GroovyEntity {
 
 open class Player : Mob {
   override val classifier = "player"
-  val name: String
+  var name: String
 
   constructor(pos: Vector3fc, name: String) : super(pos) {
     this.name = name
