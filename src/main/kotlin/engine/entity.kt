@@ -48,6 +48,7 @@ object entity {
   }
 
   fun registerMobSpawner(name: String, spawnMechanism: (Vector3fc) -> Mob) {
+    //! todo: add environmental vars, what does this mob spawn on, when should it spawn? biome? light level? peaceful mode?
 //    val boof: Mob = (blueprint.declaredConstructors[0]!!.newInstance(Vector3f(0f,0f,0f)) as Mob?)!!
 //    boof.onStep(getDelta())
 
