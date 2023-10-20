@@ -42,17 +42,27 @@ open class Mob : GroovyEntity {
 object entity {
 
   val generics = HashMap<String, Class<GroovyEntity>>()
+  val mobSpawners = HashMap<String, (Vector3fc) -> Mob>()
 
   val blah: () -> Unit = fun() {
   }
 
-  fun testing(name: String, spawnMechanism: () -> Unit) {
+  fun testing(name: String, spawnMechanism: (Vector3fc) -> Mob) {
 //    val boof: Mob = (blueprint.declaredConstructors[0]!!.newInstance(Vector3f(0f,0f,0f)) as Mob?)!!
 //    boof.onStep(getDelta())
 
     println("THIS IS GETTING CALLED!")
 
-    spawnMechanism()
+    mobSpawners[name] = spawnMechanism
+
+
+    //todo: remove this, this is prototyping
+    val gettingMob = "pig"
+    val mechanism = mobSpawners[gettingMob] ?: throw RuntimeException("Mob $gettingMob does not exist.")
+
+    val testEntity = mechanism(Vector3f(1f,2f,3f))
+
+    testEntity.onStep(getDelta())
 
   }
 
