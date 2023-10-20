@@ -600,8 +600,7 @@ object world {
     // Left.
     if (left != -1) {
       when (block.getDrawType(left.getBlockID())) {
-        DrawType.BLOCK -> {/*do nothing*/
-        }
+        DrawType.BLOCK -> {/*do nothing*/}
         else -> {
           // Attach face.
           putPositions(
@@ -639,9 +638,7 @@ object world {
     // Front.
     if (front != -1) {
       when (block.getDrawType(front.getBlockID())) {
-        DrawType.BLOCK -> {/*do nothing*/
-        }
-
+        DrawType.BLOCK -> {/*do nothing*/}
         else -> {
           // Attach face.
           putPositions(
@@ -660,9 +657,7 @@ object world {
     // Back.
     if (back != -1) {
       when (block.getDrawType(back.getBlockID())) {
-        DrawType.BLOCK -> {/*do nothing*/
-        }
-
+        DrawType.BLOCK -> {/*do nothing*/}
         else -> {
           // Attach face.
           putPositions(
