@@ -9,6 +9,8 @@ final entity = entity.INSTANCE
 
 class Pig extends Mob {
 
+  final String name = "crafter:pig"
+
   Pig(Vector3fc pos) {
     super(pos)
   }
