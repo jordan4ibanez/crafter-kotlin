@@ -73,7 +73,7 @@ object world {
     val clientChunkPosition = clientPlayer.getChunkPosition()
     val renderDistance = camera.getRenderDistance()
 
-    println("update")
+//    println("update")
 
     val (currentX, currentZ) = clientChunkPosition.destructure()
 

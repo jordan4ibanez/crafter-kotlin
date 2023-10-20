@@ -1,6 +1,8 @@
 package crafter
 
+import engine.Hostility
 import engine.Mob
+import engine.Mobility
 import engine.entity
 import org.joml.Vector3f
 import org.joml.Vector3fc
@@ -10,6 +12,7 @@ final entity = entity.INSTANCE
 class Pig extends Mob {
 
   final String classifier = "crafter:pig"
+  Hostility hostility = Hostility.Friendly
 
   Pig(Vector3fc pos) {
     super(pos)
@@ -22,7 +25,19 @@ class Pig extends Mob {
   }
 }
 
-entity.registerMobSpawner("crafter:pig", (pos) -> {
-  return new Pig(pos)
-})
+entity.registerMobSpawner("crafter:pig", (pos) -> {return new Pig(pos)})
 
+class Squid extends Mob {
+
+  final String classifier = ""
+
+  Mobility mobility = Mobility.Swim
+  Hostility hostility = Hostility.Friendly
+
+  Squid(Vector3fc pos) {
+    super(pos)
+    println("glub glub")
+  }
+}
+
+entity.registerMobSpawner("crafter:squid", (pos) -> {return new Squid(pos)})

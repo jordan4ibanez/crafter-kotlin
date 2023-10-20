@@ -7,6 +7,8 @@ import org.joml.Vector3fc
 import java.util.UUID
 import java.util.Vector
 
+
+
 open class PointEntity {
 
   val position = Vector3f()
@@ -58,9 +60,27 @@ class Item : GroovyEntity {
   }
 }
 
+enum class Mobility {
+  Walk,
+  Swim,
+  Fly,
+  Jump
+}
+
+enum class Hostility {
+  Hostile,
+  Neutral,
+  Friendly
+}
+
+
 open class Mob : GroovyEntity {
   var hp = 0
   var fallDamage = false
+  var mobility = Mobility.Walk
+  var lavaSwim = false
+  var hostility = Hostility.Neutral
+
   constructor(pos: Vector3fc) : super(pos)
 
   open fun onDeath(){}
