@@ -98,8 +98,14 @@ open class Player : Mob {
 
 object entity {
 
-  val generics = HashMap<String, (Vector3fc) -> GroovyEntity>()
-  val mobSpawners = HashMap<String, (Vector3fc) -> Mob>()
+  // Spawner function containers
+  private val genericSpawners = HashMap<String, (Vector3fc) -> GroovyEntity>()
+  private val mobSpawners = HashMap<String, (Vector3fc) -> Mob>()
+
+  // Instance containers
+  private val mobs = HashMap<String, Mob>()
+  private val players = HashMap<String, Player>()
+
 
 
   fun registerMobSpawner(name: String, spawnMechanism: (Vector3fc) -> Mob) {
@@ -113,19 +119,28 @@ object entity {
     //todo: remove this, this is prototyping
 //    val mechanism = mobSpawners[name] ?: throw RuntimeException("Mob $name does not exist.")
 //
-    val testEntity = spawnMob("crafter:pig", Vector3f(1f,2f,3f))
-//
-    testEntity.onStep(getDelta())
-    println(testEntity.classifier)
-    println(testEntity.uuid)
+//    val testEntity = spawnMob("crafter:pig", Vector3f(1f,2f,3f))
+////
+//    testEntity.onStep(getDelta())
+//    println(testEntity.classifier)
+//    println(testEntity.uuid)
   }
 
 
-  fun spawnMob(name: String, pos: Vector3fc): Mob {
+  fun spawnMob(name: String, pos: Vector3fc) {
     val spawnMechanism = mobSpawners[name] ?: throw RuntimeException("entity: Can't spawn mob $name, $name doesn't exist.")
-    return spawnMechanism(pos)
+    val mob = spawnMechanism(pos)
+    mobs[mob.uuid] = mob
+  }
+  fun removeMob(uuid: String) {
+    mobs.remove(uuid)
   }
 
-
+  fun addPlayer(player: Player) {
+    players[player.name] = player
+  }
+  fun removePlayer(name: String) {
+    players.remove(name)
+  }
 
 }
