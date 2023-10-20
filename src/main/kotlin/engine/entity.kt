@@ -57,8 +57,7 @@ object entity {
 
 
     //todo: remove this, this is prototyping
-    val gettingMob = "pig"
-    val mechanism = mobSpawners[gettingMob] ?: throw RuntimeException("Mob $gettingMob does not exist.")
+    val mechanism = mobSpawners[name] ?: throw RuntimeException("Mob $name does not exist.")
 
     val testEntity = mechanism(Vector3f(1f,2f,3f))
 
