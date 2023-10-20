@@ -598,86 +598,97 @@ object world {
     fun putColors(light: Float) = (0 until 4).forEach { _ -> colors.add(light) }
 
     // Left.
-    when (block.getDrawType(left.getBlockID())) {
-      DrawType.BLOCK -> {/*do nothing*/
-      }
-
-      else -> {
-        // Attach face.
-        putPositions(
-          0f + x, 1f + overProvision + y, 0f - overProvision + z,
-          0f + x, 0f - overProvision + y, 0f - overProvision + z,
-          0f + x, 0f - overProvision + y, 1f + overProvision + z,
-          0f + x, 1f + overProvision + y, 1f + overProvision + z
-        )
-        putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[0])
-        putIndices()
-        putColors(left.getBlockLight().toFloat() / 15f)
+    if (left != -1) {
+      when (block.getDrawType(left.getBlockID())) {
+        DrawType.BLOCK -> {/*do nothing*/
+        }
+        else -> {
+          // Attach face.
+          putPositions(
+            0f + x, 1f + overProvision + y, 0f - overProvision + z,
+            0f + x, 0f - overProvision + y, 0f - overProvision + z,
+            0f + x, 0f - overProvision + y, 1f + overProvision + z,
+            0f + x, 1f + overProvision + y, 1f + overProvision + z
+          )
+          putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[0])
+          putIndices()
+          putColors(left.getBlockLight().toFloat() / 15f)
+        }
       }
     }
 
     // Right.
-    when (block.getDrawType(right.getBlockID())) {
-      DrawType.BLOCK -> {/*do nothing*/
-      }
-
-      else -> {
-        // Attach face.
-        putPositions(
-          1f + x, 1f + overProvision + y, 1f + overProvision + z,
-          1f + x, 0f - overProvision + y, 1f + overProvision + z,
-          1f + x, 0f - overProvision + y, 0f - overProvision + z,
-          1f + x, 1f + overProvision + y, 0f - overProvision + z
-        )
-        putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[1])
-        putIndices()
-        putColors(right.getBlockLight().toFloat() / 15f)
+    if (right != -1) {
+      when (block.getDrawType(right.getBlockID())) {
+        DrawType.BLOCK -> {/*do nothing*/}
+        else -> {
+          // Attach face.
+          putPositions(
+            1f + x, 1f + overProvision + y, 1f + overProvision + z,
+            1f + x, 0f - overProvision + y, 1f + overProvision + z,
+            1f + x, 0f - overProvision + y, 0f - overProvision + z,
+            1f + x, 1f + overProvision + y, 0f - overProvision + z
+          )
+          putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[1])
+          putIndices()
+          putColors(right.getBlockLight().toFloat() / 15f)
+        }
       }
     }
 
     // Front.
-    when (block.getDrawType(front.getBlockID())) {
-      DrawType.BLOCK -> {/*do nothing*/
-      }
+    if (front != -1) {
+      when (block.getDrawType(front.getBlockID())) {
+        DrawType.BLOCK -> {/*do nothing*/
+        }
 
-      else -> {
-        // Attach face.
-        putPositions(
-          1f + overProvision + x, 1f + overProvision + y, 0f + z,
-          1f + overProvision + x, 0f - overProvision + y, 0f + z,
-          0f - overProvision + x, 0f - overProvision + y, 0f + z,
-          0f - overProvision + x, 1f + overProvision + y, 0f + z
-        )
-        putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[2])
-        putIndices()
-        putColors(front.getBlockLight().toFloat() / 15f)
+        else -> {
+          // Attach face.
+          putPositions(
+            1f + overProvision + x, 1f + overProvision + y, 0f + z,
+            1f + overProvision + x, 0f - overProvision + y, 0f + z,
+            0f - overProvision + x, 0f - overProvision + y, 0f + z,
+            0f - overProvision + x, 1f + overProvision + y, 0f + z
+          )
+          putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[2])
+          putIndices()
+          putColors(front.getBlockLight().toFloat() / 15f)
+        }
       }
     }
 
     // Back.
-    when (block.getDrawType(back.getBlockID())) {
-      DrawType.BLOCK -> {/*do nothing*/
-      }
+    if (back != -1) {
+      when (block.getDrawType(back.getBlockID())) {
+        DrawType.BLOCK -> {/*do nothing*/
+        }
 
-      else -> {
-        // Attach face.
-        putPositions(
-          0f - overProvision + x, 1f + overProvision + y, 1f + z,
-          0f - overProvision + x, 0f - overProvision + y, 1f + z,
-          1f + overProvision + x, 0f - overProvision + y, 1f + z,
-          1f + overProvision + x, 1f + overProvision + y, 1f + z
-        )
-        putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[3])
-        putIndices()
-        putColors(back.getBlockLight().toFloat() / 15f)
+        else -> {
+          // Attach face.
+          putPositions(
+            0f - overProvision + x, 1f + overProvision + y, 1f + z,
+            0f - overProvision + x, 0f - overProvision + y, 1f + z,
+            1f + overProvision + x, 0f - overProvision + y, 1f + z,
+            1f + overProvision + x, 1f + overProvision + y, 1f + z
+          )
+          putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[3])
+          putIndices()
+          putColors(back.getBlockLight().toFloat() / 15f)
+        }
       }
     }
 
-    // Bottom.
-    when (block.getDrawType(bottom.getBlockID())) {
-      DrawType.BLOCK -> {/*do nothing*/
-      }
+    //? note: Bottom and top have special properties.
+    //? note: You can fall out of the world, and you can also build to the top.
+    //? note: We must have a special scenario from this. We require mutable data.
 
+    //! fixme: this needs to get the ambient light level!
+    val topAdjusted = if (top == -1) 0 setBlockLight 15 else top
+    val bottomAdjusted = if (bottom == -1) 0 setBlockLight 15 else bottom
+
+    // Bottom.
+    when (block.getDrawType(bottomAdjusted.getBlockID())) {
+      DrawType.BLOCK -> {/*do nothing*/}
       else -> {
         // Attach face.
         putPositions(
@@ -688,15 +699,13 @@ object world {
         )
         putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[4])
         putIndices()
-        putColors(bottom.getBlockLight().toFloat() / 15f)
+        putColors(bottomAdjusted.getBlockLight().toFloat() / 15f)
       }
     }
 
     // Top.
-    when (block.getDrawType(top.getBlockID())) {
-      DrawType.BLOCK -> {/*do nothing*/
-      }
-
+    when (block.getDrawType(topAdjusted.getBlockID())) {
+      DrawType.BLOCK -> {/*do nothing*/}
       else -> {
         // Attach face.
         putPositions(
@@ -707,10 +716,9 @@ object world {
         )
         putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[5])
         putIndices()
-        putColors(top.getBlockLight().toFloat() / 15f)
+        putColors(topAdjusted.getBlockLight().toFloat() / 15f)
       }
     }
-
   }
 
   private fun detectNeighbor(
@@ -748,7 +756,7 @@ object world {
         }
         neighbor[index]
       } else {
-        0 setBlockLight 15
+        -1
       }  //! fixme: current natural light when time is implemented!
     } else {
       val index = when (dir) {
