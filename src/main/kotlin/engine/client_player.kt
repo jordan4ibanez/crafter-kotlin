@@ -6,7 +6,7 @@ import org.joml.Vector3f
 import org.joml.Vector3fc
 import kotlin.math.floor
 
-object clientPlayer : Player(Vector3f(0f,0f,0f), "singleplayer") {
+object clientPlayer : Player(Vector3f(0f,72f,0f), "singleplayer") {
 
   override val classifier = "hi"
 
@@ -15,7 +15,7 @@ object clientPlayer : Player(Vector3f(0f,0f,0f), "singleplayer") {
   private val currentChunkPosition = Vector2i()
 
   init {
-    // Automatically add in the client player into players
+    // Automatically add in the client player into players.
     entity.addPlayer(this)
   }
 

@@ -142,9 +142,13 @@ object entity {
     mobs.remove(uuid)
   }
 
-  fun spawnPlayer(player: Player) {
+  fun addPlayer(player: Player) {
     println("entity: Storing player ${player.name}")
     players[player.name] = player
+  }
+  fun spawnPlayer(name: String, pos: Vector3fc) {
+    val newPlayer = Player(pos, name)
+    players[name] = newPlayer
   }
   fun storePlayer(name: String) {
     // todo: storing procedure goes here.
