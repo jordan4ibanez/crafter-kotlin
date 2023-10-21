@@ -10,6 +10,8 @@ import java.util.concurrent.ConcurrentLinkedDeque
 // Initialization procedure. Consider this love.load()
 fun load() {
 
+  println("Crafter is running on JVM ${System.getProperty("java.version")}")
+
   initialize()
 
   window.setVsync(false)
