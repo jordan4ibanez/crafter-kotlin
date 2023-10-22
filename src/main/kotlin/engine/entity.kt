@@ -113,6 +113,11 @@ object entity {
   private val mobSpawners = HashMap<String, (Vector3fc) -> Mob>()
 
   // Instance containers
+  //
+  // Generic - GroovyEntity
+  private val generics = HashMap<String, GroovyEntity>()
+
+  // Focused - Mob, Item, etc
   private val mobs = HashMap<String, Mob>()
   private val players = HashMap<String, Player>()
 
@@ -120,28 +125,21 @@ object entity {
 
   fun registerMobSpawner(name: String, spawnMechanism: (Vector3fc) -> Mob) {
     //! todo: add environmental vars, what does this mob spawn on, when should it spawn? biome? light level? peaceful mode?
-//    val boof: Mob = (blueprint.declaredConstructors[0]!!.newInstance(Vector3f(0f,0f,0f)) as Mob?)!!
-//    boof.onStep(getDelta())
-
     mobSpawners[name] = spawnMechanism
-
-
-    //todo: remove this, this is prototyping
-//    val mechanism = mobSpawners[name] ?: throw RuntimeException("Mob $name does not exist.")
-//
-//    val testEntity = spawnMob("crafter:pig", Vector3f(1f,2f,3f))
-////
-//    testEntity.onStep(getDelta())
-//    println(testEntity.classifier)
-//    println(testEntity.uuid)
   }
+
+//  fun getAllEntities(): Map<String, Mob> {
+//    return mobs.plus(players)
+//  }
 
 
   fun spawnMob(name: String, pos: Vector3fc) {
     val spawnMechanism = mobSpawners[name] ?: throw RuntimeException("entity: Can't spawn mob $name, $name doesn't exist.")
     val mob = spawnMechanism(pos)
     println("entity: Storing mob $name at id ${mob.uuid}")
+
     mobs[mob.uuid] = mob
+    addGeneric(mob.uuid, mob)
   }
   fun storeMob(uuid: String) {
     // todo: storing procedure goes here.
@@ -151,24 +149,50 @@ object entity {
   fun deleteMob(uuid: String) {
     println("entity: Deleting mob $uuid")
     mobs.remove(uuid)
+    deleteGeneric(uuid)
   }
 
   fun addPlayer(player: Player) {
-    println("entity: Storing player ${player.name}")
     players[player.name] = player
+    println("entity: Added player ${player.name}")
+    addGeneric(player.name, player)
   }
   fun spawnPlayer(name: String, pos: Vector3fc) {
     val newPlayer = Player(pos, name)
     players[name] = newPlayer
+    println("entity: Spawned player $name")
+    addGeneric(name, newPlayer)
   }
   fun storePlayer(name: String) {
     // todo: storing procedure goes here.
-    print("todo: implement player storing procedure.")
+    print("todo: implement player storing procedure. $name")
     deletePlayer(name)
   }
   fun deletePlayer(name: String) {
     println("entity: Deleting player $name")
     players.remove(name)
+    generics.remove(name)
+  }
+
+  private fun addGeneric(name: String, generic: GroovyEntity) {
+    generics[name] = generic
+    println("entity: Stored generic $name")
+  }
+  private fun deleteGeneric(name: String) {
+    generics.remove(name)
+    println("entity: Deleted generic $name")
   }
 
 }
+
+//todo: remove this, this is prototyping
+//    val boof: Mob = (blueprint.declaredConstructors[0]!!.newInstance(Vector3f(0f,0f,0f)) as Mob?)!!
+//    boof.onStep(getDelta())
+
+//    val mechanism = mobSpawners[name] ?: throw RuntimeException("Mob $name does not exist.")
+//
+//    val testEntity = spawnMob("crafter:pig", Vector3f(1f,2f,3f))
+////
+//    testEntity.onStep(getDelta())
+//    println(testEntity.classifier)
+//    println(testEntity.uuid)
