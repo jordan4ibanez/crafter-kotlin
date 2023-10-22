@@ -17,7 +17,7 @@ open class PointEntity {
     this.position.set(pos)
   }
 
-  open fun onTick(dtime: Float) {}
+  open fun onTick(delta: Float) {}
 }
 
 class Particle : PointEntity {
