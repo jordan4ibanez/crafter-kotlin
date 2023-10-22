@@ -120,12 +120,16 @@ object entity {
   //
   // Generic - GroovyEntity
   private val generics = HashMap<String, GroovyEntity>()
-
+  //
   // Focused - Mob, Item, etc
   private val mobs = HashMap<String, Mob>()
   private val players = HashMap<String, Player>()
+  //
+  // Specialty
+  private val particles = HashMap<String, Particle>()
 
 
+  //todo: particles need a special instantiation thing.
 
   fun registerMobSpawner(name: String, spawnMechanism: (Vector3fc) -> Mob) {
     //! todo: add environmental vars, what does this mob spawn on, when should it spawn? biome? light level? peaceful mode?
