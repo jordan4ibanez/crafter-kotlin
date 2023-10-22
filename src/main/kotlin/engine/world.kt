@@ -20,6 +20,7 @@ object world {
   private const val DEPTH = 16
   private const val Y_STRIDE = WIDTH * DEPTH
   private const val ARRAY_SIZE = WIDTH * HEIGHT * DEPTH
+  private const val GRAVITY = 10f
 
   private const val Y_SLICE_HEIGHT = 16
   private const val MESH_ARRAY_SIZE = 8
@@ -50,6 +51,10 @@ object world {
   private val meshGenerationOutput = ConcurrentLinkedQueue<Pair<Vector3ic, ChunkMesh>>()
 
 // note: API begins here
+
+  fun getGravity(): Float {
+    return GRAVITY
+  }
 
   fun getChunkWidth(): Int = WIDTH
   fun getChunkWidthFloat(): Float = WIDTH.toFloat()
