@@ -26,6 +26,7 @@ fun load() {
 //
 //  texture.create("debug", worldAtlas.flush(), worldAtlas.getSize(), worldAtlas.getChannels())
 
+  texture.create("debug.png", "./textures/debug.png")
 
   // Debug mesh.
   mesh.create3D(
@@ -129,6 +130,8 @@ fun draw() {
   mesh.draw("debug")
 
   world.renderChunks()
+
+  entity.draw()
 
 }
 
