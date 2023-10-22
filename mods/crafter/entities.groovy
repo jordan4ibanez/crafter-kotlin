@@ -18,9 +18,9 @@ class Pig extends Mob {
   }
 
   @Override
-  void onStep(float delta) {
+  void onTick(float delta) {
     println("Oink, I am a pig")
-    println("this pig exists at ${position.x()}, ${position.y()}, ${position.z()}")
+    println("this pig ${this.uuid} exists at ${position.x()}, ${position.y()}, ${position.z()}")
   }
 }
 

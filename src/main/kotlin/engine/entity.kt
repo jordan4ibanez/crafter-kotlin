@@ -17,7 +17,7 @@ open class PointEntity {
     this.position.set(pos)
   }
 
-  open fun onStep(dtime: Float) {}
+  open fun onTick(dtime: Float) {}
 }
 
 class Particle : PointEntity {
@@ -31,6 +31,8 @@ open class GroovyEntity : PointEntity {
   private val size = Vector2f()
   private val rotation = Vector3f()
   private val velocity = Vector3f()
+
+
 
   fun getPosition(): Vector3fc = position
   open fun setPosition(newPosition: Vector3fc) {
