@@ -28,9 +28,13 @@ open class GroovyEntity : PointEntity {
   // Thanks, GreenXenith!
   open val classifier = "undefined"
   val uuid = UUID.randomUUID().toString()
-  private val size = Vector2f()
+  private val size = Vector2f(1f,1f)
   private val rotation = Vector3f()
   private val velocity = Vector3f()
+
+  fun drawCollisionBox() {
+    collisionBox.draw(position, size)
+  }
 
 
 
@@ -107,6 +111,8 @@ open class Player : Mob {
 
   constructor(pos: Vector3fc, name: String) : super(pos) {
     this.name = name
+    setSize(Vector2f(0.3f, 1.8f))
+    getSize().print("$name size")
   }
 }
 
@@ -127,6 +133,19 @@ object entity {
   //
   // Specialty
   private val particles = HashMap<String, Particle>()
+
+  fun onTick() {
+    val delta = getDelta()
+    generics.forEach { (key, obj) ->
+      obj.onTick(delta)
+    }
+  }
+
+  fun draw() {
+    generics.forEach {(key, obj) ->
+      obj.drawCollisionBox()
+    }
+  }
 
 
   //todo: particles need a special instantiation thing.
