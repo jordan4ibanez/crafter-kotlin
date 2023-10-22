@@ -10,6 +10,9 @@ object collision {
   private val intersection = FrustumIntersection()
   private val min = Vector3f()
   private val max = Vector3f()
+  private val gravity = world.getGravity()
+
+  // Camera collision
 
   internal fun chunkMeshWithinFrustum(x: Float, y: Float, z: Float): Boolean {
     updateChunkMatrix(x,y,z)
@@ -35,4 +38,11 @@ object collision {
         z - camPos.z()
       )
   }
+
+
+  // Entity collision
+
+
+
+
 }
