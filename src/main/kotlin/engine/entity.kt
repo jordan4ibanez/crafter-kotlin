@@ -55,6 +55,9 @@ open class GroovyEntity : PointEntity {
   constructor(pos: Vector3fc) : super(pos)
   open fun onSpawn() {}
   open fun onDespawn() {}
+  open fun onHit() {}
+  open fun onRightClick() {}
+
 }
 
 class Item : GroovyEntity {
@@ -94,7 +97,6 @@ open class Mob : GroovyEntity {
   constructor(pos: Vector3fc) : super(pos)
 
   open fun onDeath(){}
-  open fun onHit() {}
 }
 
 open class Player : Mob {
