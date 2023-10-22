@@ -59,6 +59,7 @@ open class GroovyEntity : PointEntity {
 
 class Item : GroovyEntity {
   private var itemName: String
+  override val classifier = "item"
   constructor(itemName: String, pos: Vector3fc) : super(pos) {
     this.itemName = itemName
     this.position.set(pos)
