@@ -30,6 +30,7 @@ open class GroovyEntity : PointEntity {
   val uuid = UUID.randomUUID().toString()
   private val size = Vector2f()
   private val rotation = Vector3f()
+  private val velocity = Vector3f()
 
   fun getPosition(): Vector3fc = position
   open fun setPosition(newPosition: Vector3fc) {
@@ -44,6 +45,11 @@ open class GroovyEntity : PointEntity {
   fun getRotation(): Vector3fc = rotation
   open fun setRotation(newRotation: Vector3fc) {
     rotation.set(newRotation)
+  }
+
+  fun getVelocity(): Vector3fc = velocity
+  open fun setVelocity(newVelocity: Vector3fc) {
+    velocity.set(newVelocity)
   }
 
   constructor(pos: Vector3fc) : super(pos)
