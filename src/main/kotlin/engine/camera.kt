@@ -160,6 +160,7 @@ object camera {
     cameraPosition.add(finalCameraMovement, newCameraPosition)
 
     setPosition(newCameraPosition)
+    newCameraPosition.y -= clientPlayer.eyeHeight
     clientPlayer.setPosition(newCameraPosition)
   }
 }

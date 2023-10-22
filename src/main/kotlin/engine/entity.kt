@@ -99,6 +99,7 @@ open class Mob : GroovyEntity {
   var mobility = Mobility.Walk
   var lavaSwim = false
   var hostility = Hostility.Neutral
+  var eyeHeight = 1.5f
 
   constructor(pos: Vector3fc) : super(pos)
 
@@ -108,6 +109,8 @@ open class Mob : GroovyEntity {
 open class Player : Mob {
   override val classifier = "player"
   var name: String
+
+
 
   constructor(pos: Vector3fc, name: String) : super(pos) {
     this.name = name
