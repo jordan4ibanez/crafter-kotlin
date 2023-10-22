@@ -28,35 +28,14 @@ open class GroovyEntity : PointEntity {
   // Thanks, GreenXenith!
   open val classifier = "undefined"
   val uuid = UUID.randomUUID().toString()
-  private val size = Vector2f(1f,1f)
-  private val rotation = Vector3f()
-  private val velocity = Vector3f()
+  open val size = Vector2f(1f,1f)
+  open val rotation = Vector3f()
+  open val velocity = Vector3f()
 
   fun drawCollisionBox() {
     collisionBox.draw(position, size)
   }
-
-
-
-  fun getPosition(): Vector3fc = position
-  open fun setPosition(newPosition: Vector3fc) {
-    position.set(newPosition)
-  }
-
-  fun getSize(): Vector2fc = size
-  open fun setSize(newSize: Vector2fc) {
-    size.set(newSize)
-  }
-
-  fun getRotation(): Vector3fc = rotation
-  open fun setRotation(newRotation: Vector3fc) {
-    rotation.set(newRotation)
-  }
-
-  fun getVelocity(): Vector3fc = velocity
-  open fun setVelocity(newVelocity: Vector3fc) {
-    velocity.set(newVelocity)
-  }
+  
 
   constructor(pos: Vector3fc) : super(pos)
   open fun onSpawn() {}
@@ -108,14 +87,14 @@ open class Mob : GroovyEntity {
 
 open class Player : Mob {
   override val classifier = "player"
+  override val size = Vector2f(0.3f, 1.8f)
   var name: String
 
 
 
   constructor(pos: Vector3fc, name: String) : super(pos) {
     this.name = name
-    setSize(Vector2f(0.3f, 1.8f))
-    getSize().print("$name size")
+    size.print("$name size")
   }
 }
 
