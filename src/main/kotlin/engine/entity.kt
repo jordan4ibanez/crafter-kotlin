@@ -58,10 +58,14 @@ open class GroovyEntity : PointEntity {
 }
 
 class Item : GroovyEntity {
-  var itemName: String
+  private var itemName: String
   constructor(itemName: String, pos: Vector3fc) : super(pos) {
     this.itemName = itemName
     this.position.set(pos)
+  }
+
+  fun getItemName(): String {
+    return itemName
   }
 }
 
