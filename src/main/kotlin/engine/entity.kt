@@ -17,6 +17,11 @@ open class PointEntity {
     this.position.set(pos)
   }
 
+  fun getPosition(): Vector3fc = position
+  open fun setPosition(newPosition: Vector3fc) {
+    position.set(newPosition)
+  }
+  
   open fun onTick(delta: Float) {}
 }
 
@@ -34,13 +39,6 @@ open class GroovyEntity : PointEntity {
 
   fun drawCollisionBox() {
     collisionBox.draw(position, size)
-  }
-
-
-
-  fun getPosition(): Vector3fc = position
-  open fun setPosition(newPosition: Vector3fc) {
-    position.set(newPosition)
   }
 
   fun getSize(): Vector2fc = size
