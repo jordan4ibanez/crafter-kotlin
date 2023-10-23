@@ -12,10 +12,13 @@ import org.lwjgl.system.windows.INPUT
 
 
 object camera {
+
+  private var renderDistance = 16
+
   private var sensitivity = 1f / 500f
   private var FOV: Float = toRadians(60f)
   private var zNear = 0.1f
-  private var zFar = 300f
+  private var zFar = (renderDistance * world.getChunkWidth()).toFloat() * 1.5f
   private val cameraMatrix = Matrix4f()
   private val objectMatrix = Matrix4f()
   private val guiCameraMatrix = Matrix4f()
@@ -25,8 +28,6 @@ object camera {
 
   private val workerVector3f = Vector3f()
   private val workerVector3f2 = Vector3f()
-
-  private var renderDistance = 10
 
   // Movement vals. fixme: Why the HECK are there so many variables to do basic movement??
   private val inputMovement = Vector3f()
