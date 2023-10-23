@@ -4,8 +4,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.joml.*
-import org.joml.Math.abs
-import org.joml.Math.ceil
+import org.joml.Math.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -32,6 +31,11 @@ object world {
   private const val MAX_CHUNK_MESH_UPDATES_PER_FRAME = 5
   private const val MAX_CHUNK_PROCS_PER_FRAME = 5
 
+  // Fields for the single block API.
+  private val chunkPosition = Vector2i(0,0)
+  private val internalPosition = Vector3i(0,0,0)
+
+
   // Chunk block data
 //! todo: upgrade to LongArray! This will allow either 24 bit or 32 bit limit for chunks!
   private val data = ConcurrentHashMap<Vector2ic, IntArray>()
@@ -50,7 +54,41 @@ object world {
   // Output from the chunk mesh generator goes into here.
   private val meshGenerationOutput = ConcurrentLinkedQueue<Pair<Vector3ic, ChunkMesh>>()
 
-// note: API begins here
+// note: API begins here.
+
+  // note: Single block API begins here.
+
+  fun isLoaded(pos: Vector3fc): Boolean {
+    calculateChunkPosition(pos)
+    return data.contains(chunkPosition)
+  }
+
+  fun getBlock(pos: Vector3fc) {
+
+  }
+
+  private fun calculatePosition(pos: Vector3fc) {
+    calculateChunkPosition(pos)
+    throwIfNonExistent(chunkPosition)
+    calculateInternalPosition(pos)
+  }
+  private fun calculateInternalPosition(pos: Vector3fc) = internalPosition.set(internalX(pos.x()),floor(pos.y()).toInt(),internalZ(pos.z()))
+  private fun internalX(x: Float): Int = if (x < 0) (WIDTH - floor(abs(x + 1) % WIDTH).toInt()) - 1 else floor(x % WIDTH).toInt()
+  private fun internalZ(z: Float): Int = if (z < 0) (DEPTH - floor(abs(z + 1) % DEPTH)).toInt() - 1 else floor(z % DEPTH).toInt()
+
+  private fun calculateChunkPosition(pos: Vector3fc) {
+    chunkPosition.set(toChunkX(pos.x()),toChunkZ(pos.z()))
+  }
+  private fun toChunkX(x: Float): Int = floor(x / WIDTH).toInt()
+  private fun toChunkZ(z: Float): Int = floor(z / DEPTH).toInt()
+
+  private fun throwIfNonExistent(pos: Vector2ic) {
+    if (!data.contains(pos)) throw RuntimeException("world: Tried to get ${pos.x()},${pos.y()} which doesn't exist.")
+  }
+
+
+  // note: Rest begins here.
+
 
   fun getGravity(): Float {
     return GRAVITY
@@ -775,5 +813,15 @@ object world {
 
 
 object blockManipulator {
-
+  private val LIMIT = Vector3i(64,128,64) as Vector3ic
+  private val min = Vector3i(0,0,0)
+  private val max = Vector3i(0,0,0)
+  private val size = Vector3i(0,0,0)
+  private var yStride = 0
+  private val data = IntArray(LIMIT.x() * LIMIT.y() * LIMIT.z())
+  fun testIt() {
+    (0..10).forEach { _ ->
+      println("HELLO FROM BLOCK MANIPULATOR")
+    }
+  }
 }
