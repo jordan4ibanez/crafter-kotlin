@@ -82,8 +82,11 @@ object world {
   fun getBlockLight(x: Float, y: Float, z: Float): Int = getBlock(x,y,z).getBlockLight()
 
   fun setBlock(pos: Vector3fc, newBlock: Int) {
+    newBlock.getBlockID().idCheck()
+    newBlock.getBlockState().stateCheck()
+    newBlock.getBlockLight().lightCheck()
     if (!block.has(newBlock.getBlockID())) throw RuntimeException("world: ${newBlock.getBlockID()} is not a registered block.")
-    newBlock.getBlockLight()
+    
   }
 
 
