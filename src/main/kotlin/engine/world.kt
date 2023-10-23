@@ -91,15 +91,17 @@ object world {
     data[chunkPosition]!![posToIndex(internalPosition)] = newBlock
     addSingleBlockMeshUpdate()
   }
-  fun setBlockID(pos: Vector3fc, newBlock: Int) {
-    setBlock(pos, getBlock(pos) setBlockID newBlock)
+  fun setBlockID(pos: Vector3fc, newBlockID: Int) = setBlock(pos, getBlock(pos) setBlockID newBlockID)
+  fun setBlockState(pos: Vector3fc, newState: Int) = setBlock(pos, getBlock(pos) setBlockState newState)
+  fun steBlockLight(pos: Vector3fc, newLight: Int) = setBlock(pos, getBlock(pos) setBlockLight newLight)
+
+  fun setBlock(x: Float, y: Float, z: Float, newBlock: Int) {
+    floatingPosition.set(x,y,z)
+    setBlock(floatingPosition, newBlock)
   }
-  fun setBlockState(pos: Vector3fc, newState: Int) {
-    setBlock(pos, getBlock(pos) setBlockState newState)
-  }
-  fun steBlockLight(pos: Vector3fc, newLight: Int) {
-    setBlock(pos, getBlock(pos) setBlockLight newLight)
-  }
+  fun setBlockID(x: Float, y: Float, z: Float, newBlockID: Int) = setBlock(x,y,z,getBlock(x,y,z) setBlockID newBlockID)
+  fun setBlockState(x: Float, y: Float, z: Float, newState: Int) = setBlock(x,y,z, getBlock(x,y,z) setBlockState newState)
+  fun steBlockLight(x: Float, y: Float, z: Float, newLight: Int) = setBlock(x,y,z, getBlock(x,y,z) setBlockLight newLight)
 
   private fun addSingleBlockMeshUpdate() {
     val y = floor(internalPosition.y() / Y_SLICE_HEIGHT.toFloat()).toInt()
