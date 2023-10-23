@@ -34,6 +34,7 @@ object world {
   // Fields for the single block API.
   private val chunkPosition = Vector2i(0,0)
   private val internalPosition = Vector3i(0,0,0)
+  private val floatingPosition = Vector3f(0f,0f,0f)
 
 
   // Chunk block data
@@ -67,10 +68,20 @@ object world {
     calculatePosition(pos)
     return getSingleBlock()
   }
-
   fun getBlockID(pos: Vector3fc): Int = getBlock(pos).getBlockID()
   fun getBlockState(pos: Vector3fc): Int = getBlock(pos).getBlockState()
   fun getBlockLight(pos: Vector3fc): Int = getBlock(pos).getBlockLight()
+
+  fun getBlock(x: Float, y: Float, z: Float): Int {
+    floatingPosition.set(x,y,z)
+    calculatePosition(floatingPosition)
+    return getSingleBlock()
+  }
+  fun getBlockID(x: Float, y: Float, z: Float): Int = getBlock(x,y,z).getBlockID()
+  fun getBlockState(x: Float, y: Float, z: Float): Int = getBlock(x,y,z).getBlockState()
+  fun getBlockLight(x: Float, y: Float, z: Float): Int = getBlock(x,y,z).getBlockLight()
+  
+
 
   private fun getSingleBlock(): Int {
     return data[chunkPosition]!![posToIndex(internalPosition)]
