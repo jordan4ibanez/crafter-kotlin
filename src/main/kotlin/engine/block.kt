@@ -187,6 +187,9 @@ object block {
   }
 
   // ID oriented
+  fun has(id: Int): Boolean {
+    return name.contains(id)
+  }
   fun getInventoryName(id: Int): String {
     return inventoryName[id] ?: throw invalidThrow(id, "id")
   }
@@ -203,6 +206,9 @@ object block {
   }
 
   // Name oriented
+  fun has(name: String): Boolean {
+    return id.contains(name)
+  }
   fun getInventoryName(name: String): String = getInventoryName(getID(name))
   fun getTextures(name: String): Array<String> = getTextures(getID(name))
   fun getDrawType(name: String): DrawType = getDrawType(getID(name))
