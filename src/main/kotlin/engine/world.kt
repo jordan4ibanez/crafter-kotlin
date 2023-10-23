@@ -80,7 +80,11 @@ object world {
   fun getBlockID(x: Float, y: Float, z: Float): Int = getBlock(x,y,z).getBlockID()
   fun getBlockState(x: Float, y: Float, z: Float): Int = getBlock(x,y,z).getBlockState()
   fun getBlockLight(x: Float, y: Float, z: Float): Int = getBlock(x,y,z).getBlockLight()
-  
+
+  fun setBlock(pos: Vector3fc, newBlock: Int) {
+    if (!block.has(newBlock.getBlockID())) throw RuntimeException("world: ${newBlock.getBlockID()} is not a registered block.")
+    newBlock.getBlockLight()
+  }
 
 
   private fun getSingleBlock(): Int {
@@ -204,27 +208,36 @@ object world {
   fun Int.getBlockID(): Int {
     return this ushr 16
   }
+  fun Int.idCheck() {
+    if (!(0..65535).contains(this)) throw RuntimeException("Passed in value larger than 16 bits to block id.")
+  }
 
   fun Int.getBlockLight(): Int {
     return this shl 16 ushr 28
+  }
+  fun Int.lightCheck() {
+    if (!(0..15).contains(this)) throw RuntimeException("Passed in value larger than 4 bits to block light.")
   }
 
   fun Int.getBlockState(): Int {
     return this shl 20 ushr 28
   }
+  fun Int.stateCheck() {
+    if (!(0..15).contains(this)) throw RuntimeException("Passed in value larger than 4 bits to block state.")
+  }
 
   infix fun Int.setBlockID(newID: Int): Int {
-    if (!(0..65535).contains(newID)) throw RuntimeException("passed in value larger than 16 bits to set id")
+    newID.idCheck()
     return combine(newID.shiftBlock(), this.parseBlockLight(), this.parseBlockState())
   }
 
   infix fun Int.setBlockLight(newLight: Int): Int {
-    if (!(0..15).contains(newLight)) throw RuntimeException("passed in value larger than 4 bits to set light")
+    newLight.lightCheck()
     return combine(this.parseBlockID(), newLight.shiftLight(), this.parseBlockState())
   }
 
   infix fun Int.setBlockState(newState: Int): Int {
-    if (!(0..15).contains(newState)) throw RuntimeException("passed in value larger than 4 bits to set state")
+    newState.stateCheck()
     return combine(this.parseBlockID(), this.parseBlockLight(), newState.shiftState())
   }
 
