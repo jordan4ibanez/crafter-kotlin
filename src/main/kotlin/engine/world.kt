@@ -115,7 +115,7 @@ object world {
     throwIfNonExistent(chunkPosition)
     calculateInternalPosition(pos)
   }
-  private fun calculateInternalPosition(pos: Vector3fc) = internalPosition.set(internalX(pos.x()),floor(pos.y()).toInt(),internalZ(pos.z()))
+  private fun calculateInternalPosition(pos: Vector3fc) = internalPosition.set(internalX(floor(pos.x())),floor(pos.y()).toInt(),internalZ(floor(pos.z())))
   private fun internalX(x: Float): Int = if (x < 0) (WIDTH - floor(abs(x + 1) % WIDTH).toInt()) - 1 else floor(x % WIDTH).toInt()
   private fun internalZ(z: Float): Int = if (z < 0) (DEPTH - floor(abs(z + 1) % DEPTH)).toInt() - 1 else floor(z % DEPTH).toInt()
 
