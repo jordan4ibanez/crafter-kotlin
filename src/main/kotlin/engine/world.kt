@@ -63,8 +63,17 @@ object world {
     return data.contains(chunkPosition)
   }
 
-  fun getBlock(pos: Vector3fc) {
+  fun getBlock(pos: Vector3fc): Int {
+    calculatePosition(pos)
+    return getSingleBlock()
+  }
 
+  fun getBlockID(pos: Vector3fc): Int = getBlock(pos).getBlockID()
+  fun getBlockState(pos: Vector3fc): Int = getBlock(pos).getBlockState()
+  fun getBlockLight(pos: Vector3fc): Int = getBlock(pos).getBlockLight()
+
+  private fun getSingleBlock(): Int {
+    return data[chunkPosition]!![posToIndex(internalPosition)]
   }
 
   private fun calculatePosition(pos: Vector3fc) {
