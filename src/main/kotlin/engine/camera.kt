@@ -131,6 +131,8 @@ object camera {
 
     //! FIXME: this is an overcomplicated mess.
 
+    val cameraSpeed = 10f
+
     doMouseInputCameraRotation()
 
     inputMovement.zero()
@@ -143,7 +145,7 @@ object camera {
     if (keyboard.isDown(GLFW_KEY_LEFT_SHIFT)) inputMovement.y -= 1f
 
     val yaw = newCameraRotation.y
-    val movementDelta = getDelta() * 150f
+    val movementDelta = getDelta() * cameraSpeed
 
     // Layered fixme: Why is this layered??
     cameraMovementX.zero()
