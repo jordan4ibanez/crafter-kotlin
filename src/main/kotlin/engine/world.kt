@@ -367,7 +367,7 @@ object world {
     try {
       gotten = dataGenerationInput.remove()!!
     } catch (e: Exception) {
-      println("genChunk: Data race failure.")
+//      println("genChunk: Data race failure.")
       return
     }
 
@@ -431,7 +431,7 @@ object world {
     try {
       gotten = dataGenerationOutput.remove()!!
     } catch (e: Exception) {
-      println("processChunks: Data race failure.")
+//      println("processChunks: Data race failure.")
       return
     }
 
@@ -564,7 +564,7 @@ object world {
     try {
       pos = meshGenerationInput.remove()!!
     } catch (e: Exception) {
-      println("processMeshUpdate: Data race failure.")
+//      println("processMeshUpdate: Data race failure.")
       return
     }
 
