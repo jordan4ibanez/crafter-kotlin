@@ -107,9 +107,13 @@ fun update(dtime: Float) {
 //    println(1)
     val pos = entity.getPlayer("singleplayer").getPosition()
     if (world.isLoaded(pos)) {
+      val (x,y,z) = pos.destructure()
+
 //      println(2)
 //      block.getName(world.getBlockID(pos)).apply(::println)
-      world.setBlockID(pos, stone)
+      (0..3).forEach {
+        world.setBlockID(x,y+it,z, stone)
+      }
     }
   }
 
