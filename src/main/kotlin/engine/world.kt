@@ -60,7 +60,7 @@ object world {
 
   fun isLoaded(pos: Vector3fc): Boolean {
     calculateChunkPosition(pos)
-    return data.contains(chunkPosition)
+    return data.containsKey(chunkPosition)
   }
 
   fun getBlock(pos: Vector3fc): Int {
@@ -85,14 +85,12 @@ object world {
   private fun internalX(x: Float): Int = if (x < 0) (WIDTH - floor(abs(x + 1) % WIDTH).toInt()) - 1 else floor(x % WIDTH).toInt()
   private fun internalZ(z: Float): Int = if (z < 0) (DEPTH - floor(abs(z + 1) % DEPTH)).toInt() - 1 else floor(z % DEPTH).toInt()
 
-  private fun calculateChunkPosition(pos: Vector3fc) {
-    chunkPosition.set(toChunkX(pos.x()),toChunkZ(pos.z()))
-  }
+  private fun calculateChunkPosition(pos: Vector3fc) = chunkPosition.set(toChunkX(pos.x()),toChunkZ(pos.z()))
   private fun toChunkX(x: Float): Int = floor(x / WIDTH).toInt()
   private fun toChunkZ(z: Float): Int = floor(z / DEPTH).toInt()
 
   private fun throwIfNonExistent(pos: Vector2ic) {
-    if (!data.contains(pos)) throw RuntimeException("world: Tried to get ${pos.x()},${pos.y()} which doesn't exist.")
+    if (!data.containsKey(pos)) throw RuntimeException("world: Tried to get ${pos.x()},${pos.y()} which doesn't exist.")
   }
 
 
@@ -135,7 +133,7 @@ object world {
       for (x in (currentX - rad) .. (currentX + rad)) {
         for (z in (currentZ - rad) .. (currentZ + rad)) {
           val currentKey = Vector2i(x, z)
-          if (!data.contains(currentKey)) generateChunk(x,z)
+          if (!data.containsKey(currentKey)) generateChunk(x,z)
         }
       }
     }
@@ -177,8 +175,8 @@ object world {
     dataDestructionQueue.clear()
   }
 
-  fun chunkExists(posX: Int, posZ: Int): Boolean {
-    return data.contains(Vector2i(posX, posZ))
+  private fun chunkExists(posX: Int, posZ: Int): Boolean {
+    return data.containsKey(Vector2i(posX, posZ))
   }
 
   fun Int.blockBits(block: Int): String {
