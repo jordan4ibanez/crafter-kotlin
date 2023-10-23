@@ -772,3 +772,8 @@ object world {
     }
   }
 }
+
+
+object blockManipulator {
+
+}
