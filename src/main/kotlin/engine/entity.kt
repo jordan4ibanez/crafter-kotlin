@@ -179,6 +179,12 @@ object entity {
     mobs.remove(uuid)
     deleteGeneric(uuid)
   }
+  fun hasMob(uuid: String): Boolean {
+    return mobs.containsKey(uuid)
+  }
+  fun getMob(uuid: String): Mob {
+    return mobs[uuid]!!
+  }
 
   fun addPlayer(player: Player) {
     players[player.name] = player
@@ -200,6 +206,12 @@ object entity {
     println("entity: Deleting player $name")
     players.remove(name)
     generics.remove(name)
+  }
+  fun hasPlayer(name: String): Boolean {
+    return players.containsKey(name)
+  }
+  fun getPlayer(name: String): Player {
+    return players[name]!!
   }
 
   private fun addGeneric(name: String, generic: GroovyEntity) {
