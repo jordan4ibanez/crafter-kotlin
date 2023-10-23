@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFW.*
 import java.util.concurrent.ConcurrentLinkedDeque
 
 // Initialization procedure. Consider this love.load()
+var stone = 0
 fun load() {
 
   println("Crafter is running on JVM ${System.getProperty("java.version")}")
@@ -54,6 +55,7 @@ fun load() {
 //  mouse.capture()
 
 //  window.maximize()
+  stone = block.getID("crafter:stone")
 }
 
 
@@ -106,7 +108,8 @@ fun update(dtime: Float) {
     val pos = entity.getPlayer("singleplayer").getPosition()
     if (world.isLoaded(pos)) {
 //      println(2)
-      block.getName(world.getBlockID(pos)).apply(::println)
+//      block.getName(world.getBlockID(pos)).apply(::println)
+      world.setBlockID(pos, stone)
     }
   }
 
