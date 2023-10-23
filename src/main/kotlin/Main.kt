@@ -112,7 +112,7 @@ fun update(dtime: Float) {
 //      println(2)
 //      block.getName(world.getBlockID(pos)).apply(::println)
       (0..3).forEach {
-        world.setBlockID(x,y+it,z, stone)
+        world.setBlockID(x,y+it,z, (random() * 8f).toInt())
       }
     }
   }
