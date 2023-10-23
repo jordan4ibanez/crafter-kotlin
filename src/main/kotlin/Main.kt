@@ -101,6 +101,15 @@ fun update(dtime: Float) {
   }
   window.setClearColor(color)
 
+  if (entity.hasPlayer("singleplayer")) {
+//    println(1)
+    val pos = entity.getPlayer("singleplayer").getPosition()
+    if (world.isLoaded(pos)) {
+//      println(2)
+      block.getName(world.getBlockID(pos)).apply(::println)
+    }
+  }
+
 //  println(color)
 
 
