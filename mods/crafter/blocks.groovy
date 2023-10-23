@@ -2,10 +2,11 @@ package crafter
 
 import engine.block
 import engine.api
+import engine.blockManipulator
 
 final api = api.INSTANCE
 final block = block.INSTANCE
-
+final blockManipulator = blockManipulator.INSTANCE
 
 
 block.register(
@@ -56,3 +57,5 @@ block.register(
   textures = api.stringArrayOf("brick.png","brick.png","brick.png","brick.png","brick.png","brick.png"),
 )
 
+
+blockManipulator.testIt()
