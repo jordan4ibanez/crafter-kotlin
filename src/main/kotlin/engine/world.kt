@@ -35,6 +35,7 @@ object world {
   private val chunkPosition = Vector2i(0,0)
   private val internalPosition = Vector3i(0,0,0)
   private val floatingPosition = Vector3f(0f,0f,0f)
+  private val loadCheck = Vector2i(0,0)
 
 
   // Chunk block data
@@ -60,8 +61,13 @@ object world {
   // note: Single block API begins here.
 
   fun isLoaded(pos: Vector3fc): Boolean {
+    //? note: raw pos wise
     calculateChunkPosition(pos)
     return data.containsKey(chunkPosition)
+  }
+  private fun isLoaded(x: Int, z: Int): Boolean {
+    //? note: chunk wise
+    return data.containsKey(loadCheck.set(x,z))
   }
 
   fun getBlock(pos: Vector3fc): Int {
@@ -104,8 +110,38 @@ object world {
   fun steBlockLight(x: Float, y: Float, z: Float, newLight: Int) = setBlock(x,y,z, getBlock(x,y,z) setBlockLight newLight)
 
   private fun addSingleBlockMeshUpdate() {
-    val y = floor(internalPosition.y() / Y_SLICE_HEIGHT.toFloat()).toInt()
-    addMeshUpdate(chunkPosition.x(), y, chunkPosition.y())
+    val x = internalPosition.x()
+    val y = internalPosition.y()
+    val z = internalPosition.z()
+
+    val chunkX = chunkPosition.x()
+    val chunkZ = chunkPosition.y()
+
+    val yStack = floor(y / Y_SLICE_HEIGHT.toFloat()).toInt()
+
+    if (x == 0) {
+      addSingleBlockMeshUpdateIfLoaded(chunkX - 1, yStack, chunkZ)
+    } else if (x == 15) {
+      addSingleBlockMeshUpdateIfLoaded(chunkX + 1, yStack, chunkZ)
+    }
+
+    if (z == 0) {
+      addSingleBlockMeshUpdateIfLoaded(chunkX, yStack, chunkZ - 1)
+    } else if (z == 15) {
+      addSingleBlockMeshUpdateIfLoaded(chunkX, yStack, chunkZ+ 1)
+    }
+
+    if (y > 0 && (y + 1) % 16 == 0) {
+      addSingleBlockMeshUpdateIfLoaded(chunkX, yStack + 1, chunkZ)
+    } else if (y < HEIGHT - 1 && y % 16 == 0) {
+      addSingleBlockMeshUpdateIfLoaded(chunkX, yStack - 1, chunkZ)
+    }
+//    println(16 / 16f)
+
+    addMeshUpdate(chunkX, yStack, chunkZ)
+  }
+  private fun addSingleBlockMeshUpdateIfLoaded(x: Int, y: Int, z: Int) {
+    if (isLoaded(x,z)) addMeshUpdate(x,y,z)
   }
 
   private fun getSingleBlock(): Int {
@@ -209,10 +245,6 @@ object world {
     }
 
     dataDestructionQueue.clear()
-  }
-
-  private fun chunkExists(posX: Int, posZ: Int): Boolean {
-    return data.containsKey(Vector2i(posX, posZ))
   }
 
   fun Int.blockBits(block: Int): String {
