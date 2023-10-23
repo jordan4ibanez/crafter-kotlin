@@ -86,9 +86,25 @@ object world {
     newBlock.getBlockState().stateCheck()
     newBlock.getBlockLight().lightCheck()
     if (!block.has(newBlock.getBlockID())) throw RuntimeException("world: ${newBlock.getBlockID()} is not a registered block.")
-    
+    calculatePosition(pos)
+    throwIfNonExistent(chunkPosition)
+    data[chunkPosition]!![posToIndex(internalPosition)] = newBlock
+    addSingleBlockMeshUpdate()
+  }
+  fun setBlockID(pos: Vector3fc, newBlock: Int) {
+    setBlock(pos, getBlock(pos) setBlockID newBlock)
+  }
+  fun setBlockState(pos: Vector3fc, newState: Int) {
+    setBlock(pos, getBlock(pos) setBlockState newState)
+  }
+  fun steBlockLight(pos: Vector3fc, newLight: Int) {
+    setBlock(pos, getBlock(pos) setBlockLight newLight)
   }
 
+  private fun addSingleBlockMeshUpdate() {
+    val y = floor(internalPosition.y() / Y_SLICE_HEIGHT.toFloat()).toInt()
+    addMeshUpdate(chunkPosition.x(), y, chunkPosition.y())
+  }
 
   private fun getSingleBlock(): Int {
     return data[chunkPosition]!![posToIndex(internalPosition)]
@@ -515,7 +531,9 @@ object world {
   }
 
   fun addMeshUpdate(x: Int, y: Int, z: Int) {
-    meshGenerationInput.add(Vector3i(x, y, z))
+    val newAdd = Vector3i(x, y, z)
+    if (meshGenerationInput.contains(newAdd)) return
+    meshGenerationInput.add(newAdd)
   }
 
   private fun receiveChunkMeshes() {
