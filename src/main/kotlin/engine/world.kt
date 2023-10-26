@@ -925,13 +925,13 @@ object blockManipulator {
     checkSizeValidity()
     checkYAxis()
 
-    val forceLoad = false
-
-    when {
-      // fixme: This is a "gentle stroll" into automating force loads.
-      forceLoad -> forceLoad()
-      else -> checkArea()
-    }
+//    val forceLoad = false
+//
+//    when {
+//      // fixme: This is a "gentle stroll" into automating force loads.
+//      forceLoad -> forceLoad()
+//      else -> checkArea()
+//    }
 
     size.set((abs(max.x() - min.x()) + 1), (abs(max.y() - min.y()) + 1), (abs(max.z() - min.z()) + 1))
     yStride = (size.x() + 1) * (size.z() + 1)
@@ -940,19 +940,19 @@ object blockManipulator {
   }
 
 
-  private fun checkArea() {
-    val minChunkX = world.toChunkX(min.x().toFloat())
-    val maxChunkX = world.toChunkX(max.x().toFloat())
-    val minChunkZ = world.toChunkZ(min.z().toFloat())
-    val maxChunkZ = world.toChunkZ(max.z().toFloat())
-    for (x in minChunkX .. maxChunkX) {
-      for (z in minChunkZ..maxChunkZ) {
-        if (!world.isLoaded(x, z)) {
-          throw RuntimeException("blockManip")
-        }
-      }
-    }
-  }
+//  private fun checkArea() {
+//    val minChunkX = world.toChunkX(min.x().toFloat())
+//    val maxChunkX = world.toChunkX(max.x().toFloat())
+//    val minChunkZ = world.toChunkZ(min.z().toFloat())
+//    val maxChunkZ = world.toChunkZ(max.z().toFloat())
+//    for (x in minChunkX .. maxChunkX) {
+//      for (z in minChunkZ..maxChunkZ) {
+//        if (!world.isLoaded(x, z)) {
+//          throw RuntimeException("blockManip")
+//        }
+//      }
+//    }
+//  }
 
   private fun forceLoad() {
     val minChunkX = world.toChunkX(min.x().toFloat())
