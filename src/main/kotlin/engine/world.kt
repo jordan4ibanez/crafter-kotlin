@@ -905,9 +905,30 @@ object blockManipulator {
   private val size = Vector3i(0,0,0)
   private var yStride = 0
   private val data = IntArray(LIMIT.x() * LIMIT.y() * LIMIT.z())
-  fun testIt() {
-    (0..10).forEach { _ ->
-      println("HELLO FROM BLOCK MANIPULATOR")
+  private val minCache = Vector3i(0,0,0)
+  private val maxCache = Vector3i(0,0,0)
+  private var skipSingleBlockWarning = false
+
+  fun set(xMin: Int, yMin: Int, zMin: Int, xMax: Int, yMax: Int, zMax: Int) = set(minCache.set(xMin, yMin, zMin), maxCache.set(xMax, yMax, zMax))
+  fun set(newMin: Vector3ic, newMax: Vector3ic) {
+
+    // todo: remove this nonsense
+    if (!skipSingleBlockWarning) {
+      checkIfSingle(newMin, newMax)
+    }
+
+    min.set(newMin)
+    max.set(newMax)
+
+    size.set((abs(max.x() - min.x()) + 1), (abs(max.y() - min.y()) + 1), (abs(max.z() - min.z()) + 1))
+    yStride = (size.x() + 1) * (size.z() + 1)
+
+    skipSingleBlockWarning = false
+  }
+
+  private fun checkIfSingle(min: Vector3ic, max: Vector3ic) {
+    if ((abs(max.x() - min.x()) + 1) * (abs(max.y() - min.y()) + 1) * (abs(max.z() - min.z()) + 1) <= 1) {
+      println("blockManipulator: Use single block API for single blocks.")
     }
   }
 }
