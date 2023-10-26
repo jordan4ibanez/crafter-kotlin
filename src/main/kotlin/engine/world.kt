@@ -909,6 +909,7 @@ object blockManipulator {
   private val maxCache = Vector3i(0,0,0)
   private var skipSingleBlockWarning = false
 
+
   fun set(xMin: Int, yMin: Int, zMin: Int, xMax: Int, yMax: Int, zMax: Int) = set(minCache.set(xMin, yMin, zMin), maxCache.set(xMax, yMax, zMax))
   fun set(newMin: Vector3ic, newMax: Vector3ic) {
 
@@ -920,8 +921,8 @@ object blockManipulator {
       checkIfSingle()
     }
 
-    checkMinMaxValidity();
-    checkBlockManipulatorSizeValidity(min,max);
+    checkMinMaxValidity()
+    checkSizeValidity()
     checkBlockManipulatorYAxisValidity(min,max);
     checkClassicOnlyBlockManipulatorMapBoundaries(min,max);
 
@@ -931,8 +932,24 @@ object blockManipulator {
     skipSingleBlockWarning = false
   }
 
+  private fun checkSizeValidity() {
+    fun thrower(axis: String) {
+      val limiter = when (axis){
+        "x"  -> LIMIT.x()
+        "y"  -> LIMIT.y()
+        else -> LIMIT.z()
+      }
+      throw RuntimeException("blockManipulator: $axis exceeds limit $limiter.")
+    }
+    when {
+      abs(max.x() - min.x()) >= LIMIT.x() -> thrower("x")
+      abs(max.y() - min.y()) >= LIMIT.y() -> thrower("y")
+      abs(max.z() - min.z()) >= LIMIT.z() -> thrower("z")
+    }
+  }
+
   private fun checkMinMaxValidity() {
-    fun thrower(axis: String){throw RuntimeException("blockManipulator: min.$axis is greater than max.$axis")}
+    fun thrower(axis: String){throw RuntimeException("blockManipulator: min.$axis is greater than max.$axis.")}
     when {
       min.x() > max.x() -> thrower("x")
       min.y() > max.y() -> thrower("y")
