@@ -912,13 +912,18 @@ object blockManipulator {
   fun set(xMin: Int, yMin: Int, zMin: Int, xMax: Int, yMax: Int, zMax: Int) = set(minCache.set(xMin, yMin, zMin), maxCache.set(xMax, yMax, zMax))
   fun set(newMin: Vector3ic, newMax: Vector3ic) {
 
-    // todo: remove this nonsense
-    if (!skipSingleBlockWarning) {
-      checkIfSingle(newMin, newMax)
-    }
-
     min.set(newMin)
     max.set(newMax)
+
+    if (!skipSingleBlockWarning) {
+      // todo: remove this nonsense
+      checkIfSingle()
+    }
+
+    checkMinMaxValidity();
+    checkBlockManipulatorSizeValidity(min,max);
+    checkBlockManipulatorYAxisValidity(min,max);
+    checkClassicOnlyBlockManipulatorMapBoundaries(min,max);
 
     size.set((abs(max.x() - min.x()) + 1), (abs(max.y() - min.y()) + 1), (abs(max.z() - min.z()) + 1))
     yStride = (size.x() + 1) * (size.z() + 1)
@@ -926,7 +931,16 @@ object blockManipulator {
     skipSingleBlockWarning = false
   }
 
-  private fun checkIfSingle(min: Vector3ic, max: Vector3ic) {
+  private fun checkMinMaxValidity() {
+    fun thrower(axis: String){throw RuntimeException("blockManipulator: min.$axis is greater than max.$axis")}
+    when {
+      min.x() > max.x() -> thrower("x")
+      min.y() > max.y() -> thrower("y")
+      min.z() > max.z() -> thrower("z")
+    }
+  }
+
+  private fun checkIfSingle() {
     if ((abs(max.x() - min.x()) + 1) * (abs(max.y() - min.y()) + 1) * (abs(max.z() - min.z()) + 1) <= 1) {
       println("blockManipulator: Use single block API for single blocks.")
     }
