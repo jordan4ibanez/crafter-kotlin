@@ -939,6 +939,14 @@ object blockManipulator {
     skipSingleBlockWarning = false
   }
 
+  fun read() {
+    val minChunkX = world.toChunkX(min.x().toFloat())
+    val maxChunkX = world.toChunkX(max.x().toFloat())
+    val minChunkZ = world.toChunkZ(min.z().toFloat())
+    val maxChunkZ = world.toChunkZ(max.z().toFloat())
+
+    
+  }
 
 //  private fun checkArea() {
 //    val minChunkX = world.toChunkX(min.x().toFloat())
