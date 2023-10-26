@@ -65,7 +65,7 @@ object world {
     calculateChunkPosition(pos)
     return data.containsKey(chunkPosition)
   }
-  private fun isLoaded(x: Int, z: Int): Boolean {
+  internal fun isLoaded(x: Int, z: Int): Boolean {
     //? note: chunk wise
     return data.containsKey(loadCheck.set(x,z))
   }
@@ -158,8 +158,8 @@ object world {
   private fun internalZ(z: Float): Int = if (z < 0) (DEPTH - floor(abs(z + 1) % DEPTH)).toInt() - 1 else floor(z % DEPTH).toInt()
 
   private fun calculateChunkPosition(pos: Vector3fc) = chunkPosition.set(toChunkX(pos.x()),toChunkZ(pos.z()))
-  private fun toChunkX(x: Float): Int = floor(x / WIDTH).toInt()
-  private fun toChunkZ(z: Float): Int = floor(z / DEPTH).toInt()
+  internal fun toChunkX(x: Float): Int = floor(x / WIDTH).toInt()
+  internal fun toChunkZ(z: Float): Int = floor(z / DEPTH).toInt()
 
   private fun throwIfNonExistent(pos: Vector2ic) {
     if (!data.containsKey(pos)) throw RuntimeException("world: Tried to get ${pos.x()},${pos.y()} which doesn't exist.")
@@ -923,13 +923,41 @@ object blockManipulator {
 
     checkMinMaxValidity()
     checkSizeValidity()
-    checkBlockManipulatorYAxisValidity(min,max);
-    checkClassicOnlyBlockManipulatorMapBoundaries(min,max);
+    checkYAxis()
+
+    val forceLoad = false
+
+    when {
+      forceLoad -> forceLoad()
+      else -> checkArea()
+    }
 
     size.set((abs(max.x() - min.x()) + 1), (abs(max.y() - min.y()) + 1), (abs(max.z() - min.z()) + 1))
     yStride = (size.x() + 1) * (size.z() + 1)
 
     skipSingleBlockWarning = false
+  }
+
+  private fun forceLoad() {
+    val minChunkX = world.toChunkX(min.x().toFloat())
+    val maxChunkX = world.toChunkX(max.x().toFloat())
+    val minChunkZ = world.toChunkZ(min.z().toFloat())
+    val maxChunkZ = world.toChunkZ(max.z().toFloat())
+    for (x in minChunkX .. maxChunkX) {
+      for (z in minChunkZ .. maxChunkZ) {
+        if (!world.isLoaded(x,z)) {
+          //fixme: this function doesn't exist yet.
+//          world.forceLoadInstant(x,z)
+        }
+      }
+    }
+  }
+
+  private fun checkYAxis() {
+    when {
+      min.y() < 0 -> throw RuntimeException("blockManipulator: Y is less than 0.")
+      max.y() >= world.getChunkHeight() -> throw RuntimeException("blockManipulator: Y is greater than/equal to ${world.getChunkHeight() - 1}.")
+    }
   }
 
   private fun checkSizeValidity() {
