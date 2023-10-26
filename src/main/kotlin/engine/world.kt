@@ -928,6 +928,7 @@ object blockManipulator {
     val forceLoad = false
 
     when {
+      // fixme: This is a "gentle stroll" into automating force loads.
       forceLoad -> forceLoad()
       else -> checkArea()
     }
@@ -936,6 +937,21 @@ object blockManipulator {
     yStride = (size.x() + 1) * (size.z() + 1)
 
     skipSingleBlockWarning = false
+  }
+
+
+  private fun checkArea() {
+    val minChunkX = world.toChunkX(min.x().toFloat())
+    val maxChunkX = world.toChunkX(max.x().toFloat())
+    val minChunkZ = world.toChunkZ(min.z().toFloat())
+    val maxChunkZ = world.toChunkZ(max.z().toFloat())
+    for (x in minChunkX .. maxChunkX) {
+      for (z in minChunkZ..maxChunkZ) {
+        if (!world.isLoaded(x, z)) {
+          throw RuntimeException("blockManip")
+        }
+      }
+    }
   }
 
   private fun forceLoad() {
