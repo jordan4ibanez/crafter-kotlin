@@ -1003,18 +1003,34 @@ object blockManipulator {
     id.idCheck()
     data[index] = data[index] setBlockID id
   }
-  fun setID(x: Int, y: Int, z: Int) {
+  fun setID(x: Int, y: Int, z: Int, id: Int) {
+    posCheck(x,y,z)
+    id.idCheck()
     val index = posToIndex(x,y,z)
-
+    data[index] = data[index] setBlockID id
   }
+
   fun setState(index: Int, state: Int) {
     indexCheck(index)
     state.stateCheck()
     data[index] = data[index] setBlockState state
   }
+  fun setState(x: Int, y: Int, z: Int, state: Int) {
+    posCheck(x,y,z)
+    state.stateCheck()
+    val index = posToIndex(x,y,z)
+    data[index] = data[index] setBlockState state
+  }
+
   fun setLight(index: Int, light: Int) {
     indexCheck(index)
     light.lightCheck()
+    data[index] = data[index] setBlockLight light
+  }
+  fun setLight(x: Int, y: Int, z: Int, light: Int) {
+    posCheck(x,y,z)
+    light.lightCheck()
+    val index = posToIndex(x,y,z)
     data[index] = data[index] setBlockLight light
   }
 
