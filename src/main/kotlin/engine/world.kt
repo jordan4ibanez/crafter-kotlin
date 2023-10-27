@@ -971,14 +971,18 @@ object blockManipulator {
     return read()
   }
 
-  private fun read() {
+  private fun read(): Boolean {
+    var allLoaded = true
     val minChunkX = world.toChunkX(min.x())
     val maxChunkX = world.toChunkX(max.x())
     val minChunkZ = world.toChunkZ(min.z())
     val maxChunkZ = world.toChunkZ(max.z())
     for (chunkX in minChunkX .. maxChunkX) {
       for (chunkZ in minChunkZ .. maxChunkZ) {
-        if (!world.isLoaded(chunkX,chunkZ)) continue
+        if (!world.isLoaded(chunkX,chunkZ)) {
+          allLoaded = false
+          continue
+        }
         val gottenData = world.safetGetData(chunkX,chunkZ)
         // Iterating over in world positions.
         for (x in min.x() .. max.x()) {
@@ -997,6 +1001,7 @@ object blockManipulator {
         }
       }
     }
+    return allLoaded
   }
 
   fun set(index: Int, blockData: Int) {
