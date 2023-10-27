@@ -18,6 +18,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.collections.ArrayDeque
+import kotlin.collections.ArrayList
 
 /*
 This is a data oriented and functional approach to the mess that was in Java.
@@ -927,6 +928,7 @@ object blockManipulator {
   private val cachePos = Vector3i()
   private val internalPos = Vector3i()
   private var arraySize = 0
+  private val updateQueue = ArrayDeque<Vector3ic>()
 
 
   fun set(xMin: Float, yMin: Float, zMin: Float, xMax: Float, yMax: Float, zMax: Float) = set(minCache.set(floor(xMin).toInt(), floor(yMin).toInt(), floor(zMin).toInt()), maxCache.set(floor(xMax).toInt(), floor(yMax).toInt(), floor(zMax).toInt()))
@@ -1057,6 +1059,38 @@ object blockManipulator {
       !(min.x() .. max.x()).contains(x) -> thrower("x", min.x(), max.x(), x)
       !(min.y() .. max.y()).contains(y) -> thrower("y", min.y(), max.y(), y)
       !(min.z() .. max.z()).contains(z) -> thrower("z", min.z(), max.z(), z)
+    }
+  }
+
+  fun write() {
+    val minChunkX = world.toChunkX(min.x())
+    val maxChunkX = world.toChunkX(max.x())
+    val minChunkZ = world.toChunkZ(min.z())
+    val maxChunkZ = world.toChunkZ(max.z())
+
+
+    for (chunkX in minChunkX .. maxChunkX) {
+      for (chunkZ in minChunkZ .. maxChunkZ) {
+        if (!world.isLoaded(chunkX,chunkZ)) continue
+        val gottenData = world.safetGetData(chunkX,chunkZ)
+        // Iterating over in world positions.
+        for (x in min.x() .. max.x()) {
+          if (chunkX != world.toChunkX(x)) continue
+          for (z in min.z() .. max.z()) {
+            if (chunkZ != world.toChunkZ(z)) continue
+            for (y in min.y() .. max.y()) {
+              //note: on a 3x3x3 BM test 0 indexed, 26 is the max.
+              // "you hit my battleship" or, in this case, the end of the array.
+//              if (posToIndex(x,y,z) == 26) {
+//                println("HIT")
+//              } else if (posToIndex(x,y,z) == 27) throw RuntimeException("OOPS")
+              gottenData[world.posToIndex(world.internalX(x), y, world.internalZ(z))] = data[posToIndex(x, y, z)]
+            }
+          }
+        }
+
+
+      }
     }
   }
 
