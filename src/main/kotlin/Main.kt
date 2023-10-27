@@ -112,40 +112,37 @@ fun update(delta: Float) {
     val pos = entity.getPlayer("singleplayer").getPosition()
       val (x,y,z) = pos.destructure()
       if (blockManipulator.set(
-          x - 32,y - 60, z - 32,
-          x + 31,y + 20, z + 31)) {
+          x - 32, 0f, z - 32,
+          x + 31, 127f, z + 31)) {
+        //? note: ocean version
 
-        val grassID = block.getID("crafter:grass")
+        val waterID = block.getID("crafter:water")
         val airID = block.getID("air")
-
         val waveSpeed = 10.0f
-
         xOffset += delta * waveSpeed
 
-        var index = 0
-        blockManipulator.forEach { data ->
+        val index = 0
+        for (x in blockManipulator.getMin)
 
-          val (bx,by,bz) = blockManipulator.indexToPos(index).destructure()
-
-
-          if (blockManipulator.inBounds(bx,by + 1,bz)) {
-            if (data.getBlockID() != airID && blockManipulator.getID(bx,by + 1,bz) == airID) {
-
-//                val newID = (random() * 7).toInt() + 1
-
-              val newID = clamp(1, 8, ((noisey.getSimplex(bx.toFloat() + xOffset, 0f, bz.toFloat()) + 1f) * 9f).toInt())
-
-//              println(newID)
-
-                blockManipulator.setID(index, newID)
-              }
-          }
-
-          index++
-        }
-
-
-        blockManipulator.write()
+        //?note: groovy version
+//        val grassID = block.getID("crafter:grass")
+//        val airID = block.getID("air")
+//        val waveSpeed = 10.0f
+//        xOffset += delta * waveSpeed
+//        var index = 0
+//        blockManipulator.forEach { data ->
+//          val (bx,by,bz) = blockManipulator.indexToPos(index).destructure()
+//          if (blockManipulator.inBounds(bx,by + 1,bz)) {
+//            if (data.getBlockID() != airID && blockManipulator.getID(bx,by + 1,bz) == airID) {
+//
+//              val newID = clamp(1, 8, ((noisey.getSimplex(bx.toFloat() + xOffset, 0f, bz.toFloat()) + 1f) * 9f).toInt())
+//
+//                blockManipulator.setID(index, newID)
+//              }
+//          }
+//          index++
+//        }
+//        blockManipulator.write()
       }
 
 //      println(2)
