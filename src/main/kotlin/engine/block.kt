@@ -79,9 +79,7 @@ object block {
 //    println("created block $name at $id with drawtype $drawType and inv name $inventoryName")
   }
 
-  fun register(name: String,
-               inventoryName: String,
-               textures: Array<String>) {
+  fun register(name: String, inventoryName: String, textures: Array<String>) {
     register(name, inventoryName, textures, DrawType.BLOCK)
   }
 
