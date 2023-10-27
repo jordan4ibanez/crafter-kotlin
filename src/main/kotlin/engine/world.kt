@@ -346,9 +346,8 @@ object world {
 
 // note: Internal begins here
 
-  private fun safetGetData(posX: Int, posZ: Int): IntArray {
-    return data[Vector2i(posX, posZ)]
-      ?: throw RuntimeException("world: tried to access nonexistent chunk: $posX, $posZ")
+  internal fun safetGetData(posX: Int, posZ: Int): IntArray {
+    return data[Vector2i(posX, posZ)] ?: throw RuntimeException("world: tried to access nonexistent chunk: $posX, $posZ")
   }
 
   private fun safeGetDataDeconstructClone(posX: Int, posZ: Int): Pair<Boolean, IntArray> {
@@ -908,6 +907,7 @@ object blockManipulator {
   private val minCache = Vector3i(0,0,0)
   private val maxCache = Vector3i(0,0,0)
   private var skipSingleBlockWarning = false
+  private val chunkPosCache = Vector2i()
 
 
   fun set(xMin: Int, yMin: Int, zMin: Int, xMax: Int, yMax: Int, zMax: Int) = set(minCache.set(xMin, yMin, zMin), maxCache.set(xMax, yMax, zMax))
@@ -945,7 +945,23 @@ object blockManipulator {
     val minChunkZ = world.toChunkZ(min.z().toFloat())
     val maxChunkZ = world.toChunkZ(max.z().toFloat())
 
-    
+    for (chunkX in minChunkX .. maxChunkX) {
+      for (chunkZ in minChunkZ .. maxChunkZ) {
+        if (!world.isLoaded(chunkX,chunkZ)) continue
+        val gottenData = world.safetGetData(chunkX,chunkZ)
+
+        //fixme: This can be HEAVILY optimized.
+        // Do a simple range check internal. (min/max .contains(x or z)
+        // Instead of iterating over min to max, iterate the current chunk alone.
+        for (x in min.x() .. max.x()) {
+          if (chunkX != world.toChunkX(x.toFloat())) continue
+          for (z in min.z() .. max.z()) {
+           if (chunkZ != world.toChunkZ(z.toFloat())) continue
+
+          }
+        }
+      }
+    }
   }
 
 //  private fun checkArea() {
