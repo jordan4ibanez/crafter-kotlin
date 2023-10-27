@@ -955,31 +955,21 @@ object blockManipulator {
     val maxChunkX = world.toChunkX(max.x())
     val minChunkZ = world.toChunkZ(min.z())
     val maxChunkZ = world.toChunkZ(max.z())
-    
     for (chunkX in minChunkX .. maxChunkX) {
       for (chunkZ in minChunkZ .. maxChunkZ) {
-
         if (!world.isLoaded(chunkX,chunkZ)) continue
-
         val gottenData = world.safetGetData(chunkX,chunkZ)
-
         // Iterating over in world positions.
         for (x in min.x() .. max.x()) {
-
           if (chunkX != world.toChunkX(x)) continue
-
           for (z in min.z() .. max.z()) {
-
             if (chunkZ != world.toChunkZ(z)) continue
-
             for (y in min.y() .. max.y()) {
-
               //note: on a 3x3x3 BM test 0 indexed, 26 is the max.
               // "you hit my battleship" or, in this case, the end of the array.
 //              if (posToIndex(x,y,z) == 26) {
 //                println("HIT")
 //              } else if (posToIndex(x,y,z) == 27) throw RuntimeException("OOPS")
-
               data[posToIndex(x, y, z)] = gottenData[world.posToIndex(world.internalX(x), y, world.internalZ(z))]
             }
           }
