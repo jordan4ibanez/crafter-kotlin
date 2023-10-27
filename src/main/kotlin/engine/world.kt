@@ -163,6 +163,8 @@ object world {
   private fun calculateChunkPosition(pos: Vector3fc) = chunkPosition.set(toChunkX(pos.x()),toChunkZ(pos.z()))
   internal fun toChunkX(x: Float): Int = floor(x / WIDTH).toInt()
   internal fun toChunkZ(z: Float): Int = floor(z / DEPTH).toInt()
+  internal fun toChunkX(x: Int): Int = toChunkX(x.toFloat())
+  internal fun toChunkZ(z: Int): Int = toChunkZ(z.toFloat())
 
   private fun throwIfNonExistent(pos: Vector2ic) {
     if (!data.containsKey(pos)) throw RuntimeException("world: Tried to get ${pos.x()},${pos.y()} which doesn't exist.")
@@ -945,10 +947,10 @@ object blockManipulator {
   }
 
   fun read() {
-    val minChunkX = world.toChunkX(min.x().toFloat())
-    val maxChunkX = world.toChunkX(max.x().toFloat())
-    val minChunkZ = world.toChunkZ(min.z().toFloat())
-    val maxChunkZ = world.toChunkZ(max.z().toFloat())
+    val minChunkX = world.toChunkX(min.x())
+    val maxChunkX = world.toChunkX(max.x())
+    val minChunkZ = world.toChunkZ(min.z())
+    val maxChunkZ = world.toChunkZ(max.z())
 
     val xRange = (minChunkX .. maxChunkX)
     val zRange = (minChunkZ .. maxChunkZ)
@@ -969,11 +971,11 @@ object blockManipulator {
         // Do a simple range check internal. (min/max .contains(x or z)
         // Instead of iterating over min to max, iterate the current chunk alone.
         xRange.forEach xIterator@ { x ->
-          if (chunkX != world.toChunkX(x.toFloat())) return@xIterator
+          if (chunkX != world.toChunkX(x)) return@xIterator
           zRange.forEach zIterator@ { z ->
-           if (chunkZ != world.toChunkZ(z.toFloat())) return@zIterator
+           if (chunkZ != world.toChunkZ(z)) return@zIterator
             yRange.forEach { y ->
-              data[posToIndex(x,y,z)] = gottenData[world.posToIndex(world.internalX(x.toFloat()), y, world.internalZ(z.toFloat()))]
+              data[posToIndex(x,y,z)] = gottenData[world.posToIndex(world.internalX(x), y, world.internalZ(z))]
             }
           }
         }
@@ -996,10 +998,10 @@ object blockManipulator {
 
 
 //  private fun checkArea() {
-//    val minChunkX = world.toChunkX(min.x().toFloat())
-//    val maxChunkX = world.toChunkX(max.x().toFloat())
-//    val minChunkZ = world.toChunkZ(min.z().toFloat())
-//    val maxChunkZ = world.toChunkZ(max.z().toFloat())
+//    val minChunkX = world.toChunkX(min.x())
+//    val maxChunkX = world.toChunkX(max.x())
+//    val minChunkZ = world.toChunkZ(min.z())
+//    val maxChunkZ = world.toChunkZ(max.z())
 //    for (x in minChunkX .. maxChunkX) {
 //      for (z in minChunkZ..maxChunkZ) {
 //        if (!world.isLoaded(x, z)) {
@@ -1010,10 +1012,10 @@ object blockManipulator {
 //  }
 
   private fun forceLoad() {
-    val minChunkX = world.toChunkX(min.x().toFloat())
-    val maxChunkX = world.toChunkX(max.x().toFloat())
-    val minChunkZ = world.toChunkZ(min.z().toFloat())
-    val maxChunkZ = world.toChunkZ(max.z().toFloat())
+    val minChunkX = world.toChunkX(min.x())
+    val maxChunkX = world.toChunkX(max.x())
+    val minChunkZ = world.toChunkZ(min.z())
+    val maxChunkZ = world.toChunkZ(max.z())
     for (x in minChunkX .. maxChunkX) {
       for (z in minChunkZ .. maxChunkZ) {
         if (!world.isLoaded(x,z)) {
