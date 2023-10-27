@@ -111,14 +111,14 @@ fun update(dtime: Float) {
       val (x,y,z) = pos.destructure()
 
       blockManipulator.set(
-          x - 32,y - 10, z - 32,
-          x + 31,y + 10, z + 31)
+          x - 32,0f, z - 32,
+          x + 31,127f, z + 31)
 
 
         val stoneID = block.getID("crafter:stone")
         val airID = block.getID("air")
 
-        blockManipulator.iterator().forEach { data ->
+        blockManipulator.forEach { data ->
           if (data.getBlockID() != airID) {
 //          val grassPos = blockManipulator.indexToPos(index)
 //          grassPos.print("grass")
