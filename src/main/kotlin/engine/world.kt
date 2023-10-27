@@ -921,7 +921,7 @@ object blockManipulator {
   private val max = Vector3i(0,0,0)
   private val size = Vector3i(0,0,0)
   private var yStride = 0
-  private val data = IntArray(LIMIT.x() * LIMIT.y() * LIMIT.z())
+  private val data = IntArray(LIMIT.x() * (LIMIT.x() * LIMIT.z()) * LIMIT.z())
   private val minCache = Vector3i(0,0,0)
   private val maxCache = Vector3i(0,0,0)
   private var skipSingleBlockWarning = false
