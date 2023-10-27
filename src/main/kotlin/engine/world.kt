@@ -1110,8 +1110,6 @@ object blockManipulator : Iterator<Int> {
     }
   }
 
-  fun iterator(): List<Int> = data.slice(0 until arraySize)
-
   private fun posToIndex(posX: Int, posY: Int, posZ: Int): Int {
     // This x,y,z portion transforms the real position into a base 0 position.
     val x = posX - min.x()
@@ -1202,7 +1200,7 @@ object blockManipulator : Iterator<Int> {
   }
 
   override fun hasNext(): Boolean {
-    val next = currentCount <= arraySize
+    val next = currentCount < arraySize
     if (!next) currentCount = 0
     return next
   }
@@ -1212,5 +1210,10 @@ object blockManipulator : Iterator<Int> {
 //    println(currentCount)
     currentCount++
     return returning
+  }
+
+  fun forEachIndexed(action: (index: Int, Int) -> Unit) {
+    var index = 0
+    for (item in this) action(index++, item)
   }
 }
