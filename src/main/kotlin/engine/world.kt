@@ -1,5 +1,14 @@
 package engine
 
+import engine.world.getBlockID
+import engine.world.getBlockLight
+import engine.world.getBlockState
+import engine.world.idCheck
+import engine.world.lightCheck
+import engine.world.setBlockID
+import engine.world.setBlockLight
+import engine.world.setBlockState
+import engine.world.stateCheck
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -981,6 +990,45 @@ object blockManipulator {
     }
   }
 
+  fun set(index: Int, blockData: Int) {
+    indexCheck(index)
+    //
+    blockData.getBlockID().idCheck()
+    blockData.getBlockState().stateCheck()
+    blockData.getBlockLight().lightCheck()
+    data[index] = blockData
+  }
+  fun setID(index: Int, id: Int) {
+    indexCheck(index)
+    id.idCheck()
+    data[index] = data[index] setBlockID id
+  }
+  fun setID(x: Int, y: Int, z: Int) {
+    val index = posToIndex(x,y,z)
+
+  }
+  fun setState(index: Int, state: Int) {
+    indexCheck(index)
+    state.stateCheck()
+    data[index] = data[index] setBlockState state
+  }
+  fun setLight(index: Int, light: Int) {
+    indexCheck(index)
+    light.lightCheck()
+    data[index] = data[index] setBlockLight light
+  }
+
+  private fun indexCheck(index: Int) {
+    if (index >= arraySize) throw RuntimeException("blockManipulator: Indexing out of bounds. $arraySize limit, tried $index")
+  }
+  private fun posCheck(x: Int, y: Int, z: Int) {
+    fun thrower(axis: String, min: Int, max: Int, gotten: Int) { throw RuntimeException("blockManipulator: $gotten is out of bounds for axis $axis. Min: $min | Max: $max") }
+    when {
+      !(min.x() .. max.x()).contains(x) -> thrower("x", min.x(), max.x(), x)
+      !(min.y() .. max.y()).contains(y) -> thrower("y", min.y(), max.y(), y)
+      !(min.z() .. max.z()).contains(z) -> thrower("z", min.z(), max.z(), z)
+    }
+  }
 
   fun iterator(): List<Int> = data.slice(0 until arraySize)
 
