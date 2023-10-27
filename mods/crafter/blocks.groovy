@@ -56,6 +56,3 @@ block.register(
   inventoryName = "Brick",
   textures = api.stringArrayOf("brick.png","brick.png","brick.png","brick.png","brick.png","brick.png"),
 )
-
-
-blockManipulator.testIt()
