@@ -1270,7 +1270,7 @@ object blockManipulator : Iterator<Int> {
 
   private fun checkYAxis() {
     min.y = clamp(0, HEIGHT - 1, min.y)
-    max.y = clamp(0, HEIGHT - 1, min.y)
+    max.y = clamp(0, HEIGHT - 1, max.y)
   }
 
   private fun checkSizeValidity() {
