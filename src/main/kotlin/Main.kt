@@ -1,8 +1,7 @@
 import engine.*
 import engine.world.getBlockID
 import kotlinx.coroutines.*
-import org.joml.Math.random
-import org.joml.Math.toRadians
+import org.joml.Math.*
 import org.joml.Random
 import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.*
@@ -66,9 +65,12 @@ var color = 0f
 var brighten = true
 var speed = 0.5f
 var xOffset = 0f
+val noisey = Noise(123456)
 
 // All general logic goes here. Consider this love.update()
 fun update(delta: Float) {
+  noisey.setNoiseType(NoiseType.Simplex)
+  noisey.setFrequency(0.01f)
 
   camera.freeCam()
 
@@ -110,21 +112,30 @@ fun update(delta: Float) {
     val pos = entity.getPlayer("singleplayer").getPosition()
       val (x,y,z) = pos.destructure()
       if (blockManipulator.set(
-          x - 32,y - 20, z - 32,
+          x - 32,y - 60, z - 32,
           x + 31,y + 20, z + 31)) {
 
         val grassID = block.getID("crafter:grass")
         val airID = block.getID("air")
+
+        val waveSpeed = 10.0f
+
+        xOffset += delta * waveSpeed
 
         var index = 0
         blockManipulator.forEach { data ->
 
           val (bx,by,bz) = blockManipulator.indexToPos(index).destructure()
 
+
           if (blockManipulator.inBounds(bx,by + 1,bz)) {
             if (data.getBlockID() != airID && blockManipulator.getID(bx,by + 1,bz) == airID) {
 
-                val newID = (random() * 7).toInt() + 1
+//                val newID = (random() * 7).toInt() + 1
+
+              val newID = clamp(1, 8, ((noisey.getSimplex(bx.toFloat() + xOffset, 0f, bz.toFloat()) + 1f) * 9f).toInt())
+
+//              println(newID)
 
                 blockManipulator.setID(index, newID)
               }
