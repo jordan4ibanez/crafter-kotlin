@@ -932,9 +932,11 @@ object blockManipulator {
   private val stackUpdateQueue = ArrayDeque<Int>()
 
 
-  fun set(xMin: Float, yMin: Float, zMin: Float, xMax: Float, yMax: Float, zMax: Float) = set(minCache.set(floor(xMin).toInt(), floor(yMin).toInt(), floor(zMin).toInt()), maxCache.set(floor(xMax).toInt(), floor(yMax).toInt(), floor(zMax).toInt()))
-  fun set(xMin: Int, yMin: Int, zMin: Int, xMax: Int, yMax: Int, zMax: Int) = set(minCache.set(xMin, yMin, zMin), maxCache.set(xMax, yMax, zMax))
-  fun set(newMin: Vector3ic, newMax: Vector3ic) {
+  fun set(xMin: Float, yMin: Float, zMin: Float, xMax: Float, yMax: Float, zMax: Float): Boolean = set(minCache.set(floor(xMin).toInt(), floor(yMin).toInt(), floor(zMin).toInt()), maxCache.set(floor(xMax).toInt(), floor(yMax).toInt(), floor(zMax).toInt()))
+  fun set(xMin: Int, yMin: Int, zMin: Int, xMax: Int, yMax: Int, zMax: Int): Boolean = set(minCache.set(xMin, yMin, zMin), maxCache.set(xMax, yMax, zMax))
+  fun set(newMin: Vector3ic, newMax: Vector3ic): Boolean {
+
+    // Returns true if all chunks are loaded, for now
 
 //    println("minZ: ${newMin.z()}")
 
@@ -966,7 +968,7 @@ object blockManipulator {
 
     skipSingleBlockWarning = false
 
-    read()
+    return read()
   }
 
   private fun read() {
