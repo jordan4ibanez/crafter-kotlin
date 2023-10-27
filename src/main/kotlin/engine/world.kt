@@ -992,13 +992,20 @@ object blockManipulator {
 
   fun set(index: Int, blockData: Int) {
     indexCheck(index)
-    //
     blockData.getBlockID().idCheck()
     blockData.getBlockState().stateCheck()
     blockData.getBlockLight().lightCheck()
     data[index] = blockData
   }
-  
+  fun set(x: Int, y: Int, z: Int, blockData: Int) {
+    posCheck(x,y,z)
+    blockData.getBlockID().idCheck()
+    blockData.getBlockState().stateCheck()
+    blockData.getBlockLight().lightCheck()
+    val index = posToIndex(x,y,z)
+    data[index] = blockData
+  }
+  fun set(pos: Vector3ic, blockData: Int) = set(pos.x(), pos.y(), pos.z(), blockData)
 
   fun setID(index: Int, id: Int) {
     indexCheck(index)
