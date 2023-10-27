@@ -917,6 +917,7 @@ object blockManipulator {
   private val internalPos = Vector3i()
 
 
+  fun set(xMin: Float, yMin: Float, zMin: Float, xMax: Float, yMax: Float, zMax: Float) = set(minCache.set(floor(xMin).toInt(), floor(yMin).toInt(), floor(zMin).toInt()), maxCache.set(floor(xMax).toInt(), floor(yMax).toInt(), floor(zMax).toInt()))
   fun set(xMin: Int, yMin: Int, zMin: Int, xMax: Int, yMax: Int, zMax: Int) = set(minCache.set(xMin, yMin, zMin), maxCache.set(xMax, yMax, zMax))
   fun set(newMin: Vector3ic, newMax: Vector3ic) {
 
@@ -966,10 +967,11 @@ object blockManipulator {
 
         val gottenData = world.safetGetData(chunkX,chunkZ)
 
-
         //fixme: This can be HEAVILY optimized.
         // Do a simple range check internal. (min/max .contains(x or z)
         // Instead of iterating over min to max, iterate the current chunk alone.
+
+        // Iterating over in world positions.
         xRange.forEach xIterator@ { x ->
           if (chunkX != world.toChunkX(x)) return@xIterator
           zRange.forEach zIterator@ { z ->
@@ -983,7 +985,7 @@ object blockManipulator {
     }
   }
 
-  fun posToIndex(posX: Int, posY: Int, posZ: Int): Int {
+  private fun posToIndex(posX: Int, posY: Int, posZ: Int): Int {
     // This x,y,z portion transforms the real position into a base 0 position.
     val x = posX - min.x()
     val y = posY - min.y()
