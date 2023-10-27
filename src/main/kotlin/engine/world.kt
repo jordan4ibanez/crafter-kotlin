@@ -1,5 +1,6 @@
 package engine
 
+import engine.world.addMeshUpdate
 import engine.world.getBlockID
 import engine.world.getBlockLight
 import engine.world.getBlockState
@@ -928,7 +929,7 @@ object blockManipulator {
   private val cachePos = Vector3i()
   private val internalPos = Vector3i()
   private var arraySize = 0
-  private val updateQueue = ArrayDeque<Vector3ic>()
+  private val stackUpdateQueue = ArrayDeque<Int>()
 
 
   fun set(xMin: Float, yMin: Float, zMin: Float, xMax: Float, yMax: Float, zMax: Float) = set(minCache.set(floor(xMin).toInt(), floor(yMin).toInt(), floor(zMin).toInt()), maxCache.set(floor(xMax).toInt(), floor(yMax).toInt(), floor(zMax).toInt()))
@@ -1068,6 +1069,9 @@ object blockManipulator {
     val minChunkZ = world.toChunkZ(min.z())
     val maxChunkZ = world.toChunkZ(max.z())
 
+    val minStack = world.toYStack(min.y())
+    val maxStack = world.toYStack(max.y())
+
 
     for (chunkX in minChunkX .. maxChunkX) {
       for (chunkZ in minChunkZ .. maxChunkZ) {
@@ -1088,8 +1092,9 @@ object blockManipulator {
             }
           }
         }
-
-
+        for (yStack in minStack .. maxStack) {
+          addMeshUpdate(chunkX, yStack, chunkZ)
+        }
       }
     }
   }
