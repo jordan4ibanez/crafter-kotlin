@@ -1074,6 +1074,10 @@ object blockManipulator : Iterator<Int> {
     }
   }
 
+  fun inBounds(x: Int, y: Int, z: Int): Boolean {
+    return (min.x()..max.x()).contains(x) && (min.y()..max.y()).contains(y) && (min.z()..max.z()).contains(z)
+  }
+
   fun write() {
     val minChunkX = world.toChunkX(min.x())
     val maxChunkX = world.toChunkX(max.x())
