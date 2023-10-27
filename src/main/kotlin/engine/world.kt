@@ -126,7 +126,7 @@ object world {
     val chunkX = chunkPosition.x()
     val chunkZ = chunkPosition.y()
 
-    val yStack = floor(y / Y_SLICE_HEIGHT.toFloat()).toInt()
+    val yStack = toYStack(y)
 
     if (x == 0) {
       addSingleBlockMeshUpdateIfLoaded(chunkX - 1, yStack, chunkZ)
@@ -152,6 +152,8 @@ object world {
   private fun addSingleBlockMeshUpdateIfLoaded(x: Int, y: Int, z: Int) {
     if (isLoaded(x,z)) addMeshUpdate(x,y,z)
   }
+
+  internal fun toYStack(y: Int): Int = floor(y / Y_SLICE_HEIGHT.toFloat()).toInt()
 
   private fun getSingleBlock(): Int {
     return data[chunkPosition]!![posToIndex(internalPosition)]
