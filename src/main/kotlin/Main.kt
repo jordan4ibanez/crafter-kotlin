@@ -107,27 +107,29 @@ fun update(dtime: Float) {
   if (entity.hasPlayer("singleplayer")) {
 //    println(1)
     val pos = entity.getPlayer("singleplayer").getPosition()
-//    if (world.isLoaded(pos)) {
       val (x,y,z) = pos.destructure()
-
-
       if (blockManipulator.set(
-          x - 32,0f, z - 32,
-          x + 31,127f, z + 31)) {
+          x - 32,y - 20, z - 32,
+          x + 31,y + 20, z + 31)) {
 
-        blockManipulator.read()
-
-        val stoneID = block.getID("crafter:stone")
+        val grassID = block.getID("crafter:grass")
         val airID = block.getID("air")
 
-        blockManipulator.forEachIndexed { index, data ->
-          if (data.getBlockID() != airID) {
-//          val grassPos = blockManipulator.indexToPos(index)
+        var index = 0
+        blockManipulator.forEach { data ->
 
-            val newID = (random() * 7).toInt() + 1
+          val (bx,by,bz) = blockManipulator.indexToPos(index).destructure()
 
-            blockManipulator.setID(index, newID)
+          if (blockManipulator.inBounds(bx,by + 1,bz)) {
+            if (data.getBlockID() != airID && blockManipulator.getID(bx,by + 1,bz) == airID) {
+
+                val newID = (random() * 7).toInt() + 1
+
+                blockManipulator.setID(index, newID)
+              }
           }
+
+          index++
         }
 
 
