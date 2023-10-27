@@ -1,5 +1,6 @@
 package engine
 
+
 import engine.world.addMeshUpdate
 import engine.world.getBlockID
 import engine.world.getBlockLight
@@ -25,14 +26,14 @@ import kotlin.collections.ArrayList
 This is a data oriented and functional approach to the mess that was in Java.
 */
 object world {
-  private const val WIDTH = 16
-  private const val HEIGHT = 128
-  private const val DEPTH = 16
-  private const val Y_STRIDE = WIDTH * DEPTH
+  internal const val WIDTH = 16
+  internal const val HEIGHT = 128
+  internal const val DEPTH = 16
+  internal const val Y_STRIDE = WIDTH * DEPTH
   private const val ARRAY_SIZE = WIDTH * HEIGHT * DEPTH
   private const val GRAVITY = 10f
 
-  private const val Y_SLICE_HEIGHT = 16
+  internal const val Y_SLICE_HEIGHT = 16
   private const val MESH_ARRAY_SIZE = 8
 
   private var seed = 123_456_789
@@ -346,7 +347,7 @@ object world {
   }
 
   fun posToIndex(x: Int, y: Int, z: Int): Int {
-    return (y * Y_STRIDE) + (z * DEPTH) + x;
+    return (y * Y_STRIDE) + (z * DEPTH) + x
   }
 
   fun posToIndex(pos: Vector3ic): Int {
@@ -732,7 +733,7 @@ object world {
     colors: ArrayList<Float>
   ) {
 
-    val overProvision = 0.00001f;
+    val overProvision = 0.00001f
     fun putPositions(vararg pos: Float) = positions.addAll(pos.asSequence())
     fun putTextureCoords(pos: FloatArray) = textureCoords.addAll(pos.asSequence())
     val iOrder = intArrayOf(0, 1, 2, 2, 3, 0)
@@ -929,8 +930,15 @@ object blockManipulator : Iterator<Int> {
   private val cachePos = Vector3i()
   private val internalPos = Vector3i()
   private var arraySize = 0
-  private val stackUpdateQueue = ArrayDeque<Int>()
+  private val stackUpdateQueue = mutableSetOf<Vector3ic>()
   private var currentCount = 0
+  private const val WIDTH = world.WIDTH
+  private const val HEIGHT = world.HEIGHT
+  private const val DEPTH = world.DEPTH
+  private const val Y_SLICE_HEIGHT = world.Y_SLICE_HEIGHT
+  private const val WORLD_Y_STRIDE = world.Y_STRIDE
+
+
 
 
 
@@ -970,34 +978,35 @@ object blockManipulator : Iterator<Int> {
 
     skipSingleBlockWarning = false
 
-    return read()
+    return false
   }
 
-  private fun read(): Boolean {
+  fun read(): Boolean {
     var allLoaded = true
-    val minChunkX = world.toChunkX(min.x())
-    val maxChunkX = world.toChunkX(max.x())
-    val minChunkZ = world.toChunkZ(min.z())
-    val maxChunkZ = world.toChunkZ(max.z())
+    val minChunkX = toChunkX(min.x())
+    val maxChunkX = toChunkX(max.x())
+    val minChunkZ = toChunkZ(min.z())
+    val maxChunkZ = toChunkZ(max.z())
+
     for (chunkX in minChunkX .. maxChunkX) {
       for (chunkZ in minChunkZ .. maxChunkZ) {
+
         if (!world.isLoaded(chunkX,chunkZ)) {
           allLoaded = false
           continue
         }
+
         val gottenData = world.safetGetData(chunkX,chunkZ)
+
+
         // Iterating over in world positions.
         for (x in min.x() .. max.x()) {
-          if (chunkX != world.toChunkX(x)) continue
+          if (chunkX != toChunkX(x)) continue
           for (z in min.z() .. max.z()) {
-            if (chunkZ != world.toChunkZ(z)) continue
+            if (chunkZ != toChunkZ(z)) continue
             for (y in min.y() .. max.y()) {
-              //note: on a 3x3x3 BM test 0 indexed, 26 is the max.
-              // "you hit my battleship" or, in this case, the end of the array.
-//              if (posToIndex(x,y,z) == 26) {
-//                println("HIT")
-//              } else if (posToIndex(x,y,z) == 27) throw RuntimeException("OOPS")
-              data[posToIndex(x, y, z)] = gottenData[world.posToIndex(world.internalX(x), y, world.internalZ(z))]
+
+              data[posToIndex(x, y, z)] = gottenData[worldPosToIndex(internalX(x), y, internalZ(z))]
             }
           }
         }
@@ -1079,13 +1088,42 @@ object blockManipulator : Iterator<Int> {
   }
 
   fun write() {
-    val minChunkX = world.toChunkX(min.x())
-    val maxChunkX = world.toChunkX(max.x())
-    val minChunkZ = world.toChunkZ(min.z())
-    val maxChunkZ = world.toChunkZ(max.z())
+    val minChunkX = toChunkX(min.x())
+    val maxChunkX = toChunkX(max.x())
+    val minChunkZ = toChunkZ(min.z())
+    val maxChunkZ = toChunkZ(max.z())
 
-    val minStack = world.toYStack(min.y())
-    val maxStack = world.toYStack(max.y())
+    // These hold the "cube" that makes up the min and max of the area changed. In chunk positions.
+    var minXChange = Int.MAX_VALUE
+    var maxXChange = Int.MIN_VALUE
+
+    var minYChange = Int.MAX_VALUE
+    var maxYChange = Int.MIN_VALUE
+
+    var minZChange = Int.MAX_VALUE
+    var maxZChange = Int.MIN_VALUE
+
+    fun updateMinMax(x: Int, y: Int, z: Int) {
+      if (x < minXChange) minXChange = x
+      if (x > maxXChange) maxXChange = x
+
+      if (y < minYChange) minYChange = y
+      if (y > maxYChange) maxYChange = y
+
+      if (z < minZChange) minZChange = z
+      if (z > maxZChange) maxZChange = z
+    }
+
+    fun finalize() {
+      minXChange = toChunkX(minXChange)
+      maxXChange = toChunkX(maxXChange)
+
+      minYChange = toYStack(minYChange)
+      maxYChange = toYStack(maxYChange)
+
+      minZChange = toChunkZ(minZChange)
+      maxZChange = toChunkZ(maxZChange)
+    }
 
 
     for (chunkX in minChunkX .. maxChunkX) {
@@ -1094,24 +1132,36 @@ object blockManipulator : Iterator<Int> {
         val gottenData = world.safetGetData(chunkX,chunkZ)
         // Iterating over in world positions.
         for (x in min.x() .. max.x()) {
-          if (chunkX != world.toChunkX(x)) continue
+          if (chunkX != toChunkX(x)) continue
           for (z in min.z() .. max.z()) {
-            if (chunkZ != world.toChunkZ(z)) continue
+            if (chunkZ != toChunkZ(z)) continue
             for (y in min.y() .. max.y()) {
-              //note: on a 3x3x3 BM test 0 indexed, 26 is the max.
-              // "you hit my battleship" or, in this case, the end of the array.
-//              if (posToIndex(x,y,z) == 26) {
-//                println("HIT")
-//              } else if (posToIndex(x,y,z) == 27) throw RuntimeException("OOPS")
-              gottenData[world.posToIndex(world.internalX(x), y, world.internalZ(z))] = data[posToIndex(x, y, z)]
+              val worldIndex = worldPosToIndex(internalX(x), y, internalZ(z))
+              val localIndex = posToIndex(x, y, z)
+              val oldData = gottenData[worldIndex]
+              val newData = data[localIndex]
+              if (newData != oldData) {
+                gottenData[worldIndex] = newData
+                updateMinMax(x,y,z)
+              }
             }
           }
         }
-        for (yStack in minStack .. maxStack) {
-          addMeshUpdate(chunkX, yStack, chunkZ)
+      }
+    }
+
+    finalize()
+    for (x in minXChange .. maxXChange) {
+      for (y in minYChange .. maxYChange) {
+        for (z in minZChange .. maxZChange) {
+          addMeshUpdate(x, y, z)
         }
       }
     }
+  }
+
+  private fun worldPosToIndex(posX: Int, posY: Int, posZ: Int): Int {
+    return return (posY * WORLD_Y_STRIDE) + (posZ * DEPTH) + posX
   }
 
   private fun posToIndex(posX: Int, posY: Int, posZ: Int): Int {
@@ -1151,10 +1201,10 @@ object blockManipulator : Iterator<Int> {
 //  }
 
   private fun forceLoad() {
-    val minChunkX = world.toChunkX(min.x())
-    val maxChunkX = world.toChunkX(max.x())
-    val minChunkZ = world.toChunkZ(min.z())
-    val maxChunkZ = world.toChunkZ(max.z())
+    val minChunkX = toChunkX(min.x())
+    val maxChunkX = toChunkX(max.x())
+    val minChunkZ = toChunkZ(min.z())
+    val maxChunkZ = toChunkZ(max.z())
     for (x in minChunkX .. maxChunkX) {
       for (z in minChunkZ .. maxChunkZ) {
         if (!world.isLoaded(x,z)) {
@@ -1220,4 +1270,26 @@ object blockManipulator : Iterator<Int> {
     var index = 0
     for (item in this) action(index++, item)
   }
+
+
+  // These are duplicate functions to optimize performance inside this object.
+  private fun internalX(x: Float): Int = if (x < 0) (WIDTH - floor(abs(x + 1) % WIDTH).toInt()) - 1 else floor(x % WIDTH).toInt()
+  private fun internalZ(z: Float): Int = if (z < 0) (DEPTH - floor(abs(z + 1) % DEPTH)).toInt() - 1 else floor(z % DEPTH).toInt()
+
+  private fun internalX(x: Int): Int = internalX(x.toFloat())
+  private fun internalZ(z: Int): Int = internalZ(z.toFloat())
+
+  private fun toChunkX(x: Float): Int = floor(x / world.WIDTH).toInt()
+  private fun toChunkZ(z: Float): Int = floor(z / world.DEPTH).toInt()
+  private fun toChunkX(x: Int): Int = toChunkX(x.toFloat())
+  private fun toChunkZ(z: Int): Int = toChunkZ(z.toFloat())
+
+  private fun toYStack(y: Int): Int = floor(y / Y_SLICE_HEIGHT.toFloat()).toInt()
 }
+
+// A nostalgic test
+//note: on a 3x3x3 BM test 0 indexed, 26 is the max.
+// "you hit my battleship" or, in this case, the end of the array.
+// if (posToIndex(x,y,z) == 26) {
+//   println("HIT")
+// } else if (posToIndex(x,y,z) == 27) throw RuntimeException("OOPS")
