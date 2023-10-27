@@ -1123,6 +1123,14 @@ object blockManipulator : Iterator<Int> {
   }
 
 
+  fun getMin(): Vector3ic {
+    return min
+  }
+
+  fun getMax(): Vector3ic {
+    return max
+  }
+
   private fun indexCheck(index: Int) {
     if (index >= arraySize) throw RuntimeException("blockManipulator: Indexing out of bounds. $arraySize limit, tried $index")
   }
