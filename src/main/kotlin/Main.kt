@@ -109,6 +109,12 @@ fun update(dtime: Float) {
     if (world.isLoaded(pos)) {
       val (x,y,z) = pos.destructure()
 
+      blockManipulator.set(
+        x - 1,y - 1, z - 1,
+        x + 1,y + 1, z + 1
+      )
+      blockManipulator.read()
+
 //      println(2)
 //      block.getName(world.getBlockID(pos)).apply(::println)
 //      (0..3).forEach {
