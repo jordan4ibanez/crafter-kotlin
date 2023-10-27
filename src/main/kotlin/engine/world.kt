@@ -998,6 +998,8 @@ object blockManipulator {
     blockData.getBlockLight().lightCheck()
     data[index] = blockData
   }
+  
+
   fun setID(index: Int, id: Int) {
     indexCheck(index)
     id.idCheck()
@@ -1009,6 +1011,7 @@ object blockManipulator {
     val index = posToIndex(x,y,z)
     data[index] = data[index] setBlockID id
   }
+  fun setID(pos: Vector3ic, id: Int) = setID(pos.x(), pos.y(), pos.z(), id)
 
   fun setState(index: Int, state: Int) {
     indexCheck(index)
@@ -1021,6 +1024,7 @@ object blockManipulator {
     val index = posToIndex(x,y,z)
     data[index] = data[index] setBlockState state
   }
+  fun setState(pos: Vector3ic, state: Int) = setState(pos.x(), pos.y(), pos.z(), state)
 
   fun setLight(index: Int, light: Int) {
     indexCheck(index)
@@ -1033,6 +1037,7 @@ object blockManipulator {
     val index = posToIndex(x,y,z)
     data[index] = data[index] setBlockLight light
   }
+  fun setLight(pos: Vector3ic, light: Int) = setLight(pos.x(), pos.y(), pos.z(), light)
 
   private fun indexCheck(index: Int) {
     if (index >= arraySize) throw RuntimeException("blockManipulator: Indexing out of bounds. $arraySize limit, tried $index")
