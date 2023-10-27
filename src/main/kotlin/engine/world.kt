@@ -921,6 +921,8 @@ object blockManipulator {
   fun set(xMin: Int, yMin: Int, zMin: Int, xMax: Int, yMax: Int, zMax: Int) = set(minCache.set(xMin, yMin, zMin), maxCache.set(xMax, yMax, zMax))
   fun set(newMin: Vector3ic, newMax: Vector3ic) {
 
+//    println("minZ: ${newMin.z()}")
+
     min.set(newMin)
     max.set(newMax)
 
@@ -942,7 +944,8 @@ object blockManipulator {
 //    }
 
     size.set((abs(max.x() - min.x()) + 1), (abs(max.y() - min.y()) + 1), (abs(max.z() - min.z()) + 1))
-    yStride = (size.x() + 1) * (size.z() + 1)
+
+    yStride = size.x() * size.z()
 
     skipSingleBlockWarning = false
   }
@@ -953,31 +956,50 @@ object blockManipulator {
     val minChunkZ = world.toChunkZ(min.z())
     val maxChunkZ = world.toChunkZ(max.z())
 
-    val xRange = (minChunkX .. maxChunkX)
-    val zRange = (minChunkZ .. maxChunkZ)
-    val yRange = (min.y() .. max.y())
+    println("----")
+    for (chunkX in minChunkX .. maxChunkX) {
+      for (chunkZ in minChunkZ .. maxChunkZ) {
 
-    val chunkXRange = (minChunkX .. maxChunkX)
-    val chunkZRange = (minChunkZ .. maxChunkZ)
+//        println("CHUNK: $chunkX, $chunkZ")
 
-    chunkXRange.forEach { chunkX ->
-      chunkZRange.forEach chunkIterator@ { chunkZ ->
-
-        if (!world.isLoaded(chunkX,chunkZ)) return@chunkIterator
+        if (!world.isLoaded(chunkX,chunkZ)) continue
 
         val gottenData = world.safetGetData(chunkX,chunkZ)
 
-        //fixme: This can be HEAVILY optimized.
-        // Do a simple range check internal. (min/max .contains(x or z)
-        // Instead of iterating over min to max, iterate the current chunk alone.
-
         // Iterating over in world positions.
-        xRange.forEach xIterator@ { x ->
-          if (chunkX != world.toChunkX(x)) return@xIterator
-          zRange.forEach zIterator@ { z ->
-           if (chunkZ != world.toChunkZ(z)) return@zIterator
-            yRange.forEach { y ->
-              data[posToIndex(x,y,z)] = gottenData[world.posToIndex(world.internalX(x), y, world.internalZ(z))]
+        for (x in min.x() .. max.x()) {
+
+//          println("FARP = | $x | ${world.toChunkX(x)}")
+
+          if (chunkX != world.toChunkX(x)) continue
+
+//          println("$chunkX | ${world.toChunkX(x)}")
+
+          for (z in min.z() .. max.z()) {
+
+            if (chunkZ != world.toChunkZ(z)) continue
+
+//            println("$chunkZ | ${world.toChunkZ(z)}")
+
+//            println("slipped")
+
+//            println("---!---")
+
+            for (y in min.y() .. max.y()) {
+
+//              println("reading in $x, $y, $z")
+//              println("i: ${posToIndex(x,y,z)}")
+
+              //note: on a 3x3x3 BM test 0 indexed, 26 is the max.
+              // "you hit my battleship" or, in this case, the end of the array.
+              if (posToIndex(x,y,z) == 26) {
+                println("HIT")
+              } else if (posToIndex(x,y,z) == 27) throw RuntimeException("OOPS")
+              try {
+                data[posToIndex(x, y, z)] = gottenData[world.posToIndex(world.internalX(x), y, world.internalZ(z))]
+              } catch (e: Exception) {
+                throw RuntimeException("crashed: $x, $y, $z")
+              }
             }
           }
         }
@@ -990,6 +1012,14 @@ object blockManipulator {
     val x = posX - min.x()
     val y = posY - min.y()
     val z = posZ - min.z()
+//    println("min: ${min.z()} , posz: $posZ")
+//    println("internal: $x, $y, $z")
+    when {
+      x < 0 -> {println("x was $posX")}
+      y < 0 -> {println("y was $posY")}
+      z < 0 -> {println("z was $posZ")}
+    }
+//    println("yStride: $yStride")
 
     return (y * yStride) + (z * size.z()) + x
   }
