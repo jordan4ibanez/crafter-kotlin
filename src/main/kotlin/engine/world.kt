@@ -956,22 +956,20 @@ object blockManipulator {
         if (!world.isLoaded(chunkX,chunkZ)) continue
 
         val gottenData = world.safetGetData(chunkX,chunkZ)
-        
-
 
 
         //fixme: This can be HEAVILY optimized.
         // Do a simple range check internal. (min/max .contains(x or z)
         // Instead of iterating over min to max, iterate the current chunk alone.
-//        for (x in min.x() .. max.x()) {
-//          if (chunkX != world.toChunkX(x.toFloat())) continue
-//          for (z in min.z() .. max.z()) {
-//           if (chunkZ != world.toChunkZ(z.toFloat())) continue
-//            for (y in min.y() .. min.y()) {
-//              data[posToIndex(x,y,z)] = gottenData[world.posToIndex(world.internalX(x.toFloat()), y, world.internalZ(z.toFloat()))]
-//            }
-//          }
-//        }
+        xRange.forEach xIterator@ { x ->
+          if (chunkX != world.toChunkX(x.toFloat())) return@xIterator
+          zRange.forEach zIterator@ { z ->
+           if (chunkZ != world.toChunkZ(z.toFloat())) return@zIterator
+            for (y in min.y() .. min.y()) {
+              data[posToIndex(x,y,z)] = gottenData[world.posToIndex(world.internalX(x.toFloat()), y, world.internalZ(z.toFloat()))]
+            }
+          }
+        }
       }
     }
   }
