@@ -915,7 +915,7 @@ object world {
 }
 
 
-object blockManipulator {
+object blockManipulator : Iterator<Int> {
   private val LIMIT = Vector3i(64,128,64) as Vector3ic
   private val min = Vector3i(0,0,0)
   private val max = Vector3i(0,0,0)
@@ -930,6 +930,8 @@ object blockManipulator {
   private val internalPos = Vector3i()
   private var arraySize = 0
   private val stackUpdateQueue = ArrayDeque<Int>()
+  private var currentCount = 0
+
 
 
   fun set(xMin: Float, yMin: Float, zMin: Float, xMax: Float, yMax: Float, zMax: Float): Boolean = set(minCache.set(floor(xMin).toInt(), floor(yMin).toInt(), floor(zMin).toInt()), maxCache.set(floor(xMax).toInt(), floor(yMax).toInt(), floor(zMax).toInt()))
@@ -964,7 +966,7 @@ object blockManipulator {
 
     yStride = size.x() * size.z()
 
-    arraySize = size.x() * size.z() * yStride
+    arraySize = size.x() * size.z() * size.z()
 
     skipSingleBlockWarning = false
 
@@ -1197,5 +1199,18 @@ object blockManipulator {
     if ((abs(max.x() - min.x()) + 1) * (abs(max.y() - min.y()) + 1) * (abs(max.z() - min.z()) + 1) <= 1) {
       println("blockManipulator: Use single block API for single blocks.")
     }
+  }
+
+  override fun hasNext(): Boolean {
+    val next = currentCount <= arraySize
+    if (!next) currentCount = 0
+    return next
+  }
+
+  override fun next(): Int {
+    val returning = data[currentCount]
+//    println(currentCount)
+    currentCount++
+    return returning
   }
 }
