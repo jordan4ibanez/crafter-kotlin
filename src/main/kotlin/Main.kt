@@ -111,8 +111,8 @@ fun update(dtime: Float) {
       val (x,y,z) = pos.destructure()
 
       blockManipulator.set(
-        x - 10,y - 10, z - 10,
-        x + 10,y + 10, z + 10
+        x - 12,y - 10, z - 12,
+        x + 12,y + 10, z + 12
       )
 
       val stoneID = block.getID("crafter:stone")
