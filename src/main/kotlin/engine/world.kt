@@ -930,7 +930,6 @@ object blockManipulator : Iterator<Int> {
   private val cachePos = Vector3i()
   private val internalPos = Vector3i()
   private var arraySize = 0
-  private val stackUpdateQueue = mutableSetOf<Vector3ic>()
   private var currentCount = 0
   private const val WIDTH = world.WIDTH
   private const val HEIGHT = world.HEIGHT
