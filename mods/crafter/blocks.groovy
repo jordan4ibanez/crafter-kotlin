@@ -56,3 +56,9 @@ block.register(
   inventoryName = "Brick",
   textures = api.stringArrayOf("brick.png","brick.png","brick.png","brick.png","brick.png","brick.png"),
 )
+
+block.register(
+  name = "crafter:water",
+  inventoryName = "Water",
+  textures = api.stringArrayOf("water.png","water.png","water.png","water.png","water.png","water.png")
+)
