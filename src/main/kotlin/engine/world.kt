@@ -955,12 +955,9 @@ object blockManipulator {
     val maxChunkX = world.toChunkX(max.x())
     val minChunkZ = world.toChunkZ(min.z())
     val maxChunkZ = world.toChunkZ(max.z())
-
-    println("----")
+    
     for (chunkX in minChunkX .. maxChunkX) {
       for (chunkZ in minChunkZ .. maxChunkZ) {
-
-//        println("CHUNK: $chunkX, $chunkZ")
 
         if (!world.isLoaded(chunkX,chunkZ)) continue
 
@@ -969,26 +966,13 @@ object blockManipulator {
         // Iterating over in world positions.
         for (x in min.x() .. max.x()) {
 
-//          println("FARP = | $x | ${world.toChunkX(x)}")
-
           if (chunkX != world.toChunkX(x)) continue
-
-//          println("$chunkX | ${world.toChunkX(x)}")
 
           for (z in min.z() .. max.z()) {
 
             if (chunkZ != world.toChunkZ(z)) continue
 
-//            println("$chunkZ | ${world.toChunkZ(z)}")
-
-//            println("slipped")
-
-//            println("---!---")
-
             for (y in min.y() .. max.y()) {
-
-//              println("reading in $x, $y, $z")
-//              println("i: ${posToIndex(x,y,z)}")
 
               //note: on a 3x3x3 BM test 0 indexed, 26 is the max.
               // "you hit my battleship" or, in this case, the end of the array.
