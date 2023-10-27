@@ -965,9 +965,11 @@ object blockManipulator {
     arraySize = size.x() * size.z() * yStride
 
     skipSingleBlockWarning = false
+
+    read()
   }
 
-  fun read() {
+  private fun read() {
     val minChunkX = world.toChunkX(min.x())
     val maxChunkX = world.toChunkX(max.x())
     val minChunkZ = world.toChunkZ(min.z())
