@@ -915,6 +915,7 @@ object blockManipulator {
   private val chunkPosCache = Vector2i()
   private val cachePos = Vector3i()
   private val internalPos = Vector3i()
+  private var arraySize = 0
 
 
   fun set(xMin: Float, yMin: Float, zMin: Float, xMax: Float, yMax: Float, zMax: Float) = set(minCache.set(floor(xMin).toInt(), floor(yMin).toInt(), floor(zMin).toInt()), maxCache.set(floor(xMax).toInt(), floor(yMax).toInt(), floor(zMax).toInt()))
@@ -947,6 +948,8 @@ object blockManipulator {
 
     yStride = size.x() * size.z()
 
+    arraySize = size.x() * size.z() * yStride
+
     skipSingleBlockWarning = false
   }
 
@@ -977,6 +980,9 @@ object blockManipulator {
       }
     }
   }
+
+
+  fun iterator(): List<Int> = data.slice(0 until arraySize)
 
   private fun posToIndex(posX: Int, posY: Int, posZ: Int): Int {
     // This x,y,z portion transforms the real position into a base 0 position.
