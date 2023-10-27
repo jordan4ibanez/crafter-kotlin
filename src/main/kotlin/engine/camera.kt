@@ -131,7 +131,7 @@ object camera {
 
     //! FIXME: this is an overcomplicated mess.
 
-    val cameraSpeed = 10f
+    val cameraSpeed = 50f
 
     doMouseInputCameraRotation()
 
