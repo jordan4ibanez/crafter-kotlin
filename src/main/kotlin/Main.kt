@@ -113,14 +113,12 @@ fun update(dtime: Float) {
       var minY = 127
       var maxY = 0
 
-      blockManipulator.set(
+      if (blockManipulator.set(
           x - 32,0f, z - 32,
-          x + 31,127f, z + 31)
+          x + 31,127f, z + 31)) {
 
-
-        val stoneID = block.getID("crafter:stone")
+//        val stoneID = block.getID("crafter:stone")
         val airID = block.getID("air")
-
 
         blockManipulator.forEachIndexed { index, data ->
           if (data.getBlockID() != airID) {
@@ -138,7 +136,7 @@ fun update(dtime: Float) {
 //      block.getName(world.getBlockID(pos)).apply(::println)
 //      (0..3).forEach {
 //        world.setBlockID(x,y+it,z, (random() * 8f).toInt())
-//      }
+      }
     }
   }
 
