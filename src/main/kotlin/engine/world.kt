@@ -157,6 +157,9 @@ object world {
   internal fun internalX(x: Float): Int = if (x < 0) (WIDTH - floor(abs(x + 1) % WIDTH).toInt()) - 1 else floor(x % WIDTH).toInt()
   internal fun internalZ(z: Float): Int = if (z < 0) (DEPTH - floor(abs(z + 1) % DEPTH)).toInt() - 1 else floor(z % DEPTH).toInt()
 
+  internal fun internalX(x: Int): Int = internalX(x.toFloat())
+  internal fun internalZ(z: Int): Int = internalZ(z.toFloat())
+
   private fun calculateChunkPosition(pos: Vector3fc) = chunkPosition.set(toChunkX(pos.x()),toChunkZ(pos.z()))
   internal fun toChunkX(x: Float): Int = floor(x / WIDTH).toInt()
   internal fun toChunkZ(z: Float): Int = floor(z / DEPTH).toInt()
