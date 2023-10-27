@@ -445,8 +445,7 @@ object world {
       for (z in 0 until DEPTH) {
 
         //note: +0.5 because the output is -0.5 to 0.5
-        val calculatedNoise =
-          noise.getSimplex((x + (xOffset * WIDTH)).toFloat(), (z + (zOffset * DEPTH)).toFloat()) + 0.5f
+        val calculatedNoise = noise.getSimplex((x + (xOffset * WIDTH)).toFloat(), (z + (zOffset * DEPTH)).toFloat()) + 0.5f
 
         val height = ((calculatedNoise * biomeScale) + biomeBaseHeight).toInt()
 
@@ -1175,14 +1174,14 @@ object blockManipulator : Iterator<Int> {
     }
 
     fun finalize() {
-      minXChange = toChunkX(minXChange)
-      maxXChange = toChunkX(maxXChange)
+      minXChange = toChunkX(minXChange - 1)
+      maxXChange = toChunkX(maxXChange + 1)
 
-      minYChange = toYStack(minYChange)
-      maxYChange = toYStack(maxYChange)
+      minYChange = toYStack(clamp(0, 127, minYChange - 1))
+      maxYChange = toYStack(clamp(0, 127, maxYChange + 1))
 
-      minZChange = toChunkZ(minZChange)
-      maxZChange = toChunkZ(maxZChange)
+      minZChange = toChunkZ(minZChange - 1)
+      maxZChange = toChunkZ(maxZChange + 1)
     }
 
 
