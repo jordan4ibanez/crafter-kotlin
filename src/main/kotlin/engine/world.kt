@@ -1122,7 +1122,7 @@ object blockManipulator : Iterator<Int> {
     posCheck(pos.x(), pos.y(), pos.z())
     return data[posToIndex(pos.x(), pos.y(), pos.z())].getBlockLight()
   }
-  
+
 
   private fun indexCheck(index: Int) {
     if (index >= arraySize) throw RuntimeException("blockManipulator: Indexing out of bounds. $arraySize limit, tried $index")
@@ -1217,7 +1217,7 @@ object blockManipulator : Iterator<Int> {
     return return (posY * WORLD_Y_STRIDE) + (posZ * DEPTH) + posX
   }
 
-  private fun posToIndex(posX: Int, posY: Int, posZ: Int): Int {
+  fun posToIndex(posX: Int, posY: Int, posZ: Int): Int {
     // This x,y,z portion transforms the real position into a base 0 position.
     val x = posX - min.x()
     val y = posY - min.y()
@@ -1235,7 +1235,7 @@ object blockManipulator : Iterator<Int> {
   }
 
   fun indexToPos(index: Int): Vector3i {
-    return cachePos.set(index % size.x(),(index / yStride) % size.y(),(index / size.z()) % size.z())
+    return cachePos.set((index % size.x()) + min.x(),((index / yStride) % size.y()) + min.y(),((index / size.z()) % size.z()) + min.z())
   }
 
 
