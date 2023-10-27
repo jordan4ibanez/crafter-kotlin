@@ -1329,8 +1329,8 @@ object blockManipulator : Iterator<Int> {
   private fun internalX(x: Int): Int = internalX(x.toFloat())
   private fun internalZ(z: Int): Int = internalZ(z.toFloat())
 
-  private fun toChunkX(x: Float): Int = floor(x / world.WIDTH).toInt()
-  private fun toChunkZ(z: Float): Int = floor(z / world.DEPTH).toInt()
+  private fun toChunkX(x: Float): Int = floor(x / WIDTH).toInt()
+  private fun toChunkZ(z: Float): Int = floor(z / DEPTH).toInt()
   private fun toChunkX(x: Int): Int = toChunkX(x.toFloat())
   private fun toChunkZ(z: Int): Int = toChunkZ(z.toFloat())
 
