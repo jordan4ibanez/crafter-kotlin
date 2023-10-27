@@ -1,4 +1,5 @@
 import engine.*
+import engine.world.getBlockID
 import kotlinx.coroutines.*
 import org.joml.Math.random
 import org.joml.Math.toRadians
@@ -114,6 +115,13 @@ fun update(dtime: Float) {
         x + 1,y + 1, z + 1
       )
       blockManipulator.read()
+
+    blockManipulator.iterator().forEachIndexed { index, data ->
+      if (block.getName(data.getBlockID()) == "crafter:grass") {
+        val grassPos = blockManipulator.indexToPos(index)
+        grassPos.print("grass")
+      }
+    }
 
 //      println(2)
 //      block.getName(world.getBlockID(pos)).apply(::println)
