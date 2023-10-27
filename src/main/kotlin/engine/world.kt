@@ -1269,10 +1269,8 @@ object blockManipulator : Iterator<Int> {
   }
 
   private fun checkYAxis() {
-    when {
-      min.y() < 0 -> throw RuntimeException("blockManipulator: Y is less than 0.")
-      max.y() >= world.getChunkHeight() -> throw RuntimeException("blockManipulator: Y is greater than/equal to ${world.getChunkHeight() - 1}.")
-    }
+    min.y = clamp(0, HEIGHT - 1, min.y)
+    max.y = clamp(0, HEIGHT - 1, min.y)
   }
 
   private fun checkSizeValidity() {
