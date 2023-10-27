@@ -65,9 +65,10 @@ fun load() {
 var color = 0f
 var brighten = true
 var speed = 0.5f
+var xOffset = 0f
 
 // All general logic goes here. Consider this love.update()
-fun update(dtime: Float) {
+fun update(delta: Float) {
 
   camera.freeCam()
 
@@ -90,13 +91,13 @@ fun update(dtime: Float) {
   }
 
   if (brighten) {
-    color += dtime * speed
+    color += delta * speed
     if (color >= 1f) {
       color = 1f
       brighten = false
     }
   } else {
-    color -= dtime * speed
+    color -= delta * speed
     if (color <= 0f) {
       color = 0f
       brighten = true
