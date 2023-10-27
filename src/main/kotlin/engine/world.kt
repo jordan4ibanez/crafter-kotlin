@@ -1071,6 +1071,59 @@ object blockManipulator : Iterator<Int> {
   }
   fun setLight(pos: Vector3ic, light: Int) = setLight(pos.x(), pos.y(), pos.z(), light)
 
+  fun get(index: Int): Int {
+    indexCheck(index)
+    return data[index]
+  }
+  fun get(x: Int, y: Int, z: Int): Int {
+    posCheck(x,y,z)
+    return data[posToIndex(x,y,z)]
+  }
+  fun get(pos: Vector3ic): Int {
+    posCheck(pos.x(), pos.y(), pos.z())
+    return data[posToIndex(pos.x(), pos.y(), pos.z())]
+  }
+
+  fun getID(index: Int): Int {
+    indexCheck(index)
+    return data[index].getBlockID()
+  }
+  fun getID(x: Int, y: Int, z: Int): Int {
+    posCheck(x,y,z)
+    return data[posToIndex(x,y,z)].getBlockID()
+  }
+  fun getID(pos: Vector3ic): Int {
+    posCheck(pos.x(), pos.y(), pos.z())
+    return data[posToIndex(pos.x(), pos.y(), pos.z())].getBlockID()
+  }
+
+  fun getState(index: Int): Int {
+    indexCheck(index)
+    return data[index].getBlockState()
+  }
+  fun getState(x: Int, y: Int, z: Int): Int {
+    posCheck(x,y,z)
+    return data[posToIndex(x,y,z)].getBlockState()
+  }
+  fun getState(pos: Vector3ic): Int {
+    posCheck(pos.x(), pos.y(), pos.z())
+    return data[posToIndex(pos.x(), pos.y(), pos.z())].getBlockState()
+  }
+
+  fun getLight(index: Int): Int {
+    indexCheck(index)
+    return data[index].getBlockLight()
+  }
+  fun getLight(x: Int, y: Int, z: Int): Int {
+    posCheck(x,y,z)
+    return data[posToIndex(x,y,z)].getBlockLight()
+  }
+  fun getLight(pos: Vector3ic): Int {
+    posCheck(pos.x(), pos.y(), pos.z())
+    return data[posToIndex(pos.x(), pos.y(), pos.z())].getBlockLight()
+  }
+  
+
   private fun indexCheck(index: Int) {
     if (index >= arraySize) throw RuntimeException("blockManipulator: Indexing out of bounds. $arraySize limit, tried $index")
   }
