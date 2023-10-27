@@ -978,10 +978,10 @@ object blockManipulator : Iterator<Int> {
 
     skipSingleBlockWarning = false
 
-    return false
+    return read()
   }
 
-  fun read(): Boolean {
+  private fun read(): Boolean {
     var allLoaded = true
     val minChunkX = toChunkX(min.x())
     val maxChunkX = toChunkX(max.x())
