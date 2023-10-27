@@ -154,8 +154,8 @@ object world {
     calculateInternalPosition(pos)
   }
   private fun calculateInternalPosition(pos: Vector3fc) = internalPosition.set(internalX(floor(pos.x())),floor(pos.y()).toInt(),internalZ(floor(pos.z())))
-  private fun internalX(x: Float): Int = if (x < 0) (WIDTH - floor(abs(x + 1) % WIDTH).toInt()) - 1 else floor(x % WIDTH).toInt()
-  private fun internalZ(z: Float): Int = if (z < 0) (DEPTH - floor(abs(z + 1) % DEPTH)).toInt() - 1 else floor(z % DEPTH).toInt()
+  internal fun internalX(x: Float): Int = if (x < 0) (WIDTH - floor(abs(x + 1) % WIDTH).toInt()) - 1 else floor(x % WIDTH).toInt()
+  internal fun internalZ(z: Float): Int = if (z < 0) (DEPTH - floor(abs(z + 1) % DEPTH)).toInt() - 1 else floor(z % DEPTH).toInt()
 
   private fun calculateChunkPosition(pos: Vector3fc) = chunkPosition.set(toChunkX(pos.x()),toChunkZ(pos.z()))
   internal fun toChunkX(x: Float): Int = floor(x / WIDTH).toInt()
@@ -908,6 +908,8 @@ object blockManipulator {
   private val maxCache = Vector3i(0,0,0)
   private var skipSingleBlockWarning = false
   private val chunkPosCache = Vector2i()
+  private val cachePos = Vector3i()
+  private val internalPos = Vector3i()
 
 
   fun set(xMin: Int, yMin: Int, zMin: Int, xMax: Int, yMax: Int, zMax: Int) = set(minCache.set(xMin, yMin, zMin), maxCache.set(xMax, yMax, zMax))
@@ -945,24 +947,48 @@ object blockManipulator {
     val minChunkZ = world.toChunkZ(min.z().toFloat())
     val maxChunkZ = world.toChunkZ(max.z().toFloat())
 
+    val xRange = (minChunkX .. maxChunkX)
+    val zRange = (minChunkZ .. maxChunkZ)
+
     for (chunkX in minChunkX .. maxChunkX) {
       for (chunkZ in minChunkZ .. maxChunkZ) {
+
         if (!world.isLoaded(chunkX,chunkZ)) continue
+
         val gottenData = world.safetGetData(chunkX,chunkZ)
+        
+
+
 
         //fixme: This can be HEAVILY optimized.
         // Do a simple range check internal. (min/max .contains(x or z)
         // Instead of iterating over min to max, iterate the current chunk alone.
-        for (x in min.x() .. max.x()) {
-          if (chunkX != world.toChunkX(x.toFloat())) continue
-          for (z in min.z() .. max.z()) {
-           if (chunkZ != world.toChunkZ(z.toFloat())) continue
-
-          }
-        }
+//        for (x in min.x() .. max.x()) {
+//          if (chunkX != world.toChunkX(x.toFloat())) continue
+//          for (z in min.z() .. max.z()) {
+//           if (chunkZ != world.toChunkZ(z.toFloat())) continue
+//            for (y in min.y() .. min.y()) {
+//              data[posToIndex(x,y,z)] = gottenData[world.posToIndex(world.internalX(x.toFloat()), y, world.internalZ(z.toFloat()))]
+//            }
+//          }
+//        }
       }
     }
   }
+
+  fun posToIndex(posX: Int, posY: Int, posZ: Int): Int {
+    // This x,y,z portion transforms the real position into a base 0 position.
+    val x = posX - min.x()
+    val y = posY - min.y()
+    val z = posZ - min.z()
+
+    return (y * yStride) + (z * size.z()) + x
+  }
+
+  fun indexToPos(index: Int): Vector3i {
+    return cachePos.set(index % size.x(),(index / yStride) % size.y(),(index / size.z()) % size.z())
+  }
+
 
 //  private fun checkArea() {
 //    val minChunkX = world.toChunkX(min.x().toFloat())
