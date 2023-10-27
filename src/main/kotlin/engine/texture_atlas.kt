@@ -166,7 +166,8 @@ class Packer {
   }
 
   fun getIntegralPosition(fileName: String): Vector4ic {
-    return textures[fileName]!!.getPositionAndSize()
+    val gotten = textures[fileName] ?: throw RuntimeException("textureAtlas: $fileName does not exist.")
+    return gotten.getPositionAndSize()
   }
 
   fun getOpenGLPosition(fileName: String): Vector4fc {
