@@ -951,10 +951,13 @@ object blockManipulator {
     val zRange = (minChunkZ .. maxChunkZ)
     val yRange = (min.y() .. max.y())
 
-    for (chunkX in minChunkX .. maxChunkX) {
-      for (chunkZ in minChunkZ .. maxChunkZ) {
+    val chunkXRange = (minChunkX .. maxChunkX)
+    val chunkZRange = (minChunkZ .. maxChunkZ)
 
-        if (!world.isLoaded(chunkX,chunkZ)) continue
+    chunkXRange.forEach { chunkX ->
+      chunkZRange.forEach chunkIterator@ { chunkZ ->
+
+        if (!world.isLoaded(chunkX,chunkZ)) return@chunkIterator
 
         val gottenData = world.safetGetData(chunkX,chunkZ)
 
