@@ -992,14 +992,11 @@ object blockManipulator {
 
               //note: on a 3x3x3 BM test 0 indexed, 26 is the max.
               // "you hit my battleship" or, in this case, the end of the array.
-              if (posToIndex(x,y,z) == 26) {
-                println("HIT")
-              } else if (posToIndex(x,y,z) == 27) throw RuntimeException("OOPS")
-              try {
-                data[posToIndex(x, y, z)] = gottenData[world.posToIndex(world.internalX(x), y, world.internalZ(z))]
-              } catch (e: Exception) {
-                throw RuntimeException("crashed: $x, $y, $z")
-              }
+//              if (posToIndex(x,y,z) == 26) {
+//                println("HIT")
+//              } else if (posToIndex(x,y,z) == 27) throw RuntimeException("OOPS")
+
+              data[posToIndex(x, y, z)] = gottenData[world.posToIndex(world.internalX(x), y, world.internalZ(z))]
             }
           }
         }
