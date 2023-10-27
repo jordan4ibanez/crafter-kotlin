@@ -949,6 +949,7 @@ object blockManipulator {
 
     val xRange = (minChunkX .. maxChunkX)
     val zRange = (minChunkZ .. maxChunkZ)
+    val yRange = (min.y() .. max.y())
 
     for (chunkX in minChunkX .. maxChunkX) {
       for (chunkZ in minChunkZ .. maxChunkZ) {
@@ -965,7 +966,7 @@ object blockManipulator {
           if (chunkX != world.toChunkX(x.toFloat())) return@xIterator
           zRange.forEach zIterator@ { z ->
            if (chunkZ != world.toChunkZ(z.toFloat())) return@zIterator
-            for (y in min.y() .. min.y()) {
+            yRange.forEach { y ->
               data[posToIndex(x,y,z)] = gottenData[world.posToIndex(world.internalX(x.toFloat()), y, world.internalZ(z.toFloat()))]
             }
           }
