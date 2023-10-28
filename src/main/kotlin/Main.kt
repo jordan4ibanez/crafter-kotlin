@@ -107,36 +107,37 @@ fun update(delta: Float) {
   }
   window.setClearColor(color)
 
-  if (entity.hasPlayer("singleplayer")) {
-//    println(1)
-    val pos = entity.getPlayer("singleplayer").getPosition()
-      val (x,y,z) = pos.destructure()
-      if (blockManipulator.set(
-          -32f, 0f, -32f,
-          31f, 127f, 31f)) {
-        //? note: ocean version
-
-        val waterID = block.getID("crafter:water")
-        val airID = block.getID("air")
-        val dirtID = block.getID("crafter:sand")
-        val waveSpeed = 60.0f
-        xOffset += delta * waveSpeed
-
-        for (bx in -32 .. 31) {
-          for (bz in -32 .. 31) {
-            val calculatedNoise = noisey.getSimplex(bx + xOffset, bz.toFloat()) + 0.5f
-            val height = ((calculatedNoise * 13.0f) + 80).toInt()
-            for (by in 0 until 127) {
-              if (by in 90..<height) {
-                blockManipulator.setID(bx, by, bz, dirtID)
-              } else if (by < height) {
-                blockManipulator.setID(bx, by, bz, waterID)
-              } else {
-                blockManipulator.setID(bx, by, bz, airID)
-              }
-            }
-          }
-        }
+//  if (entity.hasPlayer("singleplayer")) {
+////    println(1)
+//    val pos = entity.getPlayer("singleplayer").getPosition()
+//    val (x,y,z) = pos.destructure()
+//    if (blockManipulator.set(
+//        -32f, 0f, -32f,
+//        31f, 127f, 31f)) {
+//        //? note: ocean version
+//
+//
+//      val waterID = block.getID("crafter:water")
+//      val airID = block.getID("air")
+//      val dirtID = block.getID("crafter:sand")
+//      val waveSpeed = 60.0f
+//      xOffset += delta * waveSpeed
+//
+//      for (bx in -32 .. 31) {
+//        for (bz in -32 .. 31) {
+//          val calculatedNoise = noisey.getSimplex(bx + xOffset, bz.toFloat()) + 0.5f
+//          val height = ((calculatedNoise * 13.0f) + 80).toInt()
+//          for (by in 0 until 127) {
+//            if (by in 90..<height) {
+//              blockManipulator.setID(bx, by, bz, dirtID)
+//            } else if (by < height) {
+//              blockManipulator.setID(bx, by, bz, waterID)
+//            } else {
+//              blockManipulator.setID(bx, by, bz, airID)
+//            }
+//          }
+//        }
+//      }
 
         //?note: groovy version
 //        val grassID = block.getID("crafter:grass")
@@ -156,8 +157,8 @@ fun update(delta: Float) {
 //          }
 //          index++
 //        }
-        blockManipulator.write()
-      }
+//      blockManipulator.write()
+//    }
 
 //      println(2)
 //      block.getName(world.getBlockID(pos)).apply(::println)
@@ -165,7 +166,7 @@ fun update(delta: Float) {
 //        world.setBlockID(x,y+it,z, (random() * 8f).toInt())
 
 //    }
-  }
+//  }
 
 //  println(color)
 
