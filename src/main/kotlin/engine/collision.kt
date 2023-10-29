@@ -56,9 +56,10 @@ object collision {
     // This will auto return in the future.
 
     // If this entity exists in an area that's unloaded, freeze.
+    calculateMapRegion(size)
     if (!blockManipulator.set(
-      pos.x() - size.x(), pos.y(), pos.z() - size.x(),
-      pos.x() + size.x(), pos.y() + size.y(), pos.z() + size.x())) return
+      min,
+      max)) return
 
 
     blockManipulator.forEach {
@@ -75,7 +76,27 @@ object collision {
   private fun outOfMap(yMin: Float, yMax: Float): Boolean = yMin >= WORLD_Y_MAX || yMax < WORLD_Y_MIN
 
   private fun calculateMapRegion(size: Vector2fc) {
-
+    if (velocity.x() <= 0) {
+      min.x = pos.x - size.x()
+      max.x = oldPos.x + size.x()
+    } else {
+      min.x = oldPos.x - size.x()
+      max.x = pos.x + size.x()
+    }
+    if (velocity.y() <= 0) {
+      min.y = pos.y
+      max.y = oldPos.y + size.y()
+    } else {
+      min.y = oldPos.y
+      max.y = pos.y + size.y()
+    }
+    if (velocity.z() <= 0) {
+      min.z = pos.z - size.x()
+      max.z = oldPos.z + size.x()
+    } else {
+      min.z = oldPos.z - size.x()
+      max.z = pos.z + size.x()
+    }
   }
 
 
