@@ -26,6 +26,9 @@ object collision {
 
   internal fun collideEntityToWorld(entity: GroovyEntity) {
 
+    // Thanks luatic!
+    // https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/
+
     val size = entity.getSize()
     pos.set(entity.getPosition())
     velocity.set(entity.getVelocity())
