@@ -56,6 +56,9 @@ fun load() {
 
 //  window.maximize()
   stone = block.getID("crafter:stone")
+
+  clientPlayer.initialize()
+  clientPlayer.setPosition(clientPlayer.getPosition())
 }
 
 
@@ -74,7 +77,9 @@ fun update(delta: Float) {
 //  noisey.setNoiseType(NoiseType.Simplex)
 //  noisey.setFrequency(0.01f)
 
-  camera.freeCam()
+//  camera.freeCam()
+
+  camera.doMouseInputCameraRotation()
 
   if (keyboard.isDown(GLFW_KEY_ESCAPE)){
    window.close()
@@ -112,6 +117,7 @@ fun update(delta: Float) {
 
 // Consider this pure logic updates. onTick, collision, etc. For real time things, put them in update().
 fun tick(delta: Float) {
+
   // Global tick.
   api.doOnTick(delta)
   // Entity specific tick.
