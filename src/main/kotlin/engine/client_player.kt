@@ -39,7 +39,7 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
   override fun onTick(delta: Float) {
     super.onTick(delta)
     camera.setPosition(position.x(), position.y() + eyeHeight, + position.z())
-    position.print("clientplayer")
+//    position.print("clientplayer")
   }
 
 }

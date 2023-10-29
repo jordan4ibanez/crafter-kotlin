@@ -11,6 +11,7 @@ import kotlin.collections.HashMap
 open class PointEntity {
 
   val position = Vector3f()
+  private val velocity = Vector3f()
   var meshID = 0
 
   constructor(pos: Vector3fc) {
@@ -20,6 +21,11 @@ open class PointEntity {
   fun getPosition(): Vector3fc = position
   open fun setPosition(newPosition: Vector3fc) {
     position.set(newPosition)
+  }
+
+  fun getVelocity(): Vector3fc = velocity
+  open fun setVelocity(newVelocity: Vector3fc) {
+    velocity.set(newVelocity)
   }
   
   open fun onTick(delta: Float) {}
@@ -35,7 +41,6 @@ open class GroovyEntity : PointEntity {
   val uuid = UUID.randomUUID().toString()
   private val size = Vector2f(1f,1f)
   private val rotation = Vector3f()
-  private val velocity = Vector3f()
 
   fun drawCollisionBox() {
     collisionBox.draw(position, size)
@@ -49,11 +54,6 @@ open class GroovyEntity : PointEntity {
   fun getRotation(): Vector3fc = rotation
   open fun setRotation(newRotation: Vector3fc) {
     rotation.set(newRotation)
-  }
-
-  fun getVelocity(): Vector3fc = velocity
-  open fun setVelocity(newVelocity: Vector3fc) {
-    velocity.set(newVelocity)
   }
 
   constructor(pos: Vector3fc) : super(pos)

@@ -1,22 +1,26 @@
 package engine
 
 import org.joml.FrustumIntersection
+import org.joml.Math.abs
+import org.joml.Math.ceil
 import org.joml.Matrix4f
 import org.joml.Vector3f
 
 object collision {
+  private const val MAX_SPEED = 10f
+  private const val WORLD_Y_MAX = world.HEIGHT
+  private const val WORLD_Y_MIN = 0
+  private const val MAX_MOVEMENT_PER_LOOP = 0.2f
   private val chunkMatrix = Matrix4f()
   private val workerMatrix = Matrix4f()
   private val intersection = FrustumIntersection()
   private val min = Vector3f()
   private val max = Vector3f()
-  private val gravity = world.getGravity()
+  private val gravity = world.getGravity() / 100f
   private val pos = Vector3f()
   private val oldPos = Vector3f()
   private val velocity = Vector3f()
-  private const val MAX_SPEED = 1f
-  private const val WORLD_Y_MAX = world.HEIGHT
-  private const val WORLD_Y_MIN = 0
+  private val oldVelocity = Vector3f()
 
   //? note: Entity collision.
 
@@ -27,21 +31,39 @@ object collision {
     velocity.set(entity.getVelocity())
 
     oldPos.set(pos)
+    oldVelocity.set(velocity)
 
-    // gravity
+    // Gravity.
     velocity.y -= gravity
+
+    // Limit the speed to X blocks per tick.
+    if (velocity.length() > MAX_SPEED) {
+      velocity.normalize().mul(MAX_SPEED)
+    }
+
+    // todo: If collision occurs, break loop. Set velocity on axis hit. Done.
+
+    // Now we need to figure out how many loops we need to do
+    val loops = ceil(velocity.length() / 1f).toInt()
+    val remainder = velocity.length() % 1f
+
+    println("loops: $loops remainder: $remainder")
 
     pos.add(velocity)
 
-    if (velocity.length() > MAX_SPEED) velocity.normalize().mul(MAX_SPEED)
+//    println("vel vel ${velocity.length()}")
+//    println(velocity.y)
 
     // Player has fallen/jumped/flown out of the map no need to detect against blocks.
-    if (outOfMap(pos.y, pos.y + size.y())) return
+    if (outOfMap(pos.y, pos.y + size.y())) {
+
+      entity.setVelocity(velocity)
+      entity.setPosition(pos)
+      return
+    }
 
     //todo: if the player's top position is below 0 or the player's bottom position is equal to or greater than 128 only do movement, no collision
     // This will auto return in the future.
-
-
 
     // If this entity exists in an area that's unloaded, freeze.
     if (!blockManipulator.set(
@@ -49,11 +71,12 @@ object collision {
       pos.x() + size.x(), pos.y() + size.y(), pos.z() + size.x())) return
 
 
-
-
     blockManipulator.forEach {
 
     }
+
+    entity.setVelocity(velocity)
+    entity.setPosition(pos)
   }
 
   fun outOfMap(yMin: Float, yMax: Float): Boolean = yMin >= WORLD_Y_MAX || yMax < WORLD_Y_MIN
