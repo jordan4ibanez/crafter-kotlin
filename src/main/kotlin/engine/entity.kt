@@ -135,7 +135,7 @@ object entity {
 
   fun doOnTick(delta: Float) {
     generics.forEach { (key, obj) ->
-      collision.collideEntityToWorld(obj, delta)
+      collision.collideEntityToWorld(obj)
       // todo: collision result can be set from collide entity to entities
       obj.onTick(delta)
     }

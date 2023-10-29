@@ -70,6 +70,8 @@ var speed = 0.5f
 // All general logic goes here. Consider this love.update()
 fun update(delta: Float) {
 
+  collision.accumulate(delta)
+
   // Global tick.
   api.doOnTick(delta)
   // Entity specific tick.
