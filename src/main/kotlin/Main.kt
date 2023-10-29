@@ -168,15 +168,16 @@ fun quit() {
 
 
 // Warning: gameLoop really should not be touched. Focus on the infrastructure around it before adding to it.
-tailrec suspend fun gameLoop() {
+tailrec fun gameLoop() {
 
   window.update()
 
-  launchAllThreads()
-
   val delta = getDelta()
 
-  if (tick.think(delta)) tick(delta)
+  if (tick.think(delta)) {
+    tick(delta)
+    launchAllThreads()
+  }
 
   update(delta)
 
@@ -205,20 +206,3 @@ fun main(args: Array<String>) = runBlocking {
 
 }
 
-private val blah = ConcurrentLinkedDeque<Int>()
-
-@OptIn(DelicateCoroutinesApi::class)
-suspend fun blah() {
-  coroutineScope {
-    repeat(2) { threadID ->
-      println("threadID: $threadID")
-      GlobalScope.launch {
-        if (threadID == 5) {
-          println("all done.")
-        } else {
-          blah.add((random() * 100).toInt())
-        }
-      }
-    }
-  }
-}
