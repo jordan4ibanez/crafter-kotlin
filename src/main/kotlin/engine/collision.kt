@@ -14,6 +14,9 @@ object collision {
   private val pos = Vector3f()
   private val oldPos = Vector3f()
   private val velocity = Vector3f()
+  private const val MAX_SPEED = 1f
+  private const val WORLD_Y_MAX = world.HEIGHT
+  private const val WORLD_Y_MIN = 0
 
   //? note: Entity collision.
 
@@ -23,19 +26,20 @@ object collision {
     pos.set(entity.getPosition())
     velocity.set(entity.getVelocity())
 
-    // todo: make this an accumulative function in the future.
+    oldPos.set(pos)
+    pos.add(velocity)
+    if (velocity.length() > MAX_SPEED) velocity.normalize().mul(MAX_SPEED)
 
-    // I know JOML has functions to do this, I want this to be explicit for debugging.
-    pos.set(
-      pos.x + velocity.x,
-      pos.y + velocity.y,
-      pos.z + velocity.z
-    )
+    // Player has fallen/jumped/flown out of the map no need to detect against blocks.
+    if (outOfMap(pos.y, pos.y + size.y())) return
 
     //todo: if the player's top position is below 0 or the player's bottom position is equal to or greater than 128 only do movement, no collision
     // This will auto return in the future.
 
-    oldPos.set(pos)
+
+
+    // gravity
+
 
     // If this entity exists in an area that's unloaded, freeze.
     if (!blockManipulator.set(
@@ -49,6 +53,8 @@ object collision {
 
     }
   }
+
+  fun outOfMap(yMin: Float, yMax: Float): Boolean = yMin >= WORLD_Y_MAX || yMax < WORLD_Y_MIN
 
 
 
