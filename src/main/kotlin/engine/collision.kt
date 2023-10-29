@@ -1,7 +1,6 @@
 package engine
 
 import org.joml.FrustumIntersection
-import org.joml.Math.random
 import org.joml.Matrix4f
 import org.joml.Vector3f
 
@@ -12,27 +11,14 @@ object collision {
   private val min = Vector3f()
   private val max = Vector3f()
   private val gravity = world.getGravity()
-  private var accumulator = 0f
-  private var tick = false
-  private const val TICK_GOAL = 20
-  private const val TICK_DELTA = 1f / TICK_GOAL.toFloat()
+  private const val TICK_DELTA = tick.DELTA
   private val pos = Vector3f()
   private val oldPos = Vector3f()
   private val velocity = Vector3f()
 
   //? note: Entity collision.
-  internal fun accumulate(delta: Float) {
-    tick = false
-    accumulator += delta
-    if (accumulator >= TICK_DELTA) {
-      tick = true
-      accumulator -= TICK_DELTA
-    }
-  }
 
   internal fun collideEntityToWorld(entity: GroovyEntity) {
-
-    if (!tick) return
 
     val size = entity.getSize()
     pos.set(entity.getPosition())
