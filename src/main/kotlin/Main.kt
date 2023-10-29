@@ -114,23 +114,8 @@ fun update(delta: Float) {
     }
   }
   window.setClearColor(color)
-
-
-
-
 }
 
-//fun regenerateWorldAtlas() {
-//
-//  worldAtlas.clear()
-//  worldAtlas.add("1", "./textures/debug.png")
-//  worldAtlas.add("blah", "./textures/text_box.png")
-//  worldAtlas.add("fkalj", "./textures/test_thing.png")
-//
-//  texture.destroy("debug")
-//  texture.create("debug", worldAtlas.flush(), worldAtlas.getSize(), worldAtlas.getChannels())
-//  mesh.swapTexture("debug", "debug")
-//}
 
 
 
