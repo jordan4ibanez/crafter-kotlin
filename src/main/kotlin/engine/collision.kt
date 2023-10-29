@@ -1,5 +1,6 @@
 package engine
 
+import engine.world.getBlockID
 import org.joml.FrustumIntersection
 import org.joml.Math.abs
 import org.joml.Math.ceil
@@ -10,7 +11,6 @@ object collision {
   private const val MAX_SPEED = 10f
   private const val WORLD_Y_MAX = world.HEIGHT
   private const val WORLD_Y_MIN = 0
-  private const val MAX_MOVEMENT_PER_LOOP = 0.2f
   private val chunkMatrix = Matrix4f()
   private val workerMatrix = Matrix4f()
   private val intersection = FrustumIntersection()
@@ -44,18 +44,7 @@ object collision {
       velocity.normalize().mul(MAX_SPEED)
     }
 
-    // todo: If collision occurs, break loop. Set velocity on axis hit. Done.
-
-    // Now we need to figure out how many loops we need to do
-    val loops = ceil(velocity.length() / 1f).toInt()
-    val remainder = velocity.length() % 1f
-
-    println("loops: $loops remainder: $remainder")
-
     pos.add(velocity)
-
-//    println("vel vel ${velocity.length()}")
-//    println(velocity.y)
 
     // Player has fallen/jumped/flown out of the map no need to detect against blocks.
     if (outOfMap(pos.y, pos.y + size.y())) {
@@ -75,7 +64,10 @@ object collision {
 
 
     blockManipulator.forEach {
-
+      val id = it.getBlockID()
+      if (block.isWalkable(id)) {
+        println(block.getName(id))
+      }
     }
 
     entity.setVelocity(velocity)
