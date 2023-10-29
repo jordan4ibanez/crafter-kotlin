@@ -57,15 +57,14 @@ object collision {
 
     // If this entity exists in an area that's unloaded, freeze.
     calculateMapRegion(size)
-    if (!blockManipulator.set(
-      min,
-      max)) return
+    if (!blockManipulator.set(min, max)) return
 
 
     blockManipulator.forEach {
       val id = it.getBlockID()
       if (block.isWalkable(id)) {
         println(block.getName(id))
+        velocity.y = 0.5f
       }
     }
 
