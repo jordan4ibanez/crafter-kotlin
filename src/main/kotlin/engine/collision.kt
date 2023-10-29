@@ -13,15 +13,37 @@ object collision {
   private val max = Vector3f()
   private val gravity = world.getGravity()
   private var accumulator = 0f
+  private var tick = false
+  private const val tickGoal = 20
+  private const val tickTime = 1f / tickGoal.toFloat()
+  private val pos = Vector3f()
   private val oldPos = Vector3f()
+  private val velocity = Vector3f()
 
   //? note: Entity collision.
+  internal fun accumulate(delta: Float) {
+    accumulator += delta
+    if (accumulator >= tickTime) {
+      tick = true
+      accumulator -= tickTime
+    }
+  }
+
+  internal fun tick(): Boolean = tick
 
   internal fun collideEntityToWorld(entity: GroovyEntity, delta: Float) {
     val size = entity.getSize()
-    val pos = entity.getPosition()
-    val velocity = entity.getVelocity()
+    pos.set(entity.getPosition())
+    velocity.set(entity.getVelocity())
 
+    // todo: make this an accumulative function in the future.
+
+    // I know JOML has functions to do this, I want this to be explicit for debugging.
+    pos.set(
+      pos.x + (velocity.x * delta),
+      pos.y + (velocity.y * delta),
+      pos.z + (velocity.z * delta)
+    )
 
     //todo: if the player's top position is below 0 or the player's bottom position is equal to or greater than 128 only do movement, no collision
     // This will auto return in the future.
@@ -39,8 +61,6 @@ object collision {
     blockManipulator.forEach {
 
     }
-
-
   }
 
 
