@@ -64,16 +64,20 @@ fun load() {
 var color = 0f
 var brighten = true
 var speed = 0.5f
-var xOffset = 0f
-val noisey = Noise(123456)
+//var xOffset = 0f
+//val noisey = Noise(123456)
 
 // All general logic goes here. Consider this love.update()
 fun update(delta: Float) {
 
+  // Global tick.
   api.doOnTick(delta)
+  // Entity specific tick.
+  entity.doOnTick(delta)
 
-  noisey.setNoiseType(NoiseType.Simplex)
-  noisey.setFrequency(0.01f)
+
+//  noisey.setNoiseType(NoiseType.Simplex)
+//  noisey.setFrequency(0.01f)
 
   camera.freeCam()
 
