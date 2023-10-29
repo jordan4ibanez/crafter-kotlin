@@ -108,8 +108,6 @@ open class Player : Mob {
   override val classifier = "player"
   var name: String
 
-
-
   constructor(pos: Vector3fc, name: String) : super(pos) {
     this.name = name
     setSize(Vector2f(0.3f, 1.8f))
@@ -135,9 +133,10 @@ object entity {
   // Specialty
   private val particles = HashMap<String, Particle>()
 
-  fun onTick() {
-    val delta = getDelta()
+  fun doOnTick(delta: Float) {
     generics.forEach { (key, obj) ->
+      collision.collideEntityToWorld(obj, delta)
+      // todo: collision result can be set from collide entity to entities
       obj.onTick(delta)
     }
   }
