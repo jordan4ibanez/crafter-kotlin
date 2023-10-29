@@ -35,6 +35,9 @@ object api {
 
   fun registerOnTick(function: (delta: Float) -> Nothing) = onTick.add(function)
 
+  internal fun doOnTick(delta: Float) = onTick.forEach { it(delta) }
+
+
   //? note: API initialization internals.
 
   fun initialize() {

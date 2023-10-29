@@ -69,6 +69,9 @@ val noisey = Noise(123456)
 
 // All general logic goes here. Consider this love.update()
 fun update(delta: Float) {
+
+  api.doOnTick(delta)
+
   noisey.setNoiseType(NoiseType.Simplex)
   noisey.setFrequency(0.01f)
 
