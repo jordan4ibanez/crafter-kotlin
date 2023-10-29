@@ -8,4 +8,10 @@ final api = api.INSTANCE
 println("Crafter API is feeling pretty groovy. 8)")
 
 // Air is registered here.
-block.register("air", "air", api.stringArrayOf("air.png","air.png","air.png","air.png","air.png","air.png"), DrawType.AIR)
+block.register(
+  name = "air",
+  inventoryName = "air",
+  textures = api.stringArrayOf("air.png","air.png","air.png","air.png","air.png","air.png"),
+  drawtype = DrawType.AIR
+)
+block.setWalkable("air", false)
