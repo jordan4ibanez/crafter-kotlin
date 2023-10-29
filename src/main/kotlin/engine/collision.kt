@@ -12,7 +12,22 @@ object collision {
   private val max = Vector3f()
   private val gravity = world.getGravity()
 
-  // Camera collision
+  //? note: Entity collision.
+  
+  internal fun collideEntityToWorld(entity: GroovyEntity) {
+    val size = entity.getSize()
+    val pos = entity.getPosition()
+    val velocity = entity.getVelocity()
+
+
+  }
+
+
+
+
+
+
+  //? note: Camera collision.
 
   internal fun chunkMeshWithinFrustum(x: Float, y: Float, z: Float): Boolean {
     updateChunkMatrix(x,y,z)
