@@ -27,7 +27,12 @@ object collision {
     velocity.set(entity.getVelocity())
 
     oldPos.set(pos)
+
+    // gravity
+    velocity.y -= gravity
+
     pos.add(velocity)
+
     if (velocity.length() > MAX_SPEED) velocity.normalize().mul(MAX_SPEED)
 
     // Player has fallen/jumped/flown out of the map no need to detect against blocks.
@@ -36,9 +41,6 @@ object collision {
     //todo: if the player's top position is below 0 or the player's bottom position is equal to or greater than 128 only do movement, no collision
     // This will auto return in the future.
 
-
-
-    // gravity
 
 
     // If this entity exists in an area that's unloaded, freeze.
