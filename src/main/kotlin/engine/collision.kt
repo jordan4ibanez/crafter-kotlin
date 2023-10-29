@@ -22,12 +22,18 @@ object collision {
     val pos = entity.getPosition()
     val velocity = entity.getVelocity()
 
+
+    //todo: if the player's top position is below 0 or the player's bottom position is equal to or greater than 128 only do movement, no collision
+    // This will auto return in the future.
+
+    oldPos.set(pos)
+
     // If this entity exists in an area that's unloaded, freeze.
     if (!blockManipulator.set(
       pos.x() - size.x(), pos.y(), pos.z() - size.x(),
       pos.x() + size.x(), pos.y() + size.y(), pos.z() + size.x())) return
 
-    oldPos.set(pos)
+
 
 
     blockManipulator.forEach {
