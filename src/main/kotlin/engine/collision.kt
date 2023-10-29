@@ -1,11 +1,9 @@
 package engine
 
 import engine.world.getBlockID
-import org.joml.FrustumIntersection
+import org.joml.*
 import org.joml.Math.abs
 import org.joml.Math.ceil
-import org.joml.Matrix4f
-import org.joml.Vector3f
 
 object collision {
   private const val MAX_SPEED = 10f
@@ -75,6 +73,10 @@ object collision {
   }
 
   private fun outOfMap(yMin: Float, yMax: Float): Boolean = yMin >= WORLD_Y_MAX || yMax < WORLD_Y_MIN
+
+  private fun calculateMapRegion(size: Vector2fc) {
+
+  }
 
 
 
