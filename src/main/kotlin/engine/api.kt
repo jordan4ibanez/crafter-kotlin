@@ -14,12 +14,6 @@ object api {
   private val sharedData = Binding()
   val engine = GroovyScriptEngine("./mods/")
 
-//  fun initialize() {
-//
-//    engine.run("crafter/main.groovy", sharedData)
-////    val result = engine.eval(script)
-////    println("the result of $script is $result")
-//  }
 
 //  note: val for now, var when main menu gets put it so it can be reloaded. Or maybe not. We'll see.
 
@@ -33,8 +27,15 @@ object api {
   /**Holds the folder directory literal*/
   private var currentDirectoryLiteral = ""
 
-  // One day.
-//  private val tsCompiler = something
+  /** API elements do what they say on the tin*/
+  private val onTick = ArrayList<(delta: Float) -> Unit>()
+
+
+  //? note: Groovy modding api.
+
+  fun registerOnTick(function: (delta: Float) -> Nothing) = onTick.add(function)
+
+  //? note: API initialization internals.
 
   fun initialize() {
 
@@ -123,4 +124,6 @@ object api {
   fun stringArrayOf(vararg args: String): Array<String> {
     return arrayOf(*args)
   }
+
+
 }
