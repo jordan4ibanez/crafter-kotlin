@@ -936,7 +936,7 @@ object blockManipulator : Iterator<Int> {
 
 
 
-
+  fun set(newMin: Vector3fc, newMax: Vector3fc) = set(floor(newMin.x()).toInt(),floor(newMin.y()).toInt(),floor(newMin.z()).toInt(), floor(newMax.x()).toInt(),floor(newMax.y()).toInt(),floor(newMax.z()).toInt())
   fun set(xMin: Float, yMin: Float, zMin: Float, xMax: Float, yMax: Float, zMax: Float): Boolean = set(minCache.set(floor(xMin).toInt(), floor(yMin).toInt(), floor(zMin).toInt()), maxCache.set(floor(xMax).toInt(), floor(yMax).toInt(), floor(zMax).toInt()))
   fun set(xMin: Int, yMin: Int, zMin: Int, xMax: Int, yMax: Int, zMax: Int): Boolean = set(minCache.set(xMin, yMin, zMin), maxCache.set(xMax, yMax, zMax))
   fun set(newMin: Vector3ic, newMax: Vector3ic): Boolean {
