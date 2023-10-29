@@ -1,0 +1,62 @@
+//  if (entity.hasPlayer("singleplayer")) {
+////    println(1)
+//    val pos = entity.getPlayer("singleplayer").getPosition()
+//    val (x,y,z) = pos.destructure()
+//    if (blockManipulator.set(
+//        -32f, 0f, -32f,
+//        31f, 127f, 31f)) {
+//        //? note: ocean version
+//
+//
+//      val waterID = block.getID("crafter:water")
+//      val airID = block.getID("air")
+//      val dirtID = block.getID("crafter:sand")
+//      val waveSpeed = 60.0f
+//      xOffset += delta * waveSpeed
+//
+//      for (bx in -32 .. 31) {
+//        for (bz in -32 .. 31) {
+//          val calculatedNoise = noisey.getSimplex(bx + xOffset, bz.toFloat()) + 0.5f
+//          val height = ((calculatedNoise * 13.0f) + 80).toInt()
+//          for (by in 0 until 127) {
+//            if (by in 90..<height) {
+//              blockManipulator.setID(bx, by, bz, dirtID)
+//            } else if (by < height) {
+//              blockManipulator.setID(bx, by, bz, waterID)
+//            } else {
+//              blockManipulator.setID(bx, by, bz, airID)
+//            }
+//          }
+//        }
+//      }
+
+        //?note: groovy version
+//        val grassID = block.getID("crafter:grass")
+//        val airID = block.getID("air")
+//        val waveSpeed = 10.0f
+//        xOffset += delta * waveSpeed
+//        var index = 0
+//        blockManipulator.forEach { data ->
+//          val (bx,by,bz) = blockManipulator.indexToPos(index).destructure()
+//          if (blockManipulator.inBounds(bx,by + 1,bz)) {
+//            if (data.getBlockID() != airID && blockManipulator.getID(bx,by + 1,bz) == airID) {
+//
+//              val newID = clamp(1, 8, ((noisey.getSimplex(bx.toFloat() + xOffset, 0f, bz.toFloat()) + 1f) * 9f).toInt())
+//
+//                blockManipulator.setID(index, newID)
+//              }
+//          }
+//          index++
+//        }
+//      blockManipulator.write()
+//    }
+
+//      println(2)
+//      block.getName(world.getBlockID(pos)).apply(::println)
+//      (0..3).forEach {
+//        world.setBlockID(x,y+it,z, (random() * 8f).toInt())
+
+//    }
+//  }
+
+//  println(color)
