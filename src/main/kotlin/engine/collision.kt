@@ -11,7 +11,6 @@ object collision {
   private val min = Vector3f()
   private val max = Vector3f()
   private val gravity = world.getGravity()
-  private const val TICK_DELTA = tick.DELTA
   private val pos = Vector3f()
   private val oldPos = Vector3f()
   private val velocity = Vector3f()
@@ -28,9 +27,9 @@ object collision {
 
     // I know JOML has functions to do this, I want this to be explicit for debugging.
     pos.set(
-      pos.x + (velocity.x * TICK_DELTA),
-      pos.y + (velocity.y * TICK_DELTA),
-      pos.z + (velocity.z * TICK_DELTA)
+      pos.x + velocity.x,
+      pos.y + velocity.y,
+      pos.z + velocity.z
     )
 
     //todo: if the player's top position is below 0 or the player's bottom position is equal to or greater than 128 only do movement, no collision
