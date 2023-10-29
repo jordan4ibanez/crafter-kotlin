@@ -60,3 +60,21 @@
 //  }
 
 //  println(color)
+
+private val blah = ConcurrentLinkedDeque<Int>()
+
+@OptIn(DelicateCoroutinesApi::class)
+suspend fun blah() {
+  coroutineScope {
+    repeat(2) { threadID ->
+      println("threadID: $threadID")
+      GlobalScope.launch {
+        if (threadID == 5) {
+          println("all done.")
+        } else {
+          blah.add((random() * 100).toInt())
+        }
+      }
+    }
+  }
+}
