@@ -70,12 +70,6 @@ var speed = 0.5f
 // All general logic goes here. Consider this love.update()
 fun update(delta: Float) {
 
-  if (tick.think(delta)) {
-    // Global tick.
-    api.doOnTick(delta)
-    // Entity specific tick.
-    entity.doOnTick(delta)
-  }
 
 //  noisey.setNoiseType(NoiseType.Simplex)
 //  noisey.setFrequency(0.01f)
@@ -116,6 +110,14 @@ fun update(delta: Float) {
   window.setClearColor(color)
 }
 
+// Consider this pure logic updates. onTick, collision, etc. For real time things, put them in update().
+fun tick(delta: Float) {
+  // Global tick.
+  api.doOnTick(delta)
+  // Entity specific tick.
+  entity.doOnTick(delta)
+
+}
 
 
 
@@ -172,7 +174,11 @@ tailrec suspend fun gameLoop() {
 
   launchAllThreads()
 
-  update(getDelta())
+  val delta = getDelta()
+
+  if (tick.think(delta)) tick(delta)
+
+  update(delta)
 
   draw()
 
