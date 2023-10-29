@@ -113,6 +113,9 @@ object camera {
 
   fun getRenderDistance(): Int = renderDistance
 
+  fun setPosition(x: Float, y: Float, z: Float) {
+    position.set(x,y,z)
+  }
   fun setPosition(newPosition: Vector3fc) {
     position.set(newPosition)
   }
@@ -120,7 +123,7 @@ object camera {
   fun getPosition(): Vector3fc = position
   fun yawToLeft(yaw: Float): Float = yaw - (PI / 2F).toFloat()
 
-  private fun doMouseInputCameraRotation() {
+  internal fun doMouseInputCameraRotation() {
     val mouseDelta = mouse.getDelta()
     cameraDelta.set(mouseDelta.y(), mouseDelta.x(), 0f).mul(sensitivity)
     rotation.add(cameraDelta, newCameraRotation)
@@ -133,7 +136,7 @@ object camera {
 
     val cameraSpeed = 50f
 
-    doMouseInputCameraRotation()
+//    doMouseInputCameraRotation()
 
     inputMovement.zero()
 
@@ -162,8 +165,8 @@ object camera {
     val cameraPosition = getPosition()
     cameraPosition.add(finalCameraMovement, newCameraPosition)
 
-    setPosition(newCameraPosition)
-    newCameraPosition.y -= clientPlayer.eyeHeight
-    clientPlayer.setPosition(newCameraPosition)
+//    setPosition(newCameraPosition)
+//    newCameraPosition.y -= clientPlayer.eyeHeight
+//    clientPlayer.setPosition(newCameraPosition)
   }
 }
