@@ -1,9 +1,9 @@
 package engine
 
 import org.joml.FrustumIntersection
+import org.joml.Math.random
 import org.joml.Matrix4f
 import org.joml.Vector3f
-import org.joml.Vector3fc
 
 object collision {
   private val chunkMatrix = Matrix4f()
@@ -14,24 +14,26 @@ object collision {
   private val gravity = world.getGravity()
   private var accumulator = 0f
   private var tick = false
-  private const val tickGoal = 20
-  private const val tickTime = 1f / tickGoal.toFloat()
+  private const val TICK_GOAL = 20
+  private const val TICK_DELTA = 1f / TICK_GOAL.toFloat()
   private val pos = Vector3f()
   private val oldPos = Vector3f()
   private val velocity = Vector3f()
 
   //? note: Entity collision.
   internal fun accumulate(delta: Float) {
+    tick = false
     accumulator += delta
-    if (accumulator >= tickTime) {
+    if (accumulator >= TICK_DELTA) {
       tick = true
-      accumulator -= tickTime
+      accumulator -= TICK_DELTA
     }
   }
 
-  internal fun tick(): Boolean = tick
+  internal fun collideEntityToWorld(entity: GroovyEntity) {
 
-  internal fun collideEntityToWorld(entity: GroovyEntity, delta: Float) {
+    if (!tick) return
+
     val size = entity.getSize()
     pos.set(entity.getPosition())
     velocity.set(entity.getVelocity())
@@ -40,9 +42,9 @@ object collision {
 
     // I know JOML has functions to do this, I want this to be explicit for debugging.
     pos.set(
-      pos.x + (velocity.x * delta),
-      pos.y + (velocity.y * delta),
-      pos.z + (velocity.z * delta)
+      pos.x + (velocity.x * TICK_DELTA),
+      pos.y + (velocity.y * TICK_DELTA),
+      pos.z + (velocity.z * TICK_DELTA)
     )
 
     //todo: if the player's top position is below 0 or the player's bottom position is equal to or greater than 128 only do movement, no collision
