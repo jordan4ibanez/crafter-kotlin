@@ -55,6 +55,8 @@ object collision {
       velocity.normalize().mul(MAX_SPEED)
     }
 
+//    println(velocity.y)
+
     // Player has fallen/jumped/flown out of the map no need to detect against blocks.
     if (outOfMap(pos.y, pos.y + size.y())) {
       entity.setVelocity(velocity)
@@ -69,28 +71,27 @@ object collision {
     calculateMapRegion(size)
     if (!blockManipulator.set(min, max)) return
 
-    var currentTime = 0f
     val remainingTime = velocity.length()
+    var currentTime = remainingTime % 1f
     val loops = ceil(remainingTime).toInt()
     velocity.normalize(normalizedVelocity)
 
+//    println("loops $loops")
+
     (0 until loops).forEach { _ ->
+
+      println("currenttime: $currentTime | remainingTime: $remainingTime")
+
+//      println(normalizedVelocity.y)
 
       pos.set(
         pos.x + (normalizedVelocity.x * currentTime),
         pos.y + (normalizedVelocity.y * currentTime),
         pos.z + (normalizedVelocity.z * currentTime)
       )
-      entityAABBMin.set(
-        pos.x - size.x,
-        pos.y,
-        pos.z - size.x
-      )
-      entityAABBMax.set(
-        pos.x + size.x,
-        pos.y + size.y,
-        pos.z + size.x
-      )
+
+      updateEntityAABB()
+
 
       var index = 0
       blockManipulator.forEach blockLoop@{
@@ -107,21 +108,14 @@ object collision {
           // todo: Here it would run through them individually
 
           if (!entityCollidesWithWorld()) return@blockLoop
+          resolveCollision()
+          updateEntityAABB()
 
-          rootPos.print("collision at")
 
-//        if (foundDir == Direction.DOWN || foundDir == Direction.UP) {
-//          println("Y collision ${random()}")
-//          velocity.y = -0.001f
-//        }
         }
         index++
       }
-      currentTime += if (currentTime + 1f >= remainingTime) {
-        remainingTime % 1f
-      } else {
-        1f
-      }
+      currentTime += 1f
 //      println("current time: $currentTime")
     }
 
@@ -129,6 +123,33 @@ object collision {
     entity.setPosition(pos)
   }
 
+  private fun updateEntityAABB() {
+    entityAABBMin.set(
+      pos.x - size.x,
+      pos.y,
+      pos.z - size.x
+    )
+    entityAABBMax.set(
+      pos.x + size.x,
+      pos.y + size.y,
+      pos.z + size.x
+    )
+  }
+
+  private fun resolveCollision() {
+    println(foundDir)
+    if (foundDir == Direction.DOWN || foundDir == Direction.UP) {
+      if (velocity.y < 0) {
+        pos.y = worldAABBMax.y
+        normalizedVelocity.y = 0f
+        velocity.y = -0.01f
+      } else {
+        pos.y = worldAABBMin.y - size.y
+        normalizedVelocity.y = 0f
+        velocity.y = 0.01f
+      }
+    }
+  }
 
   private fun entityCollidesWithWorld(): Boolean {
     val collision = !(entityAABBMin.x > worldAABBMax.x || entityAABBMax.x < worldAABBMin.x || entityAABBMin.y > worldAABBMax.y || entityAABBMax.y < worldAABBMin.y || entityAABBMin.z > worldAABBMax.z || entityAABBMax.z < worldAABBMin.z)
@@ -136,21 +157,23 @@ object collision {
       foundDir = Direction.NONE
       return false
     }
-    var xDiff = 0f
-    var yDiff = 0f
-    var zDiff = 0f
-    when {
-      entityAABBMin.x < worldAABBMax.x -> xDiff = abs(entityAABBMin.x - worldAABBMax.x)
-      entityAABBMax.x > worldAABBMin.x -> xDiff = abs(entityAABBMax.x - worldAABBMin.x)
-    }
-    when {
-      entityAABBMin.y < worldAABBMax.y -> yDiff = abs(entityAABBMin.y - worldAABBMax.y)
-      entityAABBMax.y > worldAABBMin.y -> yDiff = abs(entityAABBMax.y - worldAABBMin.y)
-    }
-    when {
-      entityAABBMin.z < worldAABBMax.z -> zDiff = abs(entityAABBMin.z - worldAABBMax.z)
-      entityAABBMax.z > worldAABBMin.z -> zDiff = abs(entityAABBMax.z - worldAABBMin.z)
-    }
+
+    // todo: In the future use velocity or something, maybe old position
+    val xDiff = abs(velocity.x)
+    val yDiff = abs(velocity.y)
+    val zDiff = abs(velocity.z)
+//    when {
+//      entityAABBMin.x < worldAABBMax.x -> xDiff = abs(entityAABBMin.x - worldAABBMax.x)
+//      entityAABBMax.x > worldAABBMin.x -> xDiff = abs(entityAABBMax.x - worldAABBMin.x)
+//    }
+//    when {
+//      entityAABBMin.y < worldAABBMax.y -> yDiff = abs(entityAABBMin.y - worldAABBMax.y)
+//      entityAABBMax.y > worldAABBMin.y -> yDiff = abs(entityAABBMax.y - worldAABBMin.y)
+//    }
+//    when {
+//      entityAABBMin.z < worldAABBMax.z -> zDiff = abs(entityAABBMin.z - worldAABBMax.z)
+//      entityAABBMax.z > worldAABBMin.z -> zDiff = abs(entityAABBMax.z - worldAABBMin.z)
+//    }
 
     foundDir = when {
       xDiff > yDiff && xDiff > zDiff -> when {
