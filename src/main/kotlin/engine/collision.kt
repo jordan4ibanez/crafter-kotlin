@@ -17,8 +17,11 @@ object collision {
   private val size = Vector2f()
   private val pos = Vector3f()
   private val oldPos = Vector3f()
+  private val projectedPos = Vector3f()
   private val velocity = Vector3f()
   private val oldVelocity = Vector3f()
+  private val oldAABBMin = Vector3f()
+  private val oldAABBMax = Vector3f()
   private val entityAABBMin = Vector3f()
   private val entityAABBMax = Vector3f()
   private val worldAABBMin = Vector3f()
@@ -55,7 +58,6 @@ object collision {
       velocity.normalize().mul(MAX_SPEED)
     }
 
-//    println(velocity.y)
 
     // Player has fallen/jumped/flown out of the map no need to detect against blocks.
     if (outOfMap(pos.y, pos.y + size.y())) {
@@ -64,11 +66,9 @@ object collision {
       return
     }
 
-    //todo: if the player's top position is below 0 or the player's bottom position is equal to or greater than 128 only do movement, no collision
-    // This will auto return in the future.
-
     // If this entity exists in an area that's unloaded, freeze.
-    calculateMapRegion(size)
+    pos.add(velocity, projectedPos)
+    calculateMapRegion()
     if (!blockManipulator.set(min, max)) return
 
     val remainingTime = velocity.length()
@@ -77,18 +77,23 @@ object collision {
     velocity.normalize(normalizedVelocity)
 
 //    println("loops $loops")
+    updateOldAABB()
 
     (0 until loops).forEach { _ ->
 
-      println("currenttime: $currentTime | remainingTime: $remainingTime")
+//      println("currenttime: $currentTime | remainingTime: $remainingTime")
 
 //      println(normalizedVelocity.y)
+
+      println("-----")
 
       pos.set(
         pos.x + (normalizedVelocity.x * currentTime),
         pos.y + (normalizedVelocity.y * currentTime),
         pos.z + (normalizedVelocity.z * currentTime)
       )
+
+//      println("pos was: ${pos.y}")
 
       updateEntityAABB()
 
@@ -99,7 +104,7 @@ object collision {
         if (block.isWalkable(id)) {
 
           val rootPos = blockManipulator.indexToPos(index)
-          calculateNormal(rootPos)
+//          calculateNormal(rootPos)
 
           worldAABBMin.set(rootPos.x.toFloat(), rootPos.y.toFloat(), rootPos.z.toFloat())
           worldAABBMax.set(rootPos.x.toFloat() + 1f, rootPos.y.toFloat() + 1f, rootPos.z.toFloat() + 1f)
@@ -108,9 +113,11 @@ object collision {
           // todo: Here it would run through them individually
 
           if (!entityCollidesWithWorld()) return@blockLoop
+          oldPos.set(pos)
           resolveCollision()
           updateEntityAABB()
-
+//          updateOldAABB()
+//          println("pos is now: ${pos.y}")
 
         }
         index++
@@ -121,6 +128,7 @@ object collision {
 
     entity.setVelocity(velocity)
     entity.setPosition(pos)
+//    println("pos is being set at ${pos.y}")
   }
 
   private fun updateEntityAABB() {
@@ -135,11 +143,23 @@ object collision {
       pos.z + size.x
     )
   }
+  private fun updateOldAABB() {
+    oldAABBMin.set(
+      oldPos.x - size.x,
+      oldPos.y,
+      oldPos.z - size.x
+    )
+    oldAABBMax.set(
+      oldPos.x + size.x,
+      oldPos.y + size.y,
+      oldPos.z + size.x
+    )
+  }
 
   private fun resolveCollision() {
     println(foundDir)
     if (foundDir == Direction.DOWN || foundDir == Direction.UP) {
-      if (velocity.y < 0) {
+      if (velocity.y <= 0) {
         pos.y = worldAABBMax.y
         normalizedVelocity.y = 0f
         velocity.y = -0.01f
@@ -158,84 +178,82 @@ object collision {
       return false
     }
 
-    // todo: In the future use velocity or something, maybe old position
-    val xDiff = abs(velocity.x)
-    val yDiff = abs(velocity.y)
-    val zDiff = abs(velocity.z)
-//    when {
-//      entityAABBMin.x < worldAABBMax.x -> xDiff = abs(entityAABBMin.x - worldAABBMax.x)
-//      entityAABBMax.x > worldAABBMin.x -> xDiff = abs(entityAABBMax.x - worldAABBMin.x)
-//    }
-//    when {
-//      entityAABBMin.y < worldAABBMax.y -> yDiff = abs(entityAABBMin.y - worldAABBMax.y)
-//      entityAABBMax.y > worldAABBMin.y -> yDiff = abs(entityAABBMax.y - worldAABBMin.y)
-//    }
-//    when {
-//      entityAABBMin.z < worldAABBMax.z -> zDiff = abs(entityAABBMin.z - worldAABBMax.z)
-//      entityAABBMax.z > worldAABBMin.z -> zDiff = abs(entityAABBMax.z - worldAABBMin.z)
-//    }
+    println("test: ${oldAABBMin.y} | ${entityAABBMin.y} | ${worldAABBMax.y}")
+
+//    val leftWasOut = oldAABBMin.x > worldAABBMax.x
+//    val rightWasOut = oldAABBMax.x < worldAABBMin.x
+    val bottomWasOut = oldAABBMin.y > worldAABBMax.y
+//    val topWasOut = oldAABBMax.y < worldAABBMin.y
+//    val frontWasOut = oldAABBMin.z > worldAABBMax.z
+//    val backWasOut = oldAABBMax.z < worldAABBMin.z
+//
+//    val leftIsIn = entityAABBMin.x < worldAABBMax.x
+//    val rightIsIn = entityAABBMax.x > worldAABBMin.x
+    val bottomIsIn = entityAABBMin.y < worldAABBMax.y
+//    val topIsIn = entityAABBMax.y > worldAABBMin.y
+//    val frontIsIn = entityAABBMin.z < worldAABBMax.z
+//    val backIsIn = entityAABBMax.z > worldAABBMin.z
 
     foundDir = when {
-      xDiff > yDiff && xDiff > zDiff -> when {
-        velocity.x <= 0f -> Direction.LEFT
-        else -> Direction.RIGHT
+//      leftWasOut && leftIsIn -> Direction.LEFT
+//      rightWasOut && rightIsIn -> Direction.RIGHT
+      bottomWasOut && bottomIsIn -> Direction.DOWN
+//      topWasOut && topIsIn -> Direction.UP
+//      frontWasOut && frontIsIn -> Direction.FRONT
+//      backWasOut && backIsIn -> Direction.BACK
+      else -> {
+        println("failure")
+        Direction.NONE
       }
-      yDiff > xDiff && yDiff > zDiff -> when {
-        velocity.y <= 0f -> Direction.DOWN
-        else -> Direction.UP
-      }
-      zDiff > xDiff && zDiff > yDiff -> when {
-        velocity.z <= 0f -> Direction.FRONT
-        else -> Direction.BACK
-      }
-      else -> Direction.NONE
     }
     return true
   }
 
-  private fun calculateNormal(position: Vector3ic) {
-    if (velocity.x() <= 0f) {
-      normal.x = position.x() + 1f /*fixme: use size here*/
-    } else {
-      normal.x = position.x().toFloat()
-    }
-    if (velocity.y() <= 0f) {
-      normal.y = position.y() + 1f /*fixme: use size here*/
-    } else {
-      normal.y = position.y().toFloat()
-    }
-    if (velocity.z() <= 0f) {
-      normal.z = position.z() + 1f /*fixme: use size here*/
-    } else {
-      normal.z = position.z().toFloat()
-    }
-  }
+//  private fun calculateNormal(position: Vector3ic) {
+//    if (velocity.x() <= 0f) {
+//      normal.x = position.x() + 1f /*fixme: use size here*/
+//    } else {
+//      normal.x = position.x().toFloat()
+//    }
+//    if (velocity.y() <= 0f) {
+//      normal.y = position.y() + 1f /*fixme: use size here*/
+//    } else {
+//      normal.y = position.y().toFloat()
+//    }
+//    if (velocity.z() <= 0f) {
+//      normal.z = position.z() + 1f /*fixme: use size here*/
+//    } else {
+//      normal.z = position.z().toFloat()
+//    }
+//  }
 
   private fun outOfMap(yMin: Float, yMax: Float): Boolean = yMin >= WORLD_Y_MAX || yMax < WORLD_Y_MIN
 
-  private fun calculateMapRegion(size: Vector2fc) {
+  private fun calculateMapRegion() {
     //fixme: this is unoptimized.
     if (velocity.x() <= 0) {
-      min.x = pos.x - size.x()
-      max.x = oldPos.x + size.x()
+      min.x = projectedPos.x - size.x
+      max.x = oldPos.x + size.x
     } else {
-      min.x = oldPos.x - size.x()
-      max.x = pos.x + size.x()
+      min.x = oldPos.x - size.x
+      max.x = projectedPos.x + size.x
     }
     if (velocity.y() <= 0) {
-      min.y = pos.y
-      max.y = oldPos.y + size.y()
+      min.y = projectedPos.y
+      max.y = oldPos.y + size.y
     } else {
       min.y = oldPos.y
-      max.y = pos.y + size.y()
+      max.y = projectedPos.y + size.y
     }
     if (velocity.z() <= 0) {
-      min.z = pos.z - size.x()
-      max.z = oldPos.z + size.x()
+      min.z = projectedPos.z - size.x
+      max.z = oldPos.z + size.x
     } else {
-      min.z = oldPos.z - size.x()
-      max.z = pos.z + size.x()
+      min.z = oldPos.z - size.x
+      max.z = projectedPos.z + size.x
     }
+
+    println("map region Y: min: ${min.y} | max: ${max.y}")
   }
 
 
