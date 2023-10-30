@@ -55,17 +55,6 @@ object collision {
       velocity.normalize().mul(MAX_SPEED)
     }
 
-    entityAABBMin.set(
-      pos.x - size.x,
-      pos.y,
-      pos.z - size.x
-    )
-    entityAABBMax.set(
-      pos.x + size.x,
-      pos.y + size.y,
-      pos.z + size.x
-    )
-
     // Player has fallen/jumped/flown out of the map no need to detect against blocks.
     if (outOfMap(pos.y, pos.y + size.y())) {
       entity.setVelocity(velocity)
@@ -83,23 +72,43 @@ object collision {
     var currentTime = 0f
     val remainingTime = velocity.length()
     val loops = ceil(remainingTime).toInt()
-
-    println("------------")
+    velocity.normalize(normalizedVelocity)
 
     (0 until loops).forEach { _ ->
 
+      pos.set(
+        pos.x + (normalizedVelocity.x * currentTime),
+        pos.y + (normalizedVelocity.y * currentTime),
+        pos.z + (normalizedVelocity.z * currentTime)
+      )
+      entityAABBMin.set(
+        pos.x - size.x,
+        pos.y,
+        pos.z - size.x
+      )
+      entityAABBMax.set(
+        pos.x + size.x,
+        pos.y + size.y,
+        pos.z + size.x
+      )
+
       var index = 0
-      blockManipulator.forEach {
+      blockManipulator.forEach blockLoop@{
         val id = it.getBlockID()
         if (block.isWalkable(id)) {
 
           val rootPos = blockManipulator.indexToPos(index)
-
           calculateNormal(rootPos)
 
           worldAABBMin.set(rootPos.x.toFloat(), rootPos.y.toFloat(), rootPos.z.toFloat())
           worldAABBMax.set(rootPos.x.toFloat() + 1f, rootPos.y.toFloat() + 1f, rootPos.z.toFloat() + 1f)
 
+          // todo: Here it would get the blockbox collision box and run through the boxes individually
+          // todo: Here it would run through them individually
+
+          if (!entityCollidesWithWorld()) return@blockLoop
+
+          rootPos.print("collision at")
 
 //        if (foundDir == Direction.DOWN || foundDir == Direction.UP) {
 //          println("Y collision ${random()}")
@@ -113,7 +122,7 @@ object collision {
       } else {
         1f
       }
-      println("current time: $currentTime")
+//      println("current time: $currentTime")
     }
 
     entity.setVelocity(velocity)
@@ -121,6 +130,11 @@ object collision {
   }
 
 
+  private fun entityCollidesWithWorld(): Boolean {
+    return !(entityAABBMin.x > worldAABBMax.x || entityAABBMax.x < worldAABBMin.x ||
+             entityAABBMin.y > worldAABBMax.y || entityAABBMax.y < worldAABBMin.y ||
+             entityAABBMin.z > worldAABBMax.z || entityAABBMax.z < worldAABBMin.z)
+  }
 
   private fun calculateNormal(position: Vector3ic) {
     if (velocity.x() <= 0f) {
