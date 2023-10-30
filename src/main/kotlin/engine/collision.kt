@@ -160,30 +160,32 @@ object collision {
     val exitTime = min(xExit, yExit)
 
     // If there was no collision.
-    if (entryTime > exitTime || xEntry < 0.0f && yEntry < 0.0f || xEntry > 1.0f || yEntry > 1.0f) {
-      normal.x = 0.0f
-      normal.y = 0.0f
-      foundDir = Direction.NONE
-      return 1.0f
-    } else {
-      // If there was a collision.
+    when {
+      (entryTime > exitTime || xEntry < 0.0f && yEntry < 0.0f || xEntry > 1.0f || yEntry > 1.0f) -> {
+        normal.x = 0.0f
+        normal.y = 0.0f
+        foundDir = Direction.NONE
+        return 1.0f
+      } else -> {
+        // If there was a collision.
 
-      // Calculate normal of collided surface.
-      if (xEntry > yEntry) {
-        if (xInvEntry < 0.0f) {
-          normal.x = 1.0f
-          normal.y = 0.0f
+        // Calculate normal of collided surface.
+        if (xEntry > yEntry) {
+          if (xInvEntry < 0.0f) {
+            normal.x = 1.0f
+            normal.y = 0.0f
+          } else {
+            normal.x = -1.0f
+            normal.y = 0.0f
+          }
         } else {
-          normal.x = -1.0f
-          normal.y = 0.0f
-        }
-      } else {
-        if (yInvEntry < 0.0f) {
-          normal.x = 0.0f
-          normal.y = 1.0f
-        } else {
-          normal.x = 0.0f
-          normal.y = -1.0f
+          if (yInvEntry < 0.0f) {
+            normal.x = 0.0f
+            normal.y = 1.0f
+          } else {
+            normal.x = 0.0f
+            normal.y = -1.0f
+          }
         }
       }
     }
