@@ -87,6 +87,7 @@ object collision {
       )
       updateEntityAABB()
       var index = 0
+      //? note: Might have to iterate through this in the direction of the velocity.
       blockManipulator.forEach blockLoop@{
         val id = it.getBlockID()
         if (block.isWalkable(id)) {
@@ -100,18 +101,13 @@ object collision {
           resolveCollision()
           updateEntityAABB()
           updateOldAABB()
-//          println("pos is now: ${pos.y}")
-
         }
         index++
       }
       currentTime += 1f
-//      println("current time: $currentTime")
     }
-
     entity.setVelocity(velocity)
     entity.setPosition(pos)
-//    println("pos is being set at ${pos.y}")
   }
 
   private fun updateEntityAABB() {
@@ -160,8 +156,6 @@ object collision {
       foundDir = Direction.NONE
       return false
     }
-
-//    println("test: ${oldAABBMin.y} | ${entityAABBMin.y} | ${worldAABBMax.y}")
 
     val leftWasOut = oldAABBMin.x > worldAABBMax.x
     val rightWasOut = oldAABBMax.x < worldAABBMin.x
