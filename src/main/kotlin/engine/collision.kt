@@ -132,14 +132,40 @@ object collision {
 
   private fun entityCollidesWithWorld(): Boolean {
     val collision = !(entityAABBMin.x > worldAABBMax.x || entityAABBMax.x < worldAABBMin.x || entityAABBMin.y > worldAABBMax.y || entityAABBMax.y < worldAABBMin.y || entityAABBMin.z > worldAABBMax.z || entityAABBMax.z < worldAABBMin.z)
-    if (!collision) return false
+    if (!collision) {
+      foundDir = Direction.NONE
+      return false
+    }
+    var xDiff = 0f
+    var yDiff = 0f
+    var zDiff = 0f
     when {
-      entityAABBMin.x < worldAABBMax.x -> {}
-      entityAABBMax.x > worldAABBMin.x -> {}
-      entityAABBMin.y < worldAABBMax.y -> {}
-      entityAABBMax.y > worldAABBMin.y -> {}
-      entityAABBMin.z < worldAABBMax.z -> {}
-      entityAABBMax.z > worldAABBMin.z -> {}
+      entityAABBMin.x < worldAABBMax.x -> xDiff = abs(entityAABBMin.x - worldAABBMax.x)
+      entityAABBMax.x > worldAABBMin.x -> xDiff = abs(entityAABBMax.x - worldAABBMin.x)
+    }
+    when {
+      entityAABBMin.y < worldAABBMax.y -> yDiff = abs(entityAABBMin.y - worldAABBMax.y)
+      entityAABBMax.y > worldAABBMin.y -> yDiff = abs(entityAABBMax.y - worldAABBMin.y)
+    }
+    when {
+      entityAABBMin.z < worldAABBMax.z -> zDiff = abs(entityAABBMin.z - worldAABBMax.z)
+      entityAABBMax.z > worldAABBMin.z -> zDiff = abs(entityAABBMax.z - worldAABBMin.z)
+    }
+
+    foundDir = when {
+      xDiff > yDiff && xDiff > zDiff -> when {
+        velocity.x <= 0f -> Direction.LEFT
+        else -> Direction.RIGHT
+      }
+      yDiff > xDiff && yDiff > zDiff -> when {
+        velocity.y <= 0f -> Direction.DOWN
+        else -> Direction.UP
+      }
+      zDiff > xDiff && zDiff > yDiff -> when {
+        velocity.z <= 0f -> Direction.FRONT
+        else -> Direction.BACK
+      }
+      else -> Direction.NONE
     }
     return true
   }
