@@ -86,7 +86,6 @@ object collision {
     if (!blockManipulator.set(min, max)) return
 
 
-
     val remainingTime = velocity.length()
     var currentTime = remainingTime % 1f
     val loops = ceil(remainingTime).toInt()
@@ -108,28 +107,18 @@ object collision {
 
     // By block.
     (0 until loops).forEach { _ ->
-//      println("current time: $currentTime")
       // By axis.
       (0..2).forEach { axis ->
-
-
         when (axis) {
-          0 -> {
-            pos.x += (normalizedVelocity.x * currentTime)
-          }
-          1 -> {
-            pos.y += (normalizedVelocity.y * currentTime)
-          }
-          2 -> {
-            pos.z += (normalizedVelocity.z * currentTime)
-          }
+          0 -> pos.x += (normalizedVelocity.x * currentTime)
+          1 -> pos.y += (normalizedVelocity.y * currentTime)
+          2 -> pos.z += (normalizedVelocity.z * currentTime)
         }
         updateEntityAABB()
 
-        for (x in minX toward  maxX) {
-          for (z in minZ toward  maxZ) {
-            for (y in minY toward  maxY) {
-
+        for (x in minX ..  maxX) {
+          for (z in minZ ..  maxZ) {
+            for (y in minY ..  maxY) {
 
               val id = blockManipulator.getID(x, y, z)
               val doubleCheck = getBlockID(x.toFloat(), y.toFloat(), z.toFloat())
@@ -156,15 +145,14 @@ object collision {
 
               directionResult.reset()
 
-              val oldY = pos.y
-              if (!entityCollidesWithWorld(1)) continue
-              resolveCollision(1)
+//              val oldY = pos.y
+              if (!entityCollidesWithWorld(axis)) continue
+              resolveCollision(axis)
               updateEntityAABB()
-
               if (directionResult.down) {
-                if (abs(oldY - pos.y) > 0.5f) {
-                  println("$x,$y,$z | ${floor(pos.x)},${floor(pos.y)},${floor(pos.z)} | ${pos.x}, ${pos.z}")
-                }
+//                if (abs(oldY - pos.y) > 0.5f) {
+//                  println("$x,$y,$z | ${floor(pos.x)},${floor(pos.y)},${floor(pos.z)} | ${pos.x}, ${pos.z}")
+//                }
                 entity.onGround = true
               }
             }
@@ -181,11 +169,43 @@ object collision {
 
   private fun resolveCollision(axis: Int) {
     when (axis) {
+      0 -> {
+        if (directionResult.left) {
+//          println("left collision")
+          pos.x = worldAABBMax.x + size.x + 0.0001f
+          normalizedVelocity.x = 0f
+          velocity.x = 0f
+        } else if (directionResult.right) {
+//          println("right collision")
+          pos.x = worldAABBMin.x - size.x - 0.0001f
+          normalizedVelocity.x = 0f
+          velocity.x = 0f
+        }
+      }
       1 -> {
         if (directionResult.down) {
-          pos.y = worldAABBMax.y + 0.01f
-          normalizedVelocity.y = -0.01f
+//          println("down collision")
+          pos.y = worldAABBMax.y + 0.0001f
+          normalizedVelocity.y = 0f
           velocity.y = -0.01f
+        } else if (directionResult.up) {
+//          println("up collision")
+          pos.y = worldAABBMin.y - size.y - 0.0001f
+          normalizedVelocity.y = 0f
+          velocity.y = -0.01f
+        }
+      }
+      2 -> {
+        if (directionResult.front) {
+//          println("front collision")
+          pos.z = worldAABBMax.z + size.x + 0.0001f
+          normalizedVelocity.z = 0f
+          velocity.z = 0f
+        } else if (directionResult.back) {
+//          println("back collision")
+          pos.z = worldAABBMin.z - size.x - 0.0001f
+          normalizedVelocity.z = 0f
+          velocity.z = 0f
         }
       }
     }
@@ -207,18 +227,26 @@ object collision {
 
   private fun entityCollidesWithWorld(axis: Int): Boolean {
     val noCollision =
-        !(entityAABBMin.x < worldAABBMax.x || entityAABBMax.x > worldAABBMin.x) ||
-        !(entityAABBMin.y < worldAABBMax.y || entityAABBMax.y > worldAABBMin.y) ||
-        !(entityAABBMin.z < worldAABBMax.z || entityAABBMax.z > worldAABBMin.z)
+        entityAABBMin.x > worldAABBMax.x || entityAABBMax.x < worldAABBMin.x ||
+         entityAABBMin.y > worldAABBMax.y || entityAABBMax.y < worldAABBMin.y ||
+         entityAABBMin.z > worldAABBMax.z || entityAABBMax.z < worldAABBMin.z
 
     if (noCollision) {
       return false
     }
 
     when (axis) {
+      0 -> {
+        if (velocity.x < 0f) directionResult.left = true
+        if (velocity.x > 0f) directionResult.right = true
+      }
       1 -> {
-        if (entityAABBMin.y <= worldAABBMax.y) directionResult.down = true
-        if (entityAABBMax.y >= worldAABBMin.y) directionResult.up = true
+        if (velocity.y < 0f) directionResult.down = true
+        if (velocity.y > 0f) directionResult.up = true
+      }
+      2 -> {
+        if (velocity.z < 0f) directionResult.front = true
+        if (velocity.z > 0f) directionResult.back = true
       }
     }
 
