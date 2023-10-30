@@ -27,6 +27,9 @@ open class PointEntity {
   open fun setVelocity(newVelocity: Vector3fc) {
     velocity.set(newVelocity)
   }
+  fun addVelocity(moreVelocity: Vector3fc) {
+    velocity.add(moreVelocity)
+  }
   
   open fun onTick(delta: Float) {}
 }
