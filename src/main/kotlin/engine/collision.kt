@@ -126,6 +126,7 @@ object collision {
           2 -> pos.z += (normalizedVelocity.z * currentTime)
         }
         updateEntityAABB()
+
         for (x in minX toward maxX) {
           for (z in minZ toward maxZ) {
             for (y in minY toward maxY) {
@@ -140,7 +141,7 @@ object collision {
 
                 if (!entityCollidesWithWorld()) continue
                 oldPos.set(pos)
-                resolveCollision()
+                resolveCollision(axis)
                 updateEntityAABB()
                 updateOldAABB()
                 if (directionResult.down) {
@@ -157,30 +158,7 @@ object collision {
     entity.setPosition(pos)
   }
 
-  private fun updateEntityAABB() {
-    entityAABBMin.set(
-      pos.x - size.x,
-      pos.y,
-      pos.z - size.x
-    )
-    entityAABBMax.set(
-      pos.x + size.x,
-      pos.y + size.y,
-      pos.z + size.x
-    )
-  }
-  private fun updateOldAABB() {
-    oldAABBMin.set(
-      oldPos.x - size.x,
-      oldPos.y,
-      oldPos.z - size.x
-    )
-    oldAABBMax.set(
-      oldPos.x + size.x,
-      oldPos.y + size.y,
-      oldPos.z + size.x
-    )
-  }
+
 
   private fun resolveCollision() {
 
@@ -210,6 +188,31 @@ object collision {
       velocity.z = 0.01f
     }
 
+  }
+
+  private fun updateEntityAABB() {
+    entityAABBMin.set(
+      pos.x - size.x,
+      pos.y,
+      pos.z - size.x
+    )
+    entityAABBMax.set(
+      pos.x + size.x,
+      pos.y + size.y,
+      pos.z + size.x
+    )
+  }
+  private fun updateOldAABB() {
+    oldAABBMin.set(
+      oldPos.x - size.x,
+      oldPos.y,
+      oldPos.z - size.x
+    )
+    oldAABBMax.set(
+      oldPos.x + size.x,
+      oldPos.y + size.y,
+      oldPos.z + size.x
+    )
   }
 
   private fun entityCollidesWithWorld(): Boolean {
