@@ -108,7 +108,9 @@ object collision {
       (velocity.x > 0f) -> {
         xInvEntry = pos.x - (oldPos.x + size.x)
         xInvExit = (pos.x + size.x) - oldPos.x
-      } else -> {
+      }
+
+      else -> {
         xInvEntry = (pos.x + size.x) - oldPos.x
         xInvExit = pos.x - (oldPos.x + size.x)
       }
@@ -118,7 +120,9 @@ object collision {
       (velocity.y > 0f) -> {
         yInvEntry = pos.y - (oldPos.y + size.y)
         yInvExit = (pos.y + size.y) - oldPos.y
-      } else -> {
+      }
+
+      else -> {
         yInvEntry = (pos.y + size.y) - oldPos.y
         yInvExit = pos.y - (oldPos.y + size.y)
       }
@@ -141,7 +145,8 @@ object collision {
       (velocity.x == 0f) -> {
         xEntry = Float.NEGATIVE_INFINITY
         xExit = Float.POSITIVE_INFINITY
-      } else -> {
+      }
+      else -> {
         xEntry = xInvEntry / velocity.x
         xExit = xInvExit / velocity.x
       }
@@ -166,25 +171,38 @@ object collision {
         normal.y = 0.0f
         foundDir = Direction.NONE
         return 1.0f
-      } else -> {
-        // If there was a collision.
+      }
 
+      else -> {
+        // If there was a collision.
         // Calculate normal of collided surface.
-        if (xEntry > yEntry) {
-          if (xInvEntry < 0.0f) {
-            normal.x = 1.0f
-            normal.y = 0.0f
-          } else {
-            normal.x = -1.0f
-            normal.y = 0.0f
+        when {
+          (xEntry > yEntry) -> {
+            when {
+              (xInvEntry < 0.0f) -> {
+                normal.x = 1.0f
+                normal.y = 0.0f
+              }
+
+              else -> {
+                normal.x = -1.0f
+                normal.y = 0.0f
+              }
+            }
           }
-        } else {
-          if (yInvEntry < 0.0f) {
-            normal.x = 0.0f
-            normal.y = 1.0f
-          } else {
-            normal.x = 0.0f
-            normal.y = -1.0f
+
+          else -> {
+            when {
+              (yInvEntry < 0.0f) -> {
+                normal.x = 0.0f
+                normal.y = 1.0f
+              }
+
+              else -> {
+                normal.x = 0.0f
+                normal.y = -1.0f
+              }
+            }
           }
         }
       }
