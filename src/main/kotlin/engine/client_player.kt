@@ -45,7 +45,11 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
 
     val jump = if (onGround && positionBuffer.y != 0) 0.75f else 0f
 
-    addVelocity(positionBuffer.x.toFloat() / 10f, jump, positionBuffer.z.toFloat() / 10f)
+    addVelocity(
+      positionBuffer.x.toFloat() / 10f,
+      jump,
+      positionBuffer.z.toFloat() / 10f
+    )
   }
 
   internal fun doClientControls() {
