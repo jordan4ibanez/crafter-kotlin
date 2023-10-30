@@ -1249,6 +1249,13 @@ object blockManipulator : Iterator<Int> {
       (index / size.z()) % size.z())
   }
 
+  fun indexToWorldPos(index: Int): Vector3ic {
+    return cachePos.set(
+      (index % size.x()) + min.x,
+      ((index / yStride) % size.y()) + min.y,
+      ((index / size.z()) % size.z())+ min.z)
+  }
+
 
 //  private fun checkArea() {
 //    val minChunkX = world.toChunkX(min.x())
