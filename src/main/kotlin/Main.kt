@@ -80,6 +80,7 @@ fun update(delta: Float) {
 //  camera.freeCam()
 
   camera.doMouseInputCameraRotation()
+  clientPlayer.doClientControls()
 
   if (keyboard.isDown(GLFW_KEY_ESCAPE)){
    window.close()
@@ -88,11 +89,6 @@ fun update(delta: Float) {
 
   if (keyboard.isPressed(GLFW_KEY_F1)) {
     mouse.toggleCapture()
-  }
-
-  if (keyboard.isPressed(GLFW_KEY_R)) {
-    println("BLEH")
-//    regenerateWorldAtlas()
   }
 
   if (fpsUpdated()) {
