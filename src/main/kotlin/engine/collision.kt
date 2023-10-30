@@ -149,8 +149,6 @@ object collision {
       )
       updateEntityAABB()
 
-      //? note: Might have to iterate through this in the direction of the velocity.
-
       for (x in minX toward maxX) {
         for (z in minZ toward maxZ) {
           for (y in minY toward maxY) {
