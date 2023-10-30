@@ -104,17 +104,35 @@ object collision {
 
 //    println("loops $loops")
     updateOldAABB()
-//    println("-----")
+    println("-----")
 
     val blockManipulatorMin = blockManipulator.getMin()
     val blockManipulatorMax = blockManipulator.getMax()
 
     val minX = blockManipulatorMin.x()
-    val minY = blockManipulatorMin.y()
-    val minZ = blockManipulatorMin.z()
+    val minY: Int
+    val minZ: Int
     val maxX = blockManipulatorMax.x()
-    val maxY = blockManipulatorMax.y()
-    val maxZ = blockManipulatorMax.z()
+    val maxY: Int
+    val maxZ: Int
+
+//    println(pos.z)
+
+    if (projectedPos.y >= oldPos.y) {
+      minY = blockManipulatorMin.y()
+      maxY = blockManipulatorMax.y()
+    } else {
+      minY = blockManipulatorMax.y()
+      maxY = blockManipulatorMin.y()
+    }
+
+    if (projectedPos.z >= oldPos.z) {
+      minZ = blockManipulatorMax.z()
+      maxZ = blockManipulatorMin.z()
+    } else {
+      minZ = blockManipulatorMax.z()
+      maxZ = blockManipulatorMin.z()
+    }
 
     (0 until loops).forEach { _ ->
       pos.set(
@@ -126,9 +144,10 @@ object collision {
 
       //? note: Might have to iterate through this in the direction of the velocity.
 
-      for (x in minX..maxX) {
-        for (y in minY..maxY) {
-          for (z in minZ..maxZ) {
+      for (x in minX toward maxX) {
+        for (z in minZ toward maxZ) {
+          for (y in minY toward maxY) {
+            println(y)
             val id = blockManipulator.getID(x,y,z)
             if (block.isWalkable(id)) {
               worldAABBMin.set(x.toFloat(), y.toFloat(), z.toFloat())
@@ -142,7 +161,10 @@ object collision {
               oldPos.set(pos)
               resolveCollision()
               updateEntityAABB()
-              entity.onGround = directionResult.down
+//              updateOldAABB()
+              if (directionResult.down) {
+                entity.onGround = true
+              }
             }
           }
         }
