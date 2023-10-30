@@ -1219,9 +1219,9 @@ object blockManipulator : Iterator<Int> {
 
   fun posToIndex(posX: Int, posY: Int, posZ: Int): Int {
     // This x,y,z portion transforms the real position into a base 0 position.
-    val x = posX - min.x()
-    val y = posY - min.y()
-    val z = posZ - min.z()
+    val x = posX - min.x
+    val y = posY - min.y
+    val z = posZ - min.z
 //    println("min: ${min.z()} , posz: $posZ")
 //    println("internal: $x, $y, $z")
     when {
@@ -1231,11 +1231,22 @@ object blockManipulator : Iterator<Int> {
     }
 //    println("yStride: $yStride")
 
-    return (y * yStride) + (z * size.z()) + x
+    val test = (y * yStride) + (z * size.z()) + x
+
+    val check = indexToPos(test)
+
+    if (check.x != posX || check.y != posY || check.z != posZ) {
+      throw RuntimeException("\nINPUT: [$posX, $posY, $posZ]\nOUTPUT: [${check.x}, ${check.y}, ${check.z}]\n zmin: ${min.z} | calcZ: $z")
+    }
+
+    return test
   }
 
   fun indexToPos(index: Int): Vector3i {
-    return cachePos.set((index % size.x()) + min.x(),((index / yStride) % size.y()) + min.y(),((index / size.z()) % size.z()) + min.z())
+    return cachePos.set(
+      index % size.x(),
+      (index / yStride) % size.y(),
+      (index / size.z()) % size.z())
   }
 
 
