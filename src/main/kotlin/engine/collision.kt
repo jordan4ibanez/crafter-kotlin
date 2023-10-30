@@ -134,12 +134,12 @@ object collision {
     val collision = !(entityAABBMin.x > worldAABBMax.x || entityAABBMax.x < worldAABBMin.x || entityAABBMin.y > worldAABBMax.y || entityAABBMax.y < worldAABBMin.y || entityAABBMin.z > worldAABBMax.z || entityAABBMax.z < worldAABBMin.z)
     if (!collision) return false
     when {
-      !(entityAABBMin.x > worldAABBMax.x) -> {}
-      !(entityAABBMax.x < worldAABBMin.x) -> {}
-      !(entityAABBMin.y > worldAABBMax.y) -> {}
-      !(entityAABBMax.y < worldAABBMin.y) -> {}
-      !(entityAABBMin.z > worldAABBMax.z) -> {}
-      !(entityAABBMax.z < worldAABBMin.z) -> {}
+      !(entityAABBMin.x < worldAABBMax.x) -> {}
+      !(entityAABBMax.x > worldAABBMin.x) -> {}
+      !(entityAABBMin.y < worldAABBMax.y) -> {}
+      !(entityAABBMax.y > worldAABBMin.y) -> {}
+      !(entityAABBMin.z < worldAABBMax.z) -> {}
+      !(entityAABBMax.z > worldAABBMin.z) -> {}
     }
     return true
   }
