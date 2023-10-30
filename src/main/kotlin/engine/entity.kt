@@ -7,10 +7,13 @@ import org.joml.Vector3fc
 import java.util.UUID
 import kotlin.collections.HashMap
 
+const val interpolationSnappiness = 10f
 
 open class PointEntity {
 
+  private var interpolationTimer = 0f
   private val oldPosition = Vector3f()
+  private val interpolationPosition = Vector3f()
   val position = Vector3f()
   private val velocity = Vector3f()
   var meshID = 0
@@ -18,13 +21,21 @@ open class PointEntity {
 
   constructor(pos: Vector3fc) {
     this.position.set(pos)
-    this.oldPosition.set(pos)
+    oldPosition.set(pos)
+    interpolationPosition.set(pos)
   }
 
   fun getPosition(): Vector3fc = position
   open fun setPosition(newPosition: Vector3fc) {
     oldPosition.set(position)
     position.set(newPosition)
+    interpolationTimer = 0f
+  }
+  internal fun interpolate(delta: Float) {
+    if (interpolationTimer >= 1f) return
+    interpolationTimer += delta * interpolationSnappiness
+    if (interpolationTimer >= 1f) interpolationTimer = 1f
+    oldPosition.lerp(position, interpolationTimer, interpolationPosition)
   }
 
   fun getVelocity(): Vector3fc = velocity
