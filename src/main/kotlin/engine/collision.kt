@@ -109,14 +109,21 @@ object collision {
     val blockManipulatorMin = blockManipulator.getMin()
     val blockManipulatorMax = blockManipulator.getMax()
 
-    val minX = blockManipulatorMin.x()
+    val minX: Int
     val minY: Int
     val minZ: Int
-    val maxX = blockManipulatorMax.x()
+    val maxX: Int
     val maxY: Int
     val maxZ: Int
 
 //    println(pos.z)
+    if (projectedPos.x >= oldPos.x) {
+      minX = blockManipulatorMin.x()
+      maxX = blockManipulatorMax.x()
+    } else {
+      minX = blockManipulatorMax.x()
+      maxX = blockManipulatorMin.x()
+    }
 
     if (projectedPos.y >= oldPos.y) {
       minY = blockManipulatorMin.y()
@@ -127,8 +134,8 @@ object collision {
     }
 
     if (projectedPos.z >= oldPos.z) {
-      minZ = blockManipulatorMax.z()
-      maxZ = blockManipulatorMin.z()
+      minZ = blockManipulatorMin.z()
+      maxZ = blockManipulatorMax.z()
     } else {
       minZ = blockManipulatorMax.z()
       maxZ = blockManipulatorMin.z()
@@ -147,7 +154,6 @@ object collision {
       for (x in minX toward maxX) {
         for (z in minZ toward maxZ) {
           for (y in minY toward maxY) {
-            println(y)
             val id = blockManipulator.getID(x,y,z)
             if (block.isWalkable(id)) {
               worldAABBMin.set(x.toFloat(), y.toFloat(), z.toFloat())
@@ -161,7 +167,7 @@ object collision {
               oldPos.set(pos)
               resolveCollision()
               updateEntityAABB()
-//              updateOldAABB()
+              updateOldAABB()
               if (directionResult.down) {
                 entity.onGround = true
               }
@@ -201,16 +207,33 @@ object collision {
   }
 
   private fun resolveCollision() {
-    if (directionResult.down) {
-      pos.y = worldAABBMax.y + 0.001f
+
+    if (directionResult.left) {
+      pos.x = worldAABBMax.x + 0.01f
+      normalizedVelocity.x = 0f
+      velocity.x = -0.01f
+    } else if (directionResult.right) {
+      pos.x = worldAABBMin.x - size.x - 0.01f
+      normalizedVelocity.x = 0f
+      velocity.x = 0.01f
+    } else if (directionResult.down) {
+      pos.y = worldAABBMax.y + 0.01f
       normalizedVelocity.y = 0f
       velocity.y = -0.01f
-    }
-    if (directionResult.up) {
-      pos.y = worldAABBMin.y - size.y - 0.001f
+    } else if (directionResult.up) {
+      pos.y = worldAABBMin.y - size.y - 0.01f
       normalizedVelocity.y = 0f
       velocity.y = 0.01f
+    } else if (directionResult.front) {
+      pos.z = worldAABBMax.z + 0.01f
+      normalizedVelocity.z = 0f
+      velocity.z = -0.01f
+    } else if (directionResult.back) {
+      pos.z = worldAABBMin.z - size.x - 0.01f
+      normalizedVelocity.z = 0f
+      velocity.z = 0.01f
     }
+
   }
 
   private fun entityCollidesWithWorld(): Boolean {
