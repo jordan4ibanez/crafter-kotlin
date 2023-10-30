@@ -105,7 +105,7 @@ object collision {
     val yInvExit: Float
 
     when {
-      velocity.x > 0f -> {
+      (velocity.x > 0f) -> {
         xInvEntry = pos.x - (oldPos.x + size.x)
         xInvExit = (pos.x + size.x) - oldPos.x
       }
