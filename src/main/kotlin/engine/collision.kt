@@ -33,7 +33,7 @@ object collision {
 //  enum class Direction {
 //    NONE,LEFT, RIGHT, FRONT, BACK, DOWN, UP
 //  }
-  object directionResult {
+  private object directionResult {
     var left = false
     var right = false
     var front = false
