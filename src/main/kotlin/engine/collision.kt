@@ -95,6 +95,8 @@ object collision {
     calculateMapRegion()
     if (!blockManipulator.set(min, max)) return
 
+
+
     val remainingTime = velocity.length()
     var currentTime = remainingTime % 1f
     val loops = ceil(remainingTime).toInt()
@@ -102,7 +104,18 @@ object collision {
 
 //    println("loops $loops")
     updateOldAABB()
-    println("-----")
+//    println("-----")
+
+    val blockManipulatorMin = blockManipulator.getMin()
+    val blockManipulatorMax = blockManipulator.getMax()
+
+    val minX = blockManipulatorMin.x()
+    val minY = blockManipulatorMin.y()
+    val minZ = blockManipulatorMin.z()
+
+    val maxX = blockManipulatorMax.x()
+    val maxY = blockManipulatorMax.y()
+    val maxZ = blockManipulatorMax.z()
 
     (0 until loops).forEach { _ ->
       pos.set(
@@ -111,27 +124,29 @@ object collision {
         pos.z + (normalizedVelocity.z * currentTime)
       )
       updateEntityAABB()
-      var index = 0
-      //? note: Might have to iterate through this in the direction of the velocity.
-      blockManipulator.forEach {
-        val id = it.getBlockID()
-        if (block.isWalkable(id)) {
-          val rootPos = blockManipulator.indexToPos(index)
-          println(rootPos.x)
-          worldAABBMin.set(rootPos.x.toFloat(), rootPos.y.toFloat(), rootPos.z.toFloat())
-          worldAABBMax.set(rootPos.x.toFloat() + 1f, rootPos.y.toFloat() + 1f, rootPos.z.toFloat() + 1f)
-          // todo: Here it would get the blockbox collision box and run through the boxes individually
-          // todo: Here it would run through them individually
-          directionResult.reset()
 
-          if (entityCollidesWithWorld()) {
-            oldPos.set(pos)
-            resolveCollision()
-            updateEntityAABB()
-            entity.onGround = directionResult.down
+      //? note: Might have to iterate through this in the direction of the velocity.
+
+      for (x in minX..maxX) {
+        for (y in minY..maxY) {
+          for (z in minZ..maxZ) {
+            val id = blockManipulator.getID(x,y,z)
+            if (block.isWalkable(id)) {
+              worldAABBMin.set(x.toFloat(), y.toFloat(), z.toFloat())
+              worldAABBMax.set(x.toFloat() + 1f, y.toFloat() + 1f, z.toFloat() + 1f)
+              // todo: Here it would get the blockbox collision box and run through the boxes individually
+              // todo: Here it would run through them individually
+
+              directionResult.reset()
+
+              if (!entityCollidesWithWorld()) continue
+              oldPos.set(pos)
+              resolveCollision()
+              updateEntityAABB()
+              entity.onGround = directionResult.down
+            }
           }
         }
-        index++
       }
       currentTime += 1f
     }
