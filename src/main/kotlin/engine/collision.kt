@@ -27,12 +27,28 @@ object collision {
   private val worldAABBMin = Vector3f()
   private val worldAABBMax = Vector3f()
   private val normal = Vector3f()
-  private var foundDir = Direction.NONE
+//  private var foundDir = Direction.NONE
   private val normalizedVelocity = Vector3f()
 //  private val newPosition = Vector3f()
 
-  enum class Direction {
-    NONE,LEFT, RIGHT, FRONT, BACK, DOWN, UP
+//  enum class Direction {
+//    NONE,LEFT, RIGHT, FRONT, BACK, DOWN, UP
+//  }
+  object directionResult {
+    var left = false
+    var right = false
+    var front = false
+    var back = false
+    var down = false
+    var up = false
+    fun reset() {
+      left = false
+      right = false
+      front = false
+      back = false
+      down = false
+      up = false
+    }
   }
 
     //? note: Entity collision.
@@ -48,6 +64,8 @@ object collision {
     size.set(entity.getSize())
     pos.set(entity.getPosition())
     velocity.set(entity.getVelocity())
+
+    println("X = ${velocity.x} | Z = ${velocity.z}")
 
     oldPos.set(pos)
     oldVelocity.set(velocity)
@@ -102,11 +120,13 @@ object collision {
           worldAABBMax.set(rootPos.x.toFloat() + 1f, rootPos.y.toFloat() + 1f, rootPos.z.toFloat() + 1f)
           // todo: Here it would get the blockbox collision box and run through the boxes individually
           // todo: Here it would run through them individually
+          directionResult.reset()
+
           if (!entityCollidesWithWorld()) return@blockLoop
           oldPos.set(pos)
           resolveCollision()
           updateEntityAABB()
-          entity.onGround = foundDir == Direction.DOWN
+          entity.onGround = directionResult.down
         }
         index++
       }
@@ -142,24 +162,21 @@ object collision {
   }
 
   private fun resolveCollision() {
-    println(foundDir)
-    if (foundDir == Direction.DOWN || foundDir == Direction.UP) {
-      if (velocity.y <= 0) {
-        pos.y = worldAABBMax.y + 0.001f
-        normalizedVelocity.y = 0f
-        velocity.y = -0.01f
-      } else {
-        pos.y = worldAABBMin.y - size.y - 0.001f
-        normalizedVelocity.y = 0f
-        velocity.y = 0.01f
-      }
+    if (directionResult.down) {
+      pos.y = worldAABBMax.y + 0.001f
+      normalizedVelocity.y = 0f
+      velocity.y = -0.01f
+    }
+    if (directionResult.up) {
+      pos.y = worldAABBMin.y - size.y - 0.001f
+      normalizedVelocity.y = 0f
+      velocity.y = 0.01f
     }
   }
 
   private fun entityCollidesWithWorld(): Boolean {
     val collision = !(entityAABBMin.x > worldAABBMax.x || entityAABBMax.x < worldAABBMin.x || entityAABBMin.y > worldAABBMax.y || entityAABBMax.y < worldAABBMin.y || entityAABBMin.z > worldAABBMax.z || entityAABBMax.z < worldAABBMin.z)
     if (!collision) {
-      foundDir = Direction.NONE
       return false
     }
 
@@ -177,15 +194,14 @@ object collision {
     val frontIsIn = entityAABBMin.z < worldAABBMax.z
     val backIsIn = entityAABBMax.z > worldAABBMin.z
 
-    foundDir = when {
-      leftWasOut && leftIsIn -> Direction.LEFT
-      rightWasOut && rightIsIn -> Direction.RIGHT
-      bottomWasOut && bottomIsIn -> Direction.DOWN
-      topWasOut && topIsIn -> Direction.UP
-      frontWasOut && frontIsIn -> Direction.FRONT
-      backWasOut && backIsIn -> Direction.BACK
-      else -> Direction.NONE
-    }
+
+    if (leftWasOut && leftIsIn) directionResult.left = true
+    if (rightWasOut && rightIsIn) directionResult.right = true
+    if (bottomWasOut && bottomIsIn) directionResult.down = true
+    if (topWasOut && topIsIn) directionResult.up = true
+    if (frontWasOut && frontIsIn) directionResult.front = true
+    if (backWasOut && backIsIn) directionResult.back = true
+
     return true
   }
   
