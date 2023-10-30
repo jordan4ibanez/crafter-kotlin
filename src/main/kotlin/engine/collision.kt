@@ -26,6 +26,7 @@ object collision {
   private val entityAABBMax = Vector3f()
   private val worldAABBMin = Vector3f()
   private val worldAABBMax = Vector3f()
+  private val positionArray = FloatArray(3)
   private val normal = Vector3f()
 //  private var foundDir = Direction.NONE
   private val normalizedVelocity = Vector3f()
@@ -142,11 +143,11 @@ object collision {
     }
 
     (0 until loops).forEach { _ ->
-      pos.set(
-        pos.x + (normalizedVelocity.x * currentTime),
-        pos.y + (normalizedVelocity.y * currentTime),
-        pos.z + (normalizedVelocity.z * currentTime)
-      )
+
+      positionArray[0] = pos.x + (normalizedVelocity.x * currentTime)
+      positionArray[1] = pos.y + (normalizedVelocity.y * currentTime)
+      positionArray[2] = pos.z + (normalizedVelocity.z * currentTime)
+
       updateEntityAABB()
 
       for (x in minX toward maxX) {
