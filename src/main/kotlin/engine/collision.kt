@@ -80,43 +80,26 @@ object collision {
     updateOldAABB()
 
     (0 until loops).forEach { _ ->
-
-//      println("currenttime: $currentTime | remainingTime: $remainingTime")
-
-//      println(normalizedVelocity.y)
-
-      println("-----")
-
       pos.set(
         pos.x + (normalizedVelocity.x * currentTime),
         pos.y + (normalizedVelocity.y * currentTime),
         pos.z + (normalizedVelocity.z * currentTime)
       )
-
-//      println("pos was: ${pos.y}")
-
       updateEntityAABB()
-
-
       var index = 0
       blockManipulator.forEach blockLoop@{
         val id = it.getBlockID()
         if (block.isWalkable(id)) {
-
           val rootPos = blockManipulator.indexToPos(index)
-//          calculateNormal(rootPos)
-
           worldAABBMin.set(rootPos.x.toFloat(), rootPos.y.toFloat(), rootPos.z.toFloat())
           worldAABBMax.set(rootPos.x.toFloat() + 1f, rootPos.y.toFloat() + 1f, rootPos.z.toFloat() + 1f)
-
           // todo: Here it would get the blockbox collision box and run through the boxes individually
           // todo: Here it would run through them individually
-
           if (!entityCollidesWithWorld()) return@blockLoop
           oldPos.set(pos)
           resolveCollision()
           updateEntityAABB()
-//          updateOldAABB()
+          updateOldAABB()
 //          println("pos is now: ${pos.y}")
 
         }
