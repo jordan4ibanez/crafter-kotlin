@@ -111,6 +111,10 @@ object camera {
     return workerVector3f
   }
 
+  fun getYaw(): Float {
+    return rotation.y
+  }
+
   fun getRenderDistance(): Int = renderDistance
 
   fun setPosition(x: Float, y: Float, z: Float) {

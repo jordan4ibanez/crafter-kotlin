@@ -1,5 +1,6 @@
 package engine
 
+import org.joml.Math.*
 import org.joml.Vector2i
 import org.joml.Vector2ic
 import org.joml.Vector3f
@@ -44,11 +45,13 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
     camera.setPosition(position.x(), position.y() + eyeHeight, + position.z())
 
     val jump = if (onGround && positionBuffer.y != 0) 0.75f else 0f
-
+    val cameraYaw = camera.getYaw()
+    val forwardBuffer = (positionBuffer.z.toFloat() / 10f)
+    val sidewaysBuffer = (positionBuffer.x.toFloat() / 10f)
     addVelocity(
-      positionBuffer.x.toFloat() / 10f,
+      ((sin(-cameraYaw) * forwardBuffer) + (sin(-cameraYaw + (PI / 2.0f)) * sidewaysBuffer)).toFloat(),
       jump,
-      positionBuffer.z.toFloat() / 10f
+      ((cos(cameraYaw) * forwardBuffer) + (cos(cameraYaw - (PI / 2.0f)) * sidewaysBuffer)).toFloat()
     )
   }
 
