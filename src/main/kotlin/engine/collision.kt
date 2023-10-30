@@ -25,6 +25,7 @@ object collision {
   private val worldAABBMax = Vector3f()
   private val normal = Vector3f()
   private var foundDir = Direction.NONE
+  private val normalizedVelocity = Vector3f()
 //  private val newPosition = Vector3f()
 
   enum class Direction {
@@ -54,9 +55,6 @@ object collision {
       velocity.normalize().mul(MAX_SPEED)
     }
 
-    pos.add(velocity)
-//    newPosition.set(pos)
-
     entityAABBMin.set(
       pos.x - size.x,
       pos.y,
@@ -71,7 +69,7 @@ object collision {
     // Player has fallen/jumped/flown out of the map no need to detect against blocks.
     if (outOfMap(pos.y, pos.y + size.y())) {
       entity.setVelocity(velocity)
-      entity.setPosition(pos)
+      entity.setPosition(pos.add(velocity))
       return
     }
 
@@ -82,26 +80,40 @@ object collision {
     calculateMapRegion(size)
     if (!blockManipulator.set(min, max)) return
 
+    var currentTime = 0f
+    val remainingTime = velocity.length()
+    val loops = ceil(remainingTime).toInt()
 
-    var index = 0
-    blockManipulator.forEach {
-      val id = it.getBlockID()
-      if (block.isWalkable(id)) {
-        val rootPos = blockManipulator.indexToPos(index)
-//        println("velocity ${velocity.y}")
-        calculateNormal(rootPos)
-        worldAABBMin.set(rootPos.x.toFloat(), rootPos.y.toFloat(), rootPos.z.toFloat())
-        worldAABBMax.set(rootPos.x.toFloat() + 1f, rootPos.y.toFloat() + 1f, rootPos.z.toFloat() + 1f)
-        val collisionTime = sweptAABB()
-        pos.x = oldPos.x + (velocity.x * collisionTime)
-        pos.y = oldPos.y + (velocity.y * collisionTime)
-//        println("collision occurred in dir $foundDir")
-        if (foundDir == Direction.DOWN || foundDir == Direction.UP) {
-          println("Y collision ${random()}")
-          velocity.y = -0.001f
+    println("------------")
+
+    (0 until loops).forEach { _ ->
+
+      var index = 0
+      blockManipulator.forEach {
+        val id = it.getBlockID()
+        if (block.isWalkable(id)) {
+
+          val rootPos = blockManipulator.indexToPos(index)
+
+          calculateNormal(rootPos)
+
+          worldAABBMin.set(rootPos.x.toFloat(), rootPos.y.toFloat(), rootPos.z.toFloat())
+          worldAABBMax.set(rootPos.x.toFloat() + 1f, rootPos.y.toFloat() + 1f, rootPos.z.toFloat() + 1f)
+
+
+//        if (foundDir == Direction.DOWN || foundDir == Direction.UP) {
+//          println("Y collision ${random()}")
+//          velocity.y = -0.001f
+//        }
         }
+        index++
       }
-      index++
+      currentTime += if (currentTime + 1f >= remainingTime) {
+        remainingTime % 1f
+      } else {
+        1f
+      }
+      println("current time: $currentTime")
     }
 
     entity.setVelocity(velocity)
