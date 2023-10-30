@@ -19,15 +19,17 @@ object collision {
   private val oldPos = Vector3f()
   private val velocity = Vector3f()
   private val oldVelocity = Vector3f()
-
 //  private val entityAABBMin = Vector3f()
 //  private val entityAABBMax = Vector3f()
 //  private val worldAABBMin = Vector3f()
 //  private val worldAABBMax = Vector3f()
-
   private val normal = Vector3f()
+  private var foundDir = Direction.NONE
+  enum class Direction {
+    NONE,LEFT, RIGHT, FRONT, BACK, DOWN, UP
+  }
 
-  //? note: Entity collision.
+    //? note: Entity collision.
 
   internal fun collideEntityToWorld(entity: GroovyEntity) {
 
@@ -78,7 +80,7 @@ object collision {
         pos.y = oldPos.y + (velocity.y * collisionTime)
         velocity.x = 0f
         velocity.y = 0f
-        println("collision occured")
+        println("collision occurred in dir $foundDir")
       }
       index++
     }
@@ -88,15 +90,12 @@ object collision {
   }
 
   private fun sweptAABB(): Float {
-    /*
-    b1 and b2 are placeholders as I follow the tutorial.
-    */
-    val b1 = oldPos
-    val b2 = pos
 
     // fixme: find z
 
     // fixme: break this up into multiple functions
+
+    // fixme: Turn this into a bunch of "when" statements because this looks horrible
 
     // Find the distance between the objects on the near and far sides for both x and y.
 
@@ -106,19 +105,19 @@ object collision {
     val yInvExit: Float
 
     if (velocity.x > 0f) {
-      xInvEntry = b2.x - (b1.x + size.x)
-      xInvExit = (b2.x + size.x) - b1.x
+      xInvEntry = pos.x - (oldPos.x + size.x)
+      xInvExit = (pos.x + size.x) - oldPos.x
     } else {
-      xInvEntry = (b2.x + size.x) - b1.x
-      xInvExit = b2.x - (b1.x + size.x)
+      xInvEntry = (pos.x + size.x) - oldPos.x
+      xInvExit = pos.x - (oldPos.x + size.x)
     }
 
     if (velocity.y > 0f) {
-      yInvEntry = b2.y - (b1.y + size.y)
-      yInvExit = (b2.y + size.y) - b1.y
+      yInvEntry = pos.y - (oldPos.y + size.y)
+      yInvExit = (pos.y + size.y) - oldPos.y
     } else {
-      yInvEntry = (b2.y + size.y) - b1.y
-      yInvExit = b2.y - (b1.y + size.y)
+      yInvEntry = (pos.y + size.y) - oldPos.y
+      yInvExit = pos.y - (oldPos.y + size.y)
     }
 
 //    if (yInvEntry != 0f || xInvEntry != 0f) {
@@ -158,6 +157,7 @@ object collision {
     if (entryTime > exitTime || xEntry < 0.0f && yEntry < 0.0f || xEntry > 1.0f || yEntry > 1.0f) {
       normal.x = 0.0f
       normal.y = 0.0f
+      foundDir = Direction.NONE
       return 1.0f
     } else {
       // If there was a collision.
@@ -180,10 +180,25 @@ object collision {
           normal.y = -1.0f
         }
       }
-
-      // Return the time of collision return entryTime.
-      return entryTime
     }
+
+    // FIXME: needs front and back
+    if (xEntry > yEntry) {
+      if (xInvEntry > 0f) {
+        foundDir = Direction.RIGHT
+      } else {
+        foundDir = Direction.LEFT
+      }
+    } else {
+      if (xInvEntry > 0f) {
+        foundDir = Direction.UP
+      } else {
+        foundDir = Direction.DOWN
+      }
+    }
+
+    // Return the time of collision return entryTime.
+    return entryTime
   }
 
   private fun calculateNormal(position: Vector3ic) {
