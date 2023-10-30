@@ -100,7 +100,7 @@ object collision {
           oldPos.set(pos)
           resolveCollision()
           updateEntityAABB()
-          updateOldAABB()
+//          updateOldAABB()
         }
         index++
       }
