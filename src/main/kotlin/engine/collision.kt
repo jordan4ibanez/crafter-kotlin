@@ -78,9 +78,12 @@ object collision {
         val collisionTime = sweptAABB()
         pos.x = oldPos.x + (velocity.x * collisionTime)
         pos.y = oldPos.y + (velocity.y * collisionTime)
-        velocity.x = 0f
-        velocity.y = 0f
-        println("collision occurred in dir $foundDir")
+//        println("collision occurred in dir $foundDir")
+        if (foundDir == Direction.UP) {
+          println("up ${random()}")
+          velocity.x = 0f
+          velocity.y = 0f
+        }
       }
       index++
     }
