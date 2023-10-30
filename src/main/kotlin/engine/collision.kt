@@ -115,12 +115,15 @@ object collision {
       }
     }
 
-    if (velocity.y > 0f) {
-      yInvEntry = pos.y - (oldPos.y + size.y)
-      yInvExit = (pos.y + size.y) - oldPos.y
-    } else {
-      yInvEntry = (pos.y + size.y) - oldPos.y
-      yInvExit = pos.y - (oldPos.y + size.y)
+    when {
+      (velocity.y > 0f) -> {
+        yInvEntry = pos.y - (oldPos.y + size.y)
+        yInvExit = (pos.y + size.y) - oldPos.y
+      }
+      else -> {
+        yInvEntry = (pos.y + size.y) - oldPos.y
+        yInvExit = pos.y - (oldPos.y + size.y)
+      }
     }
 
 //    if (yInvEntry != 0f || xInvEntry != 0f) {
