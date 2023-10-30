@@ -188,25 +188,7 @@ object collision {
     }
     return true
   }
-
-//  private fun calculateNormal(position: Vector3ic) {
-//    if (velocity.x() <= 0f) {
-//      normal.x = position.x() + 1f /*fixme: use size here*/
-//    } else {
-//      normal.x = position.x().toFloat()
-//    }
-//    if (velocity.y() <= 0f) {
-//      normal.y = position.y() + 1f /*fixme: use size here*/
-//    } else {
-//      normal.y = position.y().toFloat()
-//    }
-//    if (velocity.z() <= 0f) {
-//      normal.z = position.z() + 1f /*fixme: use size here*/
-//    } else {
-//      normal.z = position.z().toFloat()
-//    }
-//  }
-
+  
   private fun outOfMap(yMin: Float, yMax: Float): Boolean = yMin >= WORLD_Y_MAX || yMax < WORLD_Y_MIN
 
   private fun calculateMapRegion() {
