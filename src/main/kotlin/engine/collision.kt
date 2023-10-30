@@ -65,7 +65,7 @@ object collision {
     pos.set(entity.getPosition())
     velocity.set(entity.getVelocity())
 
-    println("X = ${velocity.x} | Z = ${velocity.z}")
+//    println("X = ${velocity.x} | Z = ${velocity.z}")
 
     oldPos.set(pos)
     oldVelocity.set(velocity)
@@ -102,6 +102,7 @@ object collision {
 
 //    println("loops $loops")
     updateOldAABB()
+    println("-----")
 
     (0 until loops).forEach { _ ->
       pos.set(
@@ -116,6 +117,7 @@ object collision {
         val id = it.getBlockID()
         if (block.isWalkable(id)) {
           val rootPos = blockManipulator.indexToPos(index)
+          println(rootPos.x)
           worldAABBMin.set(rootPos.x.toFloat(), rootPos.y.toFloat(), rootPos.z.toFloat())
           worldAABBMax.set(rootPos.x.toFloat() + 1f, rootPos.y.toFloat() + 1f, rootPos.z.toFloat() + 1f)
           // todo: Here it would get the blockbox collision box and run through the boxes individually
