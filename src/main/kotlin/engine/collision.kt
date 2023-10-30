@@ -43,6 +43,8 @@ object collision {
     // https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/
     // https://www.amanotes.com/post/using-swept-aabb-to-detect-and-process-collision
 
+    entity.onGround = false
+
     size.set(entity.getSize())
     pos.set(entity.getPosition())
     velocity.set(entity.getVelocity())
@@ -52,6 +54,10 @@ object collision {
 
     // Gravity.
     velocity.y -= gravity
+
+    // Friction. todo: add in block friction
+    velocity.x = signum(velocity.x) * (abs(velocity.x) / 1.2f)
+    velocity.z = signum(velocity.z) * (abs(velocity.z) / 1.2f)
 
     // Limit the speed to X blocks per tick.
     if (velocity.length() > MAX_SPEED) {
@@ -100,7 +106,7 @@ object collision {
           oldPos.set(pos)
           resolveCollision()
           updateEntityAABB()
-//          updateOldAABB()
+          entity.onGround = foundDir == Direction.DOWN
         }
         index++
       }

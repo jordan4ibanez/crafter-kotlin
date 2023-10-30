@@ -13,6 +13,7 @@ open class PointEntity {
   val position = Vector3f()
   private val velocity = Vector3f()
   var meshID = 0
+  var onGround = false
 
   constructor(pos: Vector3fc) {
     this.position.set(pos)

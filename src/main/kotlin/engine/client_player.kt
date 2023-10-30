@@ -42,7 +42,10 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
   override fun onTick(delta: Float) {
     super.onTick(delta)
     camera.setPosition(position.x(), position.y() + eyeHeight, + position.z())
-    addVelocity(positionBuffer.x.toFloat() / 10f, 0f, positionBuffer.z.toFloat() / 10f)
+
+    val jump = if (onGround && positionBuffer.y != 0) 0.75f else 0f
+
+    addVelocity(positionBuffer.x.toFloat() / 10f, jump, positionBuffer.z.toFloat() / 10f)
   }
 
   internal fun doClientControls() {
