@@ -965,10 +965,8 @@ object blockManipulator : Iterator<Int> {
     size.set((abs(max.x() - min.x()) + 1), (abs(max.y() - min.y()) + 1), (abs(max.z() - min.z()) + 1))
 
     yStride = if (size.x == 1 || size.z == 1) {
-      println("hit | x: ${size.x} | z: ${size.z}")
-      size.x() + size.z() + 1
+      size.x() + size.z()
     } else {
-      println("NO HIT")
       size.x() * size.z()
     }
 
@@ -1229,48 +1227,25 @@ object blockManipulator : Iterator<Int> {
     val x = posX - min.x
     val y = posY - min.y
     val z = posZ - min.z
-//    println("min: ${min.z()} , posz: $posZ")
-//    println("internal: $x, $y, $z")
     when {
-      x < 0 -> {
-        println("x was $posX")
-      }
-
-      y < 0 -> {
-        println("y was $posY")
-      }
-
-      z < 0 -> {
-        println("z was $posZ")
-      }
+      x < 0 -> println("x was $posX")
+      y < 0 -> println("y was $posY")
+      z < 0 -> println("z was $posZ")
     }
 
-    val test = (y * yStride) + (z * size.z()) + x
-    val check = indexToPos(test)
-
-    if (check.x() != x || check.y() != y || check.z() != z) {
-      throw RuntimeException("\nINPUT: [$x, $y, $z]\n" +
-        "OUTPUT: [${check.x()}, ${check.y()}, ${check.z()}]\n" +
-        "zmin: ${min.z} | calcZ: $z\n" +
-        "zmax: ${max.z} | calcZ: $z\n" +
-        "sizeZ: ${size.z}")
-    }
-
-    return test
+    return (y * yStride) + (z * size.x()) + x
   }
 
-//  fun indexToPos(index: Int): Vector3ic {
-//    return cachePos.set(
-//      index % size.x(),
-//      (index / yStride) % size.y(),
-//      (index / size.z()) % size.z())
-//  }
 
   fun indexToPos(index: Int): Vector3ic {
-    return cachePos.set(
-      (index % size.x()),
-      ((index / yStride) % size.y()),
-      ((index / size.z()) % size.z()))
+    // https://github.com/minetest/minetest/blob/master/builtin/game/voxelarea.lua#L62
+    var i = index
+    cachePos.y = floor(i.toFloat() / yStride.toFloat()).toInt()
+    i %= yStride
+    cachePos.z = floor(i.toFloat() / size.x.toFloat()).toInt()
+    i %= size.x
+    cachePos.x = i
+    return cachePos
   }
 
 
