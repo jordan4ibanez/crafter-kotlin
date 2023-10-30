@@ -237,7 +237,7 @@ object collision {
     )
   }
 
-  private fun entityCollidesWithWorld(): Boolean {
+  private fun entityCollidesWithWorld(axis: Int): Boolean {
     val collision = !(entityAABBMin.x > worldAABBMax.x ||
         entityAABBMax.x < worldAABBMin.x ||
         entityAABBMin.y > worldAABBMax.y ||
@@ -247,6 +247,19 @@ object collision {
 
     if (!collision) return false
 
+    when (axis) {
+      0 -> {
+
+      }
+
+      1 -> {
+
+      }
+
+      2 -> {
+        
+      }
+    }
 
     val leftWasOut   = oldAABBMin.x > worldAABBMax.x
     val rightWasOut  = oldAABBMax.x < worldAABBMin.x
@@ -263,12 +276,12 @@ object collision {
     val backIsIn   = entityAABBMax.z > worldAABBMin.z
 
 
-    if (leftWasOut && leftIsIn) directionResult.left = true
-    if (rightWasOut && rightIsIn) directionResult.right = true
+    if (leftWasOut && leftIsIn)     directionResult.left = true
+    if (rightWasOut && rightIsIn)   directionResult.right = true
     if (bottomWasOut && bottomIsIn) directionResult.down = true
-    if (topWasOut && topIsIn) directionResult.up = true
-    if (frontWasOut && frontIsIn) directionResult.front = true
-    if (backWasOut && backIsIn) directionResult.back = true
+    if (topWasOut && topIsIn)       directionResult.up = true
+    if (frontWasOut && frontIsIn)   directionResult.front = true
+    if (backWasOut && backIsIn)     directionResult.back = true
 
     return true
   }
