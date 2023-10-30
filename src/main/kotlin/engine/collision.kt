@@ -192,14 +192,14 @@ object collision {
   }
 
   private fun entityCollidesWithWorld(): Boolean {
-    if (!(entityAABBMin.x > worldAABBMax.x ||
+    val collision = !(entityAABBMin.x > worldAABBMax.x ||
         entityAABBMax.x < worldAABBMin.x ||
         entityAABBMin.y > worldAABBMax.y ||
         entityAABBMax.y < worldAABBMin.y ||
         entityAABBMin.z > worldAABBMax.z ||
-        entityAABBMax.z < worldAABBMin.z)) {
-        return false
-    }
+        entityAABBMax.z < worldAABBMin.z)
+
+    if (!collision) return false
 
 
     val leftWasOut   = oldAABBMin.x > worldAABBMax.x
