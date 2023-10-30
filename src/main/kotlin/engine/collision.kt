@@ -160,11 +160,11 @@ object collision {
     println(foundDir)
     if (foundDir == Direction.DOWN || foundDir == Direction.UP) {
       if (velocity.y <= 0) {
-        pos.y = worldAABBMax.y
+        pos.y = worldAABBMax.y + 0.001f
         normalizedVelocity.y = 0f
         velocity.y = -0.01f
       } else {
-        pos.y = worldAABBMin.y - size.y
+        pos.y = worldAABBMin.y - size.y - 0.001f
         normalizedVelocity.y = 0f
         velocity.y = 0.01f
       }
@@ -178,33 +178,30 @@ object collision {
       return false
     }
 
-    println("test: ${oldAABBMin.y} | ${entityAABBMin.y} | ${worldAABBMax.y}")
+//    println("test: ${oldAABBMin.y} | ${entityAABBMin.y} | ${worldAABBMax.y}")
 
-//    val leftWasOut = oldAABBMin.x > worldAABBMax.x
-//    val rightWasOut = oldAABBMax.x < worldAABBMin.x
+    val leftWasOut = oldAABBMin.x > worldAABBMax.x
+    val rightWasOut = oldAABBMax.x < worldAABBMin.x
     val bottomWasOut = oldAABBMin.y > worldAABBMax.y
-//    val topWasOut = oldAABBMax.y < worldAABBMin.y
-//    val frontWasOut = oldAABBMin.z > worldAABBMax.z
-//    val backWasOut = oldAABBMax.z < worldAABBMin.z
-//
-//    val leftIsIn = entityAABBMin.x < worldAABBMax.x
-//    val rightIsIn = entityAABBMax.x > worldAABBMin.x
+    val topWasOut = oldAABBMax.y < worldAABBMin.y
+    val frontWasOut = oldAABBMin.z > worldAABBMax.z
+    val backWasOut = oldAABBMax.z < worldAABBMin.z
+
+    val leftIsIn = entityAABBMin.x < worldAABBMax.x
+    val rightIsIn = entityAABBMax.x > worldAABBMin.x
     val bottomIsIn = entityAABBMin.y < worldAABBMax.y
-//    val topIsIn = entityAABBMax.y > worldAABBMin.y
-//    val frontIsIn = entityAABBMin.z < worldAABBMax.z
-//    val backIsIn = entityAABBMax.z > worldAABBMin.z
+    val topIsIn = entityAABBMax.y > worldAABBMin.y
+    val frontIsIn = entityAABBMin.z < worldAABBMax.z
+    val backIsIn = entityAABBMax.z > worldAABBMin.z
 
     foundDir = when {
-//      leftWasOut && leftIsIn -> Direction.LEFT
-//      rightWasOut && rightIsIn -> Direction.RIGHT
+      leftWasOut && leftIsIn -> Direction.LEFT
+      rightWasOut && rightIsIn -> Direction.RIGHT
       bottomWasOut && bottomIsIn -> Direction.DOWN
-//      topWasOut && topIsIn -> Direction.UP
-//      frontWasOut && frontIsIn -> Direction.FRONT
-//      backWasOut && backIsIn -> Direction.BACK
-      else -> {
-        println("failure")
-        Direction.NONE
-      }
+      topWasOut && topIsIn -> Direction.UP
+      frontWasOut && frontIsIn -> Direction.FRONT
+      backWasOut && backIsIn -> Direction.BACK
+      else -> Direction.NONE
     }
     return true
   }
@@ -253,7 +250,7 @@ object collision {
       max.z = projectedPos.z + size.x
     }
 
-    println("map region Y: min: ${min.y} | max: ${max.y}")
+//    println("map region Y: min: ${min.y} | max: ${max.y}")
   }
 
 
