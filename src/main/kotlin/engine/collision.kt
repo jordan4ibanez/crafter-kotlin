@@ -88,6 +88,10 @@ object collision {
     val b1 = oldPos
     val b2 = pos
 
+    // fixme: find z
+
+    // Find the distance between the objects on the near and far sides for both x and y.
+
     val xInvEntry: Float
     val yInvEntry: Float
     val xInvExit: Float
@@ -114,6 +118,32 @@ object collision {
 //      println("entry: $xInvEntry | $yInvEntry")
 //      println("exit:  $xInvExit  | $yInvExit")
 //    }
+
+    // Find time of collision and time of leaving for each axis (if statement is to prevent divide by zero) NaN on JVM.
+
+    val xEntry: Float
+    val yEntry: Float
+    val xExit: Float
+    val yExit: Float
+
+    if (velocity.x == 0f) {
+      xEntry = Float.NEGATIVE_INFINITY
+      xExit = Float.POSITIVE_INFINITY
+    } else {
+      xEntry = xInvEntry / velocity.x
+      xExit = xInvExit / velocity.x
+    }
+
+    if (velocity.y == 0f) {
+      yEntry = Float.NEGATIVE_INFINITY
+      yExit = Float.POSITIVE_INFINITY
+    } else {
+      yEntry = yInvEntry / velocity.y
+      yExit = yInvExit / velocity.y
+    }
+
+
+
 
   }
 
