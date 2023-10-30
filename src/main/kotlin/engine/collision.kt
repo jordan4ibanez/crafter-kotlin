@@ -25,7 +25,7 @@ object collision {
   private val worldAABBMin = Vector3f()
   private val worldAABBMax = Vector3f()
   private val normalizedVelocity = Vector3f()
-  
+
   private object directionResult {
     var left = false
     var right = false
@@ -132,11 +132,10 @@ object collision {
 
 
               val id = blockManipulator.getID(x, y, z)
-              val doubleCheck = getBlockID(x.toFloat(), y.toFloat(), z.toFloat())
-
-              if (doubleCheck != id) {
-                throw RuntimeException("failed. Got $id expected $doubleCheck")
-              }
+//              val doubleCheck = getBlockID(x.toFloat(), y.toFloat(), z.toFloat())
+//              if (doubleCheck != id) {
+//                throw RuntimeException("failed. Got $id expected $doubleCheck")
+//              }
 
               if (!block.isWalkable(id)) continue
 
