@@ -25,7 +25,10 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
 //  private var payloaded = false
 
   override fun setPosition(newPosition: Vector3fc) {
+
+    oldPosition.set(position)
     position.set(newPosition)
+    interpolationTimer = 0f
     val x: Int = floor(newPosition.x() / world.getChunkWidth()).toInt()
     val z: Int = floor(newPosition.z() / world.getChunkDepth()).toInt()
     currentChunkPosition.set(x,z)
@@ -42,9 +45,7 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
 
   override fun onTick(delta: Float) {
     super.onTick(delta)
-    camera.setPosition(position.x(), position.y() + eyeHeight, + position.z())
-
-    val jump = if (onGround && positionBuffer.y != 0) 0.75f else 0f
+    val jump = if (onGround && positionBuffer.y != 0) 0.5525f else 0f
     val cameraYaw = camera.getYaw()
     val forwardBuffer = (positionBuffer.z.toFloat() / 10f)
     val sidewaysBuffer = (positionBuffer.x.toFloat() / 10f)
@@ -53,6 +54,10 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
       jump,
       ((cos(cameraYaw) * forwardBuffer) + (cos(cameraYaw - (PI / 2.0f)) * sidewaysBuffer)).toFloat()
     )
+  }
+
+  internal fun glueCamera() {
+    camera.setPosition(interpolationPosition.x(), interpolationPosition.y() + eyeHeight, + interpolationPosition.z())
   }
 
   internal fun doClientControls() {
