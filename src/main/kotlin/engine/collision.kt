@@ -211,27 +211,12 @@ object collision {
 
   private fun calculateMapRegion() {
     //fixme: this is unoptimized.
-    if (velocity.x() <= 0) {
-      min.x = projectedPos.x - size.x
-      max.x = oldPos.x + size.x
-    } else {
-      min.x = oldPos.x - size.x
-      max.x = projectedPos.x + size.x
-    }
-    if (velocity.y() <= 0) {
-      min.y = projectedPos.y
-      max.y = oldPos.y + size.y
-    } else {
-      min.y = oldPos.y
-      max.y = projectedPos.y + size.y
-    }
-    if (velocity.z() <= 0) {
-      min.z = projectedPos.z - size.x
-      max.z = oldPos.z + size.x
-    } else {
-      min.z = oldPos.z - size.x
-      max.z = projectedPos.z + size.x
-    }
+    min.x = min(projectedPos.x, oldPos.x) - size.x
+    max.x = max(projectedPos.x, oldPos.x) + size.x
+    min.y = min(projectedPos.y, oldPos.y)
+    max.y = max(projectedPos.y, oldPos.y) + size.y
+    min.z = min(projectedPos.z, oldPos.z) - size.x
+    max.z = max(projectedPos.z, oldPos.z) + size.x
 
 //    println("map region Y: min: ${min.y} | max: ${max.y}")
   }
