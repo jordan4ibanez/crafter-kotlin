@@ -109,14 +109,7 @@ fun update(delta: Float) {
     }
   }
   window.setClearColor(color)
-
-//  println("loops")
-//  if (blockManipulator.set(
-//    -12,66,-26,
-//    -10,68,-26
-//  )) {
-//    println("g2g")
-//  }
+  
 }
 
 // Consider this pure logic updates. onTick, collision, etc. For real time things, put them in update().
