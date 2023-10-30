@@ -1,0 +1,153 @@
+  private fun sweptAABB(): Float {
+
+    // fixme: find z
+
+    // fixme: break this up into multiple functions
+
+    // fixme: Turn this into a bunch of "when" statements because this looks horrible
+
+    // fixme: When blockboxes are implemented, this should collide with all boxes
+
+    // Find the distance between the objects on the near and far sides for both x and y.
+
+    val xInvEntry: Float
+    val yInvEntry: Float
+    val xInvExit: Float
+    val yInvExit: Float
+
+    when {
+      (velocity.x > 0f) -> {
+        xInvEntry = pos.x - (oldPos.x + size.x)
+        xInvExit = (pos.x + size.x) - oldPos.x
+      }
+
+      else -> {
+        xInvEntry = (pos.x + size.x) - oldPos.x
+        xInvExit = pos.x - (oldPos.x + size.x)
+      }
+    }
+
+    when {
+      (velocity.y > 0f) -> {
+        yInvEntry = pos.y - (oldPos.y + size.y)
+        yInvExit = (pos.y + size.y) - oldPos.y
+      }
+
+      else -> {
+        yInvEntry = (pos.y + size.y) - oldPos.y
+        yInvExit = pos.y - (oldPos.y + size.y)
+      }
+    }
+
+    // Find time of collision and time of leaving for each axis (if statement is to prevent divide by zero) NaN on JVM.
+
+    val xEntry: Float
+    val yEntry: Float
+    val xExit: Float
+    val yExit: Float
+
+    when {
+      (velocity.x == 0f) -> {
+        xEntry = Float.NEGATIVE_INFINITY
+        xExit = Float.POSITIVE_INFINITY
+      }
+      else -> {
+        xEntry = xInvEntry / velocity.x
+        xExit = xInvExit / velocity.x
+      }
+    }
+
+    if (velocity.y == 0f) {
+      yEntry = Float.NEGATIVE_INFINITY
+      yExit = Float.POSITIVE_INFINITY
+    } else {
+      yEntry = yInvEntry / velocity.y
+      yExit = yInvExit / velocity.y
+    }
+
+    // Find the earliest/latest times of collision float.
+    val entryTime = abs(max(xEntry, yEntry))
+    val exitTime = abs(min(xExit, yExit))
+
+    // If there was no collision.
+    when {
+      (xEntry < 0f && yEntry < 0f) || (entryTime > exitTime) -> {
+        println("entry: $entryTime | exit: $exitTime")
+        normal.x = 0.0f
+        normal.y = 0.0f
+        foundDir = Direction.NONE
+        return 1.0f
+      }
+      (xEntry < 0f) -> {
+        // Check that the bounding box started overlapped or not.
+        if (entityAABBMax.x < worldAABBMin.x || entityAABBMin.x > worldAABBMax.x) return 1.0f;
+      }
+      (yEntry < 0.0f) -> {
+        // Check that the bounding box started overlapped or not.
+        if (entityAABBMax.y < worldAABBMin.y || entityAABBMin.y > worldAABBMax.y) return 1.0f;
+      }
+
+      else -> {
+        // If there was a collision.
+        // Calculate normal of collided surface.
+        when {
+          (xEntry > yEntry) -> {
+            when {
+              (xInvEntry < 0.0f) -> {
+                normal.x = 1.0f
+                normal.y = 0.0f
+              }
+
+              else -> {
+                normal.x = -1.0f
+                normal.y = 0.0f
+              }
+            }
+          }
+
+          else -> {
+            when {
+              (yInvEntry < 0.0f) -> {
+                normal.x = 0.0f
+                normal.y = 1.0f
+              }
+
+              else -> {
+                normal.x = 0.0f
+                normal.y = -1.0f
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // FIXME: needs front and back
+    foundDir = when {
+      (xEntry > yEntry) -> {
+        when {
+          (xInvEntry > 0f) -> Direction.RIGHT
+          else -> Direction.LEFT
+        }
+      }
+
+      else -> {
+        when {
+          (yInvEntry > 0f) -> Direction.UP
+          else -> Direction.DOWN
+        }
+      }
+    }
+
+    if (foundDir == Direction.UP || foundDir == Direction.DOWN) {
+//      if (yInvEntry != 0f || xInvEntry != 0f) {
+        println("------------------------------")
+        println("velocityy: ${velocity.y}")
+        println("entry: $xInvEntry | $yInvEntry")
+        println("exit:  $xInvExit  | $yInvExit")
+//      }
+    }
+
+    // Return the time of collision return entryTime.
+    return entryTime
+  }

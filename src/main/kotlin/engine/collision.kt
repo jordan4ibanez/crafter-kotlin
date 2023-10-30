@@ -19,12 +19,14 @@ object collision {
   private val oldPos = Vector3f()
   private val velocity = Vector3f()
   private val oldVelocity = Vector3f()
-//  private val entityAABBMin = Vector3f()
-//  private val entityAABBMax = Vector3f()
-//  private val worldAABBMin = Vector3f()
-//  private val worldAABBMax = Vector3f()
+  private val entityAABBMin = Vector3f()
+  private val entityAABBMax = Vector3f()
+  private val worldAABBMin = Vector3f()
+  private val worldAABBMax = Vector3f()
   private val normal = Vector3f()
   private var foundDir = Direction.NONE
+//  private val newPosition = Vector3f()
+
   enum class Direction {
     NONE,LEFT, RIGHT, FRONT, BACK, DOWN, UP
   }
@@ -53,10 +55,21 @@ object collision {
     }
 
     pos.add(velocity)
+//    newPosition.set(pos)
+
+    entityAABBMin.set(
+      pos.x - size.x,
+      pos.y,
+      pos.z - size.x
+    )
+    entityAABBMax.set(
+      pos.x + size.x,
+      pos.y + size.y,
+      pos.z + size.x
+    )
 
     // Player has fallen/jumped/flown out of the map no need to detect against blocks.
     if (outOfMap(pos.y, pos.y + size.y())) {
-
       entity.setVelocity(velocity)
       entity.setPosition(pos)
       return
@@ -74,15 +87,18 @@ object collision {
     blockManipulator.forEach {
       val id = it.getBlockID()
       if (block.isWalkable(id)) {
-        calculateNormal(blockManipulator.indexToPos(index))
+        val rootPos = blockManipulator.indexToPos(index)
+//        println("velocity ${velocity.y}")
+        calculateNormal(rootPos)
+        worldAABBMin.set(rootPos.x.toFloat(), rootPos.y.toFloat(), rootPos.z.toFloat())
+        worldAABBMax.set(rootPos.x.toFloat() + 1f, rootPos.y.toFloat() + 1f, rootPos.z.toFloat() + 1f)
         val collisionTime = sweptAABB()
         pos.x = oldPos.x + (velocity.x * collisionTime)
         pos.y = oldPos.y + (velocity.y * collisionTime)
 //        println("collision occurred in dir $foundDir")
-        if (foundDir == Direction.UP) {
-          println("up ${random()}")
-          velocity.x = 0f
-          velocity.y = 0f
+        if (foundDir == Direction.DOWN || foundDir == Direction.UP) {
+          println("Y collision ${random()}")
+          velocity.y = -0.001f
         }
       }
       index++
@@ -92,158 +108,20 @@ object collision {
     entity.setPosition(pos)
   }
 
-  private fun sweptAABB(): Float {
 
-    // fixme: find z
-
-    // fixme: break this up into multiple functions
-
-    // fixme: Turn this into a bunch of "when" statements because this looks horrible
-
-    // Find the distance between the objects on the near and far sides for both x and y.
-
-    val xInvEntry: Float
-    val yInvEntry: Float
-    val xInvExit: Float
-    val yInvExit: Float
-
-    when {
-      (velocity.x > 0f) -> {
-        xInvEntry = pos.x - (oldPos.x + size.x)
-        xInvExit = (pos.x + size.x) - oldPos.x
-      }
-
-      else -> {
-        xInvEntry = (pos.x + size.x) - oldPos.x
-        xInvExit = pos.x - (oldPos.x + size.x)
-      }
-    }
-
-    when {
-      (velocity.y > 0f) -> {
-        yInvEntry = pos.y - (oldPos.y + size.y)
-        yInvExit = (pos.y + size.y) - oldPos.y
-      }
-
-      else -> {
-        yInvEntry = (pos.y + size.y) - oldPos.y
-        yInvExit = pos.y - (oldPos.y + size.y)
-      }
-    }
-
-//    if (yInvEntry != 0f || xInvEntry != 0f) {
-//      println("------------------------------")
-//      println("entry: $xInvEntry | $yInvEntry")
-//      println("exit:  $xInvExit  | $yInvExit")
-//    }
-
-    // Find time of collision and time of leaving for each axis (if statement is to prevent divide by zero) NaN on JVM.
-
-    val xEntry: Float
-    val yEntry: Float
-    val xExit: Float
-    val yExit: Float
-
-    when {
-      (velocity.x == 0f) -> {
-        xEntry = Float.NEGATIVE_INFINITY
-        xExit = Float.POSITIVE_INFINITY
-      }
-      else -> {
-        xEntry = xInvEntry / velocity.x
-        xExit = xInvExit / velocity.x
-      }
-    }
-
-    if (velocity.y == 0f) {
-      yEntry = Float.NEGATIVE_INFINITY
-      yExit = Float.POSITIVE_INFINITY
-    } else {
-      yEntry = yInvEntry / velocity.y
-      yExit = yInvExit / velocity.y
-    }
-
-    // Find the earliest/latest times of collision float.
-    val entryTime = max(xEntry, yEntry)
-    val exitTime = min(xExit, yExit)
-
-    // If there was no collision.
-    when {
-      (entryTime > exitTime || xEntry < 0.0f && yEntry < 0.0f || xEntry > 1.0f || yEntry > 1.0f) -> {
-        normal.x = 0.0f
-        normal.y = 0.0f
-        foundDir = Direction.NONE
-        return 1.0f
-      }
-
-      else -> {
-        // If there was a collision.
-        // Calculate normal of collided surface.
-        when {
-          (xEntry > yEntry) -> {
-            when {
-              (xInvEntry < 0.0f) -> {
-                normal.x = 1.0f
-                normal.y = 0.0f
-              }
-
-              else -> {
-                normal.x = -1.0f
-                normal.y = 0.0f
-              }
-            }
-          }
-
-          else -> {
-            when {
-              (yInvEntry < 0.0f) -> {
-                normal.x = 0.0f
-                normal.y = 1.0f
-              }
-
-              else -> {
-                normal.x = 0.0f
-                normal.y = -1.0f
-              }
-            }
-          }
-        }
-      }
-    }
-
-    // FIXME: needs front and back
-    foundDir = when {
-      (xEntry > yEntry) -> {
-        when {
-          (xInvEntry > 0f) -> Direction.RIGHT
-          else -> Direction.LEFT
-        }
-      }
-
-      else -> {
-        when {
-          (xInvEntry > 0f) -> Direction.UP
-          else -> Direction.DOWN
-        }
-      }
-    }
-
-    // Return the time of collision return entryTime.
-    return entryTime
-  }
 
   private fun calculateNormal(position: Vector3ic) {
-    if (velocity.x() <= 0) {
+    if (velocity.x() <= 0f) {
       normal.x = position.x() + 1f /*fixme: use size here*/
     } else {
       normal.x = position.x().toFloat()
     }
-    if (velocity.y() <= 0) {
+    if (velocity.y() <= 0f) {
       normal.y = position.y() + 1f /*fixme: use size here*/
     } else {
       normal.y = position.y().toFloat()
     }
-    if (velocity.z() <= 0) {
+    if (velocity.z() <= 0f) {
       normal.z = position.z() + 1f /*fixme: use size here*/
     } else {
       normal.z = position.z().toFloat()
