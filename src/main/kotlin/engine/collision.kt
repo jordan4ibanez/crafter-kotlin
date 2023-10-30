@@ -129,25 +129,24 @@ object collision {
           for (z in minZ toward maxZ) {
             for (y in minY toward maxY) {
               val id = blockManipulator.getID(x, y, z)
-              if (block.isWalkable(id)) {
-                worldAABBMin.set(x.toFloat(), y.toFloat(), z.toFloat())
-                worldAABBMax.set(x.toFloat() + 1f, y.toFloat() + 1f, z.toFloat() + 1f)
-                // todo: Here it would get the blockbox collision box and run through the boxes individually
-                // todo: Here it would run through them individually
+              if (!block.isWalkable(id)) continue
+              worldAABBMin.set(x.toFloat(), y.toFloat(), z.toFloat())
+              worldAABBMax.set(x.toFloat() + 1f, y.toFloat() + 1f, z.toFloat() + 1f)
+              // todo: Here it would get the blockbox collision box and run through the boxes individually
+              // todo: Here it would run through them individually
 
-                directionResult.reset()
+              directionResult.reset()
 
-                if (!entityCollidesWithWorld()) continue
+              if (!entityCollidesWithWorld()) continue
 
-                resolveCollision(axis)
+              resolveCollision(axis)
 
-                oldPos.set(pos)
-                updateEntityAABB()
-                updateOldAABB()
+              oldPos.set(pos)
+              updateEntityAABB()
+              updateOldAABB()
 
-                if (directionResult.down) {
-                  entity.onGround = true
-                }
+              if (directionResult.down) {
+                entity.onGround = true
               }
             }
           }
