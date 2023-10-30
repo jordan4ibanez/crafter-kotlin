@@ -108,8 +108,7 @@ object collision {
       (velocity.x > 0f) -> {
         xInvEntry = pos.x - (oldPos.x + size.x)
         xInvExit = (pos.x + size.x) - oldPos.x
-      }
-      else -> {
+      } else -> {
         xInvEntry = (pos.x + size.x) - oldPos.x
         xInvExit = pos.x - (oldPos.x + size.x)
       }
