@@ -112,7 +112,6 @@ object collision {
     val minX = blockManipulatorMin.x()
     val minY = blockManipulatorMin.y()
     val minZ = blockManipulatorMin.z()
-
     val maxX = blockManipulatorMax.x()
     val maxY = blockManipulatorMax.y()
     val maxZ = blockManipulatorMax.z()
@@ -193,23 +192,29 @@ object collision {
   }
 
   private fun entityCollidesWithWorld(): Boolean {
-    val collision = !(entityAABBMin.x > worldAABBMax.x || entityAABBMax.x < worldAABBMin.x || entityAABBMin.y > worldAABBMax.y || entityAABBMax.y < worldAABBMin.y || entityAABBMin.z > worldAABBMax.z || entityAABBMax.z < worldAABBMin.z)
+    if (!(entityAABBMin.x > worldAABBMax.x ||
+        entityAABBMax.x < worldAABBMin.x ||
+        entityAABBMin.y > worldAABBMax.y ||
+        entityAABBMax.y < worldAABBMin.y ||
+        entityAABBMin.z > worldAABBMax.z ||
+        entityAABBMax.z < worldAABBMin.z)) {
+        return false
+    }
 
-    if (!collision) return false
 
-    val leftWasOut = oldAABBMin.x > worldAABBMax.x
-    val rightWasOut = oldAABBMax.x < worldAABBMin.x
+    val leftWasOut   = oldAABBMin.x > worldAABBMax.x
+    val rightWasOut  = oldAABBMax.x < worldAABBMin.x
     val bottomWasOut = oldAABBMin.y > worldAABBMax.y
-    val topWasOut = oldAABBMax.y < worldAABBMin.y
-    val frontWasOut = oldAABBMin.z > worldAABBMax.z
-    val backWasOut = oldAABBMax.z < worldAABBMin.z
+    val topWasOut    = oldAABBMax.y < worldAABBMin.y
+    val frontWasOut  = oldAABBMin.z > worldAABBMax.z
+    val backWasOut   = oldAABBMax.z < worldAABBMin.z
 
-    val leftIsIn = entityAABBMin.x < worldAABBMax.x
-    val rightIsIn = entityAABBMax.x > worldAABBMin.x
+    val leftIsIn   = entityAABBMin.x < worldAABBMax.x
+    val rightIsIn  = entityAABBMax.x > worldAABBMin.x
     val bottomIsIn = entityAABBMin.y < worldAABBMax.y
-    val topIsIn = entityAABBMax.y > worldAABBMin.y
-    val frontIsIn = entityAABBMin.z < worldAABBMax.z
-    val backIsIn = entityAABBMax.z > worldAABBMin.z
+    val topIsIn    = entityAABBMax.y > worldAABBMin.y
+    val frontIsIn  = entityAABBMin.z < worldAABBMax.z
+    val backIsIn   = entityAABBMax.z > worldAABBMin.z
 
 
     if (leftWasOut && leftIsIn) directionResult.left = true
