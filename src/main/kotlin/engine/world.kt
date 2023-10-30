@@ -964,7 +964,14 @@ object blockManipulator : Iterator<Int> {
 
     size.set((abs(max.x() - min.x()) + 1), (abs(max.y() - min.y()) + 1), (abs(max.z() - min.z()) + 1))
 
-    yStride = size.x() * size.z()
+    yStride = if (size.x == 1 || size.z == 1) {
+      println("hit | x: ${size.x} | z: ${size.z}")
+      size.x() + size.z() + 1
+    } else {
+      println("NO HIT")
+      size.x() * size.z()
+    }
+
 
     arraySize = size.x() * size.y() * size.z()
 
@@ -1007,14 +1014,14 @@ object blockManipulator : Iterator<Int> {
     return allLoaded
   }
 
-  fun set(index: Int, blockData: Int) {
+  fun setRaw(index: Int, blockData: Int) {
     indexCheck(index)
     blockData.getBlockID().idCheck()
     blockData.getBlockState().stateCheck()
     blockData.getBlockLight().lightCheck()
     data[index] = blockData
   }
-  fun set(x: Int, y: Int, z: Int, blockData: Int) {
+  fun setRaw(x: Int, y: Int, z: Int, blockData: Int) {
     posCheck(x,y,z)
     blockData.getBlockID().idCheck()
     blockData.getBlockState().stateCheck()
@@ -1022,7 +1029,7 @@ object blockManipulator : Iterator<Int> {
     val index = posToIndex(x,y,z)
     data[index] = blockData
   }
-  fun set(pos: Vector3ic, blockData: Int) = set(pos.x(), pos.y(), pos.z(), blockData)
+  fun setRaw(pos: Vector3ic, blockData: Int) = setRaw(pos.x(), pos.y(), pos.z(), blockData)
 
   fun setID(index: Int, id: Int) {
     indexCheck(index)
@@ -1214,7 +1221,7 @@ object blockManipulator : Iterator<Int> {
   }
 
   private fun worldPosToIndex(posX: Int, posY: Int, posZ: Int): Int {
-    return return (posY * WORLD_Y_STRIDE) + (posZ * DEPTH) + posX
+    return (posY * WORLD_Y_STRIDE) + (posZ * DEPTH) + posX
   }
 
   fun posToIndex(posX: Int, posY: Int, posZ: Int): Int {
@@ -1239,11 +1246,11 @@ object blockManipulator : Iterator<Int> {
     }
 
     val test = (y * yStride) + (z * size.z()) + x
-
     val check = indexToPos(test)
 
-    if (check.x() != posX || check.y() != posY || check.z() != posZ) {
-      throw RuntimeException("\nINPUT: [$posX, $posY, $posZ]\nOUTPUT: [${check.x()}, ${check.y()}, ${check.z()}]\n" +
+    if (check.x() != x || check.y() != y || check.z() != z) {
+      throw RuntimeException("\nINPUT: [$x, $y, $z]\n" +
+        "OUTPUT: [${check.x()}, ${check.y()}, ${check.z()}]\n" +
         "zmin: ${min.z} | calcZ: $z\n" +
         "zmax: ${max.z} | calcZ: $z\n" +
         "sizeZ: ${size.z}")
@@ -1261,9 +1268,9 @@ object blockManipulator : Iterator<Int> {
 
   fun indexToPos(index: Int): Vector3ic {
     return cachePos.set(
-      (index % size.x()) + min.x,
-      ((index / yStride) % size.y()) + min.y,
-      ((index / size.z()) % size.z()) + min.z)
+      (index % size.x()),
+      ((index / yStride) % size.y()),
+      ((index / size.z()) % size.z()))
   }
 
 
