@@ -1225,35 +1225,45 @@ object blockManipulator : Iterator<Int> {
 //    println("min: ${min.z()} , posz: $posZ")
 //    println("internal: $x, $y, $z")
     when {
-      x < 0 -> {println("x was $posX")}
-      y < 0 -> {println("y was $posY")}
-      z < 0 -> {println("z was $posZ")}
+      x < 0 -> {
+        println("x was $posX")
+      }
+
+      y < 0 -> {
+        println("y was $posY")
+      }
+
+      z < 0 -> {
+        println("z was $posZ")
+      }
     }
-//    println("yStride: $yStride")
 
     val test = (y * yStride) + (z * size.z()) + x
 
     val check = indexToPos(test)
 
-    if (check.x != posX || check.y != posY || check.z != posZ) {
-      throw RuntimeException("\nINPUT: [$posX, $posY, $posZ]\nOUTPUT: [${check.x}, ${check.y}, ${check.z}]\n zmin: ${min.z} | calcZ: $z")
+    if (check.x() != posX || check.y() != posY || check.z() != posZ) {
+      throw RuntimeException("\nINPUT: [$posX, $posY, $posZ]\nOUTPUT: [${check.x()}, ${check.y()}, ${check.z()}]\n" +
+        "zmin: ${min.z} | calcZ: $z\n" +
+        "zmax: ${max.z} | calcZ: $z\n" +
+        "sizeZ: ${size.z}")
     }
 
     return test
   }
 
-  fun indexToPos(index: Int): Vector3i {
-    return cachePos.set(
-      index % size.x(),
-      (index / yStride) % size.y(),
-      (index / size.z()) % size.z())
-  }
+//  fun indexToPos(index: Int): Vector3ic {
+//    return cachePos.set(
+//      index % size.x(),
+//      (index / yStride) % size.y(),
+//      (index / size.z()) % size.z())
+//  }
 
-  fun indexToWorldPos(index: Int): Vector3ic {
+  fun indexToPos(index: Int): Vector3ic {
     return cachePos.set(
       (index % size.x()) + min.x,
       ((index / yStride) % size.y()) + min.y,
-      ((index / size.z()) % size.z())+ min.z)
+      ((index / size.z()) % size.z()) + min.z)
   }
 
 
