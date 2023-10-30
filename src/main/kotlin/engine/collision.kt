@@ -140,10 +140,13 @@ object collision {
                 directionResult.reset()
 
                 if (!entityCollidesWithWorld()) continue
-                oldPos.set(pos)
+
                 resolveCollision(axis)
+
+                oldPos.set(pos)
                 updateEntityAABB()
                 updateOldAABB()
+
                 if (directionResult.down) {
                   entity.onGround = true
                 }
@@ -160,32 +163,46 @@ object collision {
 
 
 
-  private fun resolveCollision() {
+  private fun resolveCollision(axis: Int) {
+    when (axis) {
+      0 -> {
+        if (directionResult.left) {
+          pos.x = worldAABBMax.x + 0.01f
+          normalizedVelocity.x = 0f
+          velocity.x = -0.01f
+        }
+        if (directionResult.right) {
+          pos.x = worldAABBMin.x - size.x - 0.01f
+          normalizedVelocity.x = 0f
+          velocity.x = 0.01f
+        }
+      }
 
-    if (directionResult.left) {
-      pos.x = worldAABBMax.x + 0.01f
-      normalizedVelocity.x = 0f
-      velocity.x = -0.01f
-    } else if (directionResult.right) {
-      pos.x = worldAABBMin.x - size.x - 0.01f
-      normalizedVelocity.x = 0f
-      velocity.x = 0.01f
-    } else if (directionResult.down) {
-      pos.y = worldAABBMax.y + 0.01f
-      normalizedVelocity.y = 0f
-      velocity.y = -0.01f
-    } else if (directionResult.up) {
-      pos.y = worldAABBMin.y - size.y - 0.01f
-      normalizedVelocity.y = 0f
-      velocity.y = 0.01f
-    } else if (directionResult.front) {
-      pos.z = worldAABBMax.z + 0.01f
-      normalizedVelocity.z = 0f
-      velocity.z = -0.01f
-    } else if (directionResult.back) {
-      pos.z = worldAABBMin.z - size.x - 0.01f
-      normalizedVelocity.z = 0f
-      velocity.z = 0.01f
+      1 -> {
+        if (directionResult.down) {
+          pos.y = worldAABBMax.y + 0.01f
+          normalizedVelocity.y = 0f
+          velocity.y = -0.01f
+        }
+        if (directionResult.up) {
+          pos.y = worldAABBMin.y - size.y - 0.01f
+          normalizedVelocity.y = 0f
+          velocity.y = 0.01f
+        }
+      }
+
+      2 -> {
+        if (directionResult.front) {
+          pos.z = worldAABBMax.z + 0.01f
+          normalizedVelocity.z = 0f
+          velocity.z = -0.01f
+        }
+        if (directionResult.back) {
+          pos.z = worldAABBMin.z - size.x - 0.01f
+          normalizedVelocity.z = 0f
+          velocity.z = 0.01f
+        }
+      }
     }
 
   }
