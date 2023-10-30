@@ -128,8 +128,10 @@ object collision {
         for (x in minX toward maxX) {
           for (z in minZ toward maxZ) {
             for (y in minY toward maxY) {
+              
               val id = blockManipulator.getID(x, y, z)
               if (!block.isWalkable(id)) continue
+
               worldAABBMin.set(x.toFloat(), y.toFloat(), z.toFloat())
               worldAABBMax.set(x.toFloat() + 1f, y.toFloat() + 1f, z.toFloat() + 1f)
               // todo: Here it would get the blockbox collision box and run through the boxes individually
