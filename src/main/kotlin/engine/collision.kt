@@ -113,7 +113,7 @@ object collision {
       updateEntityAABB()
       var index = 0
       //? note: Might have to iterate through this in the direction of the velocity.
-      blockManipulator.forEach blockLoop@{
+      blockManipulator.forEach {
         val id = it.getBlockID()
         if (block.isWalkable(id)) {
           val rootPos = blockManipulator.indexToPos(index)
@@ -124,11 +124,12 @@ object collision {
           // todo: Here it would run through them individually
           directionResult.reset()
 
-          if (!entityCollidesWithWorld()) return@blockLoop
-          oldPos.set(pos)
-          resolveCollision()
-          updateEntityAABB()
-          entity.onGround = directionResult.down
+          if (entityCollidesWithWorld()) {
+            oldPos.set(pos)
+            resolveCollision()
+            updateEntityAABB()
+            entity.onGround = directionResult.down
+          }
         }
         index++
       }
