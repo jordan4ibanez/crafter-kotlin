@@ -210,7 +210,6 @@ object collision {
   private fun outOfMap(yMin: Float, yMax: Float): Boolean = yMin >= WORLD_Y_MAX || yMax < WORLD_Y_MIN
 
   private fun calculateMapRegion() {
-    //fixme: this is unoptimized.
     min.x = min(projectedPos.x, oldPos.x) - size.x
     max.x = max(projectedPos.x, oldPos.x) + size.x
     min.y = min(projectedPos.y, oldPos.y)
