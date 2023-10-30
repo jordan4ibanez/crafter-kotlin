@@ -20,8 +20,6 @@ object collision {
   private val projectedPos = Vector3f()
   private val velocity = Vector3f()
   private val oldVelocity = Vector3f()
-  private val oldAABBMin = Vector3f()
-  private val oldAABBMax = Vector3f()
   private val entityAABBMin = Vector3f()
   private val entityAABBMax = Vector3f()
   private val worldAABBMin = Vector3f()
