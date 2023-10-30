@@ -33,6 +33,7 @@ object collision {
 
     // Thanks luatic!
     // https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/
+    // https://www.amanotes.com/post/using-swept-aabb-to-detect-and-process-collision
 
     size.set(entity.getSize())
     pos.set(entity.getPosition())
@@ -72,7 +73,12 @@ object collision {
       val id = it.getBlockID()
       if (block.isWalkable(id)) {
         calculateNormal(blockManipulator.indexToPos(index))
-        sweptAABB()
+        val collisionTime = sweptAABB()
+        pos.x = oldPos.x + (velocity.x * collisionTime)
+        pos.y = oldPos.y + (velocity.y * collisionTime)
+        velocity.x = 0f
+        velocity.y = 0f
+        println("collision occured")
       }
       index++
     }
@@ -81,7 +87,7 @@ object collision {
     entity.setPosition(pos)
   }
 
-  private fun sweptAABB() {
+  private fun sweptAABB(): Float {
     /*
     b1 and b2 are placeholders as I follow the tutorial.
     */
@@ -89,6 +95,8 @@ object collision {
     val b2 = pos
 
     // fixme: find z
+
+    // fixme: break this up into multiple functions
 
     // Find the distance between the objects on the near and far sides for both x and y.
 
@@ -142,9 +150,40 @@ object collision {
       yExit = yInvExit / velocity.y
     }
 
+    // Find the earliest/latest times of collision float.
+    val entryTime = max(xEntry, yEntry)
+    val exitTime = min(xExit, yExit)
 
+    // If there was no collision.
+    if (entryTime > exitTime || xEntry < 0.0f && yEntry < 0.0f || xEntry > 1.0f || yEntry > 1.0f) {
+      normal.x = 0.0f
+      normal.y = 0.0f
+      return 1.0f
+    } else {
+      // If there was a collision.
 
+      // Calculate normal of collided surface.
+      if (xEntry > yEntry) {
+        if (xInvEntry < 0.0f) {
+          normal.x = 1.0f
+          normal.y = 0.0f
+        } else {
+          normal.x = -1.0f
+          normal.y = 0.0f
+        }
+      } else {
+        if (yInvEntry < 0.0f) {
+          normal.x = 0.0f
+          normal.y = 1.0f
+        } else {
+          normal.x = 0.0f
+          normal.y = -1.0f
+        }
+      }
 
+      // Return the time of collision return entryTime.
+      return entryTime
+    }
   }
 
   private fun calculateNormal(position: Vector3ic) {
