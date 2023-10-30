@@ -1240,11 +1240,11 @@ object blockManipulator : Iterator<Int> {
   fun indexToPos(index: Int): Vector3ic {
     // https://github.com/minetest/minetest/blob/master/builtin/game/voxelarea.lua#L62
     var i = index
-    cachePos.y = floor(i.toFloat() / yStride.toFloat()).toInt()
+    cachePos.y = floor(i.toFloat() / yStride.toFloat()).toInt() + min.y
     i %= yStride
-    cachePos.z = floor(i.toFloat() / size.x.toFloat()).toInt()
+    cachePos.z = floor(i.toFloat() / size.x.toFloat()).toInt() + min.z
     i %= size.x
-    cachePos.x = i
+    cachePos.x = i + min.x
     return cachePos
   }
 

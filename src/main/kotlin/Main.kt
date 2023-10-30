@@ -109,7 +109,7 @@ fun update(delta: Float) {
     }
   }
   window.setClearColor(color)
-  
+
 }
 
 // Consider this pure logic updates. onTick, collision, etc. For real time things, put them in update().
