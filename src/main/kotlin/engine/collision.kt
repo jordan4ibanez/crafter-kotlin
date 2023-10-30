@@ -178,9 +178,8 @@ object collision {
 
   private fun entityCollidesWithWorld(): Boolean {
     val collision = !(entityAABBMin.x > worldAABBMax.x || entityAABBMax.x < worldAABBMin.x || entityAABBMin.y > worldAABBMax.y || entityAABBMax.y < worldAABBMin.y || entityAABBMin.z > worldAABBMax.z || entityAABBMax.z < worldAABBMin.z)
-    if (!collision) {
-      return false
-    }
+
+    if (!collision) return false
 
     val leftWasOut = oldAABBMin.x > worldAABBMax.x
     val rightWasOut = oldAABBMax.x < worldAABBMin.x
@@ -216,8 +215,6 @@ object collision {
     max.y = max(projectedPos.y, oldPos.y) + size.y
     min.z = min(projectedPos.z, oldPos.z) - size.x
     max.z = max(projectedPos.z, oldPos.z) + size.x
-
-//    println("map region Y: min: ${min.y} | max: ${max.y}")
   }
 
 
