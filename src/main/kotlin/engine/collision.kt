@@ -118,12 +118,18 @@ object collision {
     // By block.
     (0 until loops).forEach { _ ->
       // By axis.
-      (0..2).forEach { axis ->
+      (0..1).forEach { axis ->
 
         when (axis) {
-          0 -> pos.x += (normalizedVelocity.x * currentTime)
-          1 -> pos.y += (normalizedVelocity.y * currentTime)
-          2 -> pos.z += (normalizedVelocity.z * currentTime)
+          0 -> {
+            pos.x += (normalizedVelocity.x * currentTime)
+          }
+          1 -> {
+            pos.y += (normalizedVelocity.y * currentTime)
+          }
+          2 -> {
+            pos.z += (normalizedVelocity.z * currentTime)
+          }
         }
         updateEntityAABB()
 
@@ -141,13 +147,13 @@ object collision {
 
               directionResult.reset()
 
-              if (!entityCollidesWithWorld()) continue
+              if (!entityCollidesWithWorld(axis)) continue
 
               resolveCollision(axis)
 
-              oldPos.set(pos)
+//              oldPos.set(pos)
               updateEntityAABB()
-              updateOldAABB()
+//              updateOldAABB()
 
               if (directionResult.down) {
                 entity.onGround = true
@@ -169,13 +175,13 @@ object collision {
       0 -> {
         if (directionResult.left) {
           println("left collision")
-          pos.x = worldAABBMax.x + 0.01f
+          pos.x = worldAABBMax.x + size.x + 0.0001f
           normalizedVelocity.x = 0f
           velocity.x = -0.01f
         }
         if (directionResult.right) {
           println("right collision")
-          pos.x = worldAABBMin.x - size.x - 0.01f
+          pos.x = worldAABBMin.x - size.x - 0.0001f
           normalizedVelocity.x = 0f
           velocity.x = 0.01f
         }
@@ -183,27 +189,29 @@ object collision {
 
       1 -> {
         if (directionResult.down) {
-          pos.y = worldAABBMax.y + 0.01f
+          println("down collision")
+          pos.y = worldAABBMax.y + 0.0001f
           normalizedVelocity.y = 0f
-          velocity.y = -0.01f
+          velocity.y = 0f
         }
         if (directionResult.up) {
-          pos.y = worldAABBMin.y - size.y - 0.01f
+          println("up collision")
+          pos.y = worldAABBMin.y - size.y - 0.0001f
           normalizedVelocity.y = 0f
-          velocity.y = 0.01f
+          velocity.y = 0f
         }
       }
 
       2 -> {
         if (directionResult.front) {
-//          println("front collision")
-          pos.z = worldAABBMax.z + 0.01f
+          println("front collision")
+          pos.z = worldAABBMax.z + size.x + 0.0001f
           normalizedVelocity.z = 0f
           velocity.z = -0.01f
         }
         if (directionResult.back) {
-//          println("back collision")
-          pos.z = worldAABBMin.z - size.x - 0.01f
+          println("back collision")
+          pos.z = worldAABBMin.z - size.x - 0.0001f
           normalizedVelocity.z = 0f
           velocity.z = 0.01f
         }
@@ -238,7 +246,8 @@ object collision {
   }
 
   private fun entityCollidesWithWorld(axis: Int): Boolean {
-    val collision = !(entityAABBMin.x > worldAABBMax.x ||
+    val collision = !(
+        entityAABBMin.x > worldAABBMax.x ||
         entityAABBMax.x < worldAABBMin.x ||
         entityAABBMin.y > worldAABBMax.y ||
         entityAABBMax.y < worldAABBMin.y ||
@@ -249,39 +258,32 @@ object collision {
 
     when (axis) {
       0 -> {
-
+        val leftWasOut  = oldAABBMin.x > worldAABBMax.x
+        val rightWasOut = oldAABBMax.x < worldAABBMin.x
+        val leftIsIn    = entityAABBMin.x < worldAABBMax.x
+        val rightIsIn   = entityAABBMax.x > worldAABBMin.x
+        if (leftWasOut && leftIsIn)     directionResult.left = true
+        if (rightWasOut && rightIsIn)   directionResult.right = true
       }
 
       1 -> {
-
+        val bottomWasOut = oldAABBMin.y > worldAABBMax.y
+        val topWasOut    = oldAABBMax.y < worldAABBMin.y
+        val bottomIsIn   = entityAABBMin.y < worldAABBMax.y
+        val topIsIn      = entityAABBMax.y > worldAABBMin.y
+        if (bottomWasOut && bottomIsIn) directionResult.down = true
+        if (topWasOut && topIsIn)       directionResult.up = true
       }
 
       2 -> {
-        
+        val frontWasOut  = oldAABBMin.z > worldAABBMax.z
+        val backWasOut   = oldAABBMax.z < worldAABBMin.z
+        val frontIsIn    = entityAABBMin.z < worldAABBMax.z
+        val backIsIn     = entityAABBMax.z > worldAABBMin.z
+        if (frontWasOut && frontIsIn)   directionResult.front = true
+        if (backWasOut && backIsIn)     directionResult.back = true
       }
     }
-
-    val leftWasOut   = oldAABBMin.x > worldAABBMax.x
-    val rightWasOut  = oldAABBMax.x < worldAABBMin.x
-    val bottomWasOut = oldAABBMin.y > worldAABBMax.y
-    val topWasOut    = oldAABBMax.y < worldAABBMin.y
-    val frontWasOut  = oldAABBMin.z > worldAABBMax.z
-    val backWasOut   = oldAABBMax.z < worldAABBMin.z
-
-    val leftIsIn   = entityAABBMin.x < worldAABBMax.x
-    val rightIsIn  = entityAABBMax.x > worldAABBMin.x
-    val bottomIsIn = entityAABBMin.y < worldAABBMax.y
-    val topIsIn    = entityAABBMax.y > worldAABBMin.y
-    val frontIsIn  = entityAABBMin.z < worldAABBMax.z
-    val backIsIn   = entityAABBMax.z > worldAABBMin.z
-
-
-    if (leftWasOut && leftIsIn)     directionResult.left = true
-    if (rightWasOut && rightIsIn)   directionResult.right = true
-    if (bottomWasOut && bottomIsIn) directionResult.down = true
-    if (topWasOut && topIsIn)       directionResult.up = true
-    if (frontWasOut && frontIsIn)   directionResult.front = true
-    if (backWasOut && backIsIn)     directionResult.back = true
 
     return true
   }
