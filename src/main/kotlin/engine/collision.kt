@@ -26,8 +26,6 @@ object collision {
   private val entityAABBMax = Vector3f()
   private val worldAABBMin = Vector3f()
   private val worldAABBMax = Vector3f()
-  private val positionArray = FloatArray(3)
-  private val normal = Vector3f()
 //  private var foundDir = Direction.NONE
   private val normalizedVelocity = Vector3f()
 //  private val newPosition = Vector3f()
