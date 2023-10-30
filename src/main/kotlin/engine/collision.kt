@@ -2,8 +2,7 @@ package engine
 
 import engine.world.getBlockID
 import org.joml.*
-import org.joml.Math.abs
-import org.joml.Math.ceil
+import org.joml.Math.*
 
 object collision {
   private const val MAX_SPEED = 10f
@@ -19,6 +18,13 @@ object collision {
   private val oldPos = Vector3f()
   private val velocity = Vector3f()
   private val oldVelocity = Vector3f()
+
+//  private val entityAABBMin = Vector3f()
+//  private val entityAABBMax = Vector3f()
+//  private val worldAABBMin = Vector3f()
+//  private val worldAABBMax = Vector3f()
+
+  private val normal = Vector3f()
 
   //? note: Entity collision.
 
@@ -60,21 +66,44 @@ object collision {
     if (!blockManipulator.set(min, max)) return
 
 
+    var index = 0
     blockManipulator.forEach {
       val id = it.getBlockID()
       if (block.isWalkable(id)) {
-        println(block.getName(id))
-        velocity.y = 0.5f
+        calculateNormal(blockManipulator.indexToPos(index))
+
       }
+      index++
     }
 
     entity.setVelocity(velocity)
     entity.setPosition(pos)
   }
 
+  private fun calculateNormal(position: Vector3ic) {
+    if (velocity.x() <= 0) {
+      normal.x = position.x() + 1f /*fixme: use size here*/
+    } else {
+      normal.x = position.x().toFloat()
+    }
+
+    if (velocity.y() <= 0) {
+      normal.y = position.y() + 1f /*fixme: use size here*/
+    } else {
+      normal.y = position.y().toFloat()
+    }
+
+    if (velocity.z() <= 0) {
+      normal.z = position.z() + 1f /*fixme: use size here*/
+    } else {
+      normal.z = position.z().toFloat()
+    }
+  }
+
   private fun outOfMap(yMin: Float, yMax: Float): Boolean = yMin >= WORLD_Y_MAX || yMax < WORLD_Y_MIN
 
   private fun calculateMapRegion(size: Vector2fc) {
+    //fixme: this is unoptimized.
     if (velocity.x() <= 0) {
       min.x = pos.x - size.x()
       max.x = oldPos.x + size.x()
