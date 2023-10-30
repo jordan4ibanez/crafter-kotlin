@@ -10,6 +10,7 @@ import kotlin.collections.HashMap
 
 open class PointEntity {
 
+  private val oldPosition = Vector3f()
   val position = Vector3f()
   private val velocity = Vector3f()
   var meshID = 0
@@ -17,10 +18,12 @@ open class PointEntity {
 
   constructor(pos: Vector3fc) {
     this.position.set(pos)
+    this.oldPosition.set(pos)
   }
 
   fun getPosition(): Vector3fc = position
   open fun setPosition(newPosition: Vector3fc) {
+    oldPosition.set(position)
     position.set(newPosition)
   }
 
