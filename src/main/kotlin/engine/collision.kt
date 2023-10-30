@@ -137,8 +137,13 @@ object collision {
           for (z in minZ toward  maxZ) {
             for (y in minY toward  maxY) {
 
-              val id = world.getBlockID(x.toFloat(), y.toFloat(), z.toFloat())
-//              val id = blockManipulator.getID(x, y, z)
+              val doublecheck = getBlockID(x.toFloat(), y.toFloat(), z.toFloat())
+              val id = blockManipulator.getID(x, y, z)
+
+              if (doublecheck != id) {
+                throw RuntimeException("failed")
+              }
+
               if (!block.isWalkable(id)) continue
 
               worldAABBMin.set(
