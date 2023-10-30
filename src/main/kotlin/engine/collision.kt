@@ -14,6 +14,7 @@ object collision {
   private val min = Vector3f()
   private val max = Vector3f()
   private val gravity = world.getGravity() / 100f
+  private val size = Vector2f()
   private val pos = Vector3f()
   private val oldPos = Vector3f()
   private val velocity = Vector3f()
@@ -33,7 +34,7 @@ object collision {
     // Thanks luatic!
     // https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/
 
-    val size = entity.getSize()
+    size.set(entity.getSize())
     pos.set(entity.getPosition())
     velocity.set(entity.getVelocity())
 
@@ -71,7 +72,7 @@ object collision {
       val id = it.getBlockID()
       if (block.isWalkable(id)) {
         calculateNormal(blockManipulator.indexToPos(index))
-
+        sweptAABB()
       }
       index++
     }
@@ -80,19 +81,53 @@ object collision {
     entity.setPosition(pos)
   }
 
+  private fun sweptAABB() {
+    /*
+    b1 and b2 are placeholders as I follow the tutorial.
+    */
+    val b1 = oldPos
+    val b2 = pos
+
+    val xInvEntry: Float
+    val yInvEntry: Float
+    val xInvExit: Float
+    val yInvExit: Float
+
+    if (velocity.x > 0f) {
+      xInvEntry = b2.x - (b1.x + size.x)
+      xInvExit = (b2.x + size.x) - b1.x
+    } else {
+      xInvEntry = (b2.x + size.x) - b1.x
+      xInvExit = b2.x - (b1.x + size.x)
+    }
+
+    if (velocity.y > 0f) {
+      yInvEntry = b2.y - (b1.y + size.y)
+      yInvExit = (b2.y + size.y) - b1.y
+    } else {
+      yInvEntry = (b2.y + size.y) - b1.y
+      yInvExit = b2.y - (b1.y + size.y)
+    }
+
+//    if (yInvEntry != 0f || xInvEntry != 0f) {
+//      println("------------------------------")
+//      println("entry: $xInvEntry | $yInvEntry")
+//      println("exit:  $xInvExit  | $yInvExit")
+//    }
+
+  }
+
   private fun calculateNormal(position: Vector3ic) {
     if (velocity.x() <= 0) {
       normal.x = position.x() + 1f /*fixme: use size here*/
     } else {
       normal.x = position.x().toFloat()
     }
-
     if (velocity.y() <= 0) {
       normal.y = position.y() + 1f /*fixme: use size here*/
     } else {
       normal.y = position.y().toFloat()
     }
-
     if (velocity.z() <= 0) {
       normal.z = position.z() + 1f /*fixme: use size here*/
     } else {
