@@ -110,65 +110,42 @@ object collision {
     val blockManipulatorMin = blockManipulator.getMin()
     val blockManipulatorMax = blockManipulator.getMax()
 
-    val minX: Int
-    val minY: Int
-    val minZ: Int
-    val maxX: Int
-    val maxY: Int
-    val maxZ: Int
-
-//    println(pos.z)
-    if (projectedPos.x >= oldPos.x) {
-      minX = blockManipulatorMin.x()
-      maxX = blockManipulatorMax.x()
-    } else {
-      minX = blockManipulatorMax.x()
-      maxX = blockManipulatorMin.x()
-    }
-
-    if (projectedPos.y >= oldPos.y) {
-      minY = blockManipulatorMin.y()
-      maxY = blockManipulatorMax.y()
-    } else {
-      minY = blockManipulatorMax.y()
-      maxY = blockManipulatorMin.y()
-    }
-
-    if (projectedPos.z >= oldPos.z) {
-      minZ = blockManipulatorMin.z()
-      maxZ = blockManipulatorMax.z()
-    } else {
-      minZ = blockManipulatorMax.z()
-      maxZ = blockManipulatorMin.z()
-    }
+    val minX = blockManipulatorMin.x()
+    val minY = blockManipulatorMin.y()
+    val minZ = blockManipulatorMin.z()
+    val maxX = blockManipulatorMax.x()
+    val maxY = blockManipulatorMax.y()
+    val maxZ = blockManipulatorMax.z()
 
     (0 until loops).forEach { _ ->
+      (0..2).forEach { axis ->
 
-      positionArray[0] = pos.x + (normalizedVelocity.x * currentTime)
-      positionArray[1] = pos.y + (normalizedVelocity.y * currentTime)
-      positionArray[2] = pos.z + (normalizedVelocity.z * currentTime)
+        when (axis) {
+          0 -> pos.x += (normalizedVelocity.x * currentTime)
+          1 -> pos.y += (normalizedVelocity.y * currentTime)
+          2 -> pos.z += (normalizedVelocity.z * currentTime)
+        }
+        updateEntityAABB()
+        for (x in minX toward maxX) {
+          for (z in minZ toward maxZ) {
+            for (y in minY toward maxY) {
+              val id = blockManipulator.getID(x, y, z)
+              if (block.isWalkable(id)) {
+                worldAABBMin.set(x.toFloat(), y.toFloat(), z.toFloat())
+                worldAABBMax.set(x.toFloat() + 1f, y.toFloat() + 1f, z.toFloat() + 1f)
+                // todo: Here it would get the blockbox collision box and run through the boxes individually
+                // todo: Here it would run through them individually
 
-      updateEntityAABB()
+                directionResult.reset()
 
-      for (x in minX toward maxX) {
-        for (z in minZ toward maxZ) {
-          for (y in minY toward maxY) {
-            val id = blockManipulator.getID(x,y,z)
-            if (block.isWalkable(id)) {
-              worldAABBMin.set(x.toFloat(), y.toFloat(), z.toFloat())
-              worldAABBMax.set(x.toFloat() + 1f, y.toFloat() + 1f, z.toFloat() + 1f)
-              // todo: Here it would get the blockbox collision box and run through the boxes individually
-              // todo: Here it would run through them individually
-
-              directionResult.reset()
-
-              if (!entityCollidesWithWorld()) continue
-              oldPos.set(pos)
-              resolveCollision()
-              updateEntityAABB()
-              updateOldAABB()
-              if (directionResult.down) {
-                entity.onGround = true
+                if (!entityCollidesWithWorld()) continue
+                oldPos.set(pos)
+                resolveCollision()
+                updateEntityAABB()
+                updateOldAABB()
+                if (directionResult.down) {
+                  entity.onGround = true
+                }
               }
             }
           }
