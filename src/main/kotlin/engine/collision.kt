@@ -103,7 +103,7 @@ object collision {
 
 //    println("loops $loops")
     updateOldAABB()
-    println("-----")
+//    println("-----")
 
     val blockManipulatorMin = blockManipulator.getMin()
     val blockManipulatorMax = blockManipulator.getMax()
@@ -115,7 +115,9 @@ object collision {
     val maxY = blockManipulatorMax.y()
     val maxZ = blockManipulatorMax.z()
 
+    // By block.
     (0 until loops).forEach { _ ->
+      // By axis.
       (0..2).forEach { axis ->
 
         when (axis) {
@@ -128,7 +130,7 @@ object collision {
         for (x in minX toward maxX) {
           for (z in minZ toward maxZ) {
             for (y in minY toward maxY) {
-              
+
               val id = blockManipulator.getID(x, y, z)
               if (!block.isWalkable(id)) continue
 
@@ -166,11 +168,13 @@ object collision {
     when (axis) {
       0 -> {
         if (directionResult.left) {
+          println("left collision")
           pos.x = worldAABBMax.x + 0.01f
           normalizedVelocity.x = 0f
           velocity.x = -0.01f
         }
         if (directionResult.right) {
+          println("right collision")
           pos.x = worldAABBMin.x - size.x - 0.01f
           normalizedVelocity.x = 0f
           velocity.x = 0.01f
@@ -192,11 +196,13 @@ object collision {
 
       2 -> {
         if (directionResult.front) {
+//          println("front collision")
           pos.z = worldAABBMax.z + 0.01f
           normalizedVelocity.z = 0f
           velocity.z = -0.01f
         }
         if (directionResult.back) {
+//          println("back collision")
           pos.z = worldAABBMin.z - size.x - 0.01f
           normalizedVelocity.z = 0f
           velocity.z = 0.01f
