@@ -209,17 +209,19 @@ object collision {
     }
 
     // FIXME: needs front and back
-    if (xEntry > yEntry) {
-      if (xInvEntry > 0f) {
-        foundDir = Direction.RIGHT
-      } else {
-        foundDir = Direction.LEFT
+    foundDir = when {
+      (xEntry > yEntry) -> {
+        when {
+          (xInvEntry > 0f) -> Direction.RIGHT
+          else -> Direction.LEFT
+        }
       }
-    } else {
-      if (xInvEntry > 0f) {
-        foundDir = Direction.UP
-      } else {
-        foundDir = Direction.DOWN
+
+      else -> {
+        when {
+          (xInvEntry > 0f) -> Direction.UP
+          else -> Direction.DOWN
+        }
       }
     }
 
