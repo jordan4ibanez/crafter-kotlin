@@ -94,26 +94,17 @@ object collision {
     val blockManipulatorMin = blockManipulator.getMin()
     val blockManipulatorMax = blockManipulator.getMax()
 
-    val minX = blockManipulatorMin.x()
-    val minY = blockManipulatorMin.y()
-    val minZ = blockManipulatorMin.z()
-
-    val maxX = blockManipulatorMax.x()
-    val maxY = blockManipulatorMax.y()
-    val maxZ = blockManipulatorMax.z()
-
     //note: this is a placeholder in case this ever needs to iterate in the direction the velocity.
     // if this is ever the case, use the builtin toward iterator or this won't work correctly.
-//    val minX = if (velocity.x > 0) blockManipulatorMin.x() else blockManipulatorMax.x()
-//    val minY = if (velocity.y > 0) blockManipulatorMin.y() else blockManipulatorMax.y()
-//    val minZ = if (velocity.z > 0) blockManipulatorMin.z() else blockManipulatorMax.z()
-//
-//    val maxX = if (velocity.x > 0) blockManipulatorMax.x() else blockManipulatorMin.x()
-//    val maxY = if (velocity.y > 0) blockManipulatorMax.y() else blockManipulatorMin.y()
-//    val maxZ = if (velocity.z > 0) blockManipulatorMax.z() else blockManipulatorMin.z()
+    val minX = if (velocity.x < 0) blockManipulatorMin.x() else blockManipulatorMax.x()
+    val minY = if (velocity.y < 0) blockManipulatorMin.y() else blockManipulatorMax.y()
+    val minZ = if (velocity.z < 0) blockManipulatorMin.z() else blockManipulatorMax.z()
 
-    var frictionAccumulator = 0f
-    var frictionCount = 0f
+    val maxX = if (velocity.x < 0) blockManipulatorMax.x() else blockManipulatorMin.x()
+    val maxY = if (velocity.y < 0) blockManipulatorMax.y() else blockManipulatorMin.y()
+    val maxZ = if (velocity.z < 0) blockManipulatorMax.z() else blockManipulatorMin.z()
+
+    var currentFriction = 0f
 
     // By block.
     (0 until loops).forEach { _ ->
@@ -126,9 +117,9 @@ object collision {
         }
         updateEntityAABB()
 
-        for (x in minX .. maxX) {
-          for (z in minZ .. maxZ) {
-            for (y in minY .. maxY) {
+        for (x in minX toward maxX) {
+          for (z in minZ toward maxZ) {
+            for (y in minY toward maxY) {
 
               val id = blockManipulator.getID(x, y, z)
               val doubleCheck = getBlockID(x.toFloat(), y.toFloat(), z.toFloat())
@@ -163,8 +154,7 @@ object collision {
 //                if (abs(oldY - pos.y) > 0.5f) {
 //                  println("$x,$y,$z | ${floor(pos.x)},${floor(pos.y)},${floor(pos.z)} | ${pos.x}, ${pos.z}")
 //                }
-                frictionAccumulator += block.getFriction(id)
-                frictionCount++
+                currentFriction = block.getFriction(id)
                 entity.onGround = true
               }
             }
@@ -176,10 +166,9 @@ object collision {
 
     if (entity.onGround) {
       // Block friction.
-      val blockFriction = frictionAccumulator / frictionCount
-      println("friction: $blockFriction")
-      velocity.x = signum(velocity.x) * (abs(velocity.x) / blockFriction)
-      velocity.z = signum(velocity.z) * (abs(velocity.z) / blockFriction)
+      println("friction: $currentFriction")
+      velocity.x = signum(velocity.x) * (abs(velocity.x) / currentFriction)
+      velocity.z = signum(velocity.z) * (abs(velocity.z) / currentFriction)
     } else {
       // Air friction.
       velocity.x = signum(velocity.x) * (abs(velocity.x) / 1.35f)
