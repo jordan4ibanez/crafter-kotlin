@@ -21,7 +21,7 @@ api.registerOnTick { float delta ->
     final Vector3ic min = new Vector3i(-31,0,-31)
     final Vector3ic max = new Vector3i(32, 127, 32)
     if (blockManipulator.set(min, max)) {
-      println("it wurk")
+//      println("it wurk")
       payloaded = true
       for (x in min.x() .. max.x()) {
         for (z in min.z() .. max.z()) {
