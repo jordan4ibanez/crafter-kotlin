@@ -102,6 +102,8 @@ object collision {
     val maxY = blockManipulatorMax.y()
     val maxZ = blockManipulatorMax.z()
 
+    //note: this is a placeholder in case this ever needs to iterate in the direction the velocity.
+    // if this is ever the case, use the builtin toward iterator or this won't work correctly.
 //    val minX = if (velocity.x > 0) blockManipulatorMin.x() else blockManipulatorMax.x()
 //    val minY = if (velocity.y > 0) blockManipulatorMin.y() else blockManipulatorMax.y()
 //    val minZ = if (velocity.z > 0) blockManipulatorMin.z() else blockManipulatorMax.z()
