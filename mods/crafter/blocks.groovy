@@ -74,4 +74,4 @@ block.register(
   inventoryName = "Ice",
   textures = api.stringArrayOf("ice.png","ice.png","ice.png","ice.png","ice.png","ice.png")
 )
-block.setSlip("crafter:ice", 0.95f)
+block.setFriction("crafter:ice", 1.05f)

@@ -30,7 +30,7 @@ private val drawType      = concurrent<DrawType>()
 // Optional components.
 //
 // Main thread only.
-private val slip               = singleThreaded<Float>()
+private val friction          = singleThreaded<Float>()
 private val walkable           = singleThreaded<Boolean>()
 private val flow               = singleThreaded<Int>()
 private val viscosity          = singleThreaded<Int>()
@@ -125,8 +125,8 @@ object block {
   fun setDrawType(id: Int, newDrawType: DrawType) {
     drawType[id] = newDrawType
   }
-  fun setSlip(id: Int, newSlip: Float) {
-    slip[id] = newSlip
+  fun setFriction(id: Int, newFriction: Float) {
+    friction[id] = newFriction
   }
   fun setWalkable(id: Int, isWalkable: Boolean) {
     walkable[id] = isWalkable
@@ -170,7 +170,7 @@ object block {
   fun setTextures(name: String, newTextures: Array<String>) = setTextures(getID(name), newTextures)
   private fun setTextureCoords(name: String, newCoords: Array<FloatArray>) = setTextureCoords(getID(name), newCoords)
   fun setDrawType(name: String, newDrawType: DrawType) = setDrawType(getID(name), newDrawType)
-  fun setSlip(name: String, newSlip: Float) = setSlip(getID(name), newSlip)
+  fun setFriction(name: String, newFriction: Float) = setFriction(getID(name), newFriction)
   fun setWalkable(name: String, isWalkable: Boolean) = setWalkable(getID(name), isWalkable)
   fun setLiquid(name: String, isLiquid: Boolean) = setLiquid(getID(name), isLiquid)
   fun setFlow(name: String, flowLevel: Int) = setFlow(getID(name), flowLevel)
@@ -225,8 +225,8 @@ object block {
   //note: Optionals - defaults are set and returned here.
 
   // ID oriented.
-  fun getSlip(id: Int): Float {
-    return slip[id] ?: 0.05f
+  fun getFriction(id: Int): Float {
+    return friction[id] ?: 1.325f
   }
   fun isWalkable(id: Int): Boolean {
     return walkable[id] ?: true
@@ -263,7 +263,7 @@ object block {
   }
 
   // Name oriented.
-  fun getSlip(name: String): Float = getSlip(getID(name))
+  fun getFriction(name: String): Float = getFriction(getID(name))
   fun isWalkable(name: String): Boolean = isWalkable(getID(name))
   fun isLiquid(name: String): Boolean = isLiquid(getID(name))
   fun getFlow(name: String): Int = getFlow(getID(name))

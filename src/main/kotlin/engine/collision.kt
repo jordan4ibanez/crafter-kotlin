@@ -104,7 +104,7 @@ object collision {
     val maxY = if (velocity.y < 0) blockManipulatorMax.y() else blockManipulatorMin.y()
     val maxZ = if (velocity.z < 0) blockManipulatorMax.z() else blockManipulatorMin.z()
 
-    var currentSlip = 0f
+    var currentFriction = 0f
 
     // By block.
     (0 until loops).forEach { _ ->
@@ -154,7 +154,7 @@ object collision {
 //                if (abs(oldY - pos.y) > 0.5f) {
 //                  println("$x,$y,$z | ${floor(pos.x)},${floor(pos.y)},${floor(pos.z)} | ${pos.x}, ${pos.z}")
 //                }
-                currentSlip = block.getSlip(id)
+                currentFriction = block.getFriction(id)
                 entity.onGround = true
               }
             }
@@ -166,13 +166,13 @@ object collision {
 
     if (entity.onGround) {
       // Block friction.
-      velocity.x = signum(velocity.x) * (abs(velocity.x) * currentSlip)
-      velocity.z = signum(velocity.z) * (abs(velocity.z) * currentSlip)
-      entity.friction = currentSlip
+      velocity.x = signum(velocity.x) * (abs(velocity.x) / currentFriction)
+      velocity.z = signum(velocity.z) * (abs(velocity.z) / currentFriction)
+      entity.friction = currentFriction
     } else {
       // Air friction.
-      velocity.x = signum(velocity.x) * (abs(velocity.x) * entity.friction)
-      velocity.z = signum(velocity.z) * (abs(velocity.z) * entity.friction)
+      velocity.x = signum(velocity.x) * (abs(velocity.x) / entity.friction)
+      velocity.z = signum(velocity.z) * (abs(velocity.z) / entity.friction)
     }
 
     entity.setVelocity(velocity)
