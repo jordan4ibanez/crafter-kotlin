@@ -81,8 +81,9 @@ fun update(delta: Float) {
 
   camera.doMouseInputCameraRotation()
   clientPlayer.doClientControls()
-  clientPlayer.glueCamera()
   entity.doOnStep(delta)
+  clientPlayer.glueCamera()
+
 
   if (keyboard.isDown(GLFW_KEY_ESCAPE)){
    window.close()
