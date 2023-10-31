@@ -195,7 +195,7 @@ object collision {
         if (directionResult.down) {
 //          println("down collision")
           pos.y = worldAABBMax.y + 0.0001f
-          normalizedVelocity.y = 0f
+          normalizedVelocity.y = -0.001f
           velocity.y = -0.01f
         } else if (directionResult.up) {
 //          println("up collision")
