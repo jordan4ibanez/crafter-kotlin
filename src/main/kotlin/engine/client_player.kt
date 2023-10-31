@@ -29,7 +29,6 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
 
     oldPosition.set(position)
     position.set(newPosition)
-    interpolationTimer = 0f
     val x: Int = floor(newPosition.x() / world.getChunkWidth()).toInt()
     val z: Int = floor(newPosition.z() / world.getChunkDepth()).toInt()
     currentChunkPosition.set(x,z)
@@ -40,6 +39,10 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
 //      payloaded = true
     }
     oldChunkPosition.set(currentChunkPosition)
+
+//    if (interpolationTimer != 1f) println("interpolation failed = $interpolationTimer =--==-=-=-=-=-=-=-=-=-")
+
+    interpolationTimer = 0f
   }
 
   fun getChunkPosition(): Vector2ic = currentChunkPosition

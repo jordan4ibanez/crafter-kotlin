@@ -36,13 +36,20 @@ open class PointEntity {
   open fun setPosition(newPosition: Vector3fc) {
     oldPosition.set(position)
     position.set(newPosition)
-    interpolationTimer = 0f
+//    interpolationTimer = 0f
   }
   internal fun interpolate(delta: Float) {
-    if (interpolationTimer >= 1f) return
+    if (interpolationTimer >= 1f) {
+//      println("interpolation is complete $interpolationTimer")
+      return
+    }
 //    println("interpolating thing $interpolationTimer")
     interpolationTimer += delta * interpolationSnappiness
-    if (interpolationTimer >= 1f) interpolationTimer = 1f
+//    println("interpolation reached $interpolationTimer")
+    if (interpolationTimer >= 1f) {
+//      println("interpolation completed")
+      interpolationTimer = 1f
+    }
     oldPosition.lerp(position, interpolationTimer, interpolationPosition)
   }
 
@@ -58,6 +65,8 @@ open class PointEntity {
       y,
       z / friction
     )
+//    println("adding")
+//    interpolationTimer = 0f
   }
 
   fun velocityGoal(goal: Vector3fc, acceleration: Float) = velocityGoal(goal.x(), goal.y(), goal.z(), acceleration)
