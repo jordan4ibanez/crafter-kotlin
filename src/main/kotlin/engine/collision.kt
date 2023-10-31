@@ -166,7 +166,6 @@ object collision {
 
     if (entity.onGround) {
       // Block friction.
-//      println("friction: $currentFriction")
       velocity.x = signum(velocity.x) * (abs(velocity.x) / currentFriction)
       velocity.z = signum(velocity.z) * (abs(velocity.z) / currentFriction)
       entity.friction = currentFriction
