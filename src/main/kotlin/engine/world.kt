@@ -38,10 +38,10 @@ object world {
 
   private var seed = 123_456_789
 
-  private const val MAX_CHUNK_GENS_PER_TICK = 80
-  private const val MAX_CHUNK_MESH_PROCS_PER_TICK = 80
-  private const val MAX_CHUNK_MESH_UPDATES_PER_TICK = 80
-  private const val MAX_CHUNK_PROCS_PER_TICK = 80
+  private const val MAX_CHUNK_GENS_PER_TICK = 70
+  private const val MAX_CHUNK_MESH_PROCS_PER_TICK = 70
+  private const val MAX_CHUNK_MESH_UPDATES_PER_TICK = 70
+  private const val MAX_CHUNK_PROCS_PER_TICK = 70
 
   // Fields for the single block API.
   private val chunkPosition = Vector2i(0,0)
