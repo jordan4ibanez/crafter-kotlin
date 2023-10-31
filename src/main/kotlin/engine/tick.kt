@@ -4,7 +4,7 @@ package engine
 // Thanks Rubenwardy!
 object tick {
   private var accumulator = 0f
-  private const val GOAL = 20
+  internal const val GOAL = 20
   private  const val DELTA = 1f / GOAL.toFloat()
   internal fun think(delta: Float): Boolean {
     accumulator += delta
