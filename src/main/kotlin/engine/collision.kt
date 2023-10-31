@@ -112,6 +112,9 @@ object collision {
 //    val maxY = if (velocity.y > 0) blockManipulatorMax.y() else blockManipulatorMin.y()
 //    val maxZ = if (velocity.z > 0) blockManipulatorMax.z() else blockManipulatorMin.z()
 
+    var frictionAccumulator = 0f
+    var frictionCount = 0f
+
     // By block.
     (0 until loops).forEach { _ ->
       // By axis.
@@ -160,6 +163,7 @@ object collision {
 //                if (abs(oldY - pos.y) > 0.5f) {
 //                  println("$x,$y,$z | ${floor(pos.x)},${floor(pos.y)},${floor(pos.z)} | ${pos.x}, ${pos.z}")
 //                }
+                //todo: block friction accumulation goes here!
                 entity.onGround = true
               }
             }
