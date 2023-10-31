@@ -163,7 +163,8 @@ object collision {
 //                if (abs(oldY - pos.y) > 0.5f) {
 //                  println("$x,$y,$z | ${floor(pos.x)},${floor(pos.y)},${floor(pos.z)} | ${pos.x}, ${pos.z}")
 //                }
-                //todo: block friction accumulation goes here!
+                frictionAccumulator += block.getFriction(id)
+                frictionCount++
                 entity.onGround = true
               }
             }
@@ -175,8 +176,10 @@ object collision {
 
     if (entity.onGround) {
       // Block friction.
-      velocity.x = signum(velocity.x) * (abs(velocity.x) / 1.5f)
-      velocity.z = signum(velocity.z) * (abs(velocity.z) / 1.5f)
+      val blockFriction = frictionAccumulator / frictionCount
+      println("friction: $blockFriction")
+      velocity.x = signum(velocity.x) * (abs(velocity.x) / blockFriction)
+      velocity.z = signum(velocity.z) * (abs(velocity.z) / blockFriction)
     } else {
       // Air friction.
       velocity.x = signum(velocity.x) * (abs(velocity.x) / 1.05f)
