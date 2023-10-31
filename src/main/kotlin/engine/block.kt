@@ -16,7 +16,7 @@ private fun<T> concurrent(): ConcurrentHashMap<Int, T> {
   return ConcurrentHashMap<Int, T>()
 }
 private fun<T> singleThreaded(): HashMap<Int, T> {
-  return HashMap<Int, T>()
+  return HashMap()
 }
 
 // Required components.
@@ -28,18 +28,20 @@ private val textureCoords = concurrent<Array<FloatArray>>()
 private val drawType      = concurrent<DrawType>()
 
 // Optional components.
-private val walkable           = concurrent<Boolean>()
-private val liquid             = concurrent<Boolean>()
-private val flow               = concurrent<Int>()
-private val viscosity          = concurrent<Int>()
-private val climbable          = concurrent<Boolean>()
-private val sneakJumpClimbable = concurrent<Boolean>()
-private val falling            = concurrent<Boolean>()
-private val clear              = concurrent<Boolean>()
-private val damagePerSecond    = concurrent<Int>()
-private val light              = concurrent<Int>()
-private val floats             = concurrent<Boolean>()
-
+//
+// Main thread only.
+private val walkable           = singleThreaded<Boolean>()
+private val flow               = singleThreaded<Int>()
+private val viscosity          = singleThreaded<Int>()
+private val climbable          = singleThreaded<Boolean>()
+private val sneakJumpClimbable = singleThreaded<Boolean>()
+private val falling            = singleThreaded<Boolean>()
+private val damagePerSecond    = singleThreaded<Int>()
+private val floats             = singleThreaded<Boolean>()
+// Concurrent
+private val liquid = concurrent<Boolean>()
+private val clear  = concurrent<Boolean>()
+private val light  = concurrent<Int>()
 
 enum class DrawType(val data: Int) {
   AIR(0),
