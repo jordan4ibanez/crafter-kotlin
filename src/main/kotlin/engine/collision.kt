@@ -12,7 +12,7 @@ object collision {
   private val intersection = FrustumIntersection()
   private val min = Vector3f()
   private val max = Vector3f()
-  private val gravity = world.getGravity() / 100f
+  private val gravity = world.getGravity() / 150f
   private val size = Vector2f()
   private val pos = Vector3f()
   private val oldPos = Vector3f()
@@ -168,7 +168,7 @@ object collision {
       val finalVelocity = Vector2f(velocity.x, velocity.z)
       val currentSpeed = finalVelocity.length()
       if (!currentSpeed.isNaN()) {
-        val newFriction = (currentFriction % 1f) / 15f
+        val newFriction = (currentFriction % 1f) / 20f
         val newSpeed = clamp(0f, MAX_SPEED,currentSpeed - newFriction)
         finalVelocity.normalize().mul(newSpeed)
         if (finalVelocity.x.isNaN()) finalVelocity.x = 0f
@@ -182,7 +182,7 @@ object collision {
       val finalVelocity = Vector2f(velocity.x, velocity.z)
       val currentSpeed = finalVelocity.length()
       if (!currentSpeed.isNaN()) {
-        val newFriction = (entity.friction % 1f) / 15f
+        val newFriction = (entity.friction % 1f) / 20f
         val newSpeed = clamp(0f, MAX_SPEED,currentSpeed - newFriction)
         finalVelocity.normalize().mul(newSpeed)
         if (finalVelocity.x.isNaN()) finalVelocity.x = 0f
