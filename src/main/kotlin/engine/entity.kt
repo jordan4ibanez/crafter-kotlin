@@ -19,7 +19,6 @@ open class PointEntity {
   var meshID = 0
   var onGround = false
   internal var friction = 1.35f
-  internal var speedLimit = 3f
 
   constructor(pos: Vector3fc) {
     this.position.set(pos)
@@ -28,11 +27,6 @@ open class PointEntity {
   }
 
   fun getFriction(): Float = friction
-
-  fun getSpeedLimit(): Float = speedLimit
-  fun setSpeedLimit(newSpeedLimit: Float) {
-    speedLimit = newSpeedLimit
-  }
 
   fun getPosition(): Vector3fc = position
   open fun setPosition(newPosition: Vector3fc) {
