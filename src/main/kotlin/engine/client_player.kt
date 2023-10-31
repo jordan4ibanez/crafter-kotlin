@@ -62,6 +62,11 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
 
   internal fun doClientControls() {
     positionBuffer.z = when {
+      keyboard.isDown(GLFW.GLFW_KEY_LEFT_CONTROL) -> when {
+        keyboard.isDown(GLFW.GLFW_KEY_W) -> -2
+        keyboard.isDown(GLFW.GLFW_KEY_S) -> 2
+        else -> 0
+      }
       keyboard.isDown(GLFW.GLFW_KEY_W) -> -1
       keyboard.isDown(GLFW.GLFW_KEY_S) -> 1
       else -> 0
