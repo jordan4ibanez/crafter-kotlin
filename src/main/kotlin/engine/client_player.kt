@@ -50,12 +50,14 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
     val cameraYaw = camera.getYaw()
     val forwardBuffer = (positionBuffer.z.toFloat() / 10f)
     val sidewaysBuffer = (positionBuffer.x.toFloat() / 10f)
+    // If running
+    val speed = if (abs(positionBuffer.x) > 1 || abs(positionBuffer.z) > 1) 0.425f else 0.35f
     velocityWorker.set(
       ((sin(-cameraYaw) * forwardBuffer) + (sin(-cameraYaw + (PI / 2.0f)) * sidewaysBuffer)).toFloat(),
       0f,
       ((cos(cameraYaw) * forwardBuffer) + (cos(cameraYaw - (PI / 2.0f)) * sidewaysBuffer)).toFloat()
     )
-    if (velocityWorker.length() != 0f) velocityWorker.normalize()
+    if (velocityWorker.length() != 0f) velocityWorker.normalize().mul(speed)
 //    velocityWorker.print("velocity worker")
     velocityGoal(
       velocityWorker,
