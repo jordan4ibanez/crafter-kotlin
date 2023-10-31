@@ -30,6 +30,7 @@ private val drawType      = concurrent<DrawType>()
 // Optional components.
 //
 // Main thread only.
+private val friction          = singleThreaded<Float>()
 private val walkable           = singleThreaded<Boolean>()
 private val flow               = singleThreaded<Int>()
 private val viscosity          = singleThreaded<Int>()
@@ -124,6 +125,9 @@ object block {
   fun setDrawType(id: Int, newDrawType: DrawType) {
     drawType[id] = newDrawType
   }
+  fun setFriction(id: Int, newFriction: Float) {
+    friction[id] = newFriction
+  }
   fun setWalkable(id: Int, isWalkable: Boolean) {
     walkable[id] = isWalkable
   }
@@ -166,6 +170,7 @@ object block {
   fun setTextures(name: String, newTextures: Array<String>) = setTextures(getID(name), newTextures)
   private fun setTextureCoords(name: String, newCoords: Array<FloatArray>) = setTextureCoords(getID(name), newCoords)
   fun setDrawType(name: String, newDrawType: DrawType) = setDrawType(getID(name), newDrawType)
+  fun setFriction(name: String, newFriction: Float) = setFriction(getID(name), newFriction)
   fun setWalkable(name: String, isWalkable: Boolean) = setWalkable(getID(name), isWalkable)
   fun setLiquid(name: String, isLiquid: Boolean) = setLiquid(getID(name), isLiquid)
   fun setFlow(name: String, flowLevel: Int) = setFlow(getID(name), flowLevel)
@@ -220,6 +225,9 @@ object block {
   //note: Optionals - defaults are set and returned here.
 
   // ID oriented.
+  fun getFriction(id: Int): Float {
+    return friction[id] ?: 1.25f
+  }
   fun isWalkable(id: Int): Boolean {
     return walkable[id] ?: true
   }
@@ -255,6 +263,7 @@ object block {
   }
 
   // Name oriented.
+  fun getFriction(name: String): Float = getFriction(getID(name))
   fun isWalkable(name: String): Boolean = isWalkable(getID(name))
   fun isLiquid(name: String): Boolean = isLiquid(getID(name))
   fun getFlow(name: String): Int = getFlow(getID(name))
