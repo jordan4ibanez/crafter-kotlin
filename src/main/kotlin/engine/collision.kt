@@ -182,8 +182,8 @@ object collision {
       velocity.z = signum(velocity.z) * (abs(velocity.z) / blockFriction)
     } else {
       // Air friction.
-      velocity.x = signum(velocity.x) * (abs(velocity.x) / 1.05f)
-      velocity.z = signum(velocity.z) * (abs(velocity.z) / 1.05f)
+      velocity.x = signum(velocity.x) * (abs(velocity.x) / 1.35f)
+      velocity.z = signum(velocity.z) * (abs(velocity.z) / 1.35f)
     }
 
     entity.setVelocity(velocity)
