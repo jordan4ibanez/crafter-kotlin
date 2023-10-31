@@ -1,6 +1,5 @@
 package engine
 
-import engine.world.getBlockID
 import org.joml.*
 import org.joml.Math.*
 
@@ -166,13 +165,31 @@ object collision {
 
     if (entity.onGround) {
       // Block friction.
-      velocity.x = signum(velocity.x) * (abs(velocity.x) / currentFriction)
-      velocity.z = signum(velocity.z) * (abs(velocity.z) / currentFriction)
+      val finalVelocity = Vector2f(velocity.x, velocity.z)
+      val currentSpeed = finalVelocity.length()
+      if (!currentSpeed.isNaN()) {
+        val newFriction = (currentFriction % 1f) / 15f
+        val newSpeed = clamp(0f, MAX_SPEED,currentSpeed - newFriction)
+        finalVelocity.normalize().mul(newSpeed)
+        if (finalVelocity.x.isNaN()) finalVelocity.x = 0f
+        if (finalVelocity.y.isNaN()) finalVelocity.y = 0f
+        velocity.x = finalVelocity.x
+        velocity.z = finalVelocity.y
+      }
       entity.friction = currentFriction
     } else {
       // Air friction.
-      velocity.x = signum(velocity.x) * (abs(velocity.x) / entity.friction)
-      velocity.z = signum(velocity.z) * (abs(velocity.z) / entity.friction)
+      val finalVelocity = Vector2f(velocity.x, velocity.z)
+      val currentSpeed = finalVelocity.length()
+      if (!currentSpeed.isNaN()) {
+        val newFriction = (entity.friction % 1f) / 15f
+        val newSpeed = clamp(0f, MAX_SPEED,currentSpeed - newFriction)
+        finalVelocity.normalize().mul(newSpeed)
+        if (finalVelocity.x.isNaN()) finalVelocity.x = 0f
+        if (finalVelocity.y.isNaN()) finalVelocity.y = 0f
+        velocity.x = finalVelocity.x
+        velocity.z = finalVelocity.y
+      }
     }
 
     entity.setVelocity(velocity)
