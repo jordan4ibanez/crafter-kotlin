@@ -1,5 +1,6 @@
 package engine
 
+import org.joml.Math.random
 import org.joml.Vector2f
 import org.joml.Vector2fc
 import org.joml.Vector3f
@@ -8,6 +9,8 @@ import java.util.UUID
 import kotlin.collections.HashMap
 
 const val interpolationSnappiness = 20f
+private val vector3Worker = Vector3f()
+private val vector2Worker = Vector2f()
 
 open class PointEntity {
 
@@ -43,17 +46,35 @@ open class PointEntity {
   }
 
   fun getVelocity(): Vector3fc = velocity
+  fun setVelocity(x: Float, y: Float, z: Float) = setVelocity(vector3Worker.set(x,y,z))
   open fun setVelocity(newVelocity: Vector3fc) {
     velocity.set(newVelocity)
   }
   fun addVelocity(moreVelocity: Vector3fc) = addVelocity(moreVelocity.x(), moreVelocity.y(), moreVelocity.z())
   fun addVelocity(x: Float, y: Float, z: Float) {
-    println(friction % 1f)
     velocity.add(
-      x * (friction % 1f),
+      x / friction,
       y,
-      z * (friction % 1f)
+      z / friction
     )
+  }
+
+  fun velocityGoal(goal: Vector3fc, acceleration: Float) = velocityGoal(goal.x(), goal.y(), goal.z(), acceleration)
+  fun velocityGoal(x: Float, y: Float, z: Float, acceleration: Float) {
+    velocity.add(
+      (x * acceleration) / (friction / 1.45f),
+      y * acceleration,
+      (z * acceleration) / (friction / 1.45f),
+    )
+    vector2Worker.set(x,z)
+    val goalVelocityLength = vector2Worker.length()
+    val velocityLength = velocity.length()
+    if (velocityLength > goalVelocityLength && goalVelocityLength != 0f) {
+      println("hit goal, it was $goalVelocityLength ${random()}")
+      vector2Worker.set(velocity.x, velocity.z).normalize().mul(goalVelocityLength)
+      velocity.x = vector2Worker.x
+      velocity.z = vector2Worker.y
+    }
   }
   
   open fun onTick(delta: Float) {}
