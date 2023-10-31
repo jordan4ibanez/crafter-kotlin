@@ -46,11 +46,14 @@ open class PointEntity {
   open fun setVelocity(newVelocity: Vector3fc) {
     velocity.set(newVelocity)
   }
-  fun addVelocity(moreVelocity: Vector3fc) {
-    velocity.add(moreVelocity)
-  }
+  fun addVelocity(moreVelocity: Vector3fc) = addVelocity(moreVelocity.x(), moreVelocity.y(), moreVelocity.z())
   fun addVelocity(x: Float, y: Float, z: Float) {
-    velocity.add(x,y,z)
+    println(friction % 1f)
+    velocity.add(
+      x * (friction % 1f),
+      y,
+      z * (friction % 1f)
+    )
   }
   
   open fun onTick(delta: Float) {}
