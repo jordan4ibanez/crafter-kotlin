@@ -22,7 +22,7 @@ open class PointEntity {
   private val velocity = Vector3f()
   var meshID = 0
   var onGround = false
-  internal var friction = 1.35f
+  internal var friction = 0.8f
 
   constructor(pos: Vector3fc) {
     this.position.set(pos)
