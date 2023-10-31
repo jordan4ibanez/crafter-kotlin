@@ -7,8 +7,9 @@ import org.joml.Vector3f
 import org.joml.Vector3fc
 import java.util.UUID
 import kotlin.collections.HashMap
+import kotlin.math.sqrt
 
-const val interpolationSnappiness = 20f
+const val interpolationSnappiness = tick.GOAL
 private val vector3Worker = Vector3f()
 private val vector2Worker = Vector2f()
 
@@ -61,16 +62,22 @@ open class PointEntity {
 
   fun velocityGoal(goal: Vector3fc, acceleration: Float) = velocityGoal(goal.x(), goal.y(), goal.z(), acceleration)
   fun velocityGoal(x: Float, y: Float, z: Float, acceleration: Float) {
-    velocity.add(
-      (x * acceleration) / (friction / 1.45f),
-      y * acceleration,
-      (z * acceleration) / (friction / 1.45f),
-    )
+
     vector2Worker.set(x,z)
     val goalVelocityLength = vector2Worker.length()
-    val velocityLength = velocity.length()
+    vector2Worker.set(velocity.x,velocity.z)
+    val velocityLength = vector2Worker.length()
+
+    val diff = (sqrt(acceleration * friction)) / 2f
+
+    velocity.add(
+      (x * acceleration) * diff,
+      y * acceleration,
+      (z * acceleration) * diff,
+    )
+
     if (velocityLength > goalVelocityLength && goalVelocityLength != 0f) {
-      println("hit goal, it was $goalVelocityLength ${random()}")
+//      println("hit goal, it was $goalVelocityLength ${random()}")
       vector2Worker.set(velocity.x, velocity.z).normalize().mul(goalVelocityLength)
       velocity.x = vector2Worker.x
       velocity.z = vector2Worker.y
@@ -93,6 +100,7 @@ open class GroovyEntity : PointEntity {
 
   fun drawCollisionBox() {
     collisionBox.draw(interpolationPosition, size)
+//    collisionBox.draw(position, size)
   }
 
   fun getSize(): Vector2fc = size
