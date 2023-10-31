@@ -98,13 +98,21 @@ object collision {
     val blockManipulatorMin = blockManipulator.getMin()
     val blockManipulatorMax = blockManipulator.getMax()
 
-    val minX = if (velocity.x > 0) blockManipulatorMin.x() else blockManipulatorMax.x()
-    val minY = if (velocity.y > 0) blockManipulatorMin.y() else blockManipulatorMax.y()
-    val minZ = if (velocity.z > 0) blockManipulatorMin.z() else blockManipulatorMax.z()
+    val minX = blockManipulatorMin.x()
+    val minY = blockManipulatorMin.y()
+    val minZ = blockManipulatorMin.z()
 
-    val maxX = if (velocity.x > 0) blockManipulatorMax.x() else blockManipulatorMin.x()
-    val maxY = if (velocity.y > 0) blockManipulatorMax.y() else blockManipulatorMin.y()
-    val maxZ = if (velocity.z > 0) blockManipulatorMax.z() else blockManipulatorMin.z()
+    val maxX = blockManipulatorMax.x()
+    val maxY = blockManipulatorMax.y()
+    val maxZ = blockManipulatorMax.z()
+
+//    val minX = if (velocity.x > 0) blockManipulatorMin.x() else blockManipulatorMax.x()
+//    val minY = if (velocity.y > 0) blockManipulatorMin.y() else blockManipulatorMax.y()
+//    val minZ = if (velocity.z > 0) blockManipulatorMin.z() else blockManipulatorMax.z()
+//
+//    val maxX = if (velocity.x > 0) blockManipulatorMax.x() else blockManipulatorMin.x()
+//    val maxY = if (velocity.y > 0) blockManipulatorMax.y() else blockManipulatorMin.y()
+//    val maxZ = if (velocity.z > 0) blockManipulatorMax.z() else blockManipulatorMin.z()
 
     // By block.
     (0 until loops).forEach { _ ->
@@ -117,9 +125,9 @@ object collision {
         }
         updateEntityAABB()
 
-        for (x in minX toward maxX) {
-          for (z in minZ toward maxZ) {
-            for (y in minY toward maxY) {
+        for (x in minX .. maxX) {
+          for (z in minZ .. maxZ) {
+            for (y in minY .. maxY) {
 
               val id = blockManipulator.getID(x, y, z)
               val doubleCheck = getBlockID(x.toFloat(), y.toFloat(), z.toFloat())
