@@ -63,10 +63,6 @@ object collision {
     // Gravity.
     velocity.y -= gravity
 
-    // Friction. todo: add in block friction
-    velocity.x = signum(velocity.x) * (abs(velocity.x) / 1.2f)
-    velocity.z = signum(velocity.z) * (abs(velocity.z) / 1.2f)
-
     // Limit the speed to X blocks per tick.
     if (velocity.length() > MAX_SPEED) {
       velocity.normalize().mul(MAX_SPEED)
@@ -170,6 +166,17 @@ object collision {
       }
       currentTime = 1f
     }
+
+    if (entity.onGround) {
+      // Block friction.
+      velocity.x = signum(velocity.x) * (abs(velocity.x) / 1.5f)
+      velocity.z = signum(velocity.z) * (abs(velocity.z) / 1.5f)
+    } else {
+      // Air friction.
+      velocity.x = signum(velocity.x) * (abs(velocity.x) / 1.05f)
+      velocity.z = signum(velocity.z) * (abs(velocity.z) / 1.05f)
+    }
+
     entity.setVelocity(velocity)
     entity.setPosition(pos)
   }
