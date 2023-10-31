@@ -159,7 +159,7 @@ object collision {
           }
         }
       }
-      currentTime += 1f
+      currentTime = 1f
     }
     entity.setVelocity(velocity)
     entity.setPosition(pos)
