@@ -68,3 +68,10 @@ block.register(
   inventoryName = "Sand",
   textures = api.stringArrayOf("sand.png","sand.png","sand.png","sand.png","sand.png","sand.png")
 )
+
+block.register(
+  name = "crafter:ice",
+  inventoryName = "Ice",
+  textures = api.stringArrayOf("ice.png","ice.png","ice.png","ice.png","ice.png","ice.png")
+)
+block.setFriction("crafter:ice", 1.025f)
