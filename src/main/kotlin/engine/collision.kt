@@ -122,11 +122,11 @@ object collision {
             for (y in minY toward maxY) {
 
               val id = blockManipulator.getID(x, y, z)
-              val doubleCheck = getBlockID(x.toFloat(), y.toFloat(), z.toFloat())
+//              val doubleCheck = getBlockID(x.toFloat(), y.toFloat(), z.toFloat())
 
-              if (doubleCheck != id) {
-                throw RuntimeException("failed. Got $id expected $doubleCheck")
-              }
+//              if (doubleCheck != id) {
+//                throw RuntimeException("failed. Got $id expected $doubleCheck")
+//              }
 
               if (!block.isWalkable(id)) continue
 
