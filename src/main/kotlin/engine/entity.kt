@@ -18,12 +18,15 @@ open class PointEntity {
   private val velocity = Vector3f()
   var meshID = 0
   var onGround = false
+  internal var friction = 1.35f
 
   constructor(pos: Vector3fc) {
     this.position.set(pos)
     oldPosition.set(pos)
     interpolationPosition.set(pos)
   }
+
+  fun getFriction(): Float = friction
 
   fun getPosition(): Vector3fc = position
   open fun setPosition(newPosition: Vector3fc) {
