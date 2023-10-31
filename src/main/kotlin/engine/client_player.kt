@@ -15,6 +15,7 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
   private val oldChunkPosition = Vector2i(Int.MAX_VALUE, Int.MAX_VALUE)
   private val currentChunkPosition = Vector2i()
   private val positionBuffer = Vector3i()
+  private val velocityWorker = Vector3f()
 
   fun initialize() {
     // Automatically add in the client player into players.
@@ -49,11 +50,18 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
     val cameraYaw = camera.getYaw()
     val forwardBuffer = (positionBuffer.z.toFloat() / 10f)
     val sidewaysBuffer = (positionBuffer.x.toFloat() / 10f)
-    addVelocity(
+    velocityWorker.set(
       ((sin(-cameraYaw) * forwardBuffer) + (sin(-cameraYaw + (PI / 2.0f)) * sidewaysBuffer)).toFloat(),
-      jump,
+      0f,
       ((cos(cameraYaw) * forwardBuffer) + (cos(cameraYaw - (PI / 2.0f)) * sidewaysBuffer)).toFloat()
     )
+    if (velocityWorker.length() != 0f) velocityWorker.normalize()
+//    velocityWorker.print("velocity worker")
+    velocityGoal(
+      velocityWorker,
+      0.15f
+    )
+
   }
 
   internal fun glueCamera() {
