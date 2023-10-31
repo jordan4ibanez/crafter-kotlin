@@ -12,30 +12,34 @@ Indexed by: ID OR translate through name -> ID
 */
 
 //note: con stands for container.
-private fun<T> con(): ConcurrentHashMap<Int, T> {
+private fun<T> concurrent(): ConcurrentHashMap<Int, T> {
   return ConcurrentHashMap<Int, T>()
+}
+private fun<T> singleThreaded(): HashMap<Int, T> {
+  return HashMap<Int, T>()
 }
 
 // Required components.
 private val id            = ConcurrentHashMap<String, Int>()
-private val name          = con<String>()
-private val inventoryName = con<String>()
-private val textures      = con<Array<String>>()
-private val textureCoords = con<Array<FloatArray>>()
-private val drawType      = con<DrawType>()
+private val name          = concurrent<String>()
+private val inventoryName = concurrent<String>()
+private val textures      = concurrent<Array<String>>()
+private val textureCoords = concurrent<Array<FloatArray>>()
+private val drawType      = concurrent<DrawType>()
 
 // Optional components.
-private val walkable           = con<Boolean>()
-private val liquid             = con<Boolean>()
-private val flow               = con<Int>()
-private val viscosity          = con<Int>()
-private val climbable          = con<Boolean>()
-private val sneakJumpClimbable = con<Boolean>()
-private val falling            = con<Boolean>()
-private val clear              = con<Boolean>()
-private val damagePerSecond    = con<Int>()
-private val light              = con<Int>()
-private val floats             = con<Boolean>()
+private val walkable           = concurrent<Boolean>()
+private val liquid             = concurrent<Boolean>()
+private val flow               = concurrent<Int>()
+private val viscosity          = concurrent<Int>()
+private val climbable          = concurrent<Boolean>()
+private val sneakJumpClimbable = concurrent<Boolean>()
+private val falling            = concurrent<Boolean>()
+private val clear              = concurrent<Boolean>()
+private val damagePerSecond    = concurrent<Int>()
+private val light              = concurrent<Int>()
+private val floats             = concurrent<Boolean>()
+
 
 enum class DrawType(val data: Int) {
   AIR(0),
