@@ -61,6 +61,7 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
       velocityWorker,
       0.15f
     )
+    if (jump != 0f) addVelocity(0f,jump,0f)
 
   }
 
