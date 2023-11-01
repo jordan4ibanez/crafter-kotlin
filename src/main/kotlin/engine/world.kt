@@ -30,6 +30,7 @@ object world {
   internal const val HEIGHT = 128
   internal const val DEPTH = 16
   internal const val Y_STRIDE = WIDTH * DEPTH
+  internal const val X_STRIDE = DEPTH * HEIGHT
   private const val ARRAY_SIZE = WIDTH * HEIGHT * DEPTH
   private const val GRAVITY = 10f
 
@@ -362,7 +363,7 @@ object world {
 
   fun debugIndexToPos(i: Int): Vector3ic {
     return Vector3i(
-      i / (WIDTH * HEIGHT),
+      i / X_STRIDE,
       i % HEIGHT,
       (i / HEIGHT) % DEPTH
     )
