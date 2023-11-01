@@ -1,6 +1,7 @@
 package engine
 
 
+import engine.thread.parallelForEach
 import engine.world.addMeshUpdate
 import engine.world.getBlockID
 import engine.world.getBlockLight
@@ -35,10 +36,10 @@ object world {
 
   private var seed = 123_456_789
 
-  private const val MAX_CHUNK_GENS_PER_TICK = 80
-  private const val MAX_CHUNK_MESH_PROCS_PER_TICK = 80
-  private const val MAX_CHUNK_MESH_UPDATES_PER_TICK = 80
-  private const val MAX_CHUNK_PROCS_PER_TICK = 80
+  private const val MAX_CHUNK_GENS_PER_TICK = 100
+  private const val MAX_CHUNK_MESH_PROCS_PER_TICK = 100
+  private const val MAX_CHUNK_MESH_UPDATES_PER_TICK = 100
+  private const val MAX_CHUNK_PROCS_PER_TICK = 100
 
 //  private val blah = run {
 //    (0 until ARRAY_SIZE).forEach { i ->
@@ -229,11 +230,13 @@ object world {
 
     discardOldChunks(currentX, currentZ, renderDistance)
 
-    for (rad in 0 .. renderDistance) {
-      for (x in (currentX - rad) .. (currentX + rad)) {
-        for (z in (currentZ - rad) .. (currentZ + rad)) {
+    (0 .. renderDistance).forEach { rad ->
+      ((currentX - rad) .. (currentX + rad)).parallelForEach { x ->
+        ((currentZ - rad) .. (currentZ + rad)).parallelForEach { z ->
           val currentKey = Vector2i(x, z)
-          if (!data.containsKey(currentKey)) generateChunk(x,z)
+          if (!data.containsKey(currentKey)) {
+            generateChunk(x,z)
+          }
         }
       }
     }
