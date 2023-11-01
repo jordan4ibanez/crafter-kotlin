@@ -230,9 +230,9 @@ object world {
 
     discardOldChunks(currentX, currentZ, renderDistance)
 
-    (0 .. renderDistance).forEach { rad ->
-      ((currentX - rad) .. (currentX + rad)).parallelForEach { x ->
-        ((currentZ - rad) .. (currentZ + rad)).parallelForEach { z ->
+    (0 .. renderDistance).parallelForEach { rad ->
+      ((currentX - rad) .. (currentX + rad)).forEach { x ->
+        ((currentZ - rad) .. (currentZ + rad)).forEach { z ->
           val currentKey = Vector2i(x, z)
           if (!data.containsKey(currentKey)) {
             generateChunk(x,z)
