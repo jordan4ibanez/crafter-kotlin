@@ -682,9 +682,9 @@ object world {
     colors: ArrayList<Float>
   ) {
 
-    for (y in (Y_SLICE_HEIGHT * posY) until (Y_SLICE_HEIGHT * (posY + 1))) {
-      for (z in 0 until DEPTH) {
-        for (x in 0 until WIDTH) {
+    for (z in 0 until DEPTH) {
+      for (x in 0 until WIDTH) {
+        for (y in (Y_SLICE_HEIGHT * posY) until (Y_SLICE_HEIGHT * (posY + 1))) {
           val currentBlock = chunkData[posToIndex(x, y, z)]
           if (currentBlock.getBlockID() == 0) continue
 
