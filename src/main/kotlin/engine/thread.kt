@@ -2,6 +2,8 @@ package engine
 
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors
+import kotlin.math.max
+import kotlin.math.min
 
 // All functions which launch coroutines go into here.
 
@@ -18,9 +20,24 @@ object thread {
   }
   fun getCPUCores() = availableCores
 
-  val debugger = (0..100).parallelForEach { print(it) }
+  val debugger = (-500 until 500).parallelForEach { println(it) }
 
   fun IntRange.parallelForEach(work: (Int) -> Unit) {
-    this.forEach { work(it) }
+    if (this.step != 1) throw RuntimeException("Does not work for skip ranges.")
+    val size = max(this.first, this.last) - min(this.first, this.last)
+//    println("size $size")
+    val rangeSize = size / availableCores
+    val remainder = size % availableCores
+//    println("total: stepsIn $rangeSize, lastStep $remainder = ${(rangeSize * availableCores) + remainder}")
+//    this.forEach { work(it) }
+//    println("remainder: $remainder")
+    (0 until availableCores).forEach { i ->
+      val start = this.first + (i * rangeSize)
+      val end =  if (i == (availableCores - 1))  (start + rangeSize) + remainder else (start + rangeSize) - 1
+      launch {
+        (start .. end).forEach(work)
+      }
+//      println("start: $start | end: $end")
+    }
   }
 }
