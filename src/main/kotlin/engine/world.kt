@@ -458,17 +458,12 @@ object world {
         val height = ((calculatedNoise * biomeScale) + biomeBaseHeight).toInt()
 
         for (y in 0 until HEIGHT) {
-
-          val id = if (y < height - 6) {
-            0 setBlockID stone setBlockLight 0
-          } else if (y < height) {
-            0 setBlockID dirt setBlockLight 0
-          } else if (y <= height) {
-            0 setBlockID grass setBlockLight 0
-          } else {
-            0 setBlockID 0 setBlockLight 15
+          val id = when {
+            y < height - 6 -> 0 setBlockID stone setBlockLight 0
+            y < height -> 0 setBlockID dirt setBlockLight 0
+            y <= height -> 0 setBlockID grass setBlockLight 0
+            else -> 0 setBlockID 0 setBlockLight 15
           }
-
           dataArray[posToIndex(x, y, z)] = id
         }
       }
