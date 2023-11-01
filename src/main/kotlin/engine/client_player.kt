@@ -49,7 +49,7 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
 
   override fun onTick(delta: Float) {
     super.onTick(delta)
-    val jump = if (onGround && positionBuffer.y != 0) 0.5f else 0f
+    val jump = if (onGround && positionBuffer.y > 0) 0.5f else 0f
     val cameraYaw = camera.getYaw()
     val forwardBuffer = (positionBuffer.z.toFloat() / 10f)
     val sidewaysBuffer = (positionBuffer.x.toFloat() / 10f)
