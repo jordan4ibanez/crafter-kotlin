@@ -7,7 +7,8 @@ import java.util.concurrent.Executors
 
 object thread {
   // -1 because main thread.
-  private val availableCores = Runtime.getRuntime().availableProcessors() - 1
+  private const val FORWARD_CACHE = 32
+  private val availableCores = (Runtime.getRuntime().availableProcessors()) + FORWARD_CACHE
   // Cached is better for servers.
 
   private val executor = Executors.newFixedThreadPool(availableCores)
