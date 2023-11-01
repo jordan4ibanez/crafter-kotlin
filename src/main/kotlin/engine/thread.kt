@@ -17,4 +17,9 @@ object thread {
     executor.execute(work)
   }
   fun getCPUCores() = availableCores
+
+  
+  fun IntRange.parallelForEach(work: (Int) -> Unit) {
+
+  }
 }
