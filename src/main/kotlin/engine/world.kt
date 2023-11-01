@@ -43,6 +43,15 @@ object world {
   private const val MAX_CHUNK_MESH_UPDATES_PER_TICK = 70
   private const val MAX_CHUNK_PROCS_PER_TICK = 70
 
+  private val blah = run {
+    (0 until ARRAY_SIZE).forEach { i ->
+      val gotten = debugIndexToPos(i)
+      if (gotten.y() == 0){ //|| gotten.y() == 127) {
+        gotten.print("test")
+      }
+    }
+  }
+
   // Fields for the single block API.
   private val chunkPosition = Vector2i(0,0)
   private val internalPosition = Vector3i(0,0,0)
@@ -346,12 +355,17 @@ object world {
     return blockID xor light xor state
   }
 
+  fun posToIndex(pos: Vector3ic): Int = posToIndex(pos.x(), pos.y(), pos.z())
   fun posToIndex(x: Int, y: Int, z: Int): Int {
     return (y * Y_STRIDE) + (z * DEPTH) + x
   }
 
-  fun posToIndex(pos: Vector3ic): Int {
-    return (pos.y() * Y_STRIDE) + (pos.z() * DEPTH) + pos.x()
+  fun debugIndexToPos(i: Int): Vector3ic {
+    return Vector3i(
+      i / (WIDTH * HEIGHT),
+      i % HEIGHT,
+      (i / HEIGHT) % DEPTH
+    )
   }
 
   fun indexToPos(i: Int): Vector3ic {
