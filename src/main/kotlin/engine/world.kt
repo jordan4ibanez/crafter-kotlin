@@ -36,10 +36,10 @@ object world {
 
   private var seed = 123_456_789
 
-  private const val MAX_CHUNK_GENS_PER_TICK = 100
-  private const val MAX_CHUNK_MESH_PROCS_PER_TICK = 100
-  private const val MAX_CHUNK_MESH_UPDATES_PER_TICK = 100
-  private const val MAX_CHUNK_PROCS_PER_TICK = 100
+  private const val MAX_CHUNK_GENS_PER_TICK = 1000
+  private const val MAX_CHUNK_MESH_PROCS_PER_TICK = 1000
+  private const val MAX_CHUNK_MESH_UPDATES_PER_TICK = 1000
+  private const val MAX_CHUNK_PROCS_PER_TICK = 1000
 
 //  private val blah = run {
 //    (0 until ARRAY_SIZE).forEach { i ->
@@ -230,8 +230,8 @@ object world {
 
     discardOldChunks(currentX, currentZ, renderDistance)
 
-    (0 .. renderDistance).parallelForEach { rad ->
-      ((currentX - rad) .. (currentX + rad)).forEach { x ->
+    (0 .. renderDistance).forEach { rad ->
+      ((currentX - rad) .. (currentX + rad)).parallelForEach { x ->
         ((currentZ - rad) .. (currentZ + rad)).forEach { z ->
           val currentKey = Vector2i(x, z)
           if (!data.containsKey(currentKey)) {
@@ -406,23 +406,23 @@ object world {
       receiveChunkMeshes()
     }
 
-    for (i in 0..MAX_CHUNK_MESH_UPDATES_PER_TICK) {
-      if (meshGenerationInput.isEmpty()) break
-      thread.launch {
+    thread.launch {
+      for (i in 0..MAX_CHUNK_MESH_UPDATES_PER_TICK) {
+        if (meshGenerationInput.isEmpty()) break
         processMeshUpdate()
       }
     }
 
-    for (i in 0..MAX_CHUNK_GENS_PER_TICK) {
-      if (dataGenerationInput.isEmpty()) break
-      thread.launch {
+    thread.launch {
+      for (i in 0..MAX_CHUNK_GENS_PER_TICK) {
+        if (dataGenerationInput.isEmpty()) break
         genChunk()
       }
     }
 
-    for (i in 0..MAX_CHUNK_PROCS_PER_TICK) {
-      if (dataGenerationOutput.isEmpty()) break
-      thread.launch {
+    thread.launch {
+      for (i in 0..MAX_CHUNK_PROCS_PER_TICK) {
+        if (dataGenerationOutput.isEmpty()) break
         processChunks()
       }
     }
