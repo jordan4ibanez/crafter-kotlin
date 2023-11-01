@@ -36,10 +36,10 @@ object world {
 
   private var seed = 123_456_789
 
-  private const val MAX_CHUNK_GENS_PER_TICK = 1000
-  private const val MAX_CHUNK_MESH_PROCS_PER_TICK = 1000
-  private const val MAX_CHUNK_MESH_UPDATES_PER_TICK = 1000
-  private const val MAX_CHUNK_PROCS_PER_TICK = 1000
+  private const val MAX_CHUNK_GENS_PER_TICK = 80
+  private const val MAX_CHUNK_MESH_PROCS_PER_TICK = 80
+  private const val MAX_CHUNK_MESH_UPDATES_PER_TICK = 80
+  private const val MAX_CHUNK_PROCS_PER_TICK = 80
 
 //  private val blah = run {
 //    (0 until ARRAY_SIZE).forEach { i ->

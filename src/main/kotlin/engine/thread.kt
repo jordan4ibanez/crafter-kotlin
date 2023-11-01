@@ -7,13 +7,13 @@ import java.util.concurrent.Executors
 
 object thread {
   // -1 because main thread.
-  private const val FORWARD_CACHE = 32
-  private val availableCores = (Runtime.getRuntime().availableProcessors()) + FORWARD_CACHE
+  private const val FORWARD_CACHE = 24
+  private val availableCores = Runtime.getRuntime().availableProcessors() + FORWARD_CACHE
   // Cached is better for servers.
 
   private val executor = Executors.newFixedThreadPool(availableCores)
   // note: runs out of control
-//    private val executor = Executors.newCachedThreadPool()
+//  private val executor = Executors.newCachedThreadPool()
 
 //  fun formatSize(v: Long): String {
 //    if (v < 1024) return "$v B"
@@ -21,7 +21,7 @@ object thread {
 //    return String.format("%.1f %sB", v.toDouble() / (1L shl z * 10), " KMGTPE"[z])
 //  }
   internal fun launchAllThreads() {
-    val runtime = Runtime.getRuntime()
+//    val runtime = Runtime.getRuntime()
 //    val heapSize = runtime.totalMemory()
 //    val maxHeap = runtime.maxMemory()
 //    val free = runtime.freeMemory()
