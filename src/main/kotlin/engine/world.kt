@@ -44,17 +44,17 @@ object world {
   private const val MAX_CHUNK_MESH_UPDATES_PER_TICK = 70
   private const val MAX_CHUNK_PROCS_PER_TICK = 70
 
-  private val blah = run {
-    (0 until ARRAY_SIZE).forEach { i ->
-      val gotten = debugIndexToPos(i)
-//      if (gotten.y() == 0){ //|| gotten.y() == 127) {
-//        gotten.print("test")
-//      }
-      val check = debugPosToIndex(gotten.x(), gotten.y(), gotten.z())
-      println("input: $i | output: $check")
-      if (i != check) throw RuntimeException("nope")
-    }
-  }
+//  private val blah = run {
+//    (0 until ARRAY_SIZE).forEach { i ->
+//      val gotten = indexToPos(i)
+////      if (gotten.y() == 0){ //|| gotten.y() == 127) {
+////        gotten.print("test")
+////      }
+//      val check = posToIndex(gotten.x(), gotten.y(), gotten.z())
+//      println("input: $i | output: $check")
+//      if (i != check) throw RuntimeException("nope")
+//    }
+//  }
 
   // Fields for the single block API.
   private val chunkPosition = Vector2i(0,0)
@@ -360,27 +360,16 @@ object world {
   }
 
   fun posToIndex(pos: Vector3ic): Int = posToIndex(pos.x(), pos.y(), pos.z())
-  fun posToIndex(x: Int, y: Int, z: Int): Int {
-    return (y * Y_STRIDE) + (z * DEPTH) + x
-  }
 
-  fun debugPosToIndex(x: Int, y: Int ,z: Int): Int {
+  fun posToIndex(x: Int, y: Int ,z: Int): Int {
     return (x * X_STRIDE) + (z * HEIGHT) + y
-  }
-
-  fun debugIndexToPos(i: Int): Vector3ic {
-    return Vector3i(
-      i / X_STRIDE,
-      i % HEIGHT,
-      (i / HEIGHT) % DEPTH
-    )
   }
 
   fun indexToPos(i: Int): Vector3ic {
     return Vector3i(
-      i % WIDTH,
-      (i / Y_STRIDE) % HEIGHT,
-      (i / DEPTH) % DEPTH
+      i / X_STRIDE,
+      i % HEIGHT,
+      (i / HEIGHT) % DEPTH
     )
   }
 
