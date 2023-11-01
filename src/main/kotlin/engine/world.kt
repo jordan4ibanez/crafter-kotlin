@@ -11,9 +11,6 @@ import engine.world.setBlockID
 import engine.world.setBlockLight
 import engine.world.setBlockState
 import engine.world.stateCheck
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.joml.*
 import org.joml.Math.*
 import java.util.*
@@ -38,10 +35,10 @@ object world {
 
   private var seed = 123_456_789
 
-  private const val MAX_CHUNK_GENS_PER_TICK = 70
-  private const val MAX_CHUNK_MESH_PROCS_PER_TICK = 70
-  private const val MAX_CHUNK_MESH_UPDATES_PER_TICK = 70
-  private const val MAX_CHUNK_PROCS_PER_TICK = 70
+  private const val MAX_CHUNK_GENS_PER_TICK = 80
+  private const val MAX_CHUNK_MESH_PROCS_PER_TICK = 80
+  private const val MAX_CHUNK_MESH_UPDATES_PER_TICK = 80
+  private const val MAX_CHUNK_PROCS_PER_TICK = 80
 
 //  private val blah = run {
 //    (0 until ARRAY_SIZE).forEach { i ->
@@ -389,13 +386,18 @@ object world {
     return Pair(exists, gottenData)
   }
 
-  @OptIn(DelicateCoroutinesApi::class)
+  
   internal fun disperseChunkGenerators() {
     //note: Wrapper function to make implementation cleaner.
     // Shoot and forget. More like a machine gun.
 
-    // If there's nothing to be done, do nothing.
+    println(Thread.activeCount())
+//    if (currentCoroutine != null) {
+//      println(currentCoroutine!!.isActive)
+//      currentCoroutine = null
+//    }
 
+    // If there's nothing to be done, do nothing.
     for (i in 0..MAX_CHUNK_MESH_PROCS_PER_TICK) {
       if (meshGenerationOutput.isEmpty()) break
       receiveChunkMeshes()
@@ -403,17 +405,23 @@ object world {
 
     for (i in 0..MAX_CHUNK_MESH_UPDATES_PER_TICK) {
       if (meshGenerationInput.isEmpty()) break
-      GlobalScope.launch { processMeshUpdate() }
+      thread.launch {
+        processMeshUpdate()
+      }
     }
 
     for (i in 0..MAX_CHUNK_GENS_PER_TICK) {
       if (dataGenerationInput.isEmpty()) break
-      GlobalScope.launch { genChunk() }
+      thread.launch {
+        genChunk()
+      }
     }
 
     for (i in 0..MAX_CHUNK_PROCS_PER_TICK) {
       if (dataGenerationOutput.isEmpty()) break
-      GlobalScope.launch { processChunks() }
+      thread.launch {
+        processChunks()
+      }
     }
   }
 
@@ -661,7 +669,6 @@ object world {
         ChunkMesh(positions.toFloatArray(), textureCoords.toFloatArray(), indices.toIntArray(), colors.toFloatArray())
       )
     )
-
   }
 
   private fun buildMesh(
