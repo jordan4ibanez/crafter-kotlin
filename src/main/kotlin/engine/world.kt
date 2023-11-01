@@ -1222,8 +1222,8 @@ object blockManipulator : Iterator<Int> {
 
     finalize()
     for (x in minXChange .. maxXChange) {
-      for (y in minYChange .. maxYChange) {
-        for (z in minZChange .. maxZChange) {
+      for (z in minZChange .. maxZChange) {
+        for (y in minYChange .. maxYChange) {
           addMeshUpdate(x, y, z)
         }
       }
