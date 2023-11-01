@@ -47,9 +47,12 @@ object world {
   private val blah = run {
     (0 until ARRAY_SIZE).forEach { i ->
       val gotten = debugIndexToPos(i)
-      if (gotten.y() == 0){ //|| gotten.y() == 127) {
-        gotten.print("test")
-      }
+//      if (gotten.y() == 0){ //|| gotten.y() == 127) {
+//        gotten.print("test")
+//      }
+      val check = debugPosToIndex(gotten.x(), gotten.y(), gotten.z())
+      println("input: $i | output: $check")
+      if (i != check) throw RuntimeException("nope")
     }
   }
 
@@ -359,6 +362,10 @@ object world {
   fun posToIndex(pos: Vector3ic): Int = posToIndex(pos.x(), pos.y(), pos.z())
   fun posToIndex(x: Int, y: Int, z: Int): Int {
     return (y * Y_STRIDE) + (z * DEPTH) + x
+  }
+
+  fun debugPosToIndex(x: Int, y: Int ,z: Int): Int {
+    return (x * X_STRIDE) + (z * HEIGHT) + y
   }
 
   fun debugIndexToPos(i: Int): Vector3ic {
