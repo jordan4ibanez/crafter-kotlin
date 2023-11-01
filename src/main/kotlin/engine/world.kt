@@ -923,22 +923,23 @@ object blockManipulator : Iterator<Int> {
   private val min = Vector3i(0,0,0)
   private val max = Vector3i(0,0,0)
   private val size = Vector3i(0,0,0)
-  private var yStride = 0
+  private var xStride = 0
   private val data = IntArray(LIMIT.x() * LIMIT.y() * LIMIT.z())
   private val minCache = Vector3i(0,0,0)
   private val maxCache = Vector3i(0,0,0)
   private var skipSingleBlockWarning = false
-  private val chunkPosCache = Vector2i()
   private val cachePos = Vector3i()
-  private val internalPos = Vector3i()
   private var arraySize = 0
   private var currentCount = 0
-  private const val WIDTH = world.WIDTH
-  private const val HEIGHT = world.HEIGHT
-  private const val DEPTH = world.DEPTH
-  private const val Y_SLICE_HEIGHT = world.Y_SLICE_HEIGHT
-  private const val WORLD_Y_STRIDE = world.Y_STRIDE
-  private const val X_STRIDE = world.X_STRIDE
+  private const val WORLD_WIDTH = world.WIDTH
+  private const val WORLD_HEIGHT = world.HEIGHT
+  private const val WORLD_DEPTH = world.DEPTH
+  private const val WORLD_Y_SLICE_HEIGHT = world.Y_SLICE_HEIGHT
+  private const val WORLD_X_STRIDE = world.X_STRIDE
+
+//  internal fun getSize(): Vector3ic {
+//    return size
+//  }
 
   fun set(newMin: Vector3fc, newMax: Vector3fc) = set(floor(newMin.x()).toInt(),floor(newMin.y()).toInt(),floor(newMin.z()).toInt(), floor(newMax.x()).toInt(),floor(newMax.y()).toInt(),floor(newMax.z()).toInt())
   fun set(xMin: Float, yMin: Float, zMin: Float, xMax: Float, yMax: Float, zMax: Float): Boolean = set(minCache.set(floor(xMin).toInt(), floor(yMin).toInt(), floor(zMin).toInt()), maxCache.set(floor(xMax).toInt(), floor(yMax).toInt(), floor(zMax).toInt()))
@@ -971,12 +972,13 @@ object blockManipulator : Iterator<Int> {
 
     size.set((abs(max.x() - min.x()) + 1), (abs(max.y() - min.y()) + 1), (abs(max.z() - min.z()) + 1))
 
-    yStride = if (size.x == 1 || size.z == 1) {
-      size.x() + size.z()
-    } else {
-      size.x() * size.z()
-    }
+//    yStride = if (size.x == 1 || size.z == 1) {
+//      size.x() + size.z()
+//    } else {
+//      size.x() * size.z()
+//    }
 
+    xStride = size.z * size.y
 
     arraySize = size.x() * size.y() * size.z()
 
@@ -1002,14 +1004,12 @@ object blockManipulator : Iterator<Int> {
 
         val gottenData = world.safetGetData(chunkX,chunkZ)
 
-
         // Iterating over in world positions.
         for (x in min.x() .. max.x()) {
           if (chunkX != toChunkX(x)) continue
           for (z in min.z() .. max.z()) {
             if (chunkZ != toChunkZ(z)) continue
             for (y in min.y() .. max.y()) {
-
               data[posToIndex(x, y, z)] = gottenData[worldPosToIndex(internalX(x), y, internalZ(z))]
             }
           }
@@ -1226,7 +1226,7 @@ object blockManipulator : Iterator<Int> {
   }
 
   private fun worldPosToIndex(x: Int, y: Int, z: Int): Int {
-    return (x * X_STRIDE) + (z * HEIGHT) + y
+    return (x * WORLD_X_STRIDE) + (z * WORLD_HEIGHT) + y
   }
 
   fun posToIndex(posX: Int, posY: Int, posZ: Int): Int {
@@ -1240,19 +1240,23 @@ object blockManipulator : Iterator<Int> {
       z < 0 -> println("z was $posZ")
     }
 
-    return (y * yStride) + (z * size.x()) + x
+    return (x * xStride) + (z * size.y) + y
   }
 
 
-  fun indexToPos(index: Int): Vector3ic {
-    // https://github.com/minetest/minetest/blob/master/builtin/game/voxelarea.lua#L62
-    var i = index
-    cachePos.y = floor(i.toFloat() / yStride.toFloat()).toInt() + min.y
-    i %= yStride
-    cachePos.z = floor(i.toFloat() / size.x.toFloat()).toInt() + min.z
-    i %= size.x
-    cachePos.x = i + min.x
-    return cachePos
+  /*
+  return Vector3i(
+    i / X_STRIDE,
+    i % HEIGHT,
+    (i / HEIGHT) % DEPTH
+  )
+   */
+  fun indexToPos(i: Int): Vector3ic {
+    return cachePos.set(
+      (i / xStride) + min.x,
+      (i % size.y) + min.y,
+      ((i / size.y) % size.z) + min.z
+    )
   }
 
 
@@ -1286,8 +1290,8 @@ object blockManipulator : Iterator<Int> {
   }
 
   private fun checkYAxis() {
-    min.y = clamp(0, HEIGHT - 1, min.y)
-    max.y = clamp(0, HEIGHT - 1, max.y)
+    min.y = clamp(0, WORLD_HEIGHT - 1, min.y)
+    max.y = clamp(0, WORLD_HEIGHT - 1, max.y)
   }
 
   private fun checkSizeValidity() {
@@ -1341,18 +1345,18 @@ object blockManipulator : Iterator<Int> {
 
 
   // These are duplicate functions to optimize performance inside this object.
-  private fun internalX(x: Float): Int = if (x < 0) (WIDTH - floor(abs(x + 1) % WIDTH).toInt()) - 1 else floor(x % WIDTH).toInt()
-  private fun internalZ(z: Float): Int = if (z < 0) (DEPTH - floor(abs(z + 1) % DEPTH)).toInt() - 1 else floor(z % DEPTH).toInt()
+  private fun internalX(x: Float): Int = if (x < 0) (WORLD_WIDTH - floor(abs(x + 1) % WORLD_WIDTH).toInt()) - 1 else floor(x % WORLD_WIDTH).toInt()
+  private fun internalZ(z: Float): Int = if (z < 0) (WORLD_DEPTH - floor(abs(z + 1) % WORLD_DEPTH)).toInt() - 1 else floor(z % WORLD_DEPTH).toInt()
 
   private fun internalX(x: Int): Int = internalX(x.toFloat())
   private fun internalZ(z: Int): Int = internalZ(z.toFloat())
 
-  private fun toChunkX(x: Float): Int = floor(x / WIDTH).toInt()
-  private fun toChunkZ(z: Float): Int = floor(z / DEPTH).toInt()
+  private fun toChunkX(x: Float): Int = floor(x / WORLD_WIDTH).toInt()
+  private fun toChunkZ(z: Float): Int = floor(z / WORLD_DEPTH).toInt()
   private fun toChunkX(x: Int): Int = toChunkX(x.toFloat())
   private fun toChunkZ(z: Int): Int = toChunkZ(z.toFloat())
 
-  private fun toYStack(y: Int): Int = floor(y / Y_SLICE_HEIGHT.toFloat()).toInt()
+  private fun toYStack(y: Int): Int = floor(y / WORLD_Y_SLICE_HEIGHT.toFloat()).toInt()
 }
 
 // A nostalgic test
