@@ -18,8 +18,9 @@ object thread {
   }
   fun getCPUCores() = availableCores
 
-  
-  fun IntRange.parallelForEach(work: (Int) -> Unit) {
+  val debugger = (0..100).parallelForEach { print(it) }
 
+  fun IntRange.parallelForEach(work: (Int) -> Unit) {
+    this.forEach { work(it) }
   }
 }
