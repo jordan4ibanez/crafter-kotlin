@@ -7,11 +7,14 @@ import java.util.concurrent.Executors
 
 object thread {
   // -1 because main thread.
-  private val executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 1)
+  private val availableCores = Runtime.getRuntime().availableProcessors() - 1
+  private val executor = Executors.newFixedThreadPool(availableCores)
+
   internal fun launchAllThreads() {
     world.disperseChunkGenerators()
   }
   fun launch(work: Runnable) {
     executor.execute(work)
   }
+  fun getCPUCores() = availableCores
 }
