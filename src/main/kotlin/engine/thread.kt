@@ -46,4 +46,8 @@ object thread {
       launch { (start..end).forEach(work) }
     }
   }
+
+  internal fun destroy() {
+    executor.shutdownNow()
+  }
 }

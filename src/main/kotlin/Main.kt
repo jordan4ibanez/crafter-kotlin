@@ -148,6 +148,7 @@ fun draw() {
 // Game cleanup procedures go here. Consider this love.quit()
 fun quit() {
 
+  thread.destroy()
   mesh.destroyAll()
   texture.destroyAll()
   shader.destroyAll()
