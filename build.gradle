@@ -86,7 +86,7 @@ sourceSets {
 }
 
 kotlin {
-  jvmToolchain(17)
+  jvmToolchain(20)
 }
 
 application {
