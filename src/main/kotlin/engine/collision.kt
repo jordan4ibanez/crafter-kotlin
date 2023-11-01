@@ -94,8 +94,13 @@ object collision {
     val blockManipulatorMin = blockManipulator.getMin()
     val blockManipulatorMax = blockManipulator.getMax()
 
-    //note: this is a placeholder in case this ever needs to iterate in the direction the velocity.
-    // if this is ever the case, use the builtin toward iterator or this won't work correctly.
+    // This is debugging code.
+//    val minX = blockManipulatorMin.x()
+//    val minY = blockManipulatorMin.y()
+//    val minZ = blockManipulatorMin.z()
+//    val maxX = blockManipulatorMax.x()
+//    val maxY = blockManipulatorMax.y()
+//    val maxZ = blockManipulatorMax.z()
     val minX = if (velocity.x < 0) blockManipulatorMin.x() else blockManipulatorMax.x()
     val minY = if (velocity.y < 0) blockManipulatorMin.y() else blockManipulatorMax.y()
     val minZ = if (velocity.z < 0) blockManipulatorMin.z() else blockManipulatorMax.z()
@@ -117,16 +122,38 @@ object collision {
         }
         updateEntityAABB()
 
+//        var indexCheck = 0
+
         for (x in minX toward maxX) {
           for (z in minZ toward maxZ) {
             for (y in minY toward maxY) {
 
               val id = blockManipulator.getID(x, y, z)
-              val doubleCheck = getBlockID(x.toFloat(), y.toFloat(), z.toFloat())
+//              val doubleCheck = getBlockID(x.toFloat(), y.toFloat(), z.toFloat())
 
-              if (doubleCheck != id) {
-                throw RuntimeException("failed. Got $id expected $doubleCheck")
-              }
+//              val index = blockManipulator.posToIndex(x,y,z)
+
+//              if (index != indexCheck) {
+//                val bmSize = blockManipulator.getSize()
+//                throw RuntimeException("index error: In: $indexCheck | out: $index\n" +
+//                  "bmsize: ${bmSize.x()}, ${bmSize.y()}, ${bmSize.z()}")
+//              } else {
+//                val bmSize = blockManipulator.getSize()
+//                println("works with: bmsize: ${bmSize.x()}, ${bmSize.y()}, ${bmSize.z()}")
+//              }
+//
+//              val tripleCheck = blockManipulator.indexToPos(index)
+
+//              if (tripleCheck.x() != x || tripleCheck.y() != y || tripleCheck.z() != z) {
+//                println("minmax: $minX .. $maxX")
+//                println("minmax: $minY .. $maxY")
+//                println("minmax: $minZ .. $maxZ")
+//                throw RuntimeException("in: $x, $y, $z | out: ${tripleCheck.x()}, ${tripleCheck.y()}, ${tripleCheck.z()}")
+//              }
+//              indexCheck++
+//              if (doubleCheck != id) {
+//                throw RuntimeException("failed. Got $id expected $doubleCheck")
+//              }
 
               if (!block.isWalkable(id)) continue
 
