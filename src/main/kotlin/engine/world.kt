@@ -943,6 +943,7 @@ object blockManipulator : Iterator<Int> {
   private const val DEPTH = world.DEPTH
   private const val Y_SLICE_HEIGHT = world.Y_SLICE_HEIGHT
   private const val WORLD_Y_STRIDE = world.Y_STRIDE
+  private const val X_STRIDE = world.X_STRIDE
 
   fun set(newMin: Vector3fc, newMax: Vector3fc) = set(floor(newMin.x()).toInt(),floor(newMin.y()).toInt(),floor(newMin.z()).toInt(), floor(newMax.x()).toInt(),floor(newMax.y()).toInt(),floor(newMax.z()).toInt())
   fun set(xMin: Float, yMin: Float, zMin: Float, xMax: Float, yMax: Float, zMax: Float): Boolean = set(minCache.set(floor(xMin).toInt(), floor(yMin).toInt(), floor(zMin).toInt()), maxCache.set(floor(xMax).toInt(), floor(yMax).toInt(), floor(zMax).toInt()))
@@ -1229,8 +1230,8 @@ object blockManipulator : Iterator<Int> {
     }
   }
 
-  private fun worldPosToIndex(posX: Int, posY: Int, posZ: Int): Int {
-    return (posY * WORLD_Y_STRIDE) + (posZ * DEPTH) + posX
+  private fun worldPosToIndex(x: Int, y: Int, z: Int): Int {
+    return (x * X_STRIDE) + (z * HEIGHT) + y
   }
 
   fun posToIndex(posX: Int, posY: Int, posZ: Int): Int {
