@@ -9,7 +9,10 @@ object thread {
   // -1 because main thread.
   private val availableCores = Runtime.getRuntime().availableProcessors() - 1
   // Cached is better for servers.
+
   private val executor = Executors.newFixedThreadPool(availableCores)
+  // note: runs out of control
+//    private val executor = Executors.newCachedThreadPool()
 
 //  fun formatSize(v: Long): String {
 //    if (v < 1024) return "$v B"
