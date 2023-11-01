@@ -182,7 +182,7 @@ tailrec fun gameLoop() {
 
   if (tick.think(delta)) {
     tick(delta)
-    launchAllThreads()
+    thread.launchAllThreads()
   }
 
   update(delta)
@@ -199,7 +199,7 @@ tailrec fun gameLoop() {
 
 //note: main is at the bottom because procedures should be put into the designated functions.
 // Try not to modify this. It's the literal base of the entire program.
-fun main(args: Array<String>) = runBlocking {
+fun main(args: Array<String>) {
   println(args)
 
   Random.newSeed()
