@@ -391,7 +391,7 @@ object world {
     //note: Wrapper function to make implementation cleaner.
     // Shoot and forget. More like a machine gun.
 
-    println(Thread.activeCount())
+//    println(Thread.activeCount())
 //    if (currentCoroutine != null) {
 //      println(currentCoroutine!!.isActive)
 //      currentCoroutine = null
