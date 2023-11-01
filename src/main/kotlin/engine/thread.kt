@@ -13,7 +13,7 @@ object thread {
   internal fun launchAllThreads() {
     world.disperseChunkGenerators()
   }
-  fun launch(work: Runnable) {
+  internal fun launch(work: Runnable) {
     executor.execute(work)
   }
   fun getCPUCores() = availableCores
