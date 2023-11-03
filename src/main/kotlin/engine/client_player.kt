@@ -54,7 +54,7 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
       speedGoal
     )
 
-    if (jump != 0f) setVelocity(vel2d.x, jump, vel2d.y)
+    if (jump != 0f) addVelocity(0f, jump, 0f)
   }
 
   internal fun glueCamera() {
