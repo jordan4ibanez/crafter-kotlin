@@ -196,6 +196,7 @@ object collision {
       currentTime = 1f
     }
 
+    // Note: 50f and 0.006f are just magic numbers. They are from testing and seeing what numbers feel the best during gameplay.
     if (entity.onGround) {
       // Block friction.
       val tickFriction = -currentFriction * TICK_DELTA * (currentFriction / 50f)
