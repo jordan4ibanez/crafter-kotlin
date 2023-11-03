@@ -12,18 +12,19 @@ object collision {
   private val intersection = FrustumIntersection()
   private val min = Vector3f()
   private val max = Vector3f()
-  private val gravity = world.getGravity() / 150f
   private val size = Vector2f()
   private val pos = Vector3f()
   private val oldPos = Vector3f()
   private val projectedPos = Vector3f()
   private val velocity = Vector3f()
+  private val acceleration = Vector3f()
   private val oldVelocity = Vector3f()
   private val entityAABBMin = Vector3f()
   private val entityAABBMax = Vector3f()
   private val worldAABBMin = Vector3f()
   private val worldAABBMax = Vector3f()
   private val normalizedVelocity = Vector3f()
+  private const val TICK_DELTA = tick.GOAL_DELTA
 
   private object directionResult {
     var left = false
@@ -55,12 +56,16 @@ object collision {
     size.set(entity.getSize())
     pos.set(entity.getPosition())
     velocity.set(entity.getVelocity())
+    acceleration.set(entity.getAcceleration()).mul(TICK_DELTA)
+
 
     oldPos.set(pos)
     oldVelocity.set(velocity)
 
-    // Gravity.
-    velocity.y -= gravity
+    // Apply acceleration.
+    velocity.add(acceleration)
+
+
 
     // Limit the speed to X blocks per tick.
     if (velocity.length() > MAX_SPEED) {
@@ -190,37 +195,37 @@ object collision {
       currentTime = 1f
     }
 
-    val frictionCoefficient = 50f
+//    if (entity.onGround) {
+//      // Block friction.
+//      val finalVelocity = Vector2f(velocity.x, velocity.z)
+//      val currentSpeed = finalVelocity.length()
+//      if (!currentSpeed.isNaN()) {
+//        val newSpeed = clamp(0f, MAX_SPEED, currentSpeed - currentFriction)
+//        finalVelocity.normalize().mul(newSpeed)
+//        if (finalVelocity.x.isNaN()) finalVelocity.x = 0f
+//        if (finalVelocity.y.isNaN()) finalVelocity.y = 0f
+//        velocity.x = finalVelocity.x
+//        velocity.z = finalVelocity.y
+//      }
+//      entity.friction = currentFriction
+//    } else {
+//      // Air friction.
+//      val finalVelocity = Vector2f(velocity.x, velocity.z)
+//      val currentSpeed = finalVelocity.length()
+//      if (!currentSpeed.isNaN()) {
+//        val newSpeed = clamp(0f, MAX_SPEED, currentSpeed - entity.friction)
+//        finalVelocity.normalize().mul(newSpeed)
+//        if (finalVelocity.x.isNaN()) finalVelocity.x = 0f
+//        if (finalVelocity.y.isNaN()) finalVelocity.y = 0f
+//        velocity.x = finalVelocity.x
+//        velocity.z = finalVelocity.y
+//      }
+//    }
 
-    if (entity.onGround) {
-      // Block friction.
-      val finalVelocity = Vector2f(velocity.x, velocity.z)
-      val currentSpeed = finalVelocity.length()
-      if (!currentSpeed.isNaN()) {
-        val newFriction = (currentFriction % 1f) / frictionCoefficient
-        val newSpeed = clamp(0f, MAX_SPEED,currentSpeed - newFriction)
-        finalVelocity.normalize().mul(newSpeed)
-        if (finalVelocity.x.isNaN()) finalVelocity.x = 0f
-        if (finalVelocity.y.isNaN()) finalVelocity.y = 0f
-        velocity.x = finalVelocity.x
-        velocity.z = finalVelocity.y
-      }
+
+    if (currentFriction > 0f) {
       entity.friction = currentFriction
-    } else {
-      // Air friction.
-      val finalVelocity = Vector2f(velocity.x, velocity.z)
-      val currentSpeed = finalVelocity.length()
-      if (!currentSpeed.isNaN()) {
-        val newFriction = (entity.friction % 1f) / frictionCoefficient
-        val newSpeed = clamp(0f, MAX_SPEED,currentSpeed - newFriction)
-        finalVelocity.normalize().mul(newSpeed)
-        if (finalVelocity.x.isNaN()) finalVelocity.x = 0f
-        if (finalVelocity.y.isNaN()) finalVelocity.y = 0f
-        velocity.x = finalVelocity.x
-        velocity.z = finalVelocity.y
-      }
     }
-
     entity.setVelocity(velocity)
     entity.setPosition(pos)
   }
