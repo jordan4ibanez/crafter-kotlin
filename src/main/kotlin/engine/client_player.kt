@@ -1,5 +1,6 @@
 package engine
 
+import org.joml.Math
 import org.joml.Math.*
 import org.joml.Vector2f
 import org.joml.Vector2i
@@ -50,25 +51,13 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
 
     // Running/walking.
     val speedGoal = if (abs(positionBuffer.x) > 1 || abs(positionBuffer.z) > 1) 0.25f else 0.15f
-    val currentVel = getVelocity()
-    val currentAcceleration = getAcceleration()
 
-    vel2d.set(currentVel.x(), currentVel.z())
-
-    goalVel.set(
+    mobMove(
       ((sin(-cameraYaw) * forwardBuffer) + (sin(-cameraYaw + (PI / 2.0f)) * sidewaysBuffer)).toFloat(),
-      ((cos(cameraYaw) * forwardBuffer) + (cos(cameraYaw - (PI / 2.0f)) * sidewaysBuffer)).toFloat()
-    ).normalize().mul(speedGoal)
-    goalVel.sub(vel2d, diff)
-    diff.mul(friction)
-
-    accelerationWorker.set(
-      diff.x,
-      currentAcceleration.y(),
-      diff.y
+      ((cos(cameraYaw) * forwardBuffer) + (cos(cameraYaw - (PI / 2.0f)) * sidewaysBuffer)).toFloat(),
+      speedGoal
     )
-    if (!accelerationWorker.isFinite) accelerationWorker.set(0f,currentAcceleration.y(),0f)
-    setAcceleration(accelerationWorker)
+
     if (jump != 0f) setVelocity(vel2d.x, jump, vel2d.y)
   }
 
