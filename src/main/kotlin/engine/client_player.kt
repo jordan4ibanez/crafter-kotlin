@@ -19,32 +19,23 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
   private val accelerationWorker = Vector3f()
   private val chunkWidth = world.getChunkWidthFloat()
   private val chunkDepth = world.getChunkDepthFloat()
+  private val vel2d = Vector2f()
+  private val goalVel = Vector2f()
+  private val diff = Vector2f()
 
   fun initialize() {
     // Automatically add in the client player into players.
     entity.addPlayer(this)
   }
 
-  // Future note: This can be used to turn off the automatic chunk generation (for prototyping and generation debugging).
-//  private var payloaded = false
-
   override fun setPosition(newPosition: Vector3fc) {
-
     oldPosition.set(position)
     position.set(newPosition)
     val x: Int = floor(newPosition.x() / chunkWidth).toInt()
     val z: Int = floor(newPosition.z() / chunkDepth).toInt()
     currentChunkPosition.set(x,z)
-//    println("$x, $z")
-
-    if (currentChunkPosition != oldChunkPosition /*&& !payloaded*/) {
-      world.cleanAndGenerationScan()
-//      payloaded = true
-    }
+    if (currentChunkPosition != oldChunkPosition /*&& !payloaded*/) world.cleanAndGenerationScan()
     oldChunkPosition.set(currentChunkPosition)
-
-//    if (interpolationTimer != 1f) println("interpolation failed = $interpolationTimer =--==-=-=-=-=-=-=-=-=-")
-
     interpolationTimer = 0f
   }
 
@@ -57,29 +48,28 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
     val forwardBuffer = (positionBuffer.z.toFloat() / 10f)
     val sidewaysBuffer = (positionBuffer.x.toFloat() / 10f)
 
-    // If running
+    // Running/walking.
     val speedGoal = if (abs(positionBuffer.x) > 1 || abs(positionBuffer.z) > 1) 0.25f else 0.15f
     val currentVel = getVelocity()
     val currentAcceleration = getAcceleration()
-    val vel2d = Vector2f(currentVel.x(), currentVel.z())
-    val goalVel = Vector2f(
+
+    vel2d.set(currentVel.x(), currentVel.z())
+
+    goalVel.set(
       ((sin(-cameraYaw) * forwardBuffer) + (sin(-cameraYaw + (PI / 2.0f)) * sidewaysBuffer)).toFloat(),
       ((cos(cameraYaw) * forwardBuffer) + (cos(cameraYaw - (PI / 2.0f)) * sidewaysBuffer)).toFloat()
     ).normalize().mul(speedGoal)
-    val diff = Vector2f()
     goalVel.sub(vel2d, diff)
     diff.mul(friction)
-    val snappiness = 3f
+
     accelerationWorker.set(
-      diff.x * snappiness,
+      diff.x,
       currentAcceleration.y(),
-      diff.y * snappiness
+      diff.y
     )
     if (!accelerationWorker.isFinite) accelerationWorker.set(0f,currentAcceleration.y(),0f)
     setAcceleration(accelerationWorker)
     if (jump != 0f) setVelocity(vel2d.x, jump, vel2d.y)
-
-
   }
 
   internal fun glueCamera() {
