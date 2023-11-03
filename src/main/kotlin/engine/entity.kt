@@ -60,14 +60,8 @@ open class PointEntity {
   open fun setVelocity(newVelocity: Vector3fc) {
     velocity.set(newVelocity)
   }
-//  fun addVelocity(moreVelocity: Vector3fc) = addVelocity(moreVelocity.x(), moreVelocity.y(), moreVelocity.z())
-//  fun addVelocity(x: Float, y: Float, z: Float) {
-//    velocity.add(
-//      x * friction,
-//      y,
-//      z * friction
-//    )
-//  }
+  fun addVelocity(moreVelocity: Vector3fc) = addVelocity(moreVelocity.x(), moreVelocity.y(), moreVelocity.z())
+  fun addVelocity(x: Float, y: Float, z: Float) = velocity.add(x,y,z)
 
   fun getAcceleration(): Vector3fc = acceleration
   fun setAcceleration(x: Float, y: Float, z: Float) = setAcceleration(vector3Worker.set(x,y,z))
