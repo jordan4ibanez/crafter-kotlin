@@ -111,7 +111,7 @@ open class GroovyEntity : PointEntity {
     vel2d.set(currentVel.x(), currentVel.z())
 
     goalVel.sub(vel2d, diff)
-    diff.mul(friction * snappiness,)
+    diff.mul(friction * snappiness)
 
     accelerationWorker.set(
       diff.x,
