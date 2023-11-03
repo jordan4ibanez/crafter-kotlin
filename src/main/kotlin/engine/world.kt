@@ -29,7 +29,7 @@ object world {
   internal const val DEPTH = 16
   internal const val X_STRIDE = DEPTH * HEIGHT
   private const val ARRAY_SIZE = WIDTH * HEIGHT * DEPTH
-  private const val GRAVITY = 10f
+  private const val GRAVITY = 1f
 
   internal const val Y_SLICE_HEIGHT = 16
   private const val MESH_ARRAY_SIZE = 8
@@ -188,7 +188,7 @@ object world {
 
 
   fun getGravity(): Float {
-    return GRAVITY
+    return GRAVITY * 2f
   }
 
   fun getChunkWidth(): Int = WIDTH
