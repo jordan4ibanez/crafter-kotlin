@@ -204,6 +204,7 @@ object collision {
       if (!frictionVelocity.isFinite) frictionVelocity.set(0f)
       velocity.add(frictionVelocity.x, 0f, frictionVelocity.y)
       val currentVel2d = velocity2d.set(velocity.x, velocity.z).length()
+      // Avoid jittering.
       if (currentVel2d < 0.006f) {
         velocity.x = 0f
         velocity.z = 0f
