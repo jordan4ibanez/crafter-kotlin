@@ -40,13 +40,14 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
 
   override fun onTick(delta: Float) {
     super.onTick(delta)
-    val jump = if (onGround && positionBuffer.y > 0) 0.5f else 0f
     val cameraYaw = camera.getYaw()
     val forwardBuffer = positionBuffer.z.toFloat()
     val sidewaysBuffer = positionBuffer.x.toFloat()
 
     // Running/walking.
     val speedGoal = if (abs(positionBuffer.x) > 1 || abs(positionBuffer.z) > 1) 0.25f else 0.15f
+    // Jumping/sneaking.
+    val jump = if (onGround && positionBuffer.y > 0) 0.5f else 0f
 
     mobMove(
       ((sin(-cameraYaw) * forwardBuffer) + (sin(-cameraYaw + (PI / 2.0f)) * sidewaysBuffer)).toFloat(),
