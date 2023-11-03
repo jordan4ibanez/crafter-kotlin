@@ -1,6 +1,7 @@
 package engine
 
 import org.joml.Math.*
+import org.joml.Vector2f
 import org.joml.Vector2i
 import org.joml.Vector2ic
 import org.joml.Vector3f
@@ -15,7 +16,9 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
   private val oldChunkPosition = Vector2i(Int.MAX_VALUE, Int.MAX_VALUE)
   private val currentChunkPosition = Vector2i()
   private val positionBuffer = Vector3i()
-  private val velocityWorker = Vector3f()
+  private val accelerationWorker = Vector3f()
+  private val chunkWidth = world.getChunkWidthFloat()
+  private val chunkDepth = world.getChunkDepthFloat()
 
   fun initialize() {
     // Automatically add in the client player into players.
@@ -29,8 +32,8 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
 
     oldPosition.set(position)
     position.set(newPosition)
-    val x: Int = floor(newPosition.x() / world.getChunkWidth()).toInt()
-    val z: Int = floor(newPosition.z() / world.getChunkDepth()).toInt()
+    val x: Int = floor(newPosition.x() / chunkWidth).toInt()
+    val z: Int = floor(newPosition.z() / chunkDepth).toInt()
     currentChunkPosition.set(x,z)
 //    println("$x, $z")
 
@@ -53,20 +56,29 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
     val cameraYaw = camera.getYaw()
     val forwardBuffer = (positionBuffer.z.toFloat() / 10f)
     val sidewaysBuffer = (positionBuffer.x.toFloat() / 10f)
+
     // If running
-    val speed = if (abs(positionBuffer.x) > 1 || abs(positionBuffer.z) > 1) 0.25f else 0.15f
-    velocityWorker.set(
+    val speedGoal = if (abs(positionBuffer.x) > 1 || abs(positionBuffer.z) > 1) 0.25f else 0.15f
+    val currentVel = getVelocity()
+    val currentAcceleration = getAcceleration()
+    val vel2d = Vector2f(currentVel.x(), currentVel.z())
+    val goalVel = Vector2f(
       ((sin(-cameraYaw) * forwardBuffer) + (sin(-cameraYaw + (PI / 2.0f)) * sidewaysBuffer)).toFloat(),
-      0f,
       ((cos(cameraYaw) * forwardBuffer) + (cos(cameraYaw - (PI / 2.0f)) * sidewaysBuffer)).toFloat()
+    ).normalize().mul(speedGoal)
+    val diff = Vector2f()
+    goalVel.sub(vel2d, diff)
+    diff.mul(friction)
+    val snappiness = 3f
+    accelerationWorker.set(
+      diff.x * snappiness,
+      currentAcceleration.y(),
+      diff.y * snappiness
     )
-    if (velocityWorker.length() != 0f) velocityWorker.normalize().mul(speed)
-//    velocityWorker.print("velocity worker")
-    velocityGoal(
-      velocityWorker,
-      0.8f
-    )
-    if (jump != 0f) addVelocity(0f,jump,0f)
+    if (!accelerationWorker.isFinite) accelerationWorker.set(0f,currentAcceleration.y(),0f)
+    setAcceleration(accelerationWorker)
+    if (jump != 0f) setVelocity(vel2d.x, jump, vel2d.y)
+
 
   }
 
