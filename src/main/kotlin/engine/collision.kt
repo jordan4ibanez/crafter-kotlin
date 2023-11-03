@@ -25,6 +25,7 @@ object collision {
   private val worldAABBMax = Vector3f()
   private val normalizedVelocity = Vector3f()
   private const val TICK_DELTA = tick.GOAL_DELTA
+  private val velocity2d = Vector2f()
 
   private object directionResult {
     var left = false
@@ -195,20 +196,22 @@ object collision {
       currentTime = 1f
     }
 
-//    if (entity.onGround) {
-//      // Block friction.
-//      val finalVelocity = Vector2f(velocity.x, velocity.z)
-//      val currentSpeed = finalVelocity.length()
-//      if (!currentSpeed.isNaN()) {
-//        val newSpeed = clamp(0f, MAX_SPEED, currentSpeed - currentFriction)
-//        finalVelocity.normalize().mul(newSpeed)
-//        if (finalVelocity.x.isNaN()) finalVelocity.x = 0f
-//        if (finalVelocity.y.isNaN()) finalVelocity.y = 0f
-//        velocity.x = finalVelocity.x
-//        velocity.z = finalVelocity.y
-//      }
-//      entity.friction = currentFriction
-//    } else {
+    if (entity.onGround) {
+      // Block friction.
+      val tickFriction = -currentFriction * TICK_DELTA * (currentFriction / 50f)
+      val frictionVelocity = Vector2f(velocity.x, velocity.z).normalize().mul(tickFriction)
+      if (!frictionVelocity.isFinite) frictionVelocity.set(0f)
+      velocity.add(frictionVelocity.x, 0f, frictionVelocity.y)
+      val currentVel2d = velocity2d.set(velocity.x, velocity.z).length()
+      if (currentVel2d < 0.006f) {
+        velocity.x = 0f
+        velocity.z = 0f
+      }
+      println("current speed: ${velocity2d.length()}")
+      entity.friction = currentFriction
+    }
+
+//    else {
 //      // Air friction.
 //      val finalVelocity = Vector2f(velocity.x, velocity.z)
 //      val currentSpeed = finalVelocity.length()
@@ -222,10 +225,9 @@ object collision {
 //      }
 //    }
 
-
-    if (currentFriction > 0f) {
-      entity.friction = currentFriction
-    }
+//    if (currentFriction > 0f) {
+//      entity.friction = currentFriction
+//    }
     entity.setVelocity(velocity)
     entity.setPosition(pos)
   }
