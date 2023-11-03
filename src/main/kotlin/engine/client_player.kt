@@ -17,12 +17,8 @@ object clientPlayer : Player(Vector3f(0f,110f,0f), "singleplayer") {
   private val oldChunkPosition = Vector2i(Int.MAX_VALUE, Int.MAX_VALUE)
   private val currentChunkPosition = Vector2i()
   private val positionBuffer = Vector3i()
-  private val accelerationWorker = Vector3f()
   private val chunkWidth = world.getChunkWidthFloat()
   private val chunkDepth = world.getChunkDepthFloat()
-  private val vel2d = Vector2f()
-  private val goalVel = Vector2f()
-  private val diff = Vector2f()
 
   fun initialize() {
     // Automatically add in the client player into players.
