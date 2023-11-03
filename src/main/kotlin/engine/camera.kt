@@ -13,7 +13,7 @@ import org.lwjgl.system.windows.INPUT
 
 object camera {
 
-  private var renderDistance = 8
+  private var renderDistance = 64
 
   private var sensitivity = 1f / 500f
   private var FOV: Float = toRadians(60f)
