@@ -230,8 +230,8 @@ object world {
 
     discardOldChunks(currentX, currentZ, renderDistance)
 
-    (0 .. renderDistance).forEach { rad ->
-      ((currentX - rad) .. (currentX + rad)).parallelForEach { x ->
+    (0 .. renderDistance).parallelForEach { rad ->
+      ((currentX - rad) .. (currentX + rad)).forEach { x ->
         ((currentZ - rad) .. (currentZ + rad)).forEach { z ->
           val currentKey = Vector2i(x, z)
           if (!data.containsKey(currentKey)) {
@@ -242,40 +242,44 @@ object world {
     }
   }
 
-  private fun discardOldChunks(currentX: Int, currentZ: Int, renderDistance: Int) {
 
-    val dataDestructionQueue = ArrayDeque<Vector2ic>()
-    data.forEach { (key: Vector2ic, _) ->
-      val (x,z) = key.destructure()
-      if (abs(x - currentX) > renderDistance || abs(z - currentZ) > renderDistance) {
-        dataDestructionQueue.add(key)
+
+  private val meshDestructionQueue = ArrayDeque<Vector2ic>()
+
+  private fun discardOldChunks(currentX: Int, currentZ: Int, renderDistance: Int) {
+    thread.launch {
+      val dataDestructionQueue = ArrayDeque<Vector2ic>()
+      data.forEach { (key: Vector2ic, _) ->
+        val (x, z) = key.destructure()
+        if (abs(x - currentX) > renderDistance || abs(z - currentZ) > renderDistance) {
+          dataDestructionQueue.add(key)
+        }
       }
-    }
-    dataDestructionQueue.forEach {
-      data.remove(it)
+      while (dataDestructionQueue.isNotEmpty()) {
+        val key = dataDestructionQueue.removeFirst()
+        data.remove(key)
+      }
     }
 
     //? note: due to concurrency, we must also check the mesh list.
-    dataDestructionQueue.clear()
     meshIDs.forEach { (key: Vector2ic, _) ->
       val (x,z) = key.destructure()
       if (abs(x - currentX) > renderDistance || abs(z - currentZ) > renderDistance) {
-        dataDestructionQueue.add(key)
+        meshDestructionQueue.add(key)
       }
     }
 
-    dataDestructionQueue.forEach {
-      if (meshIDs.containsKey(it)) {
-        meshIDs[it]!!.forEach { id ->
+    while(meshDestructionQueue.isNotEmpty()) {
+      val key = meshDestructionQueue.removeFirst()
+      if (meshIDs.containsKey(key)) {
+        meshIDs[key]!!.forEach { id ->
           if (id != 0) {
             mesh.destroy(id)
           }
         }
       }
-      meshIDs.remove(it)
+      meshIDs.remove(key)
     }
-
-    dataDestructionQueue.clear()
   }
 
   fun Int.blockBits(block: Int): String {
