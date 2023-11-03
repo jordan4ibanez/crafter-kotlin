@@ -26,6 +26,7 @@ object collision {
   private val normalizedVelocity = Vector3f()
   private const val TICK_DELTA = tick.GOAL_DELTA
   private val velocity2d = Vector2f()
+  private val frictionVelocity = Vector2f()
 
   private object directionResult {
     var left = false
@@ -196,40 +197,37 @@ object collision {
       currentTime = 1f
     }
 
-    // Note: 50f and 0.006f are just magic numbers. They are from testing and seeing what numbers feel the best during gameplay.
+    // Note: 40f is just a magic number. It is from testing and seeing what numbers feel the best during gameplay.
     if (entity.onGround) {
       // Block friction.
-      val tickFriction = -currentFriction * TICK_DELTA * (currentFriction / 50f)
-      val frictionVelocity = Vector2f(velocity.x, velocity.z).normalize().mul(tickFriction)
-      if (!frictionVelocity.isFinite) frictionVelocity.set(0f)
-      velocity.add(frictionVelocity.x, 0f, frictionVelocity.y)
+      val tickFriction = -currentFriction * TICK_DELTA * (currentFriction / 40f)
+      frictionVelocity.set(velocity.x, velocity.z).normalize().mul(tickFriction)
       val currentVel2d = velocity2d.set(velocity.x, velocity.z).length()
-      // Avoid jittering.
-      if (currentVel2d < 0.006f) {
+      if (frictionVelocity.length() > currentVel2d) {
         velocity.x = 0f
         velocity.z = 0f
+      } else {
+        if (!frictionVelocity.isFinite) frictionVelocity.set(0f)
+        velocity.add(frictionVelocity.x, 0f, frictionVelocity.y)
       }
-      println("current speed: ${velocity2d.length()}")
       entity.friction = currentFriction
+    } else {
+      // Air friction.
+      val entFriction = entity.friction
+      val tickFriction = -entFriction * TICK_DELTA * (entFriction / 40f)
+      frictionVelocity.set(velocity.x, velocity.z).normalize().mul(tickFriction)
+      val currentVel2d = velocity2d.set(velocity.x, velocity.z).length()
+      if (frictionVelocity.length() > currentVel2d) {
+        velocity.x = 0f
+        velocity.z = 0f
+      } else {
+        if (!frictionVelocity.isFinite) frictionVelocity.set(0f)
+        velocity.add(frictionVelocity.x, 0f, frictionVelocity.y)
+      }
+      println("current air speed: ${velocity2d.length()}")
     }
 
-//    else {
-//      // Air friction.
-//      val finalVelocity = Vector2f(velocity.x, velocity.z)
-//      val currentSpeed = finalVelocity.length()
-//      if (!currentSpeed.isNaN()) {
-//        val newSpeed = clamp(0f, MAX_SPEED, currentSpeed - entity.friction)
-//        finalVelocity.normalize().mul(newSpeed)
-//        if (finalVelocity.x.isNaN()) finalVelocity.x = 0f
-//        if (finalVelocity.y.isNaN()) finalVelocity.y = 0f
-//        velocity.x = finalVelocity.x
-//        velocity.z = finalVelocity.y
-//      }
-//    }
 
-//    if (currentFriction > 0f) {
-//      entity.friction = currentFriction
-//    }
     entity.setVelocity(velocity)
     entity.setPosition(pos)
   }
