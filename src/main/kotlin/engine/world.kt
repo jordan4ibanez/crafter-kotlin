@@ -41,17 +41,6 @@ object world {
   private const val MAX_CHUNK_MESH_UPDATES_PER_TICK = 80
   private const val MAX_CHUNK_PROCS_PER_TICK = 80
 
-//  private val blah = run {
-//    (0 until ARRAY_SIZE).forEach { i ->
-//      val gotten = indexToPos(i)
-////      if (gotten.y() == 0){ //|| gotten.y() == 127) {
-////        gotten.print("test")
-////      }
-//      val check = posToIndex(gotten.x(), gotten.y(), gotten.z())
-//      println("input: $i | output: $check")
-//      if (i != check) throw RuntimeException("nope")
-//    }
-//  }
 
   // Fields for the single block API.
   private val chunkPosition = Vector2i(0,0)
@@ -444,6 +433,8 @@ object world {
 //      println("genChunk: Data race failure.")
       return
     }
+
+    if (data.containsKey(gotten)) return
 
     val (xOffset, zOffset) = gotten.destructure()
 
