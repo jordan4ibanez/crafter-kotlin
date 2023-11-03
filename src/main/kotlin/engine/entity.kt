@@ -14,6 +14,11 @@ const val interpolationSnappiness = tick.GOAL
 private val vector3Worker = Vector3f()
 private val vector2Worker = Vector2f()
 
+private val vel2d = Vector2f()
+private val diff = Vector2f()
+private val accelerationWorker = Vector3f()
+private val goalVel = Vector2f()
+
 open class PointEntity {
 
   internal var interpolationTimer = 0f
@@ -101,10 +106,7 @@ open class GroovyEntity : PointEntity {
 
   fun mobMove(goalX: Float, goalZ: Float, speedGoal: Float, snappiness: Float = 1f) = mobMove(vector2Worker.set(goalX, goalZ), speedGoal, snappiness)
   fun mobMove(goalDir: Vector2fc, speedGoal: Float, snappiness: Float = 1f) {
-    val vel2d = Vector2f()
-    val diff = Vector2f()
-    val accelerationWorker = Vector3f()
-    val goalVel = Vector2f()
+
     goalVel.set(goalDir).normalize().mul(speedGoal)
 
     val currentVel = getVelocity()
