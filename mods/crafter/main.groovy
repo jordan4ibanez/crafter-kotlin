@@ -12,7 +12,7 @@ final api = api.INSTANCE
 final blockManipulator = blockManipulator.INSTANCE
 final block = block.INSTANCE
 
-boolean payloaded = false
+boolean payloaded = true
 
 api.registerOnTick { float delta ->
   if (!payloaded) {
