@@ -20,6 +20,7 @@ open class PointEntity {
   internal val interpolationPosition = Vector3f()
   val position = Vector3f()
   private val velocity = Vector3f()
+  private val acceleration = Vector3f(0f,-world.getGravity(),0f)
   var meshID = 0
   var onGround = false
   internal var friction = 0.8f
@@ -36,7 +37,7 @@ open class PointEntity {
   open fun setPosition(newPosition: Vector3fc) {
     oldPosition.set(position)
     position.set(newPosition)
-//    interpolationTimer = 0f
+    interpolationTimer = 0f
   }
   internal fun interpolate(delta: Float) {
     if (interpolationTimer >= 1f) {
@@ -58,39 +59,19 @@ open class PointEntity {
   open fun setVelocity(newVelocity: Vector3fc) {
     velocity.set(newVelocity)
   }
-  fun addVelocity(moreVelocity: Vector3fc) = addVelocity(moreVelocity.x(), moreVelocity.y(), moreVelocity.z())
-  fun addVelocity(x: Float, y: Float, z: Float) {
-    velocity.add(
-      x / friction,
-      y,
-      z / friction
-    )
-//    println("adding")
-//    interpolationTimer = 0f
-  }
+//  fun addVelocity(moreVelocity: Vector3fc) = addVelocity(moreVelocity.x(), moreVelocity.y(), moreVelocity.z())
+//  fun addVelocity(x: Float, y: Float, z: Float) {
+//    velocity.add(
+//      x * friction,
+//      y,
+//      z * friction
+//    )
+//  }
 
-  fun velocityGoal(goal: Vector3fc, acceleration: Float) = velocityGoal(goal.x(), goal.y(), goal.z(), acceleration)
-  fun velocityGoal(x: Float, y: Float, z: Float, acceleration: Float) {
-
-    vector2Worker.set(x,z)
-    val goalVelocityLength = vector2Worker.length()
-    vector2Worker.set(velocity.x,velocity.z)
-    val velocityLength = vector2Worker.length()
-
-    val diff = (sqrt(acceleration * friction)) / 2f
-
-    velocity.add(
-      (x * acceleration) * diff,
-      y * acceleration,
-      (z * acceleration) * diff,
-    )
-
-    if (velocityLength > goalVelocityLength && goalVelocityLength != 0f) {
-//      println("hit goal, it was $goalVelocityLength ${random()}")
-      vector2Worker.set(velocity.x, velocity.z).normalize().mul(goalVelocityLength)
-      velocity.x = vector2Worker.x
-      velocity.z = vector2Worker.y
-    }
+  fun getAcceleration(): Vector3fc = acceleration
+  fun setAcceleration(x: Float, y: Float, z: Float) = setAcceleration(vector3Worker.set(x,y,z))
+  open fun setAcceleration(newAcceleration: Vector3fc) {
+    acceleration.set(newAcceleration)
   }
   
   open fun onTick(delta: Float) {}
