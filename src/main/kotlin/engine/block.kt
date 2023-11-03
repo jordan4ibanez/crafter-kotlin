@@ -226,7 +226,7 @@ object block {
 
   // ID oriented.
   fun getFriction(id: Int): Float {
-    return friction[id] ?: 0.8f
+    return friction[id] ?: 4f
   }
   fun isWalkable(id: Int): Boolean {
     return walkable[id] ?: true
