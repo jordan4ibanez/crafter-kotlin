@@ -5,13 +5,13 @@ package engine
 object tick {
   private var accumulator = 0f
   internal const val GOAL = 30
-  private  const val goalDelta = 1f / GOAL.toFloat()
+  internal const val GOAL_DELTA = 1f / GOAL.toFloat()
   internal fun think(delta: Float): Boolean {
     accumulator += delta
 
-    if (accumulator >= goalDelta) {
-      accumulator -= goalDelta
-      if (accumulator > goalDelta) accumulator = goalDelta % accumulator
+    if (accumulator >= GOAL_DELTA) {
+      accumulator -= GOAL_DELTA
+      if (accumulator > GOAL_DELTA) accumulator = GOAL_DELTA % accumulator
       return true
     }
     return false
