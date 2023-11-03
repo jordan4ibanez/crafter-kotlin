@@ -1,14 +1,10 @@
 package engine
 
-import org.joml.Math
-import org.joml.Math.random
 import org.joml.Vector2f
 import org.joml.Vector2fc
 import org.joml.Vector3f
 import org.joml.Vector3fc
-import java.util.UUID
-import kotlin.collections.HashMap
-import kotlin.math.sqrt
+import java.util.*
 
 const val interpolationSnappiness = tick.GOAL
 private val vector3Worker = Vector3f()
