@@ -2,12 +2,15 @@ import org.gradle.internal.os.OperatingSystem
 
 plugins {
   id "groovy"
-  id "org.jetbrains.kotlin.jvm" version "1.9.10"
+  id "org.jetbrains.kotlin.jvm" version "1.9.20"
   id "application"
 }
 
+final String kotlinVersion = "1.9.20"
+
 project.ext.lwjglVersion = "3.3.3"
 project.ext.jomlVersion = "1.10.5"
+
 switch (OperatingSystem.current()) {
   case OperatingSystem.LINUX:   project.ext.lwjglNatives = "natives-linux";   break
   case OperatingSystem.MAC_OS:  project.ext.lwjglNatives = "natives-macos";   break
@@ -23,10 +26,10 @@ repositories {
 
 dependencies {
 
-  testImplementation "org.jetbrains.kotlin:kotlin-test:1.9.10"
+  testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
 //     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:1.9.10"
 
-  runtimeOnly "org.jetbrains.kotlin:kotlin-reflect:1.9.10"
+  runtimeOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
 
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
 
