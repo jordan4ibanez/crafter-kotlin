@@ -1,11 +1,9 @@
 import engine.*
-import engine.world.getBlockID
-import kotlinx.coroutines.*
-import org.joml.Math.*
+import org.joml.Math.toRadians
 import org.joml.Random
 import org.joml.Vector3f
-import org.lwjgl.glfw.GLFW.*
-import java.util.concurrent.ConcurrentLinkedDeque
+import org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE
+import org.lwjgl.glfw.GLFW.GLFW_KEY_F1
 
 // Initialization procedure. Consider this love.load()
 var stone = 0
