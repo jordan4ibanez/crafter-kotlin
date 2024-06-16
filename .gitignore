@@ -48,3 +48,4 @@ bin/
 .idea/gradle.xml
 .idea/misc.xml
 *.js~
+.idea/codeStyles/Project.xml
