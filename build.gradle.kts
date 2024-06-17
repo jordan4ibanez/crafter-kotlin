@@ -13,7 +13,7 @@ val lwjglNatives = when (OperatingSystem.current()) {
   OperatingSystem.LINUX ->   "natives-linux"
   OperatingSystem.MAC_OS ->  "natives-macos"
   OperatingSystem.WINDOWS -> "natives-windows"
-  else -> "error"
+  else -> throw Error("This operating system is not supported. Maybe you can help with that?")
 }
 
 dependencies {
