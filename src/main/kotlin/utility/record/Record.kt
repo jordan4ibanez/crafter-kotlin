@@ -1,5 +1,5 @@
 package utility.record
 
-class Record {
-
+enum class Record {
+  Some
 }
