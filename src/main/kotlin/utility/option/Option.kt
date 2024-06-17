@@ -11,7 +11,7 @@ open class Option<T>(t: T?) {
   /**
    * Unwrap the Option.
    *
-   * @throws Error Will throw if you blindly attempt to unwrap a None option.
+   * @throws Error Will throw when you attempt to unwrap a None option.
    */
   fun unwrap(): T {
     return with(this.value) {
@@ -24,9 +24,10 @@ open class Option<T>(t: T?) {
 
   /**
    * Unwrap the Option. Throw a custom error message if it's None.
+   * As the name suggests, use this when you expectedly need data to be Some.
    *
    * @param errorMessage A custom Error message to be thrown if the Option is None.
-   * @throws Error Will throw if you blindly attempt to unwrap a None option.
+   * @throws Error Will throw your custom error message when you attempt to unwrap a None option.
    */
   fun expect(errorMessage: String): T {
     return with(this.value) {
