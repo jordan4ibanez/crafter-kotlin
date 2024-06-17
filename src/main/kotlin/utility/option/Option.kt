@@ -1,5 +1,7 @@
 package utility.option
 
+import org.jetbrains.kotlin.org.apache.commons.lang3.ObjectUtils.Null
+
 /**
  * An Option for when you are unsure if a data type will contain Some or None.
  *
@@ -89,39 +91,24 @@ open class Option<T>(t: T?) {
   }
 }
 
+/**
+ * An Option that has Some value in it.
+ */
 class Some<T>(t: T) : Option<T>(t)
 
+/**
+ * An Option that has nothing at all.
+ */
 class None<T> : Option<T>(null)
 
-fun boof(): Option<Int> {
-
-  return Some(5)
-}
-
-fun test() {
-  // This is an experiment with code styles.
-  with(boof()) {
-    when (this) {
-      is Some -> {
-        println("some")
-        val x = this.unwrap()
-        print(x + 1)
-      }
-
-      is None -> println("none")
-    }
+/**
+ * Create Some or None based on the input given to it.
+ *
+ * This is mainly to piggyback Option onto other functions.
+ */
+fun<T> undecided(t: T?): Option<T> {
+  return when (t) {
+    null -> None()
+    else -> Some(t)
   }
-
-  boof()
-    .withSome {
-      var x = it
-      x += 1
-      println(it)
-    }
-    .withNone {
-      throw Error("test")
-    }
-
-  val cool = boof().unwrap()
-  val vCool = boof().expect("we need this thing ahhHHH")
 }
