@@ -1,9 +1,9 @@
 package utility.option
 
 /**
- * A result for when you are unsure if a data type will contain a variable.
+ * An Option for when you are unsure if a data type will contain Some or None.
  *
- * @param T is the type of the data contained in the shell.
+ * @param T is the type of the data contained in the Option.
  */
 open class Option<T>(t: T?) {
   private var value: T? = t
@@ -23,21 +23,36 @@ open class Option<T>(t: T?) {
   }
 
   /**
-   * Check if the Result is Some.
+   * Unwrap the Option. Throw a custom error message if it's None.
+   *
+   * @param errorMessage A custom Error message to be thrown if the Option is None.
+   * @throws Error Will throw if you blindly attempt to unwrap a None option.
+   */
+  fun expect(errorMessage: String): T {
+    return with(this.value) {
+      return@with when (this) {
+        null -> throw Error(errorMessage)
+        else -> this // Smart cast into <T>.
+      }
+    }
+  }
+
+  /**
+   * Check if the Option is Some.
    */
   fun isSome(): Boolean {
     return this.value != null
   }
 
   /**
-   * Check if the Result is None.
+   * Check if the Option is None.
    */
   fun isNone(): Boolean {
     return this.value == null
   }
 
   /**
-   * Run a closure with the data encapsulated within the Result.
+   * Run a closure with the data encapsulated within the Option.
    *
    * If the data is None, this has no effect.
    *
