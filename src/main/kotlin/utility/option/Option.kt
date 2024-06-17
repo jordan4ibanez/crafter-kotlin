@@ -36,7 +36,41 @@ open class Option<T>(t: T?) {
     return this.value == null
   }
 
+  /**
+   * Run a closure with the data encapsulated within the Result.
+   *
+   * If the data is None, this has no effect.
+   *
+   * @param f Closure to run if it is Some. Interacts with data.
+   * @return This, making it chainable into withNone().
+   */
+  fun withSome(f: (t: T) -> Unit): Option<T> {
+    with(this.value) {
+      when (this) {
+        null -> {}
+        else -> f(this)
+      }
+    }
+    return this
+  }
 
+  /**
+   * Run a closure if the data encapsulated is None.
+   *
+   * If the data is Some, this has no effect.
+   *
+   * @param f Closure to run if it is None.
+   * @return This, making it chainable into withSome().
+   */
+  fun withNone(f: () -> Unit): Option<T> {
+    with(this.value) {
+      when (this) {
+        null -> f()
+        else -> {}
+      }
+    }
+    return this
+  }
 }
 
 class Some<T>(t: T) : Option<T>(t)
@@ -49,10 +83,26 @@ fun boof(): Option<Int> {
 }
 
 fun test() {
+  // This is an experiment with code styles.
   with(boof()) {
     when (this) {
-      is Some -> println("some")
+      is Some -> {
+        println("some")
+        val x = this.unwrap()
+        print(x + 1)
+      }
+
       is None -> println("none")
     }
   }
+
+  boof()
+    .withSome {
+      var x = it
+      x += 1
+      println(it)
+    }
+    .withNone {
+      throw Error("test")
+    }
 }
