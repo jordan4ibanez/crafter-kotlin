@@ -25,6 +25,7 @@ Then you're going to want to install:
 
 - openjdk 22
 - gradle 8.8
+- kotlin 2.0.0
 
 as of the time of writing this you can do:
 
