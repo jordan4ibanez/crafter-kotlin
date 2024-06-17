@@ -121,4 +121,7 @@ fun test() {
     .withNone {
       throw Error("test")
     }
+
+  val cool = boof().unwrap()
+  val vCool = boof().expect("we need this thing ahhHHH")
 }
