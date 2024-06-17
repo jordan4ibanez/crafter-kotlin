@@ -31,6 +31,7 @@ as of the time of writing this you can do:
 ```
 sdk install java 22-open
 sdk install gradle
+sdk install kotlin
 ```
 
 If this becomes outdated feel free to tell me.
