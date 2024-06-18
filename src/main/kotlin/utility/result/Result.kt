@@ -1,8 +1,34 @@
 package utility.result
 
-import org.jetbrains.kotlin.org.apache.commons.lang3.ObjectUtils.Null
+abstract class Result<T, E : Throwable>(private val ok: T?, private val err: E?) {
 
-open class Result<T, E> {
+  fun isOkay(): Boolean {
+    return this.ok != null
+  }
+
+  fun isErr(): Boolean {
+    return this.err != null
+  }
+
+  fun expect(errorMessage: String): T {
+    return with(this.ok) {
+      return@with when (this) {
+        null -> throw Error(errorMessage)
+        else -> this // Smart cast into <T>.
+      }
+    }
+  }
+
+  fun unwrap(): T {
+    return with(this.ok) {
+      return@with when (this) {
+        null -> throw Error("Unwrapped None Option. Did you check if it is Ok?")
+        else -> this // Smart cast into <T>.
+      }
+    }
+  }
 }
 
-var x = Result<Int, Null>()
+class Ok<T>(ok: T) : Result<T, Nothing>(ok, null)
+
+class Err<E : Throwable>(err: E) : Result<Nothing, E>(null, err)
