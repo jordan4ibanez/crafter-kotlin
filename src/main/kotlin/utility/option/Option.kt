@@ -1,13 +1,12 @@
 package utility.option
 
-import org.jetbrains.kotlin.org.apache.commons.lang3.ObjectUtils.Null
-
 /**
  * An Option for when you are unsure if a data type will contain Some or None.
  *
  * @param T is the type of the data contained in the Option.
  */
-open class Option<T>(t: T?) {
+abstract class Option<T>(t: T?) {
+
   private var value: T? = t
 
   /**
@@ -106,7 +105,7 @@ class None<T> : Option<T>(null)
  *
  * This is mainly to piggyback Option onto other functions.
  */
-fun<T> undecided(t: T?): Option<T> {
+fun <T> undecided(t: T?): Option<T> {
   return when (t) {
     null -> None()
     else -> Some(t)
