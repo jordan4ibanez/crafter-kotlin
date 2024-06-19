@@ -16,7 +16,13 @@ abstract class Option<T> protected constructor(t: T?) {
    */
   fun unwrap(): T {
     return when (this) {
-      is Some -> this.unwrap() // Smart cast into <T>.
+      is Some -> with(this.value) {
+        when (this) {
+          null -> throw Error("Unwrapped None Option. Did you check if it is Some?")
+          else -> this // Smart cast into <T>.
+        }
+      }
+
       else -> throw Error("Unwrapped None Option. Did you check if it is Some?")
     }
   }
