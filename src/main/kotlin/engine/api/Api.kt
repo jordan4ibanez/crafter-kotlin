@@ -1,7 +1,8 @@
-package engine
+package engine.api
 
 //import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory
 
+import engine.*
 import groovy.lang.Binding
 import groovy.util.GroovyScriptEngine
 
@@ -14,29 +15,30 @@ object api {
   private val sharedData = Binding()
   val engine = GroovyScriptEngine("./mods/")
 
-
 //  note: val for now, var when main menu gets put it so it can be reloaded. Or maybe not. We'll see.
 
   private const val MOD_BASE_FOLDER = "./mods"
+
   /**Holds the current mod name for debugging purposes.*/
   private var currentModName = ""
+
   /**Holds the current mod file for debugging purposes.*/
   private var currentModFile = ""
+
   /**Holds the current mod folder for debugging purposes.*/
   private var currentModFolder = ""
+
   /**Holds the folder directory literal*/
   private var currentDirectoryLiteral = ""
 
   /** API elements do what they say on the tin*/
   private val onTick = ArrayList<(delta: Float) -> Unit>()
 
-
   //? note: Groovy modding api.
 
   fun registerOnTick(function: (delta: Float) -> Nothing) = onTick.add(function)
 
   internal fun doOnTick(delta: Float) = onTick.forEach { it(delta) }
-
 
   //? note: API initialization internals.
 
@@ -51,7 +53,6 @@ object api {
 
     // This maps the block definitions to the world atlas that was just created.
     block.updateTextureCoords()
-
   }
 
   private fun loadMods() {
@@ -89,9 +90,13 @@ object api {
 
   private fun loadBlockTextures() {
     val textureDirectory = "$MOD_BASE_FOLDER/$currentModFolder/textures"
-    if (!isFolder(textureDirectory)) { println("api: $currentModName has no textures folder. Skipping."); return }
+    if (!isFolder(textureDirectory)) {
+      println("api: $currentModName has no textures folder. Skipping."); return
+    }
     val blockTextureDirectory = "$textureDirectory/blocks"
-    if (!isFolder(blockTextureDirectory)) { println("api: $currentModName has no block textures folder. Skipping.") ; return }
+    if (!isFolder(blockTextureDirectory)) {
+      println("api: $currentModName has no block textures folder. Skipping."); return
+    }
     getFileList(blockTextureDirectory)
       .filter { it.contains(".png") }
       .ifEmpty { println("api: $currentModName has no block textures in folder. Skipping."); return }
@@ -102,7 +107,9 @@ object api {
 
   private fun loadIndividualTextures() {
     val textureDirectory = "$MOD_BASE_FOLDER/$currentModFolder/textures"
-    if (!isFolder(textureDirectory)) { println("api: $currentModName has no textures folder. Skipping."); return }
+    if (!isFolder(textureDirectory)) {
+      println("api: $currentModName has no textures folder. Skipping."); return
+    }
     getFileList(textureDirectory)
       .filter { it.contains(".png") }
       .ifEmpty { println("api: $currentModName has no textures in folder. Skipping."); return }
@@ -117,7 +124,11 @@ object api {
 
   fun runFile(fileLocation: String) {
     currentModFile = fileLocation
-    try { engine.run(fileLocation, sharedData) } catch (e: Exception) { throw RuntimeException("(Groovy API error in $currentModFile):\n$e") }
+    try {
+      engine.run(fileLocation, sharedData)
+    } catch (e: Exception) {
+      throw RuntimeException("(Groovy API error in $currentModFile):\n$e")
+    }
   }
 
   fun dofile(fileLocation: String) {
@@ -127,6 +138,4 @@ object api {
   fun stringArrayOf(vararg args: String): Array<String> {
     return arrayOf(*args)
   }
-
-
 }
