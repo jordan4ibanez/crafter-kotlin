@@ -15,11 +15,9 @@ abstract class Option<T> protected constructor(t: T?) {
    * @throws Error Will throw when you attempt to unwrap a None option.
    */
   fun unwrap(): T {
-    return with(this.value) {
-      return@with when (this) {
-        null -> throw Error("Unwrapped None Option. Did you check if it is Some?")
-        else -> this // Smart cast into <T>.
-      }
+    return when (this) {
+      is Some -> this.unwrap() // Smart cast into <T>.
+      else -> throw Error("Unwrapped None Option. Did you check if it is Some?")
     }
   }
 
@@ -31,11 +29,9 @@ abstract class Option<T> protected constructor(t: T?) {
    * @throws Error Will throw your custom error message when you attempt to unwrap a None option.
    */
   fun expect(errorMessage: String): T {
-    return with(this.value) {
-      return@with when (this) {
-        null -> throw Error(errorMessage)
-        else -> this // Smart cast into <T>.
-      }
+    return when (this) {
+      is Some -> this.unwrap() // Smart cast into <T>.
+      else -> throw Error(errorMessage)
     }
   }
 
@@ -43,14 +39,14 @@ abstract class Option<T> protected constructor(t: T?) {
    * Check if the Option is Some.
    */
   fun isSome(): Boolean {
-    return this.value != null
+    return this is Some
   }
 
   /**
    * Check if the Option is None.
    */
   fun isNone(): Boolean {
-    return this.value == null
+    return this is None
   }
 
   /**
@@ -62,11 +58,8 @@ abstract class Option<T> protected constructor(t: T?) {
    * @return This, making it chainable into withNone().
    */
   fun withSome(f: (t: T) -> Unit): Option<T> {
-    with(this.value) {
-      when (this) {
-        null -> {}
-        else -> f(this)
-      }
+    when (this) {
+      is Some -> f(this.unwrap()) // Smart cast into <T>.
     }
     return this
   }
@@ -80,11 +73,8 @@ abstract class Option<T> protected constructor(t: T?) {
    * @return This, making it chainable into withSome().
    */
   fun withNone(f: () -> Unit): Option<T> {
-    with(this.value) {
-      when (this) {
-        null -> f()
-        else -> {}
-      }
+    when (this) {
+      is None -> f()
     }
     return this
   }
