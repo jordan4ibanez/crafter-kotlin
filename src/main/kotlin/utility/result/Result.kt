@@ -13,7 +13,14 @@ import utility.option.undecided
  */
 abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
 
+  /**
+   * Only exists in Ok variant of Result. Represents successful return.
+   */
   private val ok: Option<T>
+
+  /**
+   * Only exists in Err variant of Result. Represents failed return via a Throwable.
+   */
   private val err: Option<E>
 
   init {
@@ -59,7 +66,7 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
   }
 
   /**
-   * Unwrap Result as Ok unchecked. Will throw the error held if the Result is an Err.
+   * Unwrap Result as Ok unchecked. Will throw the Err held if the Result is an Err.
    *
    * @throws Throwable The held error if it is an Err.
    * @return The data T represents.
@@ -84,6 +91,13 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
     }
   }
 
+  /**
+   * Run a lambda with the Ok value stored in the Result.
+   * If the Result is Err, this has no effect.
+   *
+   * @param f The function to run.
+   * @return The Result for further chaining.
+   */
   fun withOk(f: (t: T) -> Unit): Result<T, E> {
     when (this) {
       is Ok -> f(this.ok.unwrap())
@@ -91,6 +105,12 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
     return this
   }
 
+  /**
+   * Unwrap Result as Err unchecked with custom error message if the Result is Ok.
+   *
+   * @throws Error Your custom error message.
+   * @return The Throwable E represents.
+   */
   fun expectErr(errorMessage: String): E {
     return when (this) {
       is Ok -> throw Error(errorMessage)
@@ -98,6 +118,12 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
     }
   }
 
+  /**
+   * Unwrap Result as Err unchecked. Will throw the Ok held if the Result is an Ok.
+   *
+   * @throws Throwable The held Ok if it is an Ok.
+   * @return The throwable E represents.
+   */
   fun unwrapErr(): E {
     return when (this) {
       is Ok -> throw Error(this.ok.toString())
@@ -105,6 +131,13 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
     }
   }
 
+  /**
+   * Run a lambda with the Err value stored in the Result.
+   * If the Result is Ok, this has no effect.
+   *
+   * @param f The function to run.
+   * @return The Result for further chaining.
+   */
   fun withErr(f: (e: E) -> Unit): Result<T, E> {
     when (this) {
       is Err -> f(this.err.unwrap())
@@ -113,6 +146,12 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
   }
 }
 
+/**
+ * Ok Result. Indicates successful function run. Contains type T.
+ */
 class Ok<T, E : Throwable>(ok: T) : Result<T, E>(ok, null)
 
+/**
+ * Err Result. Indicates failed function run. Contains Throwable type E.
+ */
 class Err<T, E : Throwable>(err: E) : Result<T, E>(null, err)
