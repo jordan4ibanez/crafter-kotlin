@@ -34,8 +34,8 @@ class ResultTest {
       }
 
     x.withSome {
-        println(it + 1)
-      }
+      println(it + 1)
+    }
       .withNone {
         println("you done goofed")
       }
@@ -43,5 +43,7 @@ class ResultTest {
     fun nah(): Result<Int, RuntimeException> {
       return Err(RuntimeException("oops"))
     }
+
+    nah().expectErr("wat")
   }
 }
