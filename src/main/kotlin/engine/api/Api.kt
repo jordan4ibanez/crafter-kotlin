@@ -3,6 +3,7 @@ package engine.api
 //import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory
 
 import engine.*
+import engine.block.block
 import groovy.lang.Binding
 import groovy.util.GroovyScriptEngine
 
