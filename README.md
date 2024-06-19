@@ -6,12 +6,13 @@ Discord: https://discord.gg/mW5CDTbEzK
 (This is a new discord server because I'm trying to fix my discord mess)
 
 ## Important notes:
-- Right now I'm in the process of removing the external scripting engine because it makes it
-far too difficult to maintain as a solo developer.
+
+- Right now I'm in the middle of cleaning up this disaster.
 - I have taken a long break from Kotlin and JDK dev to focus on looking at other programming languages,
-it's going to take me a bit to get back into my flow.
+  it's going to take me a bit to get back into my flow.
 
 ## Current goals:
+
 - Remove groovy garbage. Move it into internal.
 - Simplify development goals.
 - Break this thing down. Simplify how it works.
