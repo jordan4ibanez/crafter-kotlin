@@ -59,6 +59,6 @@ abstract class Result<T, E : Throwable> protected constructor(private val ok: T?
   }
 }
 
-class Ok<T>(ok: T) : Result<T, Nothing>(ok, null)
+class Ok<T, E : Throwable>(ok: T) : Result<T, E>(ok, null)
 
-class Err<E : Throwable>(err: E) : Result<Nothing, E>(null, err)
+class Err<T, E : Throwable>(err: E) : Result<T, E>(null, err)
