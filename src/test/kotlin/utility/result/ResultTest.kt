@@ -24,6 +24,10 @@ class ResultTest {
         x = Some(1)
       }
       .withErr {
+        when (it) {
+          is NullPointerException -> println("yeah that's null")
+          else -> println("some kind of other nonsense happened")
+        }
         println(it.message)
         println("oops")
         x = Some(0)
