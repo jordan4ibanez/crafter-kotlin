@@ -2,7 +2,7 @@ package crafter
 
 import engine.api.api
 import engine.block.block
-import engine.blockManipulator
+import engine.world.blockManipulator
 import org.joml.Vector3i
 import org.joml.Vector3ic
 

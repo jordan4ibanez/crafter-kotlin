@@ -2,7 +2,7 @@ package crafter
 
 import engine.api.api
 import engine.block.block
-import engine.blockManipulator
+import engine.world.blockManipulator
 
 final api = api.INSTANCE
 final block = block.INSTANCE
