@@ -21,7 +21,7 @@ class ResultTest {
 
     blah()
       .withOk {
-        x = Some(1)
+        x = Some(it)
       }
       .withErr {
         when (it) {
