@@ -1,8 +1,9 @@
-package engine
+package engine.block
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeType
+import engine.*
 import java.util.concurrent.ConcurrentHashMap
 
 /*
@@ -12,37 +13,39 @@ Indexed by: ID OR translate through name -> ID
 */
 
 //note: con stands for container.
-private fun<T> concurrent(): ConcurrentHashMap<Int, T> {
+private fun <T> concurrent(): ConcurrentHashMap<Int, T> {
   return ConcurrentHashMap<Int, T>()
 }
-private fun<T> singleThreaded(): HashMap<Int, T> {
+
+private fun <T> singleThreaded(): HashMap<Int, T> {
   return HashMap()
 }
 
 // Required components.
-private val id            = ConcurrentHashMap<String, Int>()
-private val name          = concurrent<String>()
+private val id = ConcurrentHashMap<String, Int>()
+private val name = concurrent<String>()
 private val inventoryName = concurrent<String>()
-private val textures      = concurrent<Array<String>>()
+private val textures = concurrent<Array<String>>()
 private val textureCoords = concurrent<Array<FloatArray>>()
-private val drawType      = concurrent<DrawType>()
+private val drawType = concurrent<DrawType>()
 
 // Optional components.
 //
 // Main thread only.
-private val friction          = singleThreaded<Float>()
-private val walkable           = singleThreaded<Boolean>()
-private val flow               = singleThreaded<Int>()
-private val viscosity          = singleThreaded<Int>()
-private val climbable          = singleThreaded<Boolean>()
+private val friction = singleThreaded<Float>()
+private val walkable = singleThreaded<Boolean>()
+private val flow = singleThreaded<Int>()
+private val viscosity = singleThreaded<Int>()
+private val climbable = singleThreaded<Boolean>()
 private val sneakJumpClimbable = singleThreaded<Boolean>()
-private val falling            = singleThreaded<Boolean>()
-private val damagePerSecond    = singleThreaded<Int>()
-private val floats             = singleThreaded<Boolean>()
+private val falling = singleThreaded<Boolean>()
+private val damagePerSecond = singleThreaded<Int>()
+private val floats = singleThreaded<Boolean>()
+
 // Concurrent
 private val liquid = concurrent<Boolean>()
-private val clear  = concurrent<Boolean>()
-private val light  = concurrent<Int>()
+private val clear = concurrent<Boolean>()
+private val light = concurrent<Int>()
 
 enum class DrawType(val data: Int) {
   AIR(0),
@@ -61,7 +64,8 @@ enum class DrawType(val data: Int) {
 }
 
 fun Int.toDrawType(): DrawType {
-  return DrawType.entries.filter { it.data == this }.ifEmpty { throw RuntimeException("$this is not in range of drawtypes (0..8)") }[0]
+  return DrawType.entries.filter { it.data == this }
+    .ifEmpty { throw RuntimeException("$this is not in range of drawtypes (0..8)") }[0]
 }
 
 // using this as a namespace.
@@ -107,6 +111,7 @@ object block {
   private fun setInternalName(id: Int, internalName: String) {
     name[id] = internalName
   }
+
   private fun setID(name: String, newId: Int) {
     id[name] = newId
   }
@@ -115,52 +120,67 @@ object block {
   fun setInventoryName(id: Int, newName: String) {
     inventoryName[id] = newName
   }
+
   fun setTextures(id: Int, newTextures: Array<String>) {
     if (newTextures.size != 6) throw RuntimeException("Tried to set block $id textures with ${newTextures.size} size.")
     textures[id] = newTextures
   }
+
   private fun setTextureCoords(id: Int, newCoords: Array<FloatArray>) {
     textureCoords[id] = newCoords
   }
+
   fun setDrawType(id: Int, newDrawType: DrawType) {
     drawType[id] = newDrawType
   }
+
   fun setFriction(id: Int, newFriction: Float) {
     friction[id] = newFriction
   }
+
   fun setWalkable(id: Int, isWalkable: Boolean) {
     walkable[id] = isWalkable
   }
+
   fun setLiquid(id: Int, isLiquid: Boolean) {
     liquid[id] = isLiquid
   }
+
   fun setFlow(id: Int, flowLevel: Int) {
     if (!(0..15).contains(flowLevel)) throw RuntimeException("Tried to set block $name with flow level $flowLevel (0..15)")
     flow[id] = flowLevel
   }
+
   fun setViscosity(id: Int, newViscosity: Int) {
     if (!(0..15).contains(newViscosity)) throw RuntimeException("Tried to set block $name with viscosity $newViscosity (0..15)")
     viscosity[id] = newViscosity
   }
+
   fun setClimbable(id: Int, isClimbable: Boolean) {
     climbable[id] = isClimbable
   }
+
   fun setSneakJumpClimbable(id: Int, isSneakJumpClimbable: Boolean) {
     sneakJumpClimbable[id] = isSneakJumpClimbable
   }
+
   fun setFalling(id: Int, isFalling: Boolean) {
     falling[id] = isFalling
   }
+
   fun setClear(id: Int, isClear: Boolean) {
     clear[id] = isClear
   }
+
   fun setDamagePerSecond(id: Int, dps: Int) {
     damagePerSecond[id] = dps
   }
+
   fun setLight(id: Int, newLight: Int) {
     if (!(0..15).contains(newLight)) throw RuntimeException("Tried to set block $name with viscosity $newLight (0..15)")
     light[id] = newLight
   }
+
   fun setFloats(id: Int, doesFloat: Boolean) {
     floats[id] = doesFloat
   }
@@ -175,8 +195,10 @@ object block {
   fun setLiquid(name: String, isLiquid: Boolean) = setLiquid(getID(name), isLiquid)
   fun setFlow(name: String, flowLevel: Int) = setFlow(getID(name), flowLevel)
   fun setViscosity(name: String, newViscosity: Int) = setViscosity(getID(name), newViscosity)
-  fun setClimbable(name: String, isClimbable: Boolean)  = setClimbable(getID(name), isClimbable)
-  fun setSneakJumpClimbable(name: String, isSneakJumpClimbable: Boolean) = setSneakJumpClimbable(getID(name), isSneakJumpClimbable)
+  fun setClimbable(name: String, isClimbable: Boolean) = setClimbable(getID(name), isClimbable)
+  fun setSneakJumpClimbable(name: String, isSneakJumpClimbable: Boolean) =
+    setSneakJumpClimbable(getID(name), isSneakJumpClimbable)
+
   fun setFalling(name: String, isFalling: Boolean) = setFalling(getID(name), isFalling)
   fun setClear(name: String, isClear: Boolean) = setClear(getID(name), isClear)
   fun setDamagePerSecond(name: String, dps: Int) = setDamagePerSecond(getID(name), dps)
@@ -191,6 +213,7 @@ object block {
   fun getID(name: String): Int {
     return id[name] ?: throw invalidThrow(name, "id")
   }
+
   fun getName(id: Int): String {
     return name[id] ?: throw invalidThrow(id, "name")
   }
@@ -199,17 +222,21 @@ object block {
   fun has(id: Int): Boolean {
     return name.containsKey(id)
   }
+
   fun getInventoryName(id: Int): String {
     return inventoryName[id] ?: throw invalidThrow(id, "id")
   }
+
   fun getTextures(id: Int): Array<String> {
     return textures[id] ?: throw invalidThrow(id, "textures")
   }
+
   internal fun getTextureCoords(id: Int): Array<FloatArray> {
     //! Note: This would crash anyways, ignore cast issue.
     //? note: This has no name oriented counterpart.
     return textureCoords[id] ?: invalidThrow(id, "texture coords") as Array<FloatArray>
   }
+
   fun getDrawType(id: Int): DrawType {
     return drawType[id] ?: throw invalidThrow(id, "drawType")
   }
@@ -218,6 +245,7 @@ object block {
   fun has(name: String): Boolean {
     return id.containsKey(name)
   }
+
   fun getInventoryName(name: String): String = getInventoryName(getID(name))
   fun getTextures(name: String): Array<String> = getTextures(getID(name))
   fun getDrawType(name: String): DrawType = getDrawType(getID(name))
@@ -228,36 +256,47 @@ object block {
   fun getFriction(id: Int): Float {
     return friction[id] ?: 4f
   }
+
   fun isWalkable(id: Int): Boolean {
     return walkable[id] ?: true
   }
+
   fun isLiquid(id: Int): Boolean {
     return liquid[id] ?: false
   }
+
   fun getFlow(id: Int): Int {
     return flow[id] ?: 0
   }
+
   fun getViscosity(id: Int): Int {
     return viscosity[id] ?: 0
   }
+
   fun isClimbable(id: Int): Boolean {
     return climbable[id] ?: false
   }
+
   fun isSneakJumpClimbable(id: Int): Boolean {
     return sneakJumpClimbable[id] ?: false
   }
+
   fun isFalling(id: Int): Boolean {
     return falling[id] ?: false
   }
+
   fun isClear(id: Int): Boolean {
     return clear[id] ?: false
   }
+
   fun getDamagePerSecond(id: Int): Int {
     return damagePerSecond[id] ?: 0
   }
+
   fun getLight(id: Int): Int {
     return light[id] ?: 0
   }
+
   fun doesFloat(id: Int): Boolean {
     return floats[id] ?: false
   }
@@ -278,8 +317,26 @@ object block {
 
   // The OOP raw getter.
   fun get(id: Int): BlockDefinition {
-    return BlockDefinition(id, getName(id), getInventoryName(id), getTextures(id), getDrawType(id), isWalkable(id), isLiquid(id), getFlow(id), getViscosity(id), isClimbable(id), isSneakJumpClimbable(id), isFalling(id), isClear(id), getDamagePerSecond(id), getLight(id), doesFloat(id))
+    return BlockDefinition(
+      id,
+      getName(id),
+      getInventoryName(id),
+      getTextures(id),
+      getDrawType(id),
+      isWalkable(id),
+      isLiquid(id),
+      getFlow(id),
+      getViscosity(id),
+      isClimbable(id),
+      isSneakJumpClimbable(id),
+      isFalling(id),
+      isClear(id),
+      getDamagePerSecond(id),
+      getLight(id),
+      doesFloat(id)
+    )
   }
+
   fun get(name: String): BlockDefinition = get(getID(name))
 
 
@@ -287,6 +344,7 @@ object block {
   private fun invalidThrow(name: String, thing: String): RuntimeException {
     return RuntimeException("Tried to get invalid block $name, component $thing")
   }
+
   private fun invalidThrow(id: Int, thing: String): RuntimeException {
     return RuntimeException("Tried to get invalid block id $id, component $thing")
   }
@@ -313,6 +371,7 @@ data class BlockDefinition(
   val light: Int,
   val floats: Boolean
 ) {
+
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (javaClass != other?.javaClass) return false
@@ -368,9 +427,11 @@ data class BlockDefinition(
  */
 private const val cacheFolder = "./cache"
 private const val cacheFile = "./cache/block_cache.json"
+
 internal object blockIDCache {
 
   private val nameToIDMap = HashMap<String, Int>()
+
   // 0 is reserved for air.
   private var nextFreeSlot = 1
 
@@ -386,6 +447,7 @@ internal object blockIDCache {
     }
     return getID(name)
   }
+
   private fun folderCheck() {
     if (!isFolder(cacheFolder)) {
       println("blockIDCache: Creating cache folder.")
@@ -398,16 +460,22 @@ internal object blockIDCache {
   private fun fileCheck() {
     if (isFile(cacheFile)) {
       println("blockIDCache: Parsing cache file.")
-      try { processJSONNodes(ObjectMapper().readTree(getFileString(cacheFile))) } catch (e: Exception) { throw RuntimeException("blockIDCache: $e") }
+      try {
+        processJSONNodes(ObjectMapper().readTree(getFileString(cacheFile)))
+      } catch (e: Exception) {
+        throw RuntimeException("blockIDCache: $e")
+      }
     }
   }
 
   private fun processJSONNodes(nodes: JsonNode) {
     // Crawl the JSON tree.
 
-    val keys: MutableIterator<String> = nodes.fieldNames() ?: throw RuntimeException("blockIDCache: Failed to get JSON keys.")
+    val keys: MutableIterator<String> =
+      nodes.fieldNames() ?: throw RuntimeException("blockIDCache: Failed to get JSON keys.")
 
-    val test: MutableIterator<JsonNode> = nodes.elements() ?: throw RuntimeException("blockIDCache: Failed to get JSON elements.")
+    val test: MutableIterator<JsonNode> =
+      nodes.elements() ?: throw RuntimeException("blockIDCache: Failed to get JSON elements.")
 
     keys.asSequence().zip(test.asSequence()).forEach {
       val (key, value) = it
@@ -460,7 +528,11 @@ internal object blockIDCache {
   fun write() {
     println("blockIDCache: Writing cache.")
     val mapper = ObjectMapper()
-    try { mapper.writeValue(makeFile(cacheFile), nameToIDMap) } catch (e: Exception) { throw RuntimeException("blockIDCache: Write error. $e") }
+    try {
+      mapper.writeValue(makeFile(cacheFile), nameToIDMap)
+    } catch (e: Exception) {
+      throw RuntimeException("blockIDCache: Write error. $e")
+    }
     println("blockIDCache: Cache write successful.")
   }
 }
