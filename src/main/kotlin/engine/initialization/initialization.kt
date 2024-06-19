@@ -4,7 +4,7 @@ import engine.api.api
 import engine.block.blockIDCache
 import engine.gl.gl
 import engine.glfw.glfw
-import engine.shader
+import engine.shader.shader
 
 fun initialize() {
   println("Initializing Crafter.")

@@ -1,13 +1,10 @@
-package engine
+package engine.shader
 
-import engine.file_helpers.getFileString
 import org.joml.Matrix4fc
 import org.joml.Vector2fc
 import org.joml.Vector3fc
-import org.lwjgl.opengl.GL20.*
+import org.lwjgl.opengl.GL20
 import org.lwjgl.system.MemoryStack
-import org.lwjgl.system.MemoryStack.stackPush
-
 
 object shader {
 
@@ -22,7 +19,7 @@ object shader {
   fun start(name: String) {
     currentShader = safeGet(name)
     currentUniforms = currentShader.uniforms
-    glUseProgram(currentShader.programID)
+    GL20.glUseProgram(currentShader.programID)
   }
 
   fun create(name: String, vertexSourceCodeLocation: String, fragmentSourceCodeLocation: String) {
@@ -35,7 +32,7 @@ object shader {
   }
 
   fun createUniform(uniformName: String) {
-    val location = glGetUniformLocation(currentShader.programID, uniformName)
+    val location = GL20.glGetUniformLocation(currentShader.programID, uniformName)
     if (location < 0) throw RuntimeException("shader: Unable to create uniform in shader ${currentShader.name}. $uniformName")
     currentUniforms[uniformName] = location
     // Debug for now.
@@ -45,7 +42,7 @@ object shader {
   fun createUniforms(uniformNames: Array<String>) {
     val shaderProgramID = currentShader.programID
     uniformNames.forEach { uniformName ->
-      val location = glGetUniformLocation(shaderProgramID, uniformName)
+      val location = GL20.glGetUniformLocation(shaderProgramID, uniformName)
       if (location < 0) throw RuntimeException("shader: Unable to create uniform in shader ${currentShader.name}. $uniformName")
       currentUniforms[uniformName] = location
       // Debug for now.
@@ -56,72 +53,72 @@ object shader {
   fun setUniform(name: String, matrix4f: Matrix4fc) {
     val stack: MemoryStack
     try {
-      stack = stackPush()
+      stack = MemoryStack.stackPush()
     } catch (e: Exception) {
       throw RuntimeException("setUniform: Failed to allocate stack memory. $name | ${currentShader.name}")
     }
     val buffer = stack.mallocFloat(16)
     matrix4f.get(buffer)
-    glUniformMatrix4fv(safeUniformGet(name), false, buffer)
+    GL20.glUniformMatrix4fv(safeUniformGet(name), false, buffer)
     stack.pop()
   }
 
   fun setUniform(name: String, vector: Vector3fc) {
     val stack: MemoryStack
     try {
-      stack = stackPush()
+      stack = MemoryStack.stackPush()
     } catch (e: Exception) {
       throw RuntimeException("setUniform: Failed to allocate stack memory. $name | ${currentShader.name}")
     }
     val buffer = stack.mallocFloat(3)
     vector.get(buffer)
-    glUniform3fv(safeUniformGet(name), buffer)
+    GL20.glUniform3fv(safeUniformGet(name), buffer)
     stack.pop()
   }
 
   fun setUniform(name: String, vector: Vector2fc) {
     val stack: MemoryStack
     try {
-      stack = stackPush()
+      stack = MemoryStack.stackPush()
     } catch (e: Exception) {
       throw RuntimeException("setUniform: Failed to allocate stack memory. $name | ${currentShader.name}")
     }
     val buffer = stack.mallocFloat(2)
     vector.get(buffer)
-    glUniform3fv(safeUniformGet(name), buffer)
+    GL20.glUniform3fv(safeUniformGet(name), buffer)
     stack.pop()
   }
 
   fun setUniform(name: String, value: Float) {
     val stack: MemoryStack
     try {
-      stack = stackPush()
+      stack = MemoryStack.stackPush()
     } catch (e: Exception) {
       throw RuntimeException("setUniform: Failed to allocate stack memory. $name | ${currentShader.name}")
     }
     val buffer = stack.mallocFloat(1)
     buffer.put(value).flip()
-    glUniform1fv(safeUniformGet(name), buffer)
+    GL20.glUniform1fv(safeUniformGet(name), buffer)
     stack.pop()
   }
 
   fun setUniform(name: String, value: Int) {
     val stack: MemoryStack
     try {
-      stack = stackPush()
+      stack = MemoryStack.stackPush()
     } catch (e: Exception) {
       throw RuntimeException("setUniform: Failed to allocate stack memory. $name | ${currentShader.name}")
     }
     val buffer = stack.mallocInt(1)
     buffer.put(value).flip()
-    glUniform1iv(safeUniformGet(name), buffer)
+    GL20.glUniform1iv(safeUniformGet(name), buffer)
     stack.pop()
   }
 
   fun destroyAll() {
-    glUseProgram(0)
+    GL20.glUseProgram(0)
     database.values.forEach { shader ->
-      glDeleteProgram(shader.programID)
+      GL20.glDeleteProgram(shader.programID)
     }
   }
 
@@ -136,80 +133,5 @@ object shader {
 
   private fun safeUniformGet(name: String): Int {
     return currentUniforms[name] ?: throw RuntimeException("shader: Attempted to index nonexistent uniform. $name")
-  }
-}
-
-private class ShaderObject {
-
-  val name: String
-  val programID: Int
-  val uniforms = HashMap<String, Int>()
-
-  constructor(name: String, vertexSourceCodeLocation: String, fragmentSourceCodeLocation: String) {
-    this.name = name
-    programID = createShader(vertexSourceCodeLocation, fragmentSourceCodeLocation)
-  }
-
-  // todo: Add uniform things
-  // todo: Add uniform things
-
-}
-
-private fun createShader(vertexSourceCodeLocation: String, fragmentSourceCodeLocation: String): Int {
-  val programID = glCreateProgram()
-
-  if (programID == 0) {
-    throw RuntimeException("Shader: Failed to create shader program.")
-  }
-
-  val vertexID = compileSourceCode(programID, vertexSourceCodeLocation, GL_VERTEX_SHADER)
-  val fragmentID = compileSourceCode(programID, fragmentSourceCodeLocation, GL_FRAGMENT_SHADER)
-
-  link(programID, vertexID, fragmentID)
-
-  return programID
-}
-
-private fun compileSourceCode(programID: Int, sourceCodeLocation: String, shaderType: Int): Int {
-  val sourceCode = getFileString(sourceCodeLocation)
-
-  val shaderID = glCreateShader(shaderType)
-
-  if (shaderID == 0) {
-    val shaderTypeString = if (shaderType == GL_VERTEX_SHADER) "GL_VERTEXShaderObject" else "GL_FRAGMENTShaderObject"
-    throw RuntimeException("compileSourceCode: Failed to create shader $shaderTypeString at $sourceCodeLocation")
-  }
-
-  glShaderSource(shaderID, sourceCode)
-
-  glCompileShader(shaderID)
-
-  if (glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE) {
-    throw RuntimeException("compileSourceCode: Error compiling.\n${glGetShaderInfoLog(shaderID)}")
-  }
-
-  glAttachShader(programID, shaderID)
-
-  return shaderID
-}
-
-private fun link(programID: Int, vertexID: Int, fragmentID: Int) {
-  glLinkProgram(programID)
-
-  if (glGetProgrami(programID, GL_LINK_STATUS) == GL_FALSE) {
-    throw RuntimeException("link: Failed to link program.\n${glGetProgramInfoLog(programID)}")
-  }
-
-  glDetachShader(programID, vertexID)
-  glDetachShader(programID, fragmentID)
-
-  //todo: Test this
-//  glDeleteShader(vertexID)
-//  glDeleteShader(fragmentID)
-
-  glValidateProgram(programID)
-
-  if (glGetProgrami(programID, GL_VALIDATE_STATUS) == GL_FALSE) {
-    throw RuntimeException("link: Validation failed.\n${glGetProgramInfoLog(programID)}")
   }
 }

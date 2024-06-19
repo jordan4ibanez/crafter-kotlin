@@ -1,4 +1,3 @@
-import engine.*
 import engine.api.api
 import engine.block.block
 import engine.camera.camera
@@ -13,6 +12,11 @@ import engine.keyboard.keyboard
 import engine.model.mesh
 import engine.model.texture
 import engine.mouse.mouse
+import engine.shader.shader
+import engine.thread
+import engine.tick
+import engine.window
+import engine.world
 import org.joml.Math.toRadians
 import org.joml.Random
 import org.joml.Vector3f

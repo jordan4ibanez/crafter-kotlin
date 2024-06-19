@@ -4,7 +4,7 @@ import engine.delta.getDelta
 import engine.joml_bolt_ons.destructure
 import engine.keyboard.keyboard
 import engine.mouse.mouse
-import engine.shader
+import engine.shader.shader
 import engine.window
 import engine.world
 import org.joml.Math.*
