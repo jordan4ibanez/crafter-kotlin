@@ -1,5 +1,7 @@
 package engine
 
+import engine.api.api
+
 fun initialize() {
   println("Initializing Crafter.")
 
@@ -15,5 +17,4 @@ fun initialize() {
   api.initialize()
 
   blockIDCache.write()
-
 }
