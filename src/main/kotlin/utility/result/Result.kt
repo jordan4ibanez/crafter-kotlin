@@ -3,6 +3,14 @@ package utility.result
 import utility.option.Option
 import utility.option.undecided
 
+/**
+ * A Result is a type that represents 2 states:
+ * Ok - Success!
+ * Err - There was a failure.
+ *
+ * This has been written, so you can also late throw or intercept failure states in functions.
+ * Makes the code base more durable.
+ */
 abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
 
   private val ok: Option<T>
@@ -20,17 +28,17 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
   }
 
   fun isOkay(): Boolean {
-    return this.ok.isSome()
+    return this is Ok
   }
 
   fun isErr(): Boolean {
-    return this.err.isNone()
+    return this is Err
   }
 
   fun expect(errorMessage: String): T {
-    return when (this.ok.isSome()) {
-      false -> throw Error(errorMessage)
-      true -> this.ok.unwrap() // Smart cast into <T>.
+    return when (this) {
+      is Ok -> this.ok.unwrap() // Smart cast into <T>.
+      else -> throw Error(errorMessage)
     }
   }
 
