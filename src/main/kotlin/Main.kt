@@ -1,4 +1,5 @@
 import engine.*
+import engine.api.api
 import org.joml.Math.toRadians
 import org.joml.Random
 import org.joml.Vector3f
@@ -32,10 +33,10 @@ fun load() {
     "debug",
     // positions.
     floatArrayOf(
-      -0.5f,  0.5f, 0f,
+      -0.5f, 0.5f, 0f,
       -0.5f, -0.5f, 0f,
-       0.5f, -0.5f, 0f,
-       0.5f,  0.5f, 0f
+      0.5f, -0.5f, 0f,
+      0.5f, 0.5f, 0f
     ),
     // texture coords.
     floatArrayOf(
@@ -60,8 +61,6 @@ fun load() {
 }
 
 
-
-
 var color = 0f
 var brighten = true
 var speed = 0.5f
@@ -70,7 +69,6 @@ var speed = 0.5f
 
 // All general logic goes here. Consider this love.update()
 fun update(delta: Float) {
-
 
 //  noisey.setNoiseType(NoiseType.Simplex)
 //  noisey.setFrequency(0.01f)
@@ -83,8 +81,8 @@ fun update(delta: Float) {
   clientPlayer.glueCamera()
 
 
-  if (keyboard.isDown(GLFW_KEY_ESCAPE)){
-   window.close()
+  if (keyboard.isDown(GLFW_KEY_ESCAPE)) {
+    window.close()
     return
   }
 
@@ -110,7 +108,6 @@ fun update(delta: Float) {
     }
   }
   window.setClearColor(color)
-
 }
 
 // Consider this pure logic updates. onTick, collision, etc. For real time things, put them in update().
@@ -120,10 +117,7 @@ fun tick(delta: Float) {
   api.doOnTick(delta)
   // Entity specific tick.
   entity.doOnTick(delta)
-
 }
-
-
 
 // All draw procedures go here. Consider this love.draw()
 var rotation = 0f
@@ -131,17 +125,13 @@ fun draw() {
 //  rotation += getDelta() * 50f
 //  println(rotation)
   camera.updateCameraMatrix()
-  camera.setObjectMatrix(Vector3f(0f, 0f, -1f), Vector3f(0f,toRadians(rotation), 0f))
+  camera.setObjectMatrix(Vector3f(0f, 0f, -1f), Vector3f(0f, toRadians(rotation), 0f))
   mesh.draw("debug")
 
   world.renderChunks()
 
   entity.draw()
-
 }
-
-
-
 
 // Game cleanup procedures go here. Consider this love.quit()
 fun quit() {
@@ -151,26 +141,7 @@ fun quit() {
   texture.destroyAll()
   shader.destroyAll()
   glfw.destroy()
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Warning: gameLoop really should not be touched. Focus on the infrastructure around it before adding to it.
 tailrec fun gameLoop() {
@@ -195,7 +166,6 @@ tailrec fun gameLoop() {
   return gameLoop()
 }
 
-
 //note: main is at the bottom because procedures should be put into the designated functions.
 // Try not to modify this. It's the literal base of the entire program.
 fun main(args: Array<String>) {
@@ -208,6 +178,5 @@ fun main(args: Array<String>) {
   gameLoop()
 
   quit()
-
 }
 
