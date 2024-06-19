@@ -1,6 +1,8 @@
 package engine
 
 
+import engine.block.DrawType
+import engine.block.block
 import engine.thread.parallelForEach
 import engine.world.addMeshUpdate
 import engine.world.getBlockID
@@ -18,12 +20,12 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.collections.ArrayDeque
-import kotlin.collections.ArrayList
 
 /*
 This is a data oriented and functional approach to the mess that was in Java.
 */
 object world {
+
   internal const val WIDTH = 16
   internal const val HEIGHT = 128
   internal const val DEPTH = 16
@@ -41,13 +43,11 @@ object world {
   private const val MAX_CHUNK_MESH_UPDATES_PER_TICK = 80
   private const val MAX_CHUNK_PROCS_PER_TICK = 80
 
-
   // Fields for the single block API.
-  private val chunkPosition = Vector2i(0,0)
-  private val internalPosition = Vector3i(0,0,0)
-  private val floatingPosition = Vector3f(0f,0f,0f)
-  private val loadCheck = Vector2i(0,0)
-
+  private val chunkPosition = Vector2i(0, 0)
+  private val internalPosition = Vector3i(0, 0, 0)
+  private val floatingPosition = Vector3f(0f, 0f, 0f)
+  private val loadCheck = Vector2i(0, 0)
 
   // Chunk block data
 //! todo: upgrade to LongArray! This will allow either 24 bit or 32 bit limit for chunks!
@@ -76,27 +76,30 @@ object world {
     calculateChunkPosition(pos)
     return data.containsKey(chunkPosition)
   }
+
   internal fun isLoaded(x: Int, z: Int): Boolean {
     //? note: chunk wise
-    return data.containsKey(loadCheck.set(x,z))
+    return data.containsKey(loadCheck.set(x, z))
   }
 
   fun getBlock(pos: Vector3fc): Int {
     calculatePosition(pos)
     return getSingleBlock()
   }
+
   fun getBlockID(pos: Vector3fc): Int = getBlock(pos).getBlockID()
   fun getBlockState(pos: Vector3fc): Int = getBlock(pos).getBlockState()
   fun getBlockLight(pos: Vector3fc): Int = getBlock(pos).getBlockLight()
 
   fun getBlock(x: Float, y: Float, z: Float): Int {
-    floatingPosition.set(x,y,z)
+    floatingPosition.set(x, y, z)
     calculatePosition(floatingPosition)
     return getSingleBlock()
   }
-  fun getBlockID(x: Float, y: Float, z: Float): Int = getBlock(x,y,z).getBlockID()
-  fun getBlockState(x: Float, y: Float, z: Float): Int = getBlock(x,y,z).getBlockState()
-  fun getBlockLight(x: Float, y: Float, z: Float): Int = getBlock(x,y,z).getBlockLight()
+
+  fun getBlockID(x: Float, y: Float, z: Float): Int = getBlock(x, y, z).getBlockID()
+  fun getBlockState(x: Float, y: Float, z: Float): Int = getBlock(x, y, z).getBlockState()
+  fun getBlockLight(x: Float, y: Float, z: Float): Int = getBlock(x, y, z).getBlockLight()
 
   fun setBlock(pos: Vector3fc, newBlock: Int) {
     newBlock.getBlockID().idCheck()
@@ -108,17 +111,24 @@ object world {
     data[chunkPosition]!![posToIndex(internalPosition)] = newBlock
     addSingleBlockMeshUpdate()
   }
+
   fun setBlockID(pos: Vector3fc, newBlockID: Int) = setBlock(pos, getBlock(pos) setBlockID newBlockID)
   fun setBlockState(pos: Vector3fc, newState: Int) = setBlock(pos, getBlock(pos) setBlockState newState)
   fun steBlockLight(pos: Vector3fc, newLight: Int) = setBlock(pos, getBlock(pos) setBlockLight newLight)
 
   fun setBlock(x: Float, y: Float, z: Float, newBlock: Int) {
-    floatingPosition.set(x,y,z)
+    floatingPosition.set(x, y, z)
     setBlock(floatingPosition, newBlock)
   }
-  fun setBlockID(x: Float, y: Float, z: Float, newBlockID: Int) = setBlock(x,y,z,getBlock(x,y,z) setBlockID newBlockID)
-  fun setBlockState(x: Float, y: Float, z: Float, newState: Int) = setBlock(x,y,z, getBlock(x,y,z) setBlockState newState)
-  fun steBlockLight(x: Float, y: Float, z: Float, newLight: Int) = setBlock(x,y,z, getBlock(x,y,z) setBlockLight newLight)
+
+  fun setBlockID(x: Float, y: Float, z: Float, newBlockID: Int) =
+    setBlock(x, y, z, getBlock(x, y, z) setBlockID newBlockID)
+
+  fun setBlockState(x: Float, y: Float, z: Float, newState: Int) =
+    setBlock(x, y, z, getBlock(x, y, z) setBlockState newState)
+
+  fun steBlockLight(x: Float, y: Float, z: Float, newLight: Int) =
+    setBlock(x, y, z, getBlock(x, y, z) setBlockLight newLight)
 
   private fun addSingleBlockMeshUpdate() {
     val x = internalPosition.x()
@@ -139,7 +149,7 @@ object world {
     if (z == 0) {
       addSingleBlockMeshUpdateIfLoaded(chunkX, yStack, chunkZ - 1)
     } else if (z == 15) {
-      addSingleBlockMeshUpdateIfLoaded(chunkX, yStack, chunkZ+ 1)
+      addSingleBlockMeshUpdateIfLoaded(chunkX, yStack, chunkZ + 1)
     }
 
     if (y > 0 && (y + 1) % 16 == 0) {
@@ -151,8 +161,9 @@ object world {
 
     addMeshUpdate(chunkX, yStack, chunkZ)
   }
+
   private fun addSingleBlockMeshUpdateIfLoaded(x: Int, y: Int, z: Int) {
-    if (isLoaded(x,z)) addMeshUpdate(x,y,z)
+    if (isLoaded(x, z)) addMeshUpdate(x, y, z)
   }
 
   internal fun toYStack(y: Int): Int = floor(y / Y_SLICE_HEIGHT.toFloat()).toInt()
@@ -166,14 +177,20 @@ object world {
     throwIfNonExistent(chunkPosition)
     calculateInternalPosition(pos)
   }
-  private fun calculateInternalPosition(pos: Vector3fc) = internalPosition.set(internalX(floor(pos.x())),floor(pos.y()).toInt(),internalZ(floor(pos.z())))
-  internal fun internalX(x: Float): Int = if (x < 0) (WIDTH - floor(abs(x + 1) % WIDTH).toInt()) - 1 else floor(x % WIDTH).toInt()
-  internal fun internalZ(z: Float): Int = if (z < 0) (DEPTH - floor(abs(z + 1) % DEPTH)).toInt() - 1 else floor(z % DEPTH).toInt()
+
+  private fun calculateInternalPosition(pos: Vector3fc) =
+    internalPosition.set(internalX(floor(pos.x())), floor(pos.y()).toInt(), internalZ(floor(pos.z())))
+
+  internal fun internalX(x: Float): Int =
+    if (x < 0) (WIDTH - floor(abs(x + 1) % WIDTH).toInt()) - 1 else floor(x % WIDTH).toInt()
+
+  internal fun internalZ(z: Float): Int =
+    if (z < 0) (DEPTH - floor(abs(z + 1) % DEPTH)).toInt() - 1 else floor(z % DEPTH).toInt()
 
   internal fun internalX(x: Int): Int = internalX(x.toFloat())
   internal fun internalZ(z: Int): Int = internalZ(z.toFloat())
 
-  private fun calculateChunkPosition(pos: Vector3fc) = chunkPosition.set(toChunkX(pos.x()),toChunkZ(pos.z()))
+  private fun calculateChunkPosition(pos: Vector3fc) = chunkPosition.set(toChunkX(pos.x()), toChunkZ(pos.z()))
   internal fun toChunkX(x: Float): Int = floor(x / WIDTH).toInt()
   internal fun toChunkZ(z: Float): Int = floor(z / DEPTH).toInt()
   internal fun toChunkX(x: Int): Int = toChunkX(x.toFloat())
@@ -183,9 +200,7 @@ object world {
     if (!data.containsKey(pos)) throw RuntimeException("world: Tried to get ${pos.x()},${pos.y()} which doesn't exist.")
   }
 
-
   // note: Rest begins here.
-
 
   fun getGravity(): Float {
     return GRAVITY * 2f
@@ -219,18 +234,17 @@ object world {
 
     discardOldChunks(currentX, currentZ, renderDistance)
 
-    (0 .. renderDistance).parallelForEach { rad ->
-      ((currentX - rad) .. (currentX + rad)).forEach { x ->
-        ((currentZ - rad) .. (currentZ + rad)).forEach { z ->
+    (0..renderDistance).parallelForEach { rad ->
+      ((currentX - rad)..(currentX + rad)).forEach { x ->
+        ((currentZ - rad)..(currentZ + rad)).forEach { z ->
           val currentKey = Vector2i(x, z)
           if (!data.containsKey(currentKey)) {
-            generateChunk(x,z)
+            generateChunk(x, z)
           }
         }
       }
     }
   }
-
 
 
   private val meshDestructionQueue = ArrayDeque<Vector2ic>()
@@ -252,13 +266,13 @@ object world {
 
     //? note: due to concurrency, we must also check the mesh list.
     meshIDs.forEach { (key: Vector2ic, _) ->
-      val (x,z) = key.destructure()
+      val (x, z) = key.destructure()
       if (abs(x - currentX) > renderDistance || abs(z - currentZ) > renderDistance) {
         meshDestructionQueue.add(key)
       }
     }
 
-    while(meshDestructionQueue.isNotEmpty()) {
+    while (meshDestructionQueue.isNotEmpty()) {
       val key = meshDestructionQueue.removeFirst()
       if (meshIDs.containsKey(key)) {
         meshIDs[key]!!.forEach { id ->
@@ -285,6 +299,7 @@ object world {
   fun Int.getBlockID(): Int {
     return this ushr 16
   }
+
   fun Int.idCheck() {
     if (!(0..65535).contains(this)) throw RuntimeException("Passed in value larger than 16 bits to block id.")
   }
@@ -292,6 +307,7 @@ object world {
   fun Int.getBlockLight(): Int {
     return this shl 16 ushr 28
   }
+
   fun Int.lightCheck() {
     if (!(0..15).contains(this)) throw RuntimeException("Passed in value larger than 4 bits to block light.")
   }
@@ -299,6 +315,7 @@ object world {
   fun Int.getBlockState(): Int {
     return this shl 20 ushr 28
   }
+
   fun Int.stateCheck() {
     if (!(0..15).contains(this)) throw RuntimeException("Passed in value larger than 4 bits to block state.")
   }
@@ -333,7 +350,6 @@ object world {
     return i ushr 8 shl 8
   }
 
-
   // shifters & combiner
   private fun Int.shiftBlock(): Int {
     return this shl 16
@@ -353,7 +369,7 @@ object world {
 
   fun posToIndex(pos: Vector3ic): Int = posToIndex(pos.x(), pos.y(), pos.z())
 
-  fun posToIndex(x: Int, y: Int ,z: Int): Int {
+  fun posToIndex(x: Int, y: Int, z: Int): Int {
     return (x * X_STRIDE) + (z * HEIGHT) + y
   }
 
@@ -365,11 +381,11 @@ object world {
     )
   }
 
-
 // note: Internal begins here
 
   internal fun safetGetData(posX: Int, posZ: Int): IntArray {
-    return data[Vector2i(posX, posZ)] ?: throw RuntimeException("world: tried to access nonexistent chunk: $posX, $posZ")
+    return data[Vector2i(posX, posZ)]
+      ?: throw RuntimeException("world: tried to access nonexistent chunk: $posX, $posZ")
   }
 
   private fun safeGetDataDeconstructClone(posX: Int, posZ: Int): Pair<Boolean, IntArray> {
@@ -382,7 +398,7 @@ object world {
     return Pair(exists, gottenData)
   }
 
-  
+
   internal fun disperseChunkGenerators() {
     //note: Wrapper function to make implementation cleaner.
     // Shoot and forget. More like a machine gun.
@@ -458,7 +474,8 @@ object world {
       for (z in 0 until DEPTH) {
 
         //note: +0.5 because the output is -0.5 to 0.5
-        val calculatedNoise = noise.getSimplex((x + (xOffset * WIDTH)).toFloat(), (z + (zOffset * DEPTH)).toFloat()) + 0.5f
+        val calculatedNoise =
+          noise.getSimplex((x + (xOffset * WIDTH)).toFloat(), (z + (zOffset * DEPTH)).toFloat()) + 0.5f
 
         val height = ((calculatedNoise * biomeScale) + biomeBaseHeight).toInt()
 
@@ -503,7 +520,6 @@ object world {
 
     // Fire off neighbor chunk mesh updates.
     fullNeighborMeshUpdate(position.x(), position.y())
-
   }
 
 //? note: Begin chunk mesh internal api.
@@ -515,6 +531,7 @@ object world {
     val indices: IntArray,
     val light: FloatArray
   ) {
+
     override fun equals(other: Any?): Boolean {
       if (this === other) return true
       if (javaClass != other?.javaClass) return false
@@ -552,11 +569,11 @@ object world {
   fun renderChunks() {
     val worker3 = Vector3f()
     meshIDs.forEach { (position: Vector2ic, array: IntArray) ->
-      array.forEachIndexed inner@ { y,id ->
+      array.forEachIndexed inner@{ y, id ->
         if (id == 0) return@inner
 
         val renderX = (position.x() * WIDTH).toFloat()
-        val testY   = (y * Y_SLICE_HEIGHT).toFloat()
+        val testY = (y * Y_SLICE_HEIGHT).toFloat()
         val renderZ = (position.y() * DEPTH).toFloat()
 
         if (!collision.chunkMeshWithinFrustum(renderX, testY, renderZ)) return@inner
@@ -753,7 +770,9 @@ object world {
     // Left.
     if (left != -1) {
       when (block.getDrawType(left.getBlockID())) {
-        DrawType.BLOCK -> {/*do nothing*/}
+        DrawType.BLOCK -> {/*do nothing*/
+        }
+
         else -> {
           // Attach face.
           putPositions(
@@ -772,7 +791,9 @@ object world {
     // Right.
     if (right != -1) {
       when (block.getDrawType(right.getBlockID())) {
-        DrawType.BLOCK -> {/*do nothing*/}
+        DrawType.BLOCK -> {/*do nothing*/
+        }
+
         else -> {
           // Attach face.
           putPositions(
@@ -791,7 +812,9 @@ object world {
     // Front.
     if (front != -1) {
       when (block.getDrawType(front.getBlockID())) {
-        DrawType.BLOCK -> {/*do nothing*/}
+        DrawType.BLOCK -> {/*do nothing*/
+        }
+
         else -> {
           // Attach face.
           putPositions(
@@ -810,7 +833,9 @@ object world {
     // Back.
     if (back != -1) {
       when (block.getDrawType(back.getBlockID())) {
-        DrawType.BLOCK -> {/*do nothing*/}
+        DrawType.BLOCK -> {/*do nothing*/
+        }
+
         else -> {
           // Attach face.
           putPositions(
@@ -836,7 +861,9 @@ object world {
 
     // Bottom.
     when (block.getDrawType(bottomAdjusted.getBlockID())) {
-      DrawType.BLOCK -> {/*do nothing*/}
+      DrawType.BLOCK -> {/*do nothing*/
+      }
+
       else -> {
         // Attach face.
         putPositions(
@@ -853,7 +880,9 @@ object world {
 
     // Top.
     when (block.getDrawType(topAdjusted.getBlockID())) {
-      DrawType.BLOCK -> {/*do nothing*/}
+      DrawType.BLOCK -> {/*do nothing*/
+      }
+
       else -> {
         // Attach face.
         putPositions(
@@ -923,14 +952,15 @@ object world {
 
 
 object blockManipulator : Iterator<Int> {
-  private val LIMIT = Vector3i(64,128,64) as Vector3ic
-  private val min = Vector3i(0,0,0)
-  private val max = Vector3i(0,0,0)
-  private val size = Vector3i(0,0,0)
+
+  private val LIMIT = Vector3i(64, 128, 64) as Vector3ic
+  private val min = Vector3i(0, 0, 0)
+  private val max = Vector3i(0, 0, 0)
+  private val size = Vector3i(0, 0, 0)
   private var xStride = 0
   private val data = IntArray(LIMIT.x() * LIMIT.y() * LIMIT.z())
-  private val minCache = Vector3i(0,0,0)
-  private val maxCache = Vector3i(0,0,0)
+  private val minCache = Vector3i(0, 0, 0)
+  private val maxCache = Vector3i(0, 0, 0)
   private var skipSingleBlockWarning = false
   private val cachePos = Vector3i()
   private var arraySize = 0
@@ -945,9 +975,23 @@ object blockManipulator : Iterator<Int> {
 //    return size
 //  }
 
-  fun set(newMin: Vector3fc, newMax: Vector3fc) = set(floor(newMin.x()).toInt(),floor(newMin.y()).toInt(),floor(newMin.z()).toInt(), floor(newMax.x()).toInt(),floor(newMax.y()).toInt(),floor(newMax.z()).toInt())
-  fun set(xMin: Float, yMin: Float, zMin: Float, xMax: Float, yMax: Float, zMax: Float): Boolean = set(minCache.set(floor(xMin).toInt(), floor(yMin).toInt(), floor(zMin).toInt()), maxCache.set(floor(xMax).toInt(), floor(yMax).toInt(), floor(zMax).toInt()))
-  fun set(xMin: Int, yMin: Int, zMin: Int, xMax: Int, yMax: Int, zMax: Int): Boolean = set(minCache.set(xMin, yMin, zMin), maxCache.set(xMax, yMax, zMax))
+  fun set(newMin: Vector3fc, newMax: Vector3fc) = set(
+    floor(newMin.x()).toInt(),
+    floor(newMin.y()).toInt(),
+    floor(newMin.z()).toInt(),
+    floor(newMax.x()).toInt(),
+    floor(newMax.y()).toInt(),
+    floor(newMax.z()).toInt()
+  )
+
+  fun set(xMin: Float, yMin: Float, zMin: Float, xMax: Float, yMax: Float, zMax: Float): Boolean = set(
+    minCache.set(floor(xMin).toInt(), floor(yMin).toInt(), floor(zMin).toInt()),
+    maxCache.set(floor(xMax).toInt(), floor(yMax).toInt(), floor(zMax).toInt())
+  )
+
+  fun set(xMin: Int, yMin: Int, zMin: Int, xMax: Int, yMax: Int, zMax: Int): Boolean =
+    set(minCache.set(xMin, yMin, zMin), maxCache.set(xMax, yMax, zMax))
+
   fun set(newMin: Vector3ic, newMax: Vector3ic): Boolean {
 
     // Returns true if all chunks are loaded, for now
@@ -998,22 +1042,22 @@ object blockManipulator : Iterator<Int> {
     val minChunkZ = toChunkZ(min.z())
     val maxChunkZ = toChunkZ(max.z())
 
-    for (chunkX in minChunkX .. maxChunkX) {
-      for (chunkZ in minChunkZ .. maxChunkZ) {
+    for (chunkX in minChunkX..maxChunkX) {
+      for (chunkZ in minChunkZ..maxChunkZ) {
 
-        if (!world.isLoaded(chunkX,chunkZ)) {
+        if (!world.isLoaded(chunkX, chunkZ)) {
           allLoaded = false
           continue
         }
 
-        val gottenData = world.safetGetData(chunkX,chunkZ)
+        val gottenData = world.safetGetData(chunkX, chunkZ)
 
         // Iterating over in world positions.
-        for (x in min.x() .. max.x()) {
+        for (x in min.x()..max.x()) {
           if (chunkX != toChunkX(x)) continue
-          for (z in min.z() .. max.z()) {
+          for (z in min.z()..max.z()) {
             if (chunkZ != toChunkZ(z)) continue
-            for (y in min.y() .. max.y()) {
+            for (y in min.y()..max.y()) {
               data[posToIndex(x, y, z)] = gottenData[worldPosToIndex(internalX(x), y, internalZ(z))]
             }
           }
@@ -1030,14 +1074,16 @@ object blockManipulator : Iterator<Int> {
     blockData.getBlockLight().lightCheck()
     data[index] = blockData
   }
+
   fun setRaw(x: Int, y: Int, z: Int, blockData: Int) {
-    posCheck(x,y,z)
+    posCheck(x, y, z)
     blockData.getBlockID().idCheck()
     blockData.getBlockState().stateCheck()
     blockData.getBlockLight().lightCheck()
-    val index = posToIndex(x,y,z)
+    val index = posToIndex(x, y, z)
     data[index] = blockData
   }
+
   fun setRaw(pos: Vector3ic, blockData: Int) = setRaw(pos.x(), pos.y(), pos.z(), blockData)
 
   fun setID(index: Int, id: Int) {
@@ -1045,12 +1091,14 @@ object blockManipulator : Iterator<Int> {
     id.idCheck()
     data[index] = data[index] setBlockID id
   }
+
   fun setID(x: Int, y: Int, z: Int, id: Int) {
-    posCheck(x,y,z)
+    posCheck(x, y, z)
     id.idCheck()
-    val index = posToIndex(x,y,z)
+    val index = posToIndex(x, y, z)
     data[index] = data[index] setBlockID id
   }
+
   fun setID(pos: Vector3ic, id: Int) = setID(pos.x(), pos.y(), pos.z(), id)
 
   fun setState(index: Int, state: Int) {
@@ -1058,12 +1106,14 @@ object blockManipulator : Iterator<Int> {
     state.stateCheck()
     data[index] = data[index] setBlockState state
   }
+
   fun setState(x: Int, y: Int, z: Int, state: Int) {
-    posCheck(x,y,z)
+    posCheck(x, y, z)
     state.stateCheck()
-    val index = posToIndex(x,y,z)
+    val index = posToIndex(x, y, z)
     data[index] = data[index] setBlockState state
   }
+
   fun setState(pos: Vector3ic, state: Int) = setState(pos.x(), pos.y(), pos.z(), state)
 
   fun setLight(index: Int, light: Int) {
@@ -1071,22 +1121,26 @@ object blockManipulator : Iterator<Int> {
     light.lightCheck()
     data[index] = data[index] setBlockLight light
   }
+
   fun setLight(x: Int, y: Int, z: Int, light: Int) {
-    posCheck(x,y,z)
+    posCheck(x, y, z)
     light.lightCheck()
-    val index = posToIndex(x,y,z)
+    val index = posToIndex(x, y, z)
     data[index] = data[index] setBlockLight light
   }
+
   fun setLight(pos: Vector3ic, light: Int) = setLight(pos.x(), pos.y(), pos.z(), light)
 
   fun get(index: Int): Int {
     indexCheck(index)
     return data[index]
   }
+
   fun get(x: Int, y: Int, z: Int): Int {
-    posCheck(x,y,z)
-    return data[posToIndex(x,y,z)]
+    posCheck(x, y, z)
+    return data[posToIndex(x, y, z)]
   }
+
   fun get(pos: Vector3ic): Int {
     posCheck(pos.x(), pos.y(), pos.z())
     return data[posToIndex(pos.x(), pos.y(), pos.z())]
@@ -1096,10 +1150,12 @@ object blockManipulator : Iterator<Int> {
     indexCheck(index)
     return data[index].getBlockID()
   }
+
   fun getID(x: Int, y: Int, z: Int): Int {
-    posCheck(x,y,z)
-    return data[posToIndex(x,y,z)].getBlockID()
+    posCheck(x, y, z)
+    return data[posToIndex(x, y, z)].getBlockID()
   }
+
   fun getID(pos: Vector3ic): Int {
     posCheck(pos.x(), pos.y(), pos.z())
     return data[posToIndex(pos.x(), pos.y(), pos.z())].getBlockID()
@@ -1109,10 +1165,12 @@ object blockManipulator : Iterator<Int> {
     indexCheck(index)
     return data[index].getBlockState()
   }
+
   fun getState(x: Int, y: Int, z: Int): Int {
-    posCheck(x,y,z)
-    return data[posToIndex(x,y,z)].getBlockState()
+    posCheck(x, y, z)
+    return data[posToIndex(x, y, z)].getBlockState()
   }
+
   fun getState(pos: Vector3ic): Int {
     posCheck(pos.x(), pos.y(), pos.z())
     return data[posToIndex(pos.x(), pos.y(), pos.z())].getBlockState()
@@ -1122,10 +1180,12 @@ object blockManipulator : Iterator<Int> {
     indexCheck(index)
     return data[index].getBlockLight()
   }
+
   fun getLight(x: Int, y: Int, z: Int): Int {
-    posCheck(x,y,z)
-    return data[posToIndex(x,y,z)].getBlockLight()
+    posCheck(x, y, z)
+    return data[posToIndex(x, y, z)].getBlockLight()
   }
+
   fun getLight(pos: Vector3ic): Int {
     posCheck(pos.x(), pos.y(), pos.z())
     return data[posToIndex(pos.x(), pos.y(), pos.z())].getBlockLight()
@@ -1143,12 +1203,15 @@ object blockManipulator : Iterator<Int> {
   private fun indexCheck(index: Int) {
     if (index >= arraySize) throw RuntimeException("blockManipulator: Indexing out of bounds. $arraySize limit, tried $index")
   }
+
   private fun posCheck(x: Int, y: Int, z: Int) {
-    fun thrower(axis: String, min: Int, max: Int, gotten: Int) { throw RuntimeException("blockManipulator: $gotten is out of bounds for axis $axis. Min: $min | Max: $max") }
+    fun thrower(axis: String, min: Int, max: Int, gotten: Int) {
+      throw RuntimeException("blockManipulator: $gotten is out of bounds for axis $axis. Min: $min | Max: $max")
+    }
     when {
-      !(min.x() .. max.x()).contains(x) -> thrower("x", min.x(), max.x(), x)
-      !(min.y() .. max.y()).contains(y) -> thrower("y", min.y(), max.y(), y)
-      !(min.z() .. max.z()).contains(z) -> thrower("z", min.z(), max.z(), z)
+      !(min.x()..max.x()).contains(x) -> thrower("x", min.x(), max.x(), x)
+      !(min.y()..max.y()).contains(y) -> thrower("y", min.y(), max.y(), y)
+      !(min.z()..max.z()).contains(z) -> thrower("z", min.z(), max.z(), z)
     }
   }
 
@@ -1195,23 +1258,23 @@ object blockManipulator : Iterator<Int> {
     }
 
 
-    for (chunkX in minChunkX .. maxChunkX) {
-      for (chunkZ in minChunkZ .. maxChunkZ) {
-        if (!world.isLoaded(chunkX,chunkZ)) continue
-        val gottenData = world.safetGetData(chunkX,chunkZ)
+    for (chunkX in minChunkX..maxChunkX) {
+      for (chunkZ in minChunkZ..maxChunkZ) {
+        if (!world.isLoaded(chunkX, chunkZ)) continue
+        val gottenData = world.safetGetData(chunkX, chunkZ)
         // Iterating over in world positions.
-        for (x in min.x() .. max.x()) {
+        for (x in min.x()..max.x()) {
           if (chunkX != toChunkX(x)) continue
-          for (z in min.z() .. max.z()) {
+          for (z in min.z()..max.z()) {
             if (chunkZ != toChunkZ(z)) continue
-            for (y in min.y() .. max.y()) {
+            for (y in min.y()..max.y()) {
               val worldIndex = worldPosToIndex(internalX(x), y, internalZ(z))
               val localIndex = posToIndex(x, y, z)
               val oldData = gottenData[worldIndex]
               val newData = data[localIndex]
               if (newData != oldData) {
                 gottenData[worldIndex] = newData
-                updateMinMax(x,y,z)
+                updateMinMax(x, y, z)
               }
             }
           }
@@ -1220,9 +1283,9 @@ object blockManipulator : Iterator<Int> {
     }
 
     finalize()
-    for (x in minXChange .. maxXChange) {
-      for (z in minZChange .. maxZChange) {
-        for (y in minYChange .. maxYChange) {
+    for (x in minXChange..maxXChange) {
+      for (z in minZChange..maxZChange) {
+        for (y in minYChange..maxYChange) {
           addMeshUpdate(x, y, z)
         }
       }
@@ -1247,7 +1310,6 @@ object blockManipulator : Iterator<Int> {
     return (x * xStride) + (z * size.y) + y
   }
 
-
   /*
   return Vector3i(
     i / X_STRIDE,
@@ -1262,7 +1324,6 @@ object blockManipulator : Iterator<Int> {
       ((i / size.y) % size.z) + min.z
     )
   }
-
 
 //  private fun checkArea() {
 //    val minChunkX = world.toChunkX(min.x())
@@ -1283,9 +1344,9 @@ object blockManipulator : Iterator<Int> {
     val maxChunkX = toChunkX(max.x())
     val minChunkZ = toChunkZ(min.z())
     val maxChunkZ = toChunkZ(max.z())
-    for (x in minChunkX .. maxChunkX) {
-      for (z in minChunkZ .. maxChunkZ) {
-        if (!world.isLoaded(x,z)) {
+    for (x in minChunkX..maxChunkX) {
+      for (z in minChunkZ..maxChunkZ) {
+        if (!world.isLoaded(x, z)) {
           //fixme: this function doesn't exist yet.
 //          world.forceLoadInstant(x,z)
         }
@@ -1300,9 +1361,9 @@ object blockManipulator : Iterator<Int> {
 
   private fun checkSizeValidity() {
     fun thrower(axis: String) {
-      val limiter = when (axis){
-        "x"  -> LIMIT.x()
-        "y"  -> LIMIT.y()
+      val limiter = when (axis) {
+        "x" -> LIMIT.x()
+        "y" -> LIMIT.y()
         else -> LIMIT.z()
       }
       throw RuntimeException("blockManipulator: $axis exceeds limit $limiter.")
@@ -1315,7 +1376,9 @@ object blockManipulator : Iterator<Int> {
   }
 
   private fun checkMinMaxValidity() {
-    fun thrower(axis: String){throw RuntimeException("blockManipulator: min.$axis is greater than max.$axis.")}
+    fun thrower(axis: String) {
+      throw RuntimeException("blockManipulator: min.$axis is greater than max.$axis.")
+    }
     when {
       min.x() > max.x() -> thrower("x")
       min.y() > max.y() -> thrower("y")
@@ -1347,10 +1410,12 @@ object blockManipulator : Iterator<Int> {
     for (item in this) action(index++, item)
   }
 
-
   // These are duplicate functions to optimize performance inside this object.
-  private fun internalX(x: Float): Int = if (x < 0) (WORLD_WIDTH - floor(abs(x + 1) % WORLD_WIDTH).toInt()) - 1 else floor(x % WORLD_WIDTH).toInt()
-  private fun internalZ(z: Float): Int = if (z < 0) (WORLD_DEPTH - floor(abs(z + 1) % WORLD_DEPTH)).toInt() - 1 else floor(z % WORLD_DEPTH).toInt()
+  private fun internalX(x: Float): Int =
+    if (x < 0) (WORLD_WIDTH - floor(abs(x + 1) % WORLD_WIDTH).toInt()) - 1 else floor(x % WORLD_WIDTH).toInt()
+
+  private fun internalZ(z: Float): Int =
+    if (z < 0) (WORLD_DEPTH - floor(abs(z + 1) % WORLD_DEPTH)).toInt() - 1 else floor(z % WORLD_DEPTH).toInt()
 
   private fun internalX(x: Int): Int = internalX(x.toFloat())
   private fun internalZ(z: Int): Int = internalZ(z.toFloat())

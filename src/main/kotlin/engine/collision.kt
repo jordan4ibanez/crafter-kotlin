@@ -1,9 +1,14 @@
 package engine
 
-import org.joml.*
+import engine.block.block
+import org.joml.FrustumIntersection
 import org.joml.Math.*
+import org.joml.Matrix4f
+import org.joml.Vector2f
+import org.joml.Vector3f
 
 object collision {
+
   private const val MAX_SPEED = 10f
   private const val WORLD_Y_MAX = world.HEIGHT
   private const val WORLD_Y_MIN = 0
@@ -29,6 +34,7 @@ object collision {
   private val frictionVelocity = Vector2f()
 
   private object directionResult {
+
     var left = false
     var right = false
     var front = false
@@ -45,7 +51,7 @@ object collision {
     }
   }
 
-    //? note: Entity collision.
+  //? note: Entity collision.
 
   internal fun collideEntityToWorld(entity: GroovyEntity) {
 
@@ -67,13 +73,10 @@ object collision {
     // Apply acceleration.
     velocity.add(acceleration)
 
-
-
     // Limit the speed to X blocks per tick.
     if (velocity.length() > MAX_SPEED) {
       velocity.normalize().mul(MAX_SPEED)
     }
-
 
     // Player has fallen/jumped/flown out of the map no need to detect against blocks.
     if (outOfMap(pos.y, pos.y + size.y())) {
@@ -86,7 +89,6 @@ object collision {
     pos.add(velocity, projectedPos)
     calculateMapRegion()
     if (!blockManipulator.set(min, max)) return
-
 
     val remainingTime = velocity.length()
     var currentTime = remainingTime % 1f
@@ -233,7 +235,6 @@ object collision {
   }
 
 
-
   private fun resolveCollision(axis: Int) {
     when (axis) {
       0 -> {
@@ -249,6 +250,7 @@ object collision {
           velocity.x = 0f
         }
       }
+
       1 -> {
         if (directionResult.down) {
 //          println("down collision")
@@ -262,6 +264,7 @@ object collision {
           velocity.y = 0f
         }
       }
+
       2 -> {
         if (directionResult.front) {
 //          println("front collision")
@@ -276,7 +279,6 @@ object collision {
         }
       }
     }
-
   }
 
   private fun updateEntityAABB() {
@@ -294,9 +296,9 @@ object collision {
 
   private fun entityCollidesWithWorld(axis: Int): Boolean {
     val noCollision =
-        entityAABBMin.x > worldAABBMax.x || entityAABBMax.x < worldAABBMin.x ||
-         entityAABBMin.y > worldAABBMax.y || entityAABBMax.y < worldAABBMin.y ||
-         entityAABBMin.z > worldAABBMax.z || entityAABBMax.z < worldAABBMin.z
+      entityAABBMin.x > worldAABBMax.x || entityAABBMax.x < worldAABBMin.x ||
+          entityAABBMin.y > worldAABBMax.y || entityAABBMax.y < worldAABBMin.y ||
+          entityAABBMin.z > worldAABBMax.z || entityAABBMax.z < worldAABBMin.z
 
     if (noCollision) {
       return false
@@ -307,10 +309,12 @@ object collision {
         if (velocity.x < 0f) directionResult.left = true
         if (velocity.x > 0f) directionResult.right = true
       }
+
       1 -> {
         if (velocity.y < 0f) directionResult.down = true
         if (velocity.y > 0f) directionResult.up = true
       }
+
       2 -> {
         if (velocity.z < 0f) directionResult.front = true
         if (velocity.z > 0f) directionResult.back = true
@@ -319,7 +323,7 @@ object collision {
 
     return true
   }
-  
+
   private fun outOfMap(yMin: Float, yMax: Float): Boolean = yMin >= WORLD_Y_MAX || yMax < WORLD_Y_MIN
 
   private fun calculateMapRegion() {
@@ -331,24 +335,18 @@ object collision {
     max.z = max(projectedPos.z, oldPos.z) + size.x
   }
 
-
-
-
-
-
   //? note: Camera collision.
 
   internal fun chunkMeshWithinFrustum(x: Float, y: Float, z: Float): Boolean {
-    updateChunkMatrix(x,y,z)
+    updateChunkMatrix(x, y, z)
 
     //? note: Simulate the calculation that happens in GLSL on the cpu.
     return intersection
       .set(workerMatrix.set(camera.getCameraMatrix()).mul(chunkMatrix))
       .testAab(
-        min.set(0f,0f,0f),
-        max.set(world.getChunkWidthFloat(),world.getChunkHeightFloat(),world.getChunkDepthFloat())
+        min.set(0f, 0f, 0f),
+        max.set(world.getChunkWidthFloat(), world.getChunkHeightFloat(), world.getChunkDepthFloat())
       )
-
   }
 
   private fun updateChunkMatrix(x: Float, y: Float, z: Float) {
@@ -363,10 +361,6 @@ object collision {
       )
   }
 
-
   // Entity collision
-
-
-
 
 }
