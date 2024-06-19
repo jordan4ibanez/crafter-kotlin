@@ -1,6 +1,6 @@
 package utility.result
 
-abstract class Result<T, E : Throwable>(private val ok: T?, private val err: E?) {
+abstract class Result<T, E : Throwable> protected constructor(private val ok: T?, private val err: E?) {
 
   fun isOkay(): Boolean {
     return this.ok != null
