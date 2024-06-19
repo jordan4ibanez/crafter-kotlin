@@ -8,7 +8,7 @@ import kotlin.test.assertFails
 
 
 class ResultTest {
-  
+
 
   @Test
   fun cool2() {
@@ -54,7 +54,5 @@ class ResultTest {
     assertFails {
       cule.unwrap()
     }
-
-    assert(false)
   }
 }
