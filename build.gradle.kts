@@ -53,7 +53,7 @@ dependencies {
 
   runtimeOnly("org.jetbrains.kotlin:kotlin-reflect:2.0.0")
 
-//  testImplementation("org.jetbrains.kotlin:kotlin-test:2.0.0")
+  testImplementation("org.jetbrains.kotlin:kotlin-test:2.0.0")
   testImplementation(kotlin("test"))
 }
 
@@ -108,4 +108,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEa
   compilerOptions {
     jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_22)
   }
+}
+
+tasks.withType<Test> {
+  useJUnitPlatform()
 }
