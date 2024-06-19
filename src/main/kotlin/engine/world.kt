@@ -5,6 +5,7 @@ import engine.block.DrawType
 import engine.block.block
 import engine.camera.camera
 import engine.client_player.clientPlayer
+import engine.collision.collision
 import engine.thread.parallelForEach
 import engine.world.addMeshUpdate
 import engine.world.getBlockID

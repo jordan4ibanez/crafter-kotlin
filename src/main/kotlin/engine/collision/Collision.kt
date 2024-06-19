@@ -1,5 +1,6 @@
-package engine
+package engine.collision
 
+import engine.*
 import engine.block.block
 import engine.camera.camera
 import org.joml.FrustumIntersection

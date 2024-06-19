@@ -1,5 +1,6 @@
 package engine
 
+import engine.collision.collision
 import org.joml.Vector2f
 import org.joml.Vector2fc
 import org.joml.Vector3f
@@ -22,7 +23,7 @@ open class PointEntity {
   internal val interpolationPosition = Vector3f()
   val position = Vector3f()
   private val velocity = Vector3f()
-  private val acceleration = Vector3f(0f,-world.getGravity(),0f)
+  private val acceleration = Vector3f(0f, -world.getGravity(), 0f)
   var meshID = 0
   var onGround = false
   internal var friction = 0.8f
@@ -41,6 +42,7 @@ open class PointEntity {
     position.set(newPosition)
     interpolationTimer = 0f
   }
+
   internal fun interpolate(delta: Float) {
     if (interpolationTimer >= 1f) {
 //      println("interpolation is complete $interpolationTimer")
@@ -57,19 +59,20 @@ open class PointEntity {
   }
 
   fun getVelocity(): Vector3fc = velocity
-  fun setVelocity(x: Float, y: Float, z: Float) = setVelocity(vector3Worker.set(x,y,z))
+  fun setVelocity(x: Float, y: Float, z: Float) = setVelocity(vector3Worker.set(x, y, z))
   open fun setVelocity(newVelocity: Vector3fc) {
     velocity.set(newVelocity)
   }
+
   fun addVelocity(moreVelocity: Vector3fc) = addVelocity(moreVelocity.x(), moreVelocity.y(), moreVelocity.z())
-  fun addVelocity(x: Float, y: Float, z: Float) = velocity.add(x,y,z)
+  fun addVelocity(x: Float, y: Float, z: Float) = velocity.add(x, y, z)
 
   fun getAcceleration(): Vector3fc = acceleration
-  fun setAcceleration(x: Float, y: Float, z: Float) = setAcceleration(vector3Worker.set(x,y,z))
+  fun setAcceleration(x: Float, y: Float, z: Float) = setAcceleration(vector3Worker.set(x, y, z))
   open fun setAcceleration(newAcceleration: Vector3fc) {
     acceleration.set(newAcceleration)
   }
-  
+
   open fun onTick(delta: Float) {}
 }
 
@@ -78,10 +81,11 @@ class Particle : PointEntity {
 }
 
 open class GroovyEntity : PointEntity {
+
   // Thanks, GreenXenith!
   open val classifier = "undefined"
   val uuid = UUID.randomUUID().toString()
-  private val size = Vector2f(1f,1f)
+  private val size = Vector2f(1f, 1f)
   private val rotation = Vector3f()
 
   fun drawCollisionBox() {
@@ -100,7 +104,9 @@ open class GroovyEntity : PointEntity {
   }
 
 
-  fun mobMove(goalX: Float, goalZ: Float, speedGoal: Float, snappiness: Float = 1f) = mobMove(vector2Worker.set(goalX, goalZ), speedGoal, snappiness)
+  fun mobMove(goalX: Float, goalZ: Float, speedGoal: Float, snappiness: Float = 1f) =
+    mobMove(vector2Worker.set(goalX, goalZ), speedGoal, snappiness)
+
   fun mobMove(goalDir: Vector2fc, speedGoal: Float, snappiness: Float = 1f) {
 
     goalVel.set(goalDir).normalize().mul(speedGoal)
@@ -118,21 +124,23 @@ open class GroovyEntity : PointEntity {
       currentAcceleration.y(),
       diff.y
     )
-    if (!accelerationWorker.isFinite) accelerationWorker.set(0f,currentAcceleration.y(),0f)
+    if (!accelerationWorker.isFinite) accelerationWorker.set(0f, currentAcceleration.y(), 0f)
     setAcceleration(accelerationWorker)
   }
 
   constructor(pos: Vector3fc) : super(pos)
+
   open fun onSpawn() {}
   open fun onDespawn() {}
   open fun onHit() {}
   open fun onRightClick() {}
-
 }
 
 class Item : GroovyEntity {
+
   private var itemName: String
   override val classifier = "item"
+
   constructor(itemName: String, pos: Vector3fc) : super(pos) {
     this.itemName = itemName
     this.position.set(pos)
@@ -158,6 +166,7 @@ enum class Hostility {
 
 
 open class Mob : GroovyEntity {
+
   var hp = 0
   var fallDamage = false
   var mobility = Mobility.Walk
@@ -167,10 +176,11 @@ open class Mob : GroovyEntity {
 
   constructor(pos: Vector3fc) : super(pos)
 
-  open fun onDeath(){}
+  open fun onDeath() {}
 }
 
 open class Player : Mob {
+
   override val classifier = "player"
   var name: String
 
@@ -191,10 +201,12 @@ object entity {
   //
   // Generic - GroovyEntity
   private val generics = HashMap<String, GroovyEntity>()
+
   //
   // Focused - Mob, Item, etc
   private val mobs = HashMap<String, Mob>()
   private val players = HashMap<String, Player>()
+
   //
   // Specialty
   private val particles = HashMap<String, Particle>()
@@ -214,11 +226,10 @@ object entity {
   }
 
   fun draw() {
-    generics.forEach {(key, obj) ->
+    generics.forEach { (key, obj) ->
       obj.drawCollisionBox()
     }
   }
-
 
   //todo: particles need a special instantiation thing.
 
@@ -231,28 +242,32 @@ object entity {
 //    return mobs.plus(players)
 //  }
 
-
   fun spawnMob(name: String, pos: Vector3fc) {
-    val spawnMechanism = mobSpawners[name] ?: throw RuntimeException("entity: Can't spawn mob $name, $name doesn't exist.")
+    val spawnMechanism =
+      mobSpawners[name] ?: throw RuntimeException("entity: Can't spawn mob $name, $name doesn't exist.")
     val mob = spawnMechanism(pos)
     println("entity: Storing mob $name at id ${mob.uuid}")
 
     mobs[mob.uuid] = mob
     addGeneric(mob.uuid, mob)
   }
+
   fun storeMob(uuid: String) {
     // todo: storing procedure goes here.
     println("todo: implement mob storing procedure.")
     deleteMob(uuid)
   }
+
   fun deleteMob(uuid: String) {
     println("entity: Deleting mob $uuid")
     mobs.remove(uuid)
     deleteGeneric(uuid)
   }
+
   fun hasMob(uuid: String): Boolean {
     return mobs.containsKey(uuid)
   }
+
   fun getMob(uuid: String): Mob {
     return mobs[uuid]!!
   }
@@ -262,25 +277,30 @@ object entity {
     println("entity: Added player ${player.name}")
     addGeneric(player.name, player)
   }
+
   fun spawnPlayer(name: String, pos: Vector3fc) {
     val newPlayer = Player(pos, name)
     players[name] = newPlayer
     println("entity: Spawned player $name")
     addGeneric(name, newPlayer)
   }
+
   fun storePlayer(name: String) {
     // todo: storing procedure goes here.
     print("todo: implement player storing procedure. $name")
     deletePlayer(name)
   }
+
   fun deletePlayer(name: String) {
     println("entity: Deleting player $name")
     players.remove(name)
     generics.remove(name)
   }
+
   fun hasPlayer(name: String): Boolean {
     return players.containsKey(name)
   }
+
   fun getPlayer(name: String): Player {
     return players[name]!!
   }
@@ -289,11 +309,11 @@ object entity {
     generics[name] = generic
     println("entity: Stored generic $name")
   }
+
   private fun deleteGeneric(name: String) {
     generics.remove(name)
     println("entity: Deleted generic $name")
   }
-
 }
 
 //todo: remove this, this is prototyping
