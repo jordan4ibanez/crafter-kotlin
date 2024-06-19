@@ -1,14 +1,12 @@
-package engine
+package engine.camera
 
-import org.joml.Math
+import engine.*
 import org.joml.Math.*
 import org.joml.Matrix4f
 import org.joml.Matrix4fc
-import org.joml.Vector2fc
 import org.joml.Vector3f
 import org.joml.Vector3fc
 import org.lwjgl.glfw.GLFW.*
-import org.lwjgl.system.windows.INPUT
 
 
 object camera {
@@ -23,8 +21,8 @@ object camera {
   private val objectMatrix = Matrix4f()
   private val guiCameraMatrix = Matrix4f()
   private val guiObjectMatrix = Matrix4f()
-  private val position = Vector3f(0f,78f,0f)
-  private val rotation = Vector3f(0f,0f,0f)
+  private val position = Vector3f(0f, 78f, 0f)
+  private val rotation = Vector3f(0f, 0f, 0f)
 
   private val workerVector3f = Vector3f()
   private val workerVector3f2 = Vector3f()
@@ -55,20 +53,21 @@ object camera {
 
 
   fun setObjectMatrix(position: Vector3fc) {
-    setObjectMatrix(position, workerVector3f2.set(0f,0f,0f))
+    setObjectMatrix(position, workerVector3f2.set(0f, 0f, 0f))
   }
 
-  fun setObjectMatrix(position: Vector3fc, rotation:Vector3fc) {
-    setObjectMatrix(position, rotation, workerVector3f.set(1f,1f,1f))
+  fun setObjectMatrix(position: Vector3fc, rotation: Vector3fc) {
+    setObjectMatrix(position, rotation, workerVector3f.set(1f, 1f, 1f))
   }
 
   fun setObjectMatrix(position: Vector3fc, rotation: Vector3fc, scale: Vector3fc) {
     objectMatrix
       .identity()
       .translate(
-        position.x() - this.position.x(),
-        position.y() - this.position.y(),
-        position.z() - this.position.z())
+        position.x() - camera.position.x(),
+        position.y() - camera.position.y(),
+        position.z() - camera.position.z()
+      )
       .rotateY(-rotation.y())
       .rotateX(-rotation.x())
       .rotateZ(-rotation.z())
@@ -118,8 +117,9 @@ object camera {
   fun getRenderDistance(): Int = renderDistance
 
   fun setPosition(x: Float, y: Float, z: Float) {
-    position.set(x,y,z)
+    position.set(x, y, z)
   }
+
   fun setPosition(newPosition: Vector3fc) {
     position.set(newPosition)
   }

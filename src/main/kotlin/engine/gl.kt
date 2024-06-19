@@ -1,5 +1,6 @@
 package engine
 
+import engine.camera.camera
 import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.opengl.GL14.*
 import org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS
@@ -21,7 +22,8 @@ object gl {
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS)
 
     // If System.err is uncommented, when there's an OpenGL error, this will completely stop the program.
-    debugCallback = setupDebugMessageCallback(/*System.err*/) ?: throw RuntimeException("GL: Failed to initialize debug callback.")
+    debugCallback =
+      setupDebugMessageCallback(/*System.err*/) ?: throw RuntimeException("GL: Failed to initialize debug callback.")
 
     glDepthMask(true)
     glEnable(GL_DEPTH_TEST)

@@ -1,5 +1,6 @@
 package engine
 
+import engine.camera.camera
 import org.joml.Vector2fc
 import org.joml.Vector3f
 import org.joml.Vector3fc
@@ -43,5 +44,4 @@ object collisionBox {
       max.x, max.y, min.z  // 7
     )
   }
-
 }

@@ -3,6 +3,7 @@ package engine
 
 import engine.block.DrawType
 import engine.block.block
+import engine.camera.camera
 import engine.thread.parallelForEach
 import engine.world.addMeshUpdate
 import engine.world.getBlockID
