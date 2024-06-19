@@ -5,6 +5,12 @@ repositories {
   gradlePluginPortal()
 }
 
+plugins {
+  id("java-library")
+  kotlin("jvm") version "2.0.0"
+  id("application")
+}
+
 val lwjglVersion = "3.3.3"
 val jomlVersion = "1.10.5"
 
@@ -16,6 +22,7 @@ val lwjglNatives = when (OperatingSystem.current()) {
 }
 
 dependencies {
+
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.0")
 
   runtimeOnly("org.jetbrains.kotlin:kotlin-reflect:2.0.0")
@@ -52,15 +59,8 @@ dependencies {
   implementation("org.joml:joml:$jomlVersion")
 
   runtimeOnly("org.jetbrains.kotlin:kotlin-reflect:2.0.0")
-
+  
   testImplementation("org.jetbrains.kotlin:kotlin-test:2.0.0")
-  testImplementation(kotlin("test"))
-}
-
-plugins {
-  id("java-library")
-  kotlin("jvm") version "2.0.0"
-  id("application")
 }
 
 val kotlinVersion = "2.0.0"
@@ -68,16 +68,41 @@ val kotlinVersion = "2.0.0"
 //final group = "org.example"
 //final version = "1.0-SNAPSHOT"
 
+//tasks.named<Test>("test") {
+//  useJUnitPlatform()
+//  testLogging {
+//    events("passed")
+//  }
+//}
+
 tasks.test {
   useJUnitPlatform()
+//  testLogging {
+//    events("passed", "skipped", "failed")
+//  }
+  testLogging {
+    showStandardStreams = true
+  }
 }
 
 // Thanks, chaottic!
 sourceSets {
   main {
-    java {
+    kotlin {
 //      srcDir("mods")
-      exclude("*")
+//      exclude("*")
+      srcDir("src")
+    }
+    java {
+      srcDir("src")
+    }
+  }
+  test {
+    kotlin {
+      srcDir("test")
+    }
+    java {
+      srcDir("test")
     }
   }
 }
@@ -110,6 +135,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEa
   }
 }
 
-tasks.withType<Test> {
-  useJUnitPlatform()
+tasks.withType<JavaCompile>().configureEach {
+  options.release.set(22)
 }
