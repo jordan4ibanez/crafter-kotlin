@@ -1,21 +1,30 @@
 package utility.result
 
-abstract class Result<T, E : Throwable> protected constructor(private val ok: T?, private val err: E?) {
+import utility.option.Option
+import utility.option.undecided
+
+abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
+
+  private val ok: Option<T>
+  private val err: Option<E>
 
   init {
-    if (this.ok == null && this.err == null) {
+    // Only one can be None. Only one can be Some.
+    if (ok == null && err == null) {
       throw Error("A Result must have either an Ok or Err.")
-    } else if (this.ok != null && this.err != null) {
+    } else if (ok != null && err != null) {
       throw Error("A Result must not contain both an Ok and an Err.")
     }
+    this.ok = undecided(ok)
+    this.err = undecided(err)
   }
 
   fun isOkay(): Boolean {
-    return this.ok != null
+    return this.ok.isSome()
   }
 
   fun isErr(): Boolean {
-    return this.err != null
+    return this.err.isNone()
   }
 
   fun expect(errorMessage: String): T {
@@ -56,6 +65,11 @@ abstract class Result<T, E : Throwable> protected constructor(private val ok: T?
       null -> throw Error(this.ok.toString())
       else -> this.err // Smart cast into <E>.
     }
+  }
+
+  fun withErr(f: (e: E) -> Unit) {
+
+//    f(this.err)
   }
 }
 
