@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeType
 import engine.file_helpers.*
-import engine.worldAtlas
+import engine.texture_atlas.worldAtlas
 import java.util.concurrent.ConcurrentHashMap
 
 /*

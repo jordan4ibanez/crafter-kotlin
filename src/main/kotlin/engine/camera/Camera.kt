@@ -5,8 +5,8 @@ import engine.joml_bolt_ons.destructure
 import engine.keyboard.keyboard
 import engine.mouse.mouse
 import engine.shader.shader
-import engine.window
-import engine.world
+import engine.window.window
+import engine.world.world
 import org.joml.Math.*
 import org.joml.Matrix4f
 import org.joml.Matrix4fc

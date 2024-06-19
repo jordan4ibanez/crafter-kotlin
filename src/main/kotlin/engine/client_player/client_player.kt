@@ -4,7 +4,7 @@ import engine.camera.camera
 import engine.entity.Player
 import engine.entity.entity
 import engine.keyboard.keyboard
-import engine.world
+import engine.world.world
 import org.joml.Math.*
 import org.joml.Vector2i
 import org.joml.Vector2ic

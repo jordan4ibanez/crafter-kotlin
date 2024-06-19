@@ -1,4 +1,4 @@
-package engine
+package engine.window
 
 import engine.delta.delta
 import engine.keyboard.keyboard

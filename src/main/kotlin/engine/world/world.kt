@@ -1,4 +1,4 @@
-package engine
+package engine.world
 
 
 import engine.block.DrawType
@@ -11,6 +11,7 @@ import engine.model.mesh
 import engine.noise.Noise
 import engine.noise.NoiseType
 import engine.thread.parallelForEach
+import engine.thread.thread
 import engine.world.addMeshUpdate
 import engine.world.getBlockID
 import engine.world.getBlockLight

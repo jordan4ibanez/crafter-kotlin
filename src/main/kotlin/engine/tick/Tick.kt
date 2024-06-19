@@ -1,8 +1,9 @@
-package engine
+package engine.tick
 
 
 // Thanks Rubenwardy!
 object tick {
+
   private var accumulator = 0f
   internal const val GOAL = 30
   internal const val GOAL_DELTA = 1f / GOAL.toFloat()

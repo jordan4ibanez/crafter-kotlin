@@ -1,6 +1,6 @@
 package engine.mouse
 
-import engine.window
+import engine.window.window
 import org.joml.Vector2f
 import org.joml.Vector2fc
 import org.lwjgl.glfw.GLFW.*

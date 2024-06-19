@@ -1,10 +1,12 @@
-package engine
+package engine.thread
 
+import engine.world.world
 import java.util.concurrent.Executors
 
 // All functions which launch coroutines go into here.
 
 object thread {
+
   // -1 because main thread.
   private const val FORWARD_CACHE = 24
   private val availableCores = Runtime.getRuntime().availableProcessors() + FORWARD_CACHE

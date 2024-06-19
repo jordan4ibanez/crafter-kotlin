@@ -8,7 +8,7 @@ import engine.file_helpers.getFolderList
 import engine.file_helpers.isFile
 import engine.file_helpers.isFolder
 import engine.model.texture
-import engine.worldAtlas
+import engine.texture_atlas.worldAtlas
 import groovy.lang.Binding
 import groovy.util.GroovyScriptEngine
 

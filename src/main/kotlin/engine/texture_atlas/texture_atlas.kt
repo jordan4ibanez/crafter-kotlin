@@ -1,4 +1,4 @@
-package engine
+package engine.texture_atlas
 
 import engine.joml_bolt_ons.destructure
 import org.joml.*
