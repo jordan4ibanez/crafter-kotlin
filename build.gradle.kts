@@ -97,3 +97,9 @@ kotlin {
 application {
   mainClass.set("MainKt")
 }
+
+tasks.wrapper {
+  gradleVersion = "8.8"
+  distributionType = Wrapper.DistributionType.BIN
+}
+
