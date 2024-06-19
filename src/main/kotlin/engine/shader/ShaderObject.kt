@@ -1,7 +1,5 @@
 package engine.shader
 
-import engine.createShader
-
 class ShaderObject {
 
   val name: String

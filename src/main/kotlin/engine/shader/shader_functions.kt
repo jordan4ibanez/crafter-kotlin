@@ -1,4 +1,4 @@
-package engine
+package engine.shader
 
 import engine.file_helpers.getFileString
 import org.lwjgl.opengl.GL20.*
