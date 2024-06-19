@@ -151,7 +151,15 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
  */
 class Ok<T, E : Throwable>(ok: T) : Result<T, E>(ok, null)
 
+// We do not want to accidentally use this at all.
+@Suppress("ClassName")
+open class __ZBaseErr<T, E : Throwable> protected constructor(err: E) : Result<T, E>(null, err)
+
 /**
  * Err Result. Indicates failed function run. Contains Throwable type E.
  */
-class Err<T, E : Throwable>(err: E) : Result<T, E>(null, err)
+class Err<T, E : Throwable>(err: E) : __ZBaseErr<T, E>(err)
+
+// Kotlin cannot understand that Throwable is the base class, so we must suppress this.
+@Suppress("UNCHECKED_CAST")
+class ErrString<T, E : Throwable>(err: String) : __ZBaseErr<T, E>(Throwable(err) as E)
