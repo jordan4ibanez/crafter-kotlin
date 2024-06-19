@@ -8,22 +8,7 @@ import kotlin.test.assertFails
 
 
 class ResultTest {
-
-  @Test
-  fun name() {
-    TODO("Not yet implemented")
-  }
-
-  @Test
-  fun blof() {
-    throw RuntimeException("sdfg")
-  }
-
-  @Test
-  fun wr() {
-    var x: Result<Int, Error> = ErrString("asdf")
-    assert(true == false)
-  }
+  
 
   @Test
   fun cool2() {
