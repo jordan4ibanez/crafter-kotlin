@@ -12,6 +12,7 @@ import engine.initialization.initialize
 import engine.keyboard.keyboard
 import engine.model.mesh
 import engine.model.texture
+import engine.mouse.mouse
 import org.joml.Math.toRadians
 import org.joml.Random
 import org.joml.Vector3f

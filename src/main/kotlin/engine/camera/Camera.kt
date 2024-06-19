@@ -3,7 +3,7 @@ package engine.camera
 import engine.delta.getDelta
 import engine.joml_bolt_ons.destructure
 import engine.keyboard.keyboard
-import engine.mouse
+import engine.mouse.mouse
 import engine.shader
 import engine.window
 import engine.world

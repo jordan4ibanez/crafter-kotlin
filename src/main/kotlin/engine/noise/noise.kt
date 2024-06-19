@@ -1,9 +1,8 @@
-package engine
+package engine.noise
 
 import org.joml.Math.*
 import org.joml.Vector2f
 import org.joml.Vector3f
-import java.lang.RuntimeException
 
 //note: IntelliJ's auto translater butchered this so I had to translate it by hand.
 
@@ -35,45 +34,43 @@ import java.lang.RuntimeException
 // off every 'zix'.)
 //
 
+enum class NoiseType { Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, Cellular, WhiteNoise, Cubic, CubicFractal }
+enum class Interp { Linear, Hermite, Quintic }
+enum class FractalType { FBM, Billow, RigidMulti }
+enum class CellularDistanceFunction { Euclidean, Manhattan, Natural }
+enum class CellularReturnType { CellValue, NoiseLookup, Distance, Distance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div }
 
-enum class NoiseType {Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, Cellular, WhiteNoise, Cubic, CubicFractal}
-enum class Interp {Linear, Hermite, Quintic}
-enum class FractalType {FBM, Billow, RigidMulti}
-enum class CellularDistanceFunction {Euclidean, Manhattan, Natural}
-enum class CellularReturnType {CellValue, NoiseLookup, Distance, Distance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div}
-
-private val Value          = NoiseType.Value
-private val ValueFractal   = NoiseType.ValueFractal
-private val Perlin         = NoiseType.Perlin
-private val PerlinFractal  = NoiseType.PerlinFractal
-private val Simplex        = NoiseType.Simplex
+private val Value = NoiseType.Value
+private val ValueFractal = NoiseType.ValueFractal
+private val Perlin = NoiseType.Perlin
+private val PerlinFractal = NoiseType.PerlinFractal
+private val Simplex = NoiseType.Simplex
 private val SimplexFractal = NoiseType.SimplexFractal
-private val Cellular       = NoiseType.Cellular
-private val WhiteNoise     = NoiseType.WhiteNoise
-private val Cubic          = NoiseType.Cubic
-private val CubicFractal   = NoiseType.CubicFractal
+private val Cellular = NoiseType.Cellular
+private val WhiteNoise = NoiseType.WhiteNoise
+private val Cubic = NoiseType.Cubic
+private val CubicFractal = NoiseType.CubicFractal
 
-private val Linear  = Interp.Linear
+private val Linear = Interp.Linear
 private val Hermite = Interp.Hermite
 private val Quintic = Interp.Quintic
 
-private val FBM        = FractalType.FBM
-private val Billow     = FractalType.Billow
+private val FBM = FractalType.FBM
+private val Billow = FractalType.Billow
 private val RigidMulti = FractalType.RigidMulti
 
 private val Euclidean = CellularDistanceFunction.Euclidean
 private val Manhattan = CellularDistanceFunction.Manhattan
-private val Natural   = CellularDistanceFunction.Natural
+private val Natural = CellularDistanceFunction.Natural
 
-private val CellValue    = CellularReturnType.CellValue
-private val NoiseLookup  = CellularReturnType.NoiseLookup
-private val Distance     = CellularReturnType.Distance
-private val Distance2    = CellularReturnType.Distance2
+private val CellValue = CellularReturnType.CellValue
+private val NoiseLookup = CellularReturnType.NoiseLookup
+private val Distance = CellularReturnType.Distance
+private val Distance2 = CellularReturnType.Distance2
 private val Distance2Add = CellularReturnType.Distance2Add
 private val Distance2Sub = CellularReturnType.Distance2Sub
 private val Distance2Mul = CellularReturnType.Distance2Mul
 private val Distance2Div = CellularReturnType.Distance2Div
-
 
 
 class Noise {
@@ -867,7 +864,17 @@ class Noise {
     return xd * g.x + yd * g.y + zd * g.z
   }
 
-  private fun gradCoord4D(seed: Int, x: Int, y: Int, z: Int, w: Int, xd: Float, yd: Float, zd: Float, wd: Float): Float {
+  private fun gradCoord4D(
+    seed: Int,
+    x: Int,
+    y: Int,
+    z: Int,
+    w: Int,
+    xd: Float,
+    yd: Float,
+    zd: Float,
+    wd: Float
+  ): Float {
     var hash = seed
     hash = hash xor X_PRIME * x
     hash = hash xor Y_PRIME * y
@@ -911,12 +918,13 @@ class Noise {
     when (noiseType) {
       Value -> return singleValue(seed, x, y, z)
       ValueFractal ->
-        return when(fractalType) {
+        return when (fractalType) {
           FBM -> singleValueFractalFBM(x, y, z)
           Billow -> singleValueFractalBillow(x, y, z)
           RigidMulti -> singleValueFractalRigidMulti(x, y, z)
           else -> 0f
         }
+
       Perlin -> return singlePerlin(seed, x, y, z)
       PerlinFractal ->
         return when (fractalType) {
@@ -925,6 +933,7 @@ class Noise {
           RigidMulti -> singlePerlinFractalRigidMulti(x, y, z)
           else -> 0f
         }
+
       Simplex -> return singleSimplex(seed, x, y, z)
       SimplexFractal ->
         return when (fractalType) {
@@ -933,11 +942,13 @@ class Noise {
           RigidMulti -> singleSimplexFractalRigidMulti(x, y, z)
           else -> 0f
         }
+
       Cellular ->
         return when (cellularReturnType) {
-          CellValue,NoiseLookup,Distance-> singleCellular(x, y, z)
+          CellValue, NoiseLookup, Distance -> singleCellular(x, y, z)
           else -> singleCellular2Edge(x, y, z)
         }
+
       WhiteNoise -> return getWhiteNoise(x, y, z)
       Cubic -> return singleCubic(seed, x, y, z)
       CubicFractal ->
@@ -947,6 +958,7 @@ class Noise {
           RigidMulti -> singleCubicFractalRigidMulti(x, y, z)
           else -> 0f
         }
+
       else -> return 0f
     }
   }
@@ -964,6 +976,7 @@ class Noise {
           RigidMulti -> singleValueFractalRigidMulti(x, y)
           else -> 0f
         }
+
       Perlin -> return singlePerlin(seed, x, y)
       PerlinFractal ->
         return when (fractalType) {
@@ -972,6 +985,7 @@ class Noise {
           RigidMulti -> singlePerlinFractalRigidMulti(x, y)
           else -> 0f
         }
+
       Simplex -> return singleSimplex(seed, x, y)
       SimplexFractal ->
         return when (fractalType) {
@@ -980,13 +994,15 @@ class Noise {
           RigidMulti -> singleSimplexFractalRigidMulti(x, y)
           else -> 0f
         }
+
       Cellular ->
         return when (cellularReturnType) {
           CellValue, NoiseLookup, Distance -> singleCellular(x, y)
           else -> singleCellular2Edge(x, y)
         }
+
       WhiteNoise -> return getWhiteNoise(x, y)
-      Cubic ->return singleCubic(seed, x, y)
+      Cubic -> return singleCubic(seed, x, y)
       CubicFractal ->
         return when (fractalType) {
           FBM -> singleCubicFractalFBM(x, y)
@@ -994,6 +1010,7 @@ class Noise {
           RigidMulti -> singleCubicFractalRigidMulti(x, y)
           else -> 0f
         }
+
       else -> return 0f
     }
   }
@@ -1143,11 +1160,13 @@ class Noise {
         ys = interpHermiteFunc(y - y0)
         zs = interpHermiteFunc(z - z0)
       }
+
       Quintic -> {
         xs = interpQuinticFunc(x - x0)
         ys = interpQuinticFunc(y - y0)
         zs = interpQuinticFunc(z - z0)
       }
+
       else -> {
         xs = x - x0
         ys = y - y0
@@ -1259,10 +1278,12 @@ class Noise {
         xs = interpHermiteFunc(x - x0)
         ys = interpHermiteFunc(y - y0)
       }
+
       Quintic -> {
         xs = interpQuinticFunc(x - x0)
         ys = interpQuinticFunc(y - y0)
       }
+
       else -> {
         xs = x - x0
         ys = y - y0
@@ -1382,11 +1403,13 @@ class Noise {
         ys = interpHermiteFunc(y - y0)
         zs = interpHermiteFunc(z - z0)
       }
+
       Quintic -> {
         xs = interpQuinticFunc(x - x0)
         ys = interpQuinticFunc(y - y0)
         zs = interpQuinticFunc(z - z0)
       }
+
       else -> {
         xs = x - x0
         ys = y - y0
@@ -1509,10 +1532,12 @@ class Noise {
         xs = interpHermiteFunc(x - x0)
         ys = interpHermiteFunc(y - y0)
       }
+
       Quintic -> {
         xs = interpQuinticFunc(x - x0)
         ys = interpQuinticFunc(y - y0)
       }
+
       else -> {
         xs = x - x0
         ys = y - y0
@@ -1847,8 +1872,8 @@ class Noise {
 
     val x1 = x0 - i1 + G2
     val y1 = y0 - j1 + G2
-    val x2 = x0 - 1 + 2*G2
-    val y2 = y0 - 1 + 2*G2
+    val x2 = x0 - 1 + 2 * G2
+    val y2 = y0 - 1 + 2 * G2
 
     var n0 = 0f
     var n1 = 0f
@@ -2105,30 +2130,131 @@ class Noise {
 
     return cubicLerp(
       cubicLerp(
-        cubicLerp(valCoord3D(seed, x0, y0, z0), valCoord3D(seed, x1, y0, z0), valCoord3D(seed, x2, y0, z0), valCoord3D(seed, x3, y0, z0), xs),
-        cubicLerp(valCoord3D(seed, x0, y1, z0), valCoord3D(seed, x1, y1, z0), valCoord3D(seed, x2, y1, z0), valCoord3D(seed, x3, y1, z0), xs),
-        cubicLerp(valCoord3D(seed, x0, y2, z0), valCoord3D(seed, x1, y2, z0), valCoord3D(seed, x2, y2, z0), valCoord3D(seed, x3, y2, z0), xs),
-        cubicLerp(valCoord3D(seed, x0, y3, z0), valCoord3D(seed, x1, y3, z0), valCoord3D(seed, x2, y3, z0), valCoord3D(seed, x3, y3, z0), xs),
-        ys),
+        cubicLerp(
+          valCoord3D(seed, x0, y0, z0),
+          valCoord3D(seed, x1, y0, z0),
+          valCoord3D(seed, x2, y0, z0),
+          valCoord3D(seed, x3, y0, z0),
+          xs
+        ),
+        cubicLerp(
+          valCoord3D(seed, x0, y1, z0),
+          valCoord3D(seed, x1, y1, z0),
+          valCoord3D(seed, x2, y1, z0),
+          valCoord3D(seed, x3, y1, z0),
+          xs
+        ),
+        cubicLerp(
+          valCoord3D(seed, x0, y2, z0),
+          valCoord3D(seed, x1, y2, z0),
+          valCoord3D(seed, x2, y2, z0),
+          valCoord3D(seed, x3, y2, z0),
+          xs
+        ),
+        cubicLerp(
+          valCoord3D(seed, x0, y3, z0),
+          valCoord3D(seed, x1, y3, z0),
+          valCoord3D(seed, x2, y3, z0),
+          valCoord3D(seed, x3, y3, z0),
+          xs
+        ),
+        ys
+      ),
       cubicLerp(
-        cubicLerp(valCoord3D(seed, x0, y0, z1), valCoord3D(seed, x1, y0, z1), valCoord3D(seed, x2, y0, z1), valCoord3D(seed, x3, y0, z1), xs),
-        cubicLerp(valCoord3D(seed, x0, y1, z1), valCoord3D(seed, x1, y1, z1), valCoord3D(seed, x2, y1, z1), valCoord3D(seed, x3, y1, z1), xs),
-        cubicLerp(valCoord3D(seed, x0, y2, z1), valCoord3D(seed, x1, y2, z1), valCoord3D(seed, x2, y2, z1), valCoord3D(seed, x3, y2, z1), xs),
-        cubicLerp(valCoord3D(seed, x0, y3, z1), valCoord3D(seed, x1, y3, z1), valCoord3D(seed, x2, y3, z1), valCoord3D(seed, x3, y3, z1), xs),
-        ys),
+        cubicLerp(
+          valCoord3D(seed, x0, y0, z1),
+          valCoord3D(seed, x1, y0, z1),
+          valCoord3D(seed, x2, y0, z1),
+          valCoord3D(seed, x3, y0, z1),
+          xs
+        ),
+        cubicLerp(
+          valCoord3D(seed, x0, y1, z1),
+          valCoord3D(seed, x1, y1, z1),
+          valCoord3D(seed, x2, y1, z1),
+          valCoord3D(seed, x3, y1, z1),
+          xs
+        ),
+        cubicLerp(
+          valCoord3D(seed, x0, y2, z1),
+          valCoord3D(seed, x1, y2, z1),
+          valCoord3D(seed, x2, y2, z1),
+          valCoord3D(seed, x3, y2, z1),
+          xs
+        ),
+        cubicLerp(
+          valCoord3D(seed, x0, y3, z1),
+          valCoord3D(seed, x1, y3, z1),
+          valCoord3D(seed, x2, y3, z1),
+          valCoord3D(seed, x3, y3, z1),
+          xs
+        ),
+        ys
+      ),
       cubicLerp(
-        cubicLerp(valCoord3D(seed, x0, y0, z2), valCoord3D(seed, x1, y0, z2), valCoord3D(seed, x2, y0, z2), valCoord3D(seed, x3, y0, z2), xs),
-        cubicLerp(valCoord3D(seed, x0, y1, z2), valCoord3D(seed, x1, y1, z2), valCoord3D(seed, x2, y1, z2), valCoord3D(seed, x3, y1, z2), xs),
-        cubicLerp(valCoord3D(seed, x0, y2, z2), valCoord3D(seed, x1, y2, z2), valCoord3D(seed, x2, y2, z2), valCoord3D(seed, x3, y2, z2), xs),
-        cubicLerp(valCoord3D(seed, x0, y3, z2), valCoord3D(seed, x1, y3, z2), valCoord3D(seed, x2, y3, z2), valCoord3D(seed, x3, y3, z2), xs),
-        ys),
+        cubicLerp(
+          valCoord3D(seed, x0, y0, z2),
+          valCoord3D(seed, x1, y0, z2),
+          valCoord3D(seed, x2, y0, z2),
+          valCoord3D(seed, x3, y0, z2),
+          xs
+        ),
+        cubicLerp(
+          valCoord3D(seed, x0, y1, z2),
+          valCoord3D(seed, x1, y1, z2),
+          valCoord3D(seed, x2, y1, z2),
+          valCoord3D(seed, x3, y1, z2),
+          xs
+        ),
+        cubicLerp(
+          valCoord3D(seed, x0, y2, z2),
+          valCoord3D(seed, x1, y2, z2),
+          valCoord3D(seed, x2, y2, z2),
+          valCoord3D(seed, x3, y2, z2),
+          xs
+        ),
+        cubicLerp(
+          valCoord3D(seed, x0, y3, z2),
+          valCoord3D(seed, x1, y3, z2),
+          valCoord3D(seed, x2, y3, z2),
+          valCoord3D(seed, x3, y3, z2),
+          xs
+        ),
+        ys
+      ),
       cubicLerp(
-        cubicLerp(valCoord3D(seed, x0, y0, z3), valCoord3D(seed, x1, y0, z3), valCoord3D(seed, x2, y0, z3), valCoord3D(seed, x3, y0, z3), xs),
-        cubicLerp(valCoord3D(seed, x0, y1, z3), valCoord3D(seed, x1, y1, z3), valCoord3D(seed, x2, y1, z3), valCoord3D(seed, x3, y1, z3), xs),
-        cubicLerp(valCoord3D(seed, x0, y2, z3), valCoord3D(seed, x1, y2, z3), valCoord3D(seed, x2, y2, z3), valCoord3D(seed, x3, y2, z3), xs),
-        cubicLerp(valCoord3D(seed, x0, y3, z3), valCoord3D(seed, x1, y3, z3), valCoord3D(seed, x2, y3, z3), valCoord3D(seed, x3, y3, z3), xs),
-        ys),
-      zs) * CUBIC_3D_BOUNDING
+        cubicLerp(
+          valCoord3D(seed, x0, y0, z3),
+          valCoord3D(seed, x1, y0, z3),
+          valCoord3D(seed, x2, y0, z3),
+          valCoord3D(seed, x3, y0, z3),
+          xs
+        ),
+        cubicLerp(
+          valCoord3D(seed, x0, y1, z3),
+          valCoord3D(seed, x1, y1, z3),
+          valCoord3D(seed, x2, y1, z3),
+          valCoord3D(seed, x3, y1, z3),
+          xs
+        ),
+        cubicLerp(
+          valCoord3D(seed, x0, y2, z3),
+          valCoord3D(seed, x1, y2, z3),
+          valCoord3D(seed, x2, y2, z3),
+          valCoord3D(seed, x3, y2, z3),
+          xs
+        ),
+        cubicLerp(
+          valCoord3D(seed, x0, y3, z3),
+          valCoord3D(seed, x1, y3, z3),
+          valCoord3D(seed, x2, y3, z3),
+          valCoord3D(seed, x3, y3, z3),
+          xs
+        ),
+        ys
+      ),
+      zs
+    ) * CUBIC_3D_BOUNDING
   }
 
 
@@ -2239,15 +2365,24 @@ class Noise {
     val ys = y - y1.toFloat()
 
     return cubicLerp(
-      cubicLerp(valCoord2D(seed, x0, y0), valCoord2D(seed, x1, y0), valCoord2D(seed, x2, y0), valCoord2D(seed, x3, y0),
-        xs),
-      cubicLerp(valCoord2D(seed, x0, y1), valCoord2D(seed, x1, y1), valCoord2D(seed, x2, y1), valCoord2D(seed, x3, y1),
-        xs),
-      cubicLerp(valCoord2D(seed, x0, y2), valCoord2D(seed, x1, y2), valCoord2D(seed, x2, y2), valCoord2D(seed, x3, y2),
-        xs),
-      cubicLerp(valCoord2D(seed, x0, y3), valCoord2D(seed, x1, y3), valCoord2D(seed, x2, y3), valCoord2D(seed, x3, y3),
-        xs),
-      ys) * CUBIC_2D_BOUNDING
+      cubicLerp(
+        valCoord2D(seed, x0, y0), valCoord2D(seed, x1, y0), valCoord2D(seed, x2, y0), valCoord2D(seed, x3, y0),
+        xs
+      ),
+      cubicLerp(
+        valCoord2D(seed, x0, y1), valCoord2D(seed, x1, y1), valCoord2D(seed, x2, y1), valCoord2D(seed, x3, y1),
+        xs
+      ),
+      cubicLerp(
+        valCoord2D(seed, x0, y2), valCoord2D(seed, x1, y2), valCoord2D(seed, x2, y2), valCoord2D(seed, x3, y2),
+        xs
+      ),
+      cubicLerp(
+        valCoord2D(seed, x0, y3), valCoord2D(seed, x1, y3), valCoord2D(seed, x2, y3), valCoord2D(seed, x3, y3),
+        xs
+      ),
+      ys
+    ) * CUBIC_2D_BOUNDING
   }
 
   // Cellular Noise
@@ -2262,7 +2397,7 @@ class Noise {
     z *= frequency
 
     return when (cellularReturnType) {
-      CellValue,NoiseLookup,Distance -> singleCellular(x, y, z)
+      CellValue, NoiseLookup, Distance -> singleCellular(x, y, z)
       else -> singleCellular2Edge(x, y, z)
     }
   }
@@ -2279,14 +2414,14 @@ class Noise {
 
     when (cellularDistanceFunction) {
       Euclidean -> {
-        for (xi in (xr - 1) .. (xr + 1)) {
-          for (yi in (yr - 1) ..  (yr + 1)) {
-            for (zi in (zr - 1) .. (zr + 1)) {
-              val vec = CELL_3D [hash3D(seed, xi, yi, zi) and 255]
+        for (xi in (xr - 1)..(xr + 1)) {
+          for (yi in (yr - 1)..(yr + 1)) {
+            for (zi in (zr - 1)..(zr + 1)) {
+              val vec = CELL_3D[hash3D(seed, xi, yi, zi) and 255]
 
-              val vecX = xi -x + vec.x
-              val vecY = yi -y + vec.y
-              val vecZ = zi -z + vec.z
+              val vecX = xi - x + vec.x
+              val vecY = yi - y + vec.y
+              val vecZ = zi - z + vec.z
 
               val newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ
 
@@ -2300,17 +2435,18 @@ class Noise {
           }
         }
       }
+
       Manhattan -> {
-        for (xi in (xr - 1) .. (xr + 1)) {
-          for (yi in (yr - 1) .. (yr + 1)) {
-            for (zi in (zr - 1) .. (zr + 1)) {
-              val vec = CELL_3D [hash3D(seed, xi, yi, zi) and 255]
+        for (xi in (xr - 1)..(xr + 1)) {
+          for (yi in (yr - 1)..(yr + 1)) {
+            for (zi in (zr - 1)..(zr + 1)) {
+              val vec = CELL_3D[hash3D(seed, xi, yi, zi) and 255]
 
-              val vecX = xi -x + vec.x
-              val vecY = yi -y + vec.y
-              val vecZ = zi -z + vec.z
+              val vecX = xi - x + vec.x
+              val vecY = yi - y + vec.y
+              val vecZ = zi - z + vec.z
 
-              val newDistance = abs (vecX) + abs(vecY) + abs(vecZ)
+              val newDistance = abs(vecX) + abs(vecY) + abs(vecZ)
 
               if (newDistance < distance) {
                 distance = newDistance
@@ -2322,17 +2458,18 @@ class Noise {
           }
         }
       }
+
       Natural -> {
-        for (xi in (xr - 1) .. (xr + 1)) {
-          for (yi in (yr - 1) .. (yr + 1)) {
-            for (zi in (zr - 1) .. (zr + 1)) {
-              val vec = CELL_3D [hash3D(seed, xi, yi, zi) and 255]
+        for (xi in (xr - 1)..(xr + 1)) {
+          for (yi in (yr - 1)..(yr + 1)) {
+            for (zi in (zr - 1)..(zr + 1)) {
+              val vec = CELL_3D[hash3D(seed, xi, yi, zi) and 255]
 
-              val vecX = xi -x + vec.x
-              val vecY = yi -y + vec.y
-              val vecZ = zi -z + vec.z
+              val vecX = xi - x + vec.x
+              val vecY = yi - y + vec.y
+              val vecZ = zi - z + vec.z
 
-              val newDistance =(abs(vecX) + abs(vecY) + abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ)
+              val newDistance = (abs(vecX) + abs(vecY) + abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ)
 
               if (newDistance < distance) {
                 distance = newDistance
@@ -2344,13 +2481,14 @@ class Noise {
           }
         }
       }
+
       else -> {}
     }
 
     return when (cellularReturnType) {
       CellValue -> valCoord3D(0, xc, yc, zc)
       NoiseLookup -> {
-        val vec = CELL_3D [hash3D(seed, xc, yc, zc) and 255]
+        val vec = CELL_3D[hash3D(seed, xc, yc, zc) and 255]
         if (cellularNoiseLookup == null) {
           throw RuntimeException("noise: Forgot to set m_cellularNoiseLookup.")
         }
@@ -2372,14 +2510,14 @@ class Noise {
 
     when (cellularDistanceFunction) {
       Euclidean -> {
-        for (xi in (xr - 1) .. (xr + 1)) {
-          for (yi in (yr - 1) .. (yr + 1)) {
-            for (zi in (zr - 1) .. (zr + 1)) {
-              val vec = CELL_3D [hash3D(seed, xi, yi, zi) and 255]
+        for (xi in (xr - 1)..(xr + 1)) {
+          for (yi in (yr - 1)..(yr + 1)) {
+            for (zi in (zr - 1)..(zr + 1)) {
+              val vec = CELL_3D[hash3D(seed, xi, yi, zi) and 255]
 
-              val vecX = xi -x + vec.x
-              val vecY = yi -y + vec.y
-              val vecZ = zi -z + vec.z
+              val vecX = xi - x + vec.x
+              val vecY = yi - y + vec.y
+              val vecZ = zi - z + vec.z
 
               val newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ
 
@@ -2389,17 +2527,18 @@ class Noise {
           }
         }
       }
+
       Manhattan -> {
-        for (xi in (xr - 1) .. (xr + 1)) {
-          for (yi in (yr - 1) .. (yr + 1)) {
-            for (zi in (zr - 1) .. (zr + 1)) {
-              val vec = CELL_3D [hash3D(seed, xi, yi, zi) and 255]
+        for (xi in (xr - 1)..(xr + 1)) {
+          for (yi in (yr - 1)..(yr + 1)) {
+            for (zi in (zr - 1)..(zr + 1)) {
+              val vec = CELL_3D[hash3D(seed, xi, yi, zi) and 255]
 
-              val vecX = xi -x + vec.x
-              val vecY = yi -y + vec.y
-              val vecZ = zi -z + vec.z
+              val vecX = xi - x + vec.x
+              val vecY = yi - y + vec.y
+              val vecZ = zi - z + vec.z
 
-              val newDistance = abs (vecX) + abs(vecY) + abs(vecZ)
+              val newDistance = abs(vecX) + abs(vecY) + abs(vecZ)
 
               distance2 = max(min(distance2, newDistance), distance)
               distance = min(distance, newDistance)
@@ -2407,17 +2546,18 @@ class Noise {
           }
         }
       }
+
       Natural -> {
-        for (xi in (xr - 1) .. (xr + 1)) {
-          for (yi in (yr - 1) .. (yr + 1)) {
-            for (zi in (zr - 1) .. (zr + 1)) {
-              val vec = CELL_3D [hash3D(seed, xi, yi, zi) and 255]
+        for (xi in (xr - 1)..(xr + 1)) {
+          for (yi in (yr - 1)..(yr + 1)) {
+            for (zi in (zr - 1)..(zr + 1)) {
+              val vec = CELL_3D[hash3D(seed, xi, yi, zi) and 255]
 
-              val vecX = xi -x + vec.x
-              val vecY = yi -y + vec.y
-              val vecZ = zi -z + vec.z
+              val vecX = xi - x + vec.x
+              val vecY = yi - y + vec.y
+              val vecZ = zi - z + vec.z
 
-              val newDistance =(abs(vecX) + abs(vecY) + abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ)
+              val newDistance = (abs(vecX) + abs(vecY) + abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ)
 
               distance2 = max(min(distance2, newDistance), distance)
               distance = min(distance, newDistance)
@@ -2425,6 +2565,7 @@ class Noise {
           }
         }
       }
+
       else -> {}
     }
 
@@ -2447,7 +2588,7 @@ class Noise {
     y *= frequency
 
     return when (cellularReturnType) {
-      CellValue,NoiseLookup,Distance -> singleCellular(x, y)
+      CellValue, NoiseLookup, Distance -> singleCellular(x, y)
       else -> singleCellular2Edge(x, y)
     }
   }
@@ -2462,14 +2603,14 @@ class Noise {
 
     when (cellularDistanceFunction) {
       Manhattan -> {
-        for (xi in (xr - 1) .. (xr + 1)) {
-          for (yi in (yr - 1) .. (yr + 1)) {
-            val vec = CELL_2D [hash2D(seed, xi, yi) and 255]
+        for (xi in (xr - 1)..(xr + 1)) {
+          for (yi in (yr - 1)..(yr + 1)) {
+            val vec = CELL_2D[hash2D(seed, xi, yi) and 255]
 
-            val vecX = xi -x + vec.x
-            val vecY = yi -y + vec.y
+            val vecX = xi - x + vec.x
+            val vecY = yi - y + vec.y
 
-            val newDistance =(abs(vecX) + abs(vecY))
+            val newDistance = (abs(vecX) + abs(vecY))
 
             if (newDistance < distance) {
               distance = newDistance
@@ -2479,15 +2620,16 @@ class Noise {
           }
         }
       }
+
       Natural -> {
-        for (xi in (xr - 1) .. (xr + 1)) {
-          for (yi in (yr - 1) .. (yr + 1)) {
-            val vec = CELL_2D [hash2D(seed, xi, yi) and 255]
+        for (xi in (xr - 1)..(xr + 1)) {
+          for (yi in (yr - 1)..(yr + 1)) {
+            val vec = CELL_2D[hash2D(seed, xi, yi) and 255]
 
-            val vecX = xi -x + vec.x
-            val vecY = yi -y + vec.y
+            val vecX = xi - x + vec.x
+            val vecY = yi - y + vec.y
 
-            val newDistance =(abs(vecX) + abs(vecY)) + (vecX * vecX + vecY * vecY)
+            val newDistance = (abs(vecX) + abs(vecY)) + (vecX * vecX + vecY * vecY)
 
             if (newDistance < distance) {
               distance = newDistance
@@ -2497,15 +2639,16 @@ class Noise {
           }
         }
       }
+
       else -> {
-        for (xi in (xr - 1) .. (xr + 1)) {
-          for (yi in (yr - 1) .. (yr + 1)) {
-            val vec = CELL_2D [hash2D(seed, xi, yi) and 255]
+        for (xi in (xr - 1)..(xr + 1)) {
+          for (yi in (yr - 1)..(yr + 1)) {
+            val vec = CELL_2D[hash2D(seed, xi, yi) and 255]
 
-            val vecX = xi -x + vec.x
-            val vecY = yi -y + vec.y
+            val vecX = xi - x + vec.x
+            val vecY = yi - y + vec.y
 
-            val newDistance = vecX * vecX +vecY * vecY
+            val newDistance = vecX * vecX + vecY * vecY
 
             if (newDistance < distance) {
               distance = newDistance
@@ -2521,7 +2664,7 @@ class Noise {
       CellValue -> valCoord2D(0, xc, yc)
 
       NoiseLookup -> {
-        val vec = CELL_2D [hash2D(seed, xc, yc) and 255]
+        val vec = CELL_2D[hash2D(seed, xc, yc) and 255]
         if (cellularNoiseLookup == null) {
           throw RuntimeException("noise: Forgot to set m_cellularNoiseLookup.")
         }
@@ -2542,12 +2685,12 @@ class Noise {
 
     when (cellularDistanceFunction) {
       Manhattan -> {
-        for (xi in (xr - 1) .. (xr + 1)) {
-          for (yi in (yr - 1) .. (yr + 1)) {
-            val vec = CELL_2D [hash2D(seed, xi, yi) and 255]
+        for (xi in (xr - 1)..(xr + 1)) {
+          for (yi in (yr - 1)..(yr + 1)) {
+            val vec = CELL_2D[hash2D(seed, xi, yi) and 255]
 
-            val vecX = xi -x + vec.x
-            val vecY = yi -y + vec.y
+            val vecX = xi - x + vec.x
+            val vecY = yi - y + vec.y
 
             val newDistance = abs(vecX) + abs(vecY)
 
@@ -2556,30 +2699,32 @@ class Noise {
           }
         }
       }
+
       Natural -> {
-        for (xi in (xr - 1) .. (xr + 1)) {
-          for (yi in (yr - 1) .. (yr + 1)) {
-            val vec = CELL_2D [hash2D(seed, xi, yi) and 255]
+        for (xi in (xr - 1)..(xr + 1)) {
+          for (yi in (yr - 1)..(yr + 1)) {
+            val vec = CELL_2D[hash2D(seed, xi, yi) and 255]
 
-            val vecX = xi -x + vec.x
-            val vecY = yi -y + vec.y
+            val vecX = xi - x + vec.x
+            val vecY = yi - y + vec.y
 
-            val newDistance =(abs(vecX) + abs(vecY)) + (vecX * vecX + vecY * vecY)
+            val newDistance = (abs(vecX) + abs(vecY)) + (vecX * vecX + vecY * vecY)
 
             distance2 = max(min(distance2, newDistance), distance)
             distance = min(distance, newDistance)
           }
         }
       }
+
       else -> {
-        for (xi in (xr - 1) .. (xr + 1)) {
-          for (yi in (yr - 1) .. (yr + 1)) {
-            val vec = CELL_2D [hash2D(seed, xi, yi) and 255]
+        for (xi in (xr - 1)..(xr + 1)) {
+          for (yi in (yr - 1)..(yr + 1)) {
+            val vec = CELL_2D[hash2D(seed, xi, yi) and 255]
 
-            val vecX = xi -x + vec.x
-            val vecY = yi -y + vec.y
+            val vecX = xi - x + vec.x
+            val vecY = yi - y + vec.y
 
-            val newDistance = vecX * vecX +vecY * vecY
+            val newDistance = vecX * vecX + vecY * vecY
 
             distance2 = max(min(distance2, newDistance), distance)
             distance = min(distance, newDistance)
@@ -2638,11 +2783,13 @@ class Noise {
         ys = interpHermiteFunc(yf - y0)
         zs = interpHermiteFunc(zf - z0)
       }
+
       Quintic -> {
         xs = interpQuinticFunc(xf - x0)
         ys = interpQuinticFunc(yf - y0)
         zs = interpQuinticFunc(zf - z0)
       }
+
       else -> {
         xs = xf - x0
         ys = yf - y0
@@ -2722,10 +2869,12 @@ class Noise {
         xs = interpHermiteFunc(xf - x0)
         ys = interpHermiteFunc(yf - y0)
       }
+
       Quintic -> {
         xs = interpQuinticFunc(xf - x0)
         ys = interpQuinticFunc(yf - y0)
       }
+
       else -> {
         xs = xf - x0
         ys = yf - y0
@@ -2747,5 +2896,4 @@ class Noise {
     v2.x += lerp(lx0x, lx1x, ys) * perturbAmp
     v2.y += lerp(ly0x, ly1x, ys) * perturbAmp
   }
-
 }

@@ -2,7 +2,7 @@ package engine.glfw
 
 import engine.joml_bolt_ons.destructure
 import engine.keyboard.keyboard
-import engine.mouse
+import engine.mouse.mouse
 import engine.window
 import org.joml.Vector2i
 import org.joml.Vector2ic

@@ -8,6 +8,8 @@ import engine.client_player.clientPlayer
 import engine.collision.collision
 import engine.joml_bolt_ons.destructure
 import engine.model.mesh
+import engine.noise.Noise
+import engine.noise.NoiseType
 import engine.thread.parallelForEach
 import engine.world.addMeshUpdate
 import engine.world.getBlockID

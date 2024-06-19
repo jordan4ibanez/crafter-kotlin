@@ -2,6 +2,7 @@ package engine
 
 import engine.delta.delta
 import engine.keyboard.keyboard
+import engine.mouse.mouse
 import org.joml.Vector2i
 import org.joml.Vector2ic
 import org.joml.Vector3f

@@ -1,10 +1,12 @@
-package engine
+package engine.mouse
 
+import engine.window
 import org.joml.Vector2f
 import org.joml.Vector2fc
 import org.lwjgl.glfw.GLFW.*
 
 object mouse {
+
   internal val position = Vector2f(-1f, -1f)
   private val oldPosition = Vector2f(-1f, -1f)
   private val delta = Vector2f(0f, 0f)
@@ -65,7 +67,6 @@ object mouse {
   fun getDelta(): Vector2fc = delta
 
 
-
   internal fun capture() {
     glfwSetInputMode(window.pointer, GLFW_CURSOR, GLFW_CURSOR_DISABLED)
     needsDeltaReset = true
@@ -86,5 +87,4 @@ object mouse {
     glfwSetCursorPos(window.pointer, 0.0, 0.0)
     needsDeltaReset = false
   }
-
 }
