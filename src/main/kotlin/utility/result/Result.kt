@@ -10,10 +10,10 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
 
   init {
     // Only one can be None. Only one can be Some.
-    if (ok == null && err == null) {
-      throw Error("A Result must have either an Ok or Err.")
-    } else if (ok != null && err != null) {
-      throw Error("A Result must not contain both an Ok and an Err.")
+    val okNull = (ok == null)
+    val errNull = (err == null)
+    if (okNull == errNull) {
+      throw Error("A Result must have either an Ok or Err. Not both. Not neither.")
     }
     this.ok = undecided(ok)
     this.err = undecided(err)
@@ -28,48 +28,52 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
   }
 
   fun expect(errorMessage: String): T {
-    return when (this.ok) {
-      null -> throw Error(errorMessage)
-      else -> this.ok // Smart cast into <T>.
+    return when (this.ok.isSome()) {
+      false -> throw Error(errorMessage)
+      true -> this.ok.unwrap() // Smart cast into <T>.
     }
   }
 
   fun unwrap(): T {
-    return when (this.ok) {
-      null -> when (this.err) {
-        // This is now a safety check because we can't seal out extending this class.
-        null -> throw Error("Result Err is missing an err field.")
-        else -> throw this.err
-      }
-
-      else -> this.ok // Smart cast into <T>.
+    return when (this) {
+      is Ok -> this.ok.unwrap()// Smart cast into <T>.
+      else -> throw this.err.unwrap()
     }
   }
 
   fun unwrapOrDefault(default: T): T {
-    return when (this.ok) {
-      null -> default
-      else -> this.ok // Smart cast into <T>.
+    return when (this) {
+      is Ok -> default
+      else -> this.ok.unwrap() // Smart cast into <T>.
     }
   }
 
+  fun withOk(f: (t: T) -> Unit): Result<T, E> {
+    when (this) {
+      is Ok -> f(this.ok.unwrap())
+    }
+    return this
+  }
+
   fun expectErr(errorMessage: String): E {
-    return when (this.err) {
-      null -> throw Error(errorMessage)
-      else -> this.err // Smart cast into <E>.
+    return when (this) {
+      is Ok -> throw Error(errorMessage)
+      else -> this.err.unwrap() // Smart cast into <E>.
     }
   }
 
   fun unwrapErr(): E {
-    return when (this.err) {
-      null -> throw Error(this.ok.toString())
-      else -> this.err // Smart cast into <E>.
+    return when (this) {
+      is Ok -> throw Error(this.ok.toString())
+      else -> this.err.unwrap() // Smart cast into <E>.
     }
   }
 
-  fun withErr(f: (e: E) -> Unit) {
-
-//    f(this.err)
+  fun withErr(f: (e: E) -> Unit): Result<T, E> {
+    when (this) {
+      is Err -> f(this.err.unwrap())
+    }
+    return this
   }
 }
 
