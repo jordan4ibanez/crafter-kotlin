@@ -4,11 +4,29 @@ import org.junit.Test
 import utility.option.None
 import utility.option.Option
 import utility.option.Some
+import kotlin.test.assertFails
+
 
 class ResultTest {
 
   @Test
-  fun cool() {
+  fun name() {
+    TODO("Not yet implemented")
+  }
+
+  @Test
+  fun blof() {
+    throw RuntimeException("sdfg")
+  }
+
+  @Test
+  fun wr() {
+    var x: Result<Int, Error> = ErrString("asdf")
+    assert(true == false)
+  }
+
+  @Test
+  fun cool2() {
     fun blah(): Result<Int, Throwable> {
       return if (Math.random() > 0.5) {
         Ok(1)
@@ -45,5 +63,13 @@ class ResultTest {
     }
 
     nah().expectErr("wat")
+
+    val cule: Result<Int, Error> = ErrString("hi there")
+
+    assertFails {
+      cule.unwrap()
+    }
+
+    assert(false)
   }
 }
