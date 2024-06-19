@@ -1,9 +1,9 @@
 package crafter
 
-import engine.Hostility
-import engine.Mob
-import engine.Mobility
-import engine.entity
+import engine.entity.Hostility
+import engine.entity.Mob
+import engine.entity.Mobility
+import engine.entity.entity
 import org.joml.Vector3fc
 
 final entity = entity.INSTANCE
@@ -24,7 +24,7 @@ class Pig extends Mob {
   }
 }
 
-entity.registerMobSpawner("crafter:pig", (pos) -> {return new Pig(pos)})
+entity.registerMobSpawner("crafter:pig", (pos) -> { return new Pig(pos) })
 
 class Squid extends Mob {
 
@@ -39,4 +39,4 @@ class Squid extends Mob {
   }
 }
 
-entity.registerMobSpawner("crafter:squid", (pos) -> {return new Squid(pos)})
+entity.registerMobSpawner("crafter:squid", (pos) -> { return new Squid(pos) })
