@@ -5,8 +5,8 @@ import utility.option.undecided
 
 /**
  * A Result is a type that represents 2 states:
- * Ok - Success!
- * Err - There was a failure.
+ * Ok - Success! Contains data.
+ * Err - There was a failure. Contains throwable.
  *
  * This has been written, so you can also late throw or intercept failure states in functions.
  * Makes the code base more durable.
@@ -27,14 +27,30 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
     this.err = undecided(err)
   }
 
+  /**
+   * Check if the Result is Ok.
+   *
+   * @return If it is Ok.
+   */
   fun isOkay(): Boolean {
     return this is Ok
   }
 
+  /**
+   * Check if the Result is Err.
+   *
+   * @return If it is Err.
+   */
   fun isErr(): Boolean {
     return this is Err
   }
 
+  /**
+   * Unwrap Result as Ok unchecked with custom error message if the Result is Err.
+   *
+   * @throws Error Your custom error message.
+   * @return Whatever data T represents.
+   */
   fun expect(errorMessage: String): T {
     return when (this) {
       is Ok -> this.ok.unwrap() // Smart cast into <T>.
@@ -42,6 +58,12 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
     }
   }
 
+  /**
+   * Unwrap Result as Ok unchecked. Will throw the error held if the Result is an Err.
+   *
+   * @throws Throwable The held error if it is an Err.
+   * @return The data T represents.
+   */
   fun unwrap(): T {
     return when (this) {
       is Ok -> this.ok.unwrap()// Smart cast into <T>.
@@ -49,6 +71,12 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
     }
   }
 
+  /**
+   * Unwrap result as Ok. If the Result is an Err, swap for supplemented default.
+   *
+   * @param default The value to return if the Result is an Err.
+   * @return The data T represents or default if the Result is an Err.
+   */
   fun unwrapOrDefault(default: T): T {
     return when (this) {
       is Ok -> default
