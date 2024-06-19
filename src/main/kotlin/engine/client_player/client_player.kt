@@ -1,6 +1,10 @@
-package engine
+package engine.client_player
 
+import engine.Player
 import engine.camera.camera
+import engine.entity
+import engine.keyboard
+import engine.world
 import org.joml.Math.*
 import org.joml.Vector2i
 import org.joml.Vector2ic

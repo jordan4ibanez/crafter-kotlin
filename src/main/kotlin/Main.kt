@@ -2,6 +2,7 @@ import engine.*
 import engine.api.api
 import engine.block.block
 import engine.camera.camera
+import engine.client_player.clientPlayer
 import org.joml.Math.toRadians
 import org.joml.Random
 import org.joml.Vector3f
