@@ -56,6 +56,7 @@ fun load() {
 //  mouse.capture()
 
 //  window.maximize()
+  window.setVsync(true)
   stone = block.getID("crafter:stone")
 
   clientPlayer.initialize()
