@@ -1,9 +1,9 @@
 package engine.client_player
 
-import engine.Player
 import engine.camera.camera
-import engine.entity
-import engine.keyboard
+import engine.entity.Player
+import engine.entity.entity
+import engine.keyboard.keyboard
 import engine.world
 import org.joml.Math.*
 import org.joml.Vector2i

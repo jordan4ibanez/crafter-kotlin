@@ -1,16 +1,22 @@
 package engine
 
-import org.joml.*
+import engine.delta.delta
+import engine.keyboard.keyboard
+import org.joml.Vector2i
+import org.joml.Vector2ic
+import org.joml.Vector3f
+import org.joml.Vector3fc
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.system.MemoryUtil.NULL
 
 object window {
+
   internal var pointer: Long = NULL
   private const val WINDOW_TITLE_BASE = "Crafter"
-  internal val frameBufferSize = Vector2i(0,0)
-  internal val position = Vector2i(0,0)
-  private val clearColor = Vector3f(0f,0f,0f)
+  internal val frameBufferSize = Vector2i(0, 0)
+  internal val position = Vector2i(0, 0)
+  private val clearColor = Vector3f(0f, 0f, 0f)
 
   internal fun getTitleBase(): String {
     return WINDOW_TITLE_BASE
@@ -37,7 +43,7 @@ object window {
   }
 
   fun setClearColor(r: Float, g: Float, b: Float) {
-    clearColor.set(r,g,b)
+    clearColor.set(r, g, b)
     glClearColor(clearColor.x(), clearColor.y(), clearColor.z(), 1f)
   }
 
@@ -89,5 +95,4 @@ object window {
   fun close() {
     glfwSetWindowShouldClose(pointer, true)
   }
-
 }

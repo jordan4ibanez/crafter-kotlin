@@ -1,4 +1,4 @@
-package engine
+package engine.joml_bolt_ons
 
 import org.joml.*
 
@@ -19,7 +19,7 @@ private fun parseInfo(type: String, debugInfo: String? = null): String {
 
 private fun assembleVectorComponents(x: Float, y: Float, z: Float? = null, w: Float? = null): String {
   val builder = StringBuilder()
-  run iteration@ {
+  run iteration@{
     listOf("x", "y", "z", "w").zip(listOf(x, y, z, w)).forEach {
       val (key, value) = it
       if (value == null) {
@@ -36,7 +36,7 @@ private fun assembleVectorComponents(x: Float, y: Float, z: Float? = null, w: Fl
 
 private fun assembleVectorComponents(x: Int, y: Int, z: Int? = null, w: Int? = null): String {
   val builder = StringBuilder()
-  run iteration@ {
+  run iteration@{
     listOf("x", "y", "z", "w").zip(listOf(x, y, z, w)).forEach {
       val (key, value) = it
       if (value == null) {
@@ -85,6 +85,7 @@ fun Vector2fc.print(debugInfo: String? = null) {
   val result = finalizeVectorSerialization("Vector2fc", debugInfo, this.destructureToString())
   println(result)
 }
+
 fun Vector2f.print(debugInfo: String? = null) {
   val result = finalizeVectorSerialization("Vector2f", debugInfo, this.destructureToString())
   println(result)
@@ -94,6 +95,7 @@ fun Vector2ic.print(debugInfo: String? = null) {
   val result = finalizeVectorSerialization("Vector2fc", debugInfo, this.destructureToString())
   println(result)
 }
+
 fun Vector2i.print(debugInfo: String? = null) {
   val result = finalizeVectorSerialization("Vector2f", debugInfo, this.destructureToString())
   println(result)
@@ -103,6 +105,7 @@ fun Vector3fc.print(debugInfo: String? = null) {
   val result = finalizeVectorSerialization("Vector3fc", debugInfo, this.destructureToString())
   println(result)
 }
+
 fun Vector3f.print(debugInfo: String? = null) {
   val result = finalizeVectorSerialization("Vector3f", debugInfo, this.destructureToString())
   println(result)
@@ -112,6 +115,7 @@ fun Vector3ic.print(debugInfo: String? = null) {
   val result = finalizeVectorSerialization("Vector3ic", debugInfo, this.destructureToString())
   println(result)
 }
+
 fun Vector3i.print(debugInfo: String? = null) {
   val result = finalizeVectorSerialization("Vector3i", debugInfo, this.destructureToString())
   println(result)
@@ -121,6 +125,7 @@ fun Vector4fc.print(debugInfo: String? = null) {
   val result = finalizeVectorSerialization("Vector4fc", debugInfo, this.destructureToString())
   println(result)
 }
+
 fun Vector4f.print(debugInfo: String? = null) {
   val result = finalizeVectorSerialization("Vector4f", debugInfo, this.destructureToString())
   println(result)
@@ -131,6 +136,7 @@ fun Vector4f.print(debugInfo: String? = null) {
 fun Vector2fc.destructure(): Array<Float> {
   return arrayOf(this.x(), this.y())
 }
+
 fun Vector2ic.destructure(): Array<Int> {
   return arrayOf(this.x(), this.y())
 }
@@ -138,6 +144,7 @@ fun Vector2ic.destructure(): Array<Int> {
 fun Vector3fc.destructure(): Array<Float> {
   return arrayOf(this.x(), this.y(), this.z())
 }
+
 fun Vector3ic.destructure(): Array<Int> {
   return arrayOf(this.x(), this.y(), this.z())
 }
@@ -145,6 +152,7 @@ fun Vector3ic.destructure(): Array<Int> {
 fun Vector4fc.destructure(): Array<Float> {
   return arrayOf(this.x(), this.y(), this.z(), this.w())
 }
+
 fun Vector4ic.destructure(): Array<Int> {
   return arrayOf(this.x(), this.y(), this.z(), this.w())
 }
@@ -152,6 +160,7 @@ fun Vector4ic.destructure(): Array<Int> {
 fun Vector2fc.toArray(): Array<Float> {
   return this.destructure()
 }
+
 fun Vector2ic.toArray(): Array<Int> {
   return this.destructure()
 }
@@ -159,6 +168,7 @@ fun Vector2ic.toArray(): Array<Int> {
 fun Vector3fc.toArray(): Array<Float> {
   return this.destructure()
 }
+
 fun Vector3ic.toArray(): Array<Int> {
   return this.destructure()
 }
@@ -166,6 +176,7 @@ fun Vector3ic.toArray(): Array<Int> {
 fun Vector4fc.toArray(): Array<Float> {
   return this.destructure()
 }
+
 fun Vector4ic.toArray(): Array<Int> {
   return this.destructure()
 }

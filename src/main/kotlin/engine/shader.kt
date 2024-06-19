@@ -1,5 +1,6 @@
 package engine
 
+import engine.file_helpers.getFileString
 import org.joml.Matrix4fc
 import org.joml.Vector2fc
 import org.joml.Vector3fc
@@ -139,6 +140,7 @@ object shader {
 }
 
 private class ShaderObject {
+
   val name: String
   val programID: Int
   val uniforms = HashMap<String, Int>()

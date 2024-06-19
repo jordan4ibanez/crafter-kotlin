@@ -3,7 +3,8 @@ package engine.block
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeType
-import engine.*
+import engine.file_helpers.*
+import engine.worldAtlas
 import java.util.concurrent.ConcurrentHashMap
 
 /*
@@ -339,7 +340,6 @@ object block {
 
   fun get(name: String): BlockDefinition = get(getID(name))
 
-
   // and these are two mini exception factory helpers.
   private fun invalidThrow(name: String, thing: String): RuntimeException {
     return RuntimeException("Tried to get invalid block $name, component $thing")
@@ -348,9 +348,7 @@ object block {
   private fun invalidThrow(id: Int, thing: String): RuntimeException {
     return RuntimeException("Tried to get invalid block id $id, component $thing")
   }
-
 }
-
 
 @JvmRecord
 data class BlockDefinition(
@@ -417,7 +415,6 @@ data class BlockDefinition(
     return result
   }
 }
-
 
 /**
  * This object's soul purpose is to parse and map the block_cache.json file for the BlockDefinitionContainer to get

@@ -1,21 +1,15 @@
 package engine
 
-import org.joml.Vector2i
-import org.joml.Vector2ic
-import org.joml.Vector4f
-import org.joml.Vector4fc
-import org.joml.Vector4i
-import org.joml.Vector4ic
+import engine.joml_bolt_ons.destructure
+import org.joml.*
 import org.lwjgl.BufferUtils.createByteBuffer
 import org.lwjgl.stb.STBImage.stbi_image_free
 import org.lwjgl.stb.STBImage.stbi_load
 import org.lwjgl.stb.STBImageWrite.stbi_write_png
 import org.lwjgl.system.MemoryStack
 import java.nio.ByteBuffer
-import java.util.SortedSet
-import java.util.TreeSet
+import java.util.*
 import java.util.UUID.randomUUID
-
 
 
 val worldAtlas = Packer("worldAtlas")
@@ -34,6 +28,7 @@ private const val CHANNELS = 4
 private const val UNDER_PROVISION = 0.00001f;
 
 private class Canvas {
+
   val uuid: String
   val position = Vector2i()
   var data: ByteBuffer = createByteBuffer(0)
@@ -116,7 +111,7 @@ private class Canvas {
   }
 
   private fun collisionDetect(x: Int, y: Int) {
-    if (x < 0 || x >= size.x() || y < 0 ||y >= size.y()) {
+    if (x < 0 || x >= size.x() || y < 0 || y >= size.y()) {
       throw RuntimeException("Canvas: Tried to access out of bounds. $x, $y | Limit: ${size.x()}, ${size.y()}")
     }
   }
@@ -124,7 +119,7 @@ private class Canvas {
   private fun colorCheck(color: Vector4i) {
     color.destructure().zip(arrayOf("red", "blue", "green", "alpha")).forEach {
       val (value, name) = it
-      if (value < 0 ||value > 255) {
+      if (value < 0 || value > 255) {
         throw RuntimeException("Canvas: $name out of bounds. $value. Limit: 0-255")
       }
     }
@@ -136,13 +131,14 @@ private class Canvas {
 }
 
 class Packer {
+
   private val padding = 1
-  private val edgeColor = Vector4i(255,0,0,255)
-  private val blankSpaceColor = Vector4i(0,0,0,0)
+  private val edgeColor = Vector4i(255, 0, 0, 255)
+  private val blankSpaceColor = Vector4i(0, 0, 0, 0)
   private val showDebugEdge = false
   private val expansionAmount = 16
   private val size = Vector2i(16, 16)
-  private var maxSize = Vector2i(0,0)
+  private var maxSize = Vector2i(0, 0)
   private val textures = HashMap<String, Canvas>()
   private val canvas: Canvas
   private val availableX: SortedSet<Int> = TreeSet()
@@ -190,8 +186,21 @@ class Packer {
     )
   }
 
-  fun getQuadOf(fileName: String, xLeftTrim: Float, xRightTrim: Float, yTopTrim: Float, yBottomTrim: Float): FloatArray {
-    arrayOf("xLeftTrim", "xRightTrim", "yTopTrim", "yBottomTrim").zip(arrayOf(xLeftTrim, xRightTrim, yTopTrim, yBottomTrim)).forEach {
+  fun getQuadOf(
+    fileName: String,
+    xLeftTrim: Float,
+    xRightTrim: Float,
+    yTopTrim: Float,
+    yBottomTrim: Float
+  ): FloatArray {
+    arrayOf("xLeftTrim", "xRightTrim", "yTopTrim", "yBottomTrim").zip(
+      arrayOf(
+        xLeftTrim,
+        xRightTrim,
+        yTopTrim,
+        yBottomTrim
+      )
+    ).forEach {
       val (name, value) = it
       if (value > 1 || value < 0) throw RuntimeException("Packer: Value for $name out of bounds. 0-1. Got: $value")
     }
@@ -204,10 +213,10 @@ class Packer {
     val adjustedYBottomTrim = (yBottomTrim * o.w()) + o.y() + o.w();
 
     return floatArrayOf(
-      adjustedXLeftTrim,   adjustedYTopTrim,
-      adjustedXLeftTrim,   adjustedYBottomTrim,
-      adjustedXRightTrim , adjustedYBottomTrim,
-      adjustedXRightTrim,  adjustedYTopTrim
+      adjustedXLeftTrim, adjustedYTopTrim,
+      adjustedXLeftTrim, adjustedYBottomTrim,
+      adjustedXRightTrim, adjustedYBottomTrim,
+      adjustedXRightTrim, adjustedYTopTrim
     )
   }
 
@@ -221,7 +230,7 @@ class Packer {
     availableX.add(padding)
     availableY.add(padding)
     size.set(16, 16)
-    maxSize.set(0,0)
+    maxSize.set(0, 0)
   }
 
   fun add(name: String, fileLocation: String) {
@@ -244,7 +253,7 @@ class Packer {
   private fun pack() {
     textures.values.forEach { textureCanvas ->
 //      println("packing ${textureCanvas.name}  ======================")
-      while(!tetrisPack(textureCanvas)) {
+      while (!tetrisPack(textureCanvas)) {
         val currentSize = canvas.size
         canvas.resize(currentSize.x + expansionAmount, currentSize.y + expansionAmount)
       }
@@ -269,13 +278,13 @@ class Packer {
 
       for (x in 0 until sizeX) {
         for (y in 0 until sizeY) {
-          val color = textureCanvas.getPixel(x,y)
+          val color = textureCanvas.getPixel(x, y)
           canvas.setPixel(x + posX, y + posY, color)
         }
       }
     }
 
-    textures.values.forEach {textureCanvas ->
+    textures.values.forEach { textureCanvas ->
       textureCanvas.destroy()
     }
   }
@@ -294,7 +303,7 @@ class Packer {
     var bestX = padding
     var bestY = padding
 
-    run exit@ {
+    run exit@{
       availableY.forEach yLoop@{ hmm ->
         val y = hmm!!
 
@@ -315,7 +324,7 @@ class Packer {
 
           var failed = false
 
-          textures.values.forEach nextObject@ { other ->
+          textures.values.forEach nextObject@{ other ->
             if (other.uuid == textureCanvas.uuid) return@nextObject
 
             val otherX = other.position.x
@@ -327,7 +336,8 @@ class Packer {
             if (other.packed && otherX + otherWidth + padding > x &&
               otherX < x + thisWidth + padding &&
               otherY + otherHeight + padding > y &&
-              otherY < y + thisHeight + padding) {
+              otherY < y + thisHeight + padding
+            ) {
 
 //              println("${textureCanvas.uuid} collided with ${other.uuid}")
 

@@ -1,4 +1,4 @@
-package engine
+package engine.gl
 
 import engine.camera.camera
 import org.lwjgl.opengl.GL.createCapabilities

@@ -1,7 +1,7 @@
 package engine.collision_box
 
 import engine.camera.camera
-import engine.mesh
+import engine.model.mesh
 import org.joml.Vector2fc
 import org.joml.Vector3f
 import org.joml.Vector3fc

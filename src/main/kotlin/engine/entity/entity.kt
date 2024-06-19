@@ -1,7 +1,10 @@
-package engine
+package engine.entity
 
 import engine.collision.collision
 import engine.collision_box.collisionBox
+import engine.joml_bolt_ons.print
+import engine.tick
+import engine.world
 import org.joml.Vector2f
 import org.joml.Vector2fc
 import org.joml.Vector3f

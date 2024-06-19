@@ -1,6 +1,7 @@
-package engine
+package engine.keyboard
 
 object keyboard {
+
   internal var lastKey: Char = '\u0000'
 
   private val currentMap = HashMap<Int, Boolean>()
@@ -61,5 +62,4 @@ object keyboard {
       return false
     }
   }
-
 }

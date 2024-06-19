@@ -1,5 +1,9 @@
-package engine
+package engine.glfw
 
+import engine.joml_bolt_ons.destructure
+import engine.keyboard.keyboard
+import engine.mouse
+import engine.window
 import org.joml.Vector2i
 import org.joml.Vector2ic
 import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
@@ -12,7 +16,7 @@ object glfw {
 
   // This object is abstracting away complex implementation details away from the window object.
 
-  private val monitorSize = Vector2i(0,0)
+  private val monitorSize = Vector2i(0, 0)
 
   fun initialize() {
 
@@ -67,7 +71,6 @@ object glfw {
     if (glfwRawMouseMotionSupported()) {
       glfwSetInputMode(window.pointer, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE)
     }
-
   }
 
   private fun constructWindow() {
@@ -86,7 +89,6 @@ object glfw {
 
     window.setPosition(windowPosX, windowPosY)
   }
-
 
 
   private fun constructCallbacks() {
@@ -134,7 +136,6 @@ object glfw {
         mouse.position.set(-1f, -1f)
       }
     }
-
   }
 
   fun getMonitorSize(): Vector2ic {
@@ -149,5 +150,4 @@ object glfw {
     glfwTerminate()
     glfwSetErrorCallback(null)?.free()
   }
-
 }

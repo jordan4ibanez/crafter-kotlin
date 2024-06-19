@@ -1,4 +1,4 @@
-package engine
+package engine.helpers
 
 // Thanks, kimapr! This will be quite useful. https://stackoverflow.com/a/34608552
 inline fun <T> Array<T>.mapInPlace(mutator: (T) -> T) {

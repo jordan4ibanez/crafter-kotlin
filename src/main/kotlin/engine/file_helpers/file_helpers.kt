@@ -1,7 +1,6 @@
-package engine
+package engine.file_helpers
 
 import java.io.File
-import javax.xml.stream.Location
 
 //note: A few file helper functions.
 

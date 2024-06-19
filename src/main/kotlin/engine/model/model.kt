@@ -1,4 +1,4 @@
-package engine
+package engine.model
 
 import org.joml.Vector2f
 import org.joml.Vector2fc
@@ -25,25 +25,60 @@ object mesh {
   private val indicesVboID = HashMap<Int, Int>()
   private val indicesCount = HashMap<Int, Int>()
   private val textureID = HashMap<Int, Int>()
+
   //? note: Optionals.
   private val colorsID = HashMap<Int, Int>()
   private val bonesID = HashMap<Int, Int>()
 
   // note: 3D and 2D are explicit here to make code more readable.
 
-  fun create3D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String): Int =
+  fun create3D(
+    name: String,
+    positions: FloatArray,
+    textureCoords: FloatArray,
+    indices: IntArray,
+    textureName: String
+  ): Int =
     internalCreate(name, positions, textureCoords, indices, textureName, true)
 
-  fun create3D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, light: FloatArray, textureName: String): Int =
+  fun create3D(
+    name: String,
+    positions: FloatArray,
+    textureCoords: FloatArray,
+    indices: IntArray,
+    light: FloatArray,
+    textureName: String
+  ): Int =
     internalCreate(name, positions, textureCoords, indices, light, textureName, true)
 
-  fun create2D(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String): Int =
+  fun create2D(
+    name: String,
+    positions: FloatArray,
+    textureCoords: FloatArray,
+    indices: IntArray,
+    textureName: String
+  ): Int =
     internalCreate(name, positions, textureCoords, indices, textureName, false)
 
-  private fun internalCreate(name: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, textureName: String, is3D: Boolean): Int =
+  private fun internalCreate(
+    name: String,
+    positions: FloatArray,
+    textureCoords: FloatArray,
+    indices: IntArray,
+    textureName: String,
+    is3D: Boolean
+  ): Int =
     internalCreate(name, positions, textureCoords, indices, FloatArray(0), textureName, is3D)
 
-  private fun internalCreate(newName: String, positions: FloatArray, textureCoords: FloatArray, indices: IntArray, colors: FloatArray, textureName: String, is3D: Boolean): Int {
+  private fun internalCreate(
+    newName: String,
+    positions: FloatArray,
+    textureCoords: FloatArray,
+    indices: IntArray,
+    colors: FloatArray,
+    textureName: String,
+    is3D: Boolean
+  ): Int {
     val newID: Int
     val newPositionsID: Int
     val newTextureCoordsID: Int
@@ -54,16 +89,20 @@ object mesh {
     val newColorsID: Int
 //    val newBonesID: Int
     // Check texture existence before continuing.
-    try { newTextureID = texture.getID(textureName) } catch (e: RuntimeException) { throw RuntimeException("mesh: Tried to use nonexistent texture. $textureName") }
+    try {
+      newTextureID = texture.getID(textureName)
+    } catch (e: RuntimeException) {
+      throw RuntimeException("mesh: Tried to use nonexistent texture. $textureName")
+    }
     newID = glGenVertexArrays()
     // GL State machine Object assignment begin.
     glBindVertexArray(newID)
     // Store the width of the components. Vector3f or Vector2f, basically.
     val componentWidth = if (is3D) 3 else 2
     // Required.
-    newPositionsID     = uploadFloatArray(positions, 0, componentWidth)
+    newPositionsID = uploadFloatArray(positions, 0, componentWidth)
     newTextureCoordsID = uploadFloatArray(textureCoords, 1, 2)
-    newIndicesVboID    = uploadIndices(indices)
+    newIndicesVboID = uploadIndices(indices)
     // Optionals.
     newColorsID = if (colors.isNotEmpty()) uploadFloatArray(colors, 2, 4) else 0
     // All required data has been created. Store.
@@ -85,6 +124,7 @@ object mesh {
   fun draw(id: Int) {
     drawMesh(id)
   }
+
   fun draw(name: String) {
     drawMesh(getID(name))
   }
@@ -92,20 +132,31 @@ object mesh {
   fun drawLines(id: Int) {
     drawMeshLineMode(id)
   }
+
   fun drawLines(name: String) {
     drawMeshLineMode(getID(name))
   }
 
   fun destroy(id: Int) {
-    try { destroyMesh(id) } catch (e: Exception) { throw RuntimeException("mesh: Tried to destroy non-existent mesh. $id\n$e") }
+    try {
+      destroyMesh(id)
+    } catch (e: Exception) {
+      throw RuntimeException("mesh: Tried to destroy non-existent mesh. $id\n$e")
+    }
   }
+
   fun destroy(name: String) {
-    try { destroyMesh(getID(name)) } catch (e: Exception) { throw RuntimeException("mesh: Tried to destroy non-existent mesh. $name\n$e") }
+    try {
+      destroyMesh(getID(name))
+    } catch (e: Exception) {
+      throw RuntimeException("mesh: Tried to destroy non-existent mesh. $name\n$e")
+    }
   }
 
   fun exists(id: Int): Boolean {
     return name.containsKey(id)
   }
+
   fun exists(name: String): Boolean {
     return id.containsKey(name)
   }
@@ -113,6 +164,7 @@ object mesh {
   fun getID(name: String): Int {
     return id[name] ?: throwNonExistent("ID", name)
   }
+
   fun getName(id: Int): String {
     return name[id] ?: throw RuntimeException("mesh: Tried to get non-existent name. $id")
   }
@@ -120,6 +172,7 @@ object mesh {
   fun getPositionsID(id: Int): Int {
     return positionsID[id] ?: throwNonExistent("positions", id)
   }
+
   fun getPositionsID(name: String): Int {
     return positionsID[getID(name)] ?: throwNonExistent("positions", name)
   }
@@ -127,6 +180,7 @@ object mesh {
   fun getTextureCoordsID(id: Int): Int {
     return textureCoordsID[id] ?: throwNonExistent("texture coords", id)
   }
+
   fun getTextureCoordsID(name: String): Int {
     return textureCoordsID[getID(name)] ?: throwNonExistent("texture coords", name)
   }
@@ -134,6 +188,7 @@ object mesh {
   fun getIndicesVboID(id: Int): Int {
     return indicesVboID[id] ?: throwNonExistent("indices VBO", id)
   }
+
   fun getIndicesVboID(name: String): Int {
     return indicesVboID[getID(name)] ?: throwNonExistent("indices VBO", name)
   }
@@ -141,6 +196,7 @@ object mesh {
   fun getIndicesCount(id: Int): Int {
     return indicesCount[id] ?: throwNonExistent("indices count", id)
   }
+
   fun getIndicesCount(name: String): Int {
     return indicesCount[getID(name)] ?: throwNonExistent("indices count", name)
   }
@@ -148,6 +204,7 @@ object mesh {
   fun getTextureID(id: Int): Int {
     return textureID[id] ?: throwNonExistent("texture ID", id)
   }
+
   fun getTextureID(name: String): Int {
     return textureID[getID(name)] ?: throwNonExistent("texture ID", name)
   }
@@ -155,6 +212,7 @@ object mesh {
   fun colorsExist(id: Int): Boolean {
     return colorsID.containsKey(id)
   }
+
   fun colorsExist(name: String): Boolean {
     return colorsID.containsKey(getID(name))
   }
@@ -162,6 +220,7 @@ object mesh {
   fun getColorsID(id: Int): Int {
     return colorsID[id] ?: throwNonExistent("colors ID", id)
   }
+
   fun getColorsID(name: String): Int {
     return colorsID[getID(name)] ?: throwNonExistent("colors ID", name)
   }
@@ -169,6 +228,7 @@ object mesh {
   fun bonesExist(id: Int): Boolean {
     return bonesID.containsKey(id)
   }
+
   fun bonesExist(name: String): Boolean {
     return bonesID.containsKey(getID(name))
   }
@@ -176,6 +236,7 @@ object mesh {
   fun getBonesID(id: Int): Int {
     return bonesID[id] ?: throwNonExistent("bones ID", id)
   }
+
   fun getBonesID(name: String): Int {
     return bonesID[getID(name)] ?: throwNonExistent("bones ID", name)
   }
@@ -187,13 +248,14 @@ object mesh {
   fun swapTexture(id: Int, newTextureName: String) {
     textureID[id] = texture.getID(newTextureName)
   }
+
   fun swapTexture(name: String, newTextureName: String) =
     swapTexture(getID(name), newTextureName)
 
   fun destroyAll() {
     //? Note: This avoid a concurrent modification exception. We have to collect IDs, then modify the container.
     val collector = ArrayList<Int>()
-    id.values.forEach{ collector.add(it) }
+    id.values.forEach { collector.add(it) }
     collector.forEach { gottenID: Int ->
       // Debug info for now.
 //      println("mesh: Destroying $gottenID | ${getName(gottenID)}")
@@ -349,13 +411,12 @@ object mesh {
     throw RuntimeException("mesh: Tried to get non-existent $thing. $name")
     return -1
   }
+
   private fun throwNonExistent(thing: String, id: Int): Int {
     throw RuntimeException("mesh: Tried to get non-existent $thing. $id")
     return -1
   }
-
 }
-
 
 //note: Texture operations.
 
@@ -402,6 +463,7 @@ object texture {
   fun exists(id: Int): Boolean {
     return name.containsKey(id)
   }
+
   fun exists(name: String): Boolean {
     return id.containsKey(name)
   }
@@ -409,6 +471,7 @@ object texture {
   fun destroy(id: Int) {
     safeDestroy(id)
   }
+
   fun destroy(name: String) {
     safeDestroy(getID(name))
   }
@@ -416,6 +479,7 @@ object texture {
   fun getID(name: String): Int {
     return id[name] ?: throw RuntimeException("texture: Tried to get non-existent ID. $name")
   }
+
   fun getName(id: Int): String {
     return name[id] ?: throw RuntimeException("texture: Tried to get non-existent name. $id")
   }
@@ -424,6 +488,7 @@ object texture {
   fun getSize(id: Int): Vector2ic {
     return size[id] ?: throw RuntimeException("texture: Tried to get non-existent size. $id")
   }
+
   fun getSize(name: String): Vector2ic {
     return size[getID(name)] ?: throw RuntimeException("texture: Tried to get non-existent size. $name")
   }
@@ -431,13 +496,16 @@ object texture {
   fun getFloatingSize(id: Int): Vector2fc {
     return floatingSize[id] ?: throw RuntimeException("texture: Tried to get non-existent floating size. $id")
   }
+
   fun getFloatingSize(name: String): Vector2fc {
-    return floatingSize[getID(name)] ?: throw RuntimeException("texture: Tried to get non-existent floating size. $name")
+    return floatingSize[getID(name)]
+      ?: throw RuntimeException("texture: Tried to get non-existent floating size. $name")
   }
 
   fun getChannels(id: Int): Int {
     return channels[id] ?: throw RuntimeException("texture: Tried to get non-existent channels. $id")
   }
+
   fun getChannels(name: String): Int {
     return channels[getID(name)] ?: throw RuntimeException("texture: Tried to get non-existent channels. $name")
   }
@@ -489,8 +557,8 @@ object texture {
     //? note: Returns texture ID.
     // Creates a GL texture from a file location with a custom name.
     val (buffer, width, height, newChannels) = constructTextureFromFile(fileLocation)
-    val newSize = Vector2i(width,height)
-    val newFloatingSize = Vector2f(width.toFloat(),height.toFloat())
+    val newSize = Vector2i(width, height)
+    val newFloatingSize = Vector2f(width.toFloat(), height.toFloat())
     val newID = uploadTextureBuffer(newName, newSize, buffer)
     destroyTextureBuffer(buffer)
     // All required data has been created. Store.
@@ -520,6 +588,7 @@ object texture {
   private fun checkDuplicate(name: String) {
     if (id.contains(name)) throw RuntimeException("texture: Attempted to store duplicate of $name")
   }
+
   private fun checkDuplicate(id: Int) {
     if (name.containsKey(id)) throw RuntimeException("texture: Attempted to store duplicate of $id")
   }
@@ -535,7 +604,8 @@ object texture {
     val stackHeight: IntBuffer = stack.mallocInt(1)
     val stackChannels: IntBuffer = stack.mallocInt(1)
 
-    val buffer: ByteBuffer = stbi_load(fileLocation, stackWidth, stackHeight, stackChannels, 4) ?: throw RuntimeException("STBI: Failed to load texture. $fileLocation")
+    val buffer: ByteBuffer = stbi_load(fileLocation, stackWidth, stackHeight, stackChannels, 4)
+      ?: throw RuntimeException("STBI: Failed to load texture. $fileLocation")
     val width = stackWidth.get(0)
     val height = stackWidth.get(0)
     val channels = stackChannels.get(0)
@@ -558,7 +628,7 @@ object texture {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
     // Border color is nothing - This is a GL REQUIRED float
-    val borderColor = floatArrayOf(0f,0f,0f,0f)
+    val borderColor = floatArrayOf(0f, 0f, 0f, 0f)
 
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 

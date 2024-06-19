@@ -1,4 +1,4 @@
-package engine
+package engine.constants
 
 import org.joml.Math
 
