@@ -5,7 +5,7 @@ package utility.option
  *
  * @param T is the type of the data contained in the Option.
  */
-abstract class Option<T>(t: T?) {
+abstract class Option<T> protected constructor(t: T?) {
 
   private var value: T? = t
 
