@@ -1,18 +1,40 @@
 package utility.result
 
 import org.junit.Test
+import utility.option.None
+import utility.option.Option
+import utility.option.Some
 
 class ResultTest {
 
   @Test
   fun cool() {
-    fun blah(): Result<Int, Error> {
-      if (Math.random() > 0.5) {
-        return Ok(1)
+    fun blah(): Result<Int, Throwable> {
+      return if (Math.random() > 0.5) {
+        Ok(1)
       } else {
-        return Err(Error("oops"))
+        Err(NullPointerException("oops"))
       }
     }
+
+    var x: Option<Int> = None()
+
+    blah()
+      .withOk {
+        x = Some(1)
+      }
+      .withErr {
+        println(it.message)
+        println("oops")
+        x = Some(0)
+      }
+
+    x.withSome {
+        println(it + 1)
+      }
+      .withNone {
+        println("you done goofed")
+      }
 
     fun nah(): Result<Int, RuntimeException> {
       return Err(RuntimeException("oops"))
