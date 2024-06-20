@@ -1,6 +1,6 @@
 package utility.result
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertFails
 
 

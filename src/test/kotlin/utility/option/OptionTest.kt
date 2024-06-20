@@ -1,6 +1,6 @@
 package utility.option
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class OptionTest {
 
