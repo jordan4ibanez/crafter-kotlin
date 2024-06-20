@@ -10,6 +10,7 @@ Discord: https://discord.gg/mW5CDTbEzK
 - Right now I'm in the middle of cleaning up this disaster.
 - I have taken a long break from Kotlin and JDK dev to focus on looking at other programming languages,
   it's going to take me a bit to get back into my flow.
+- Unit testing for some reason is broken with Gradle. You'll have to run it in IntelliJ.
 
 ## Current goals:
 
