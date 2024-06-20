@@ -1,0 +1,98 @@
+import org.gradle.internal.os.OperatingSystem
+
+plugins {
+  id "groovy"
+  id "org.jetbrains.kotlin.jvm" version "1.9.20"
+  id "application"
+}
+
+final String kotlinVersion = "1.9.20"
+
+project.ext.lwjglVersion = "3.3.3"
+project.ext.jomlVersion = "1.10.5"
+
+switch (OperatingSystem.current()) {
+  case OperatingSystem.LINUX: project.ext.lwjglNatives = "natives-linux"; break
+  case OperatingSystem.MAC_OS: project.ext.lwjglNatives = "natives-macos"; break
+  case OperatingSystem.WINDOWS: project.ext.lwjglNatives = "natives-windows"; break
+}
+
+//final group = "org.example"
+//final version = "1.0-SNAPSHOT"
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+
+  testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
+//     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:1.9.10"
+
+  runtimeOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
+
+  // JS scripting language
+//  implementation "org.openjdk.nashorn:nashorn-core:15.4"
+
+  // groovy
+  implementation 'org.apache.groovy:groovy-all:5.0.0-alpha-2'
+
+  // Kotlin Script
+//  implementation("org.jetbrains.kotlin:kotlin-scripting-jvm:1.9.10")
+//  runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:1.9.10")
+//  implementation 'org.jetbrains.kotlin:kotlin-scripting-common'
+//  implementation 'org.jetbrains.kotlin:kotlin-scripting-jvm'
+//  implementation 'org.jetbrains.kotlin:kotlin-scripting-dependencies'
+//  implementation 'org.jetbrains.kotlin:kotlin-scripting-common'
+//  implementation 'org.jetbrains.kotlin:kotlin-scripting-jvm'
+//  implementation 'org.jetbrains.kotlin:kotlin-scripting-jvm-host'
+
+  // Apache Ignite database
+  implementation 'org.apache.ignite:ignite-core:2.15.0'
+
+  // JSON helper
+  implementation 'com.fasterxml.jackson.core:jackson-core:2.14.2'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+  implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.2'
+
+  implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+  implementation "org.lwjgl:lwjgl"
+  implementation "org.lwjgl:lwjgl-assimp"
+  implementation "org.lwjgl:lwjgl-glfw"
+  implementation "org.lwjgl:lwjgl-openal"
+  implementation "org.lwjgl:lwjgl-opengl"
+  implementation "org.lwjgl:lwjgl-stb"
+
+  runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
+  implementation "org.joml:joml:$jomlVersion"
+}
+
+tasks.test {
+  useJUnitPlatform()
+}
+
+// Thanks, chaottic!
+sourceSets {
+  main {
+    java {
+      srcDir("mods")
+      exclude("*")
+    }
+  }
+}
+
+kotlin {
+  jvmToolchain(20)
+}
+
+application {
+  mainClass.set("MainKt")
+}
