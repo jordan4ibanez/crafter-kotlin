@@ -2,11 +2,11 @@ import org.gradle.internal.os.OperatingSystem
 
 plugins {
   id "groovy"
-  id "org.jetbrains.kotlin.jvm" version "1.9.20"
+  id "org.jetbrains.kotlin.jvm" version "2.0.0"
   id "application"
 }
 
-final String kotlinVersion = "1.9.20"
+final String kotlinVersion = "2.0.0"
 
 project.ext.lwjglVersion = "3.3.3"
 project.ext.jomlVersion = "1.10.5"
@@ -27,35 +27,20 @@ repositories {
 dependencies {
 
   testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
-//     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:1.9.10"
 
   runtimeOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
 
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
-
-  // JS scripting language
-//  implementation "org.openjdk.nashorn:nashorn-core:15.4"
-
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1"
   // groovy
-  implementation 'org.apache.groovy:groovy-all:5.0.0-alpha-2'
-
-  // Kotlin Script
-//  implementation("org.jetbrains.kotlin:kotlin-scripting-jvm:1.9.10")
-//  runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:1.9.10")
-//  implementation 'org.jetbrains.kotlin:kotlin-scripting-common'
-//  implementation 'org.jetbrains.kotlin:kotlin-scripting-jvm'
-//  implementation 'org.jetbrains.kotlin:kotlin-scripting-dependencies'
-//  implementation 'org.jetbrains.kotlin:kotlin-scripting-common'
-//  implementation 'org.jetbrains.kotlin:kotlin-scripting-jvm'
-//  implementation 'org.jetbrains.kotlin:kotlin-scripting-jvm-host'
+  implementation 'org.codehaus.groovy:groovy-all:3.0.21'
 
   // Apache Ignite database
-  implementation 'org.apache.ignite:ignite-core:2.15.0'
+  implementation 'org.apache.ignite:ignite-core:2.16.0'
 
   // JSON helper
-  implementation 'com.fasterxml.jackson.core:jackson-core:2.14.2'
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
-  implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.2'
+  implementation 'com.fasterxml.jackson.core:jackson-core:2.17.1'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
+  implementation 'com.fasterxml.jackson.core:jackson-annotations:2.17.1'
 
   implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
@@ -73,10 +58,18 @@ dependencies {
   runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
   implementation "org.joml:joml:$jomlVersion"
+
+  // Testing
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
 }
 
 tasks.test {
   useJUnitPlatform()
+  dependsOn 'cleanTest'
+  testLogging {
+    events "passed", "skipped", "failed"
+  }
 }
 
 // Thanks, chaottic!
@@ -90,7 +83,7 @@ sourceSets {
 }
 
 kotlin {
-  jvmToolchain(20)
+  jvmToolchain(22)
 }
 
 application {
