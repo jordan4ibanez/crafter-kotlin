@@ -6,9 +6,8 @@ repositories {
 }
 
 plugins {
-  id("java-library")
-  kotlin("jvm") version "2.0.0"
   id("application")
+  kotlin("jvm") version "2.0.0"
 }
 
 val lwjglVersion = "3.3.3"
@@ -22,6 +21,8 @@ val lwjglNatives = when (OperatingSystem.current()) {
 }
 
 dependencies {
+
+  implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.0")
 
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.0")
 
@@ -59,8 +60,15 @@ dependencies {
   implementation("org.joml:joml:$jomlVersion")
 
   runtimeOnly("org.jetbrains.kotlin:kotlin-reflect:2.0.0")
-  
-  testImplementation("org.jetbrains.kotlin:kotlin-test:2.0.0")
+
+  // Junit5 testing wasteland
+  //! This doesn't work
+//  testImplementation("org.jetbrains.kotlin:kotlin-test:2.0.0")
+//  testImplementation("org.jetbrains.kotlin:kotlin-test-junit:2.0.0")
+
+  testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+  testImplementation("org.junit.jupiter:junit-jupiter-engine")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 val kotlinVersion = "2.0.0"
@@ -74,6 +82,10 @@ val kotlinVersion = "2.0.0"
 //    events("passed")
 //  }
 //}
+
+tasks.withType<Test> {
+  useJUnitPlatform()
+}
 
 tasks.test {
   useJUnitPlatform()
@@ -93,17 +105,17 @@ sourceSets {
 //      exclude("*")
       srcDir("src")
     }
-    java {
-      srcDir("src")
-    }
+//    java {
+//      srcDir("src")
+//    }
   }
   test {
     kotlin {
       srcDir("test")
     }
-    java {
-      srcDir("test")
-    }
+//    java {
+//      srcDir("test")
+//    }
   }
 }
 
@@ -117,6 +129,14 @@ java {
 
 kotlin {
   jvmToolchain(22)
+  compilerOptions {
+    apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
+  }
+  testing {
+    dependencies {
+      implementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    }
+  }
 }
 
 application {
