@@ -12,6 +12,11 @@ class OptionTest {
   private val something = Some(1)
 
   @Test
+  fun introduction() {
+    println("=== Starting Option Test ===")
+  }
+
+  @Test
   fun unwrap() {
     // Nothing
     assertThrows<Error> {
