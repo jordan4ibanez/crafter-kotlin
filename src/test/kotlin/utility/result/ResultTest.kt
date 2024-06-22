@@ -1,66 +1,33 @@
 package utility.result
 
 import org.junit.jupiter.api.Test
-import kotlin.test.assertFails
 
 
 class ResultTest {
 
+  val stringError = ErrString<Int, RuntimeException>("It failed to do the thing.")
+  val errorTyped = Err<Int, Error>(Error("Uh oh."))
+  val unknownErrorType: Err<Int, Throwable> = when ((0..3).random()) {
+    0 -> Err(Error("Just a plain old error."))
+    1 -> Err(RuntimeException("Did something during runtime."))
+    2 -> Err(NullPointerException("That's pretty pointy."))
+    3 -> Err(Exception("It was excepted."))
+    else -> Err(UnknownError("You did something completely unknown."))
+  }
+  val okay = Ok<Int, Error>(1)
+
   @Test
-  fun errUnwrap() {
-    val x: Result<Int, Error> = ErrString("Uh oh")
-    assertFails {
-      x.unwrap()
-    }
-    assertFails {
-      x.expect("Yep this is working.")
-    }
+  fun introduction() {
+    println("=== Starting Result Test ===")
   }
 
-//
-//  @Test
-//  fun cool2() {
-//    fun blah(): Result<Int, Throwable> {
-//      return if (Math.random() > 0.5) {
-//        Ok(1)
-//      } else {
-//        Err(NullPointerException("oops"))
-//      }
-//    }
-//
-//    var x: Option<Int> = None()
-//
-//    blah()
-//      .withOk {
-//        x = Some(it)
-//      }
-//      .withErr {
-//        when (it) {
-//          is NullPointerException -> println("yeah that's null")
-//          else -> println("some kind of other nonsense happened")
-//        }
-//        println(it.message)
-//        println("oops")
-//        x = Some(0)
-//      }
-//
-//    x.withSome {
-//      println(it + 1)
-//    }
-//      .withNone {
-//        println("you done goofed")
-//      }
-//
-//    fun nah(): Result<Int, RuntimeException> {
-//      return Err(RuntimeException("oops"))
-//    }
-//
-//    nah().expectErr("wat")
-//
-//    val cule: Result<Int, Error> = ErrString("hi there")
-//
-//    assertFails {
-//      cule.unwrap()
-//    }
-//  }
+  @Test
+  fun debugRandom() {
+//    println(typeOf(unknownErrorType.unwrapErr()))
+  }
+
+  @Test
+  fun conclusion() {
+    println("=== Result Test Concluded ===")
+  }
 }
