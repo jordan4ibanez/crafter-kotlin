@@ -1,20 +1,27 @@
 package utility.result
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import utility.safety_exceptions.ExpectException
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 
 class ResultTest {
 
-  val stringError = ErrString<Int, RuntimeException>("It failed to do the thing.")
-  val errorTyped = Err<Int, Error>(Error("Uh oh."))
-  val unknownErrorType: Err<Int, Throwable> = when ((0..3).random()) {
+  // We want a few Err objects to do specific tests on.
+  private val stringError = Err<Int, RuntimeException>("It failed to do the thing.")
+  private val errorTyped = Err<Int, Error>(Error("Uh oh."))
+  private val unknownErrorType: Err<Int, Throwable> = when ((0..3).random()) {
     0 -> Err(Error("Just a plain old error."))
     1 -> Err(RuntimeException("Did something during runtime."))
     2 -> Err(NullPointerException("That's pretty pointy."))
     3 -> Err(Exception("It was excepted."))
     else -> Err(UnknownError("You did something completely unknown."))
   }
-  val okay = Ok<Int, Error>(1)
+
+  // Then we just want a simple Ok to ensure random things don't fail during runtime.
+  private val okay = Ok<Int, Error>(1)
 
   @Test
   fun introduction() {
@@ -22,8 +29,37 @@ class ResultTest {
   }
 
   @Test
+  fun isOkay() {
+    // String Error
+    assertFalse {
+      stringError.isOkay()
+    }
+  }
+
+  @Test
+  fun isErr() {
+    // String Error
+    assertTrue {
+      stringError.isErr()
+    }
+  }
+
+  @Test
+  fun expect() {
+    // String Error
+    assertThrows<ExpectException> {
+      stringError.expect("Should fail.")
+    }
+  }
+
+  @Test
   fun debugRandom() {
-//    println(typeOf(unknownErrorType.unwrapErr()))
+    when (unknownErrorType.unwrapErr()) {
+      is NullPointerException -> println("That's a null pointer.")
+      is RuntimeException -> println("That's a runtime.")
+      is Error -> println("That's an error.")
+      is Exception -> println("That's an exception.")
+    }
   }
 
   @Test
