@@ -1,5 +1,8 @@
 package utility.option
 
+import utility.safety_exceptions.ExpectException
+import utility.safety_exceptions.UnwrapException
+
 /**
  * An Option for when you are unsure if a data type will contain Some or None.
  *
@@ -12,18 +15,18 @@ abstract class Option<T> protected constructor(t: T?) {
   /**
    * Unwrap the Option.
    *
-   * @throws Error Will throw when you attempt to unwrap a None option.
+   * @throws Error Will throw UnwrapException when you attempt to unwrap a None option.
    */
   fun unwrap(): T {
     return when (this) {
       is Some -> with(this.value) {
         when (this) {
-          null -> throw Error("Unwrapped None Option. Did you check if it is Some?")
+          null -> throw UnwrapException("Unwrapped None Option. Did you check if it is Some?")
           else -> this // Smart cast into <T>.
         }
       }
 
-      else -> throw Error("Unwrapped None Option. Did you check if it is Some?")
+      else -> throw UnwrapException("Unwrapped None Option. Did you check if it is Some?")
     }
   }
 
@@ -32,12 +35,12 @@ abstract class Option<T> protected constructor(t: T?) {
    * As the name suggests, use this when you expectedly need data to be Some.
    *
    * @param errorMessage A custom Error message to be thrown if the Option is None.
-   * @throws Error Will throw your custom error message when you attempt to unwrap a None option.
+   * @throws Error Will throw ExpectException with your custom error message when you attempt to unwrap a None option.
    */
   fun expect(errorMessage: String): T {
     return when (this) {
       is Some -> this.unwrap() // Smart cast into <T>.
-      else -> throw Error(errorMessage)
+      else -> throw ExpectException(errorMessage)
     }
   }
 
