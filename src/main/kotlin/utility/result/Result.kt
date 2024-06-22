@@ -49,19 +49,20 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
    * @return If it is Err.
    */
   fun isErr(): Boolean {
-    return this is Err || this is ErrString
+    return this is Err
   }
 
   /**
    * Unwrap Result as Ok unchecked with custom error message if the Result is Err.
    *
-   * @throws Error Your custom error message.
+   * @throws Error Your custom error message as a Throwable cast into E.
    * @return Whatever data T represents.
    */
   fun expect(errorMessage: String): T {
+    @Suppress("UNCHECKED_CAST")
     return when (this) {
       is Ok -> this.ok.unwrap() // Smart cast into <T>.
-      else -> throw Error(errorMessage)
+      else -> throw Throwable(errorMessage) as E
     }
   }
 
@@ -151,15 +152,11 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
  */
 class Ok<T, E : Throwable>(ok: T) : Result<T, E>(ok, null)
 
-// We do not want to accidentally use this at all.
-@Suppress("ClassName")
-open class __ZBaseErr<T, E : Throwable> protected constructor(err: E) : Result<T, E>(null, err)
-
 /**
  * Err Result. Indicates failed function run. Contains Throwable type E.
  */
-class Err<T, E : Throwable>(err: E) : __ZBaseErr<T, E>(err)
+class Err<T, E : Throwable>(err: E) : Result<T, E>(null, err) {
 
-// Kotlin cannot understand that Throwable is the base class, so we must suppress this.
-@Suppress("UNCHECKED_CAST")
-class ErrString<T, E : Throwable>(err: String) : __ZBaseErr<T, E>(Throwable(err) as E)
+  @Suppress("UNCHECKED_CAST")
+  constructor(stringError: String) : this(Throwable(stringError) as E)
+}
