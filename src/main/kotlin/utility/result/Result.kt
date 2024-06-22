@@ -2,6 +2,7 @@ package utility.result
 
 import utility.option.Option
 import utility.option.undecided
+import utility.safety_exceptions.ExpectException
 
 /**
  * A Result is a type that represents 2 states:
@@ -53,20 +54,6 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
   }
 
   /**
-   * Unwrap Result as Ok unchecked with custom error message if the Result is Err.
-   *
-   * @throws Error Your custom error message as a Throwable cast into E.
-   * @return Whatever data T represents.
-   */
-  fun expect(errorMessage: String): T {
-    @Suppress("UNCHECKED_CAST")
-    return when (this) {
-      is Ok -> this.ok.unwrap() // Smart cast into <T>.
-      else -> throw Throwable(errorMessage) as E
-    }
-  }
-
-  /**
    * Unwrap Result as Ok unchecked. Will throw the Err held if the Result is an Err.
    *
    * @throws Throwable The held error if it is an Err.
@@ -76,6 +63,19 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
     return when (this) {
       is Ok -> this.ok.unwrap()// Smart cast into <T>.
       else -> throw this.err.unwrap()
+    }
+  }
+
+  /**
+   * Unwrap Result as Ok unchecked with custom error message if the Result is Err.
+   *
+   * @throws Error Your custom error message as a Throwable cast into E.
+   * @return Whatever data T represents.
+   */
+  fun expect(errorMessage: String): T {
+    return when (this) {
+      is Ok -> this.ok.unwrap() // Smart cast into <T>.
+      else -> throw ExpectException(errorMessage)
     }
   }
 
