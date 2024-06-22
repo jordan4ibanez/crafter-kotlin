@@ -28,7 +28,7 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
     val okNull = (ok == null)
     val errNull = (err == null)
     if (okNull == errNull) {
-      throw Error("A Result must have either an Ok or Err. Not both. Not neither.")
+      throw IllegalArgumentException("A Result must have either an Ok or Err. Not both. Not neither.")
     }
     this.ok = undecided(ok)
     this.err = undecided(err)
