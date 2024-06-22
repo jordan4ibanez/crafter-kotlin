@@ -49,7 +49,7 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
    * @return If it is Err.
    */
   fun isErr(): Boolean {
-    return this is Err
+    return this is Err || this is ErrString
   }
 
   /**
