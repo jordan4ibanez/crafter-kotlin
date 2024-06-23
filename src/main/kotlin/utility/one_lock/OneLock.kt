@@ -16,7 +16,7 @@ class OneLock<T> {
 
   private var data: Option<T> = None()
 
-  fun set(t: T): Result<Int, MultipleOneLockSetException> {
+  fun set(t: T): Result<Int> {
     return when (data) {
       is Some -> throw MultipleOneLockSetException("Cannot set value more than once.")
       else -> Ok(0)
