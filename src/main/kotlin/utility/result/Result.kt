@@ -13,7 +13,7 @@ import utility.safety_exceptions.UnwrapException
  * This has been written, so you can also late throw or intercept failure states in functions.
  * Makes the code base more durable.
  */
-abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
+abstract class Result<T, E : Exception> protected constructor(ok: T?, err: E?) {
 
   /**
    * Only exists in Ok variant of Result. Represents successful return.
@@ -110,12 +110,12 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
   /**
    * Unwrap Result as Err unchecked. Will throw the Ok held if the Result is an Ok.
    *
-   * @throws Throwable The held Ok if it is an Ok.
+   * @throws Throwable The held Ok if it is an Ok in an UnwrapException.
    * @return The throwable E represents.
    */
   fun unwrapErr(): E {
     return when (this) {
-      is Ok -> throw Error(this.ok.toString())
+      is Ok -> throw UnwrapException(this.ok.toString())
       else -> this.err.unwrap() // Smart cast into <E>.
     }
   }
@@ -123,7 +123,7 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
   /**
    * Unwrap Result as Err unchecked with custom error message if the Result is Ok.
    *
-   * @throws Error Your custom error message.
+   * @throws Error Your custom error message in ExpectException.
    * @return The Throwable E represents.
    */
   fun expectErr(errorMessage: String): E {
@@ -151,13 +151,13 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
 /**
  * Ok Result. Indicates successful function run. Contains type T.
  */
-class Ok<T, E : Throwable>(ok: T) : Result<T, E>(ok, null)
+class Ok<T, E : Exception>(ok: T) : Result<T, E>(ok, null)
 
 /**
  * Err Result. Indicates failed function run. Contains Throwable type E.
  */
-class Err<T, E : Throwable>(err: E) : Result<T, E>(null, err) {
+class Err<T, E : Exception>(err: E) : Result<T, E>(null, err) {
 
   @Suppress("UNCHECKED_CAST")
-  constructor(stringError: String) : this(Throwable(stringError) as E)
+  constructor(stringError: String) : this(Exception(stringError) as E)
 }
