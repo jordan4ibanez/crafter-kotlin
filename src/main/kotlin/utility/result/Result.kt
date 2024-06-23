@@ -3,6 +3,7 @@ package utility.result
 import utility.option.Option
 import utility.option.undecided
 import utility.safety_exceptions.ExpectException
+import utility.safety_exceptions.UnwrapException
 
 /**
  * A Result is a type that represents 2 states:
@@ -62,14 +63,14 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
   fun unwrap(): T {
     return when (this) {
       is Ok -> this.ok.unwrap()// Smart cast into <T>.
-      else -> throw this.err.unwrap()
+      else -> throw UnwrapException(this.err.unwrap().message.toString())
     }
   }
 
   /**
    * Unwrap Result as Ok unchecked with custom error message if the Result is Err.
    *
-   * @throws Error Your custom error message as a Throwable cast into E.
+   * @throws Error Your custom error message as an ExpectException.
    * @return Whatever data T represents.
    */
   fun expect(errorMessage: String): T {
@@ -87,8 +88,8 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
    */
   fun unwrapOrDefault(default: T): T {
     return when (this) {
-      is Ok -> default
-      else -> this.ok.unwrap() // Smart cast into <T>.
+      is Ok -> this.ok.unwrap() // Smart cast into <T>.
+      else -> default
     }
   }
 
@@ -114,7 +115,7 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
    */
   fun expectErr(errorMessage: String): E {
     return when (this) {
-      is Ok -> throw Error(errorMessage)
+      is Ok -> throw ExpectException(errorMessage)
       else -> this.err.unwrap() // Smart cast into <E>.
     }
   }
