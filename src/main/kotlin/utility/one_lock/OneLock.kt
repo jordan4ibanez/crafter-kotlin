@@ -3,9 +3,9 @@ package utility.one_lock
 import utility.option.None
 import utility.option.Option
 import utility.option.Some
-import utility.result.Err
 import utility.result.Ok
 import utility.result.Result
+import utility.safety_exceptions.MultipleOneLockSetException
 
 /**
  * OneLock is a container for holding data which can only be set once, or it throws an error.
@@ -16,9 +16,9 @@ class OneLock<T> {
 
   private var data: Option<T> = None()
 
-  fun set(t: T): Result<Int, Error> {
+  fun set(t: T): Result<Int, MultipleOneLockSetException> {
     return when (data) {
-      is Some -> Err(Error("Cannot set value more than once."))
+      is Some -> throw MultipleOneLockSetException("Cannot set value more than once.")
       else -> Ok(0)
     }
   }
