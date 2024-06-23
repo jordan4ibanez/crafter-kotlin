@@ -29,6 +29,10 @@ class ResultTest {
     assertFalse {
       error.isOkay()
     }
+    // Okay
+    assertTrue {
+      okay.isOkay()
+    }
   }
 
   @Test
@@ -36,6 +40,10 @@ class ResultTest {
     // Error
     assertTrue {
       error.isErr()
+    }
+    // Okay
+    assertFalse {
+      okay.isErr()
     }
   }
 
@@ -45,6 +53,10 @@ class ResultTest {
     assertThrows<UnwrapException> {
       error.unwrap()
     }
+    // Okay
+    assertDoesNotThrow {
+      okay.unwrap()
+    }
   }
 
   @Test
@@ -53,6 +65,10 @@ class ResultTest {
     assertThrows<ExpectException> {
       error.expect("Should fail.")
     }
+    // Okay
+    assertDoesNotThrow {
+      okay.expect("This should not fail.")
+    }
   }
 
   @Test
@@ -60,6 +76,10 @@ class ResultTest {
     // Error
     assertDoesNotThrow {
       assertEquals(100, error.unwrapOrDefault(100))
+    }
+    // Okay
+    assertDoesNotThrow {
+      assertEquals(1, okay.unwrapOrDefault(100))
     }
   }
 
@@ -71,19 +91,35 @@ class ResultTest {
         throw Error("This shouldn't work with an Error.")
       }
     }
+    // Okay
+    assertThrows<Error> {
+      okay.withOk {
+        throw Error("This should be throwing with an Okay")
+      }
+    }
   }
 
   @Test
   fun unwrapErr() {
+    // Error
     assertDoesNotThrow {
       error.unwrapErr()
+    }
+    // Okay
+    assertThrows<UnwrapException> {
+      okay.unwrapErr()
     }
   }
 
   @Test
   fun expectErr() {
+    // Error
     assertDoesNotThrow {
       error.expectErr("This should not throw.")
+    }
+    // Okay
+    assertThrows<ExpectException> {
+      okay.expectErr("This should throw.")
     }
   }
 
