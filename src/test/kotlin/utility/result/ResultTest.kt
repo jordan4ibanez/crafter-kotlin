@@ -25,7 +25,7 @@ class ResultTest {
 
   @Test
   fun isOkay() {
-    // String Error
+    // Error
     assertFalse {
       error.isOkay()
     }
@@ -33,7 +33,7 @@ class ResultTest {
 
   @Test
   fun isErr() {
-    // String Error
+    // Error
     assertTrue {
       error.isErr()
     }
@@ -41,7 +41,7 @@ class ResultTest {
 
   @Test
   fun unwrap() {
-    // String Error
+    // Error
     assertThrows<UnwrapException> {
       error.unwrap()
     }
@@ -49,7 +49,7 @@ class ResultTest {
 
   @Test
   fun expect() {
-    // String Error
+    // Error
     assertThrows<ExpectException> {
       error.expect("Should fail.")
     }
@@ -57,7 +57,7 @@ class ResultTest {
 
   @Test
   fun unwrapOrDefault() {
-    // String Error
+    // Error
     assertDoesNotThrow {
       assertEquals(100, error.unwrapOrDefault(100))
     }
@@ -65,10 +65,10 @@ class ResultTest {
 
   @Test
   fun withOk() {
-    // String Error
+    // Error
     assertDoesNotThrow {
       error.withOk {
-        throw Error("Shouldn't work")
+        throw Error("This shouldn't work with an Error.")
       }
     }
   }
@@ -79,7 +79,14 @@ class ResultTest {
       error.unwrapErr()
     }
   }
-  
+
+  @Test
+  fun expectErr() {
+    assertDoesNotThrow {
+      error.expectErr("This should not throw.")
+    }
+  }
+
   @Test
   fun conclusion() {
     println("=== Result Test Concluded ===")
