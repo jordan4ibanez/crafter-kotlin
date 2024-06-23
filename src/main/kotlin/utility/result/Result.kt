@@ -108,19 +108,6 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
   }
 
   /**
-   * Unwrap Result as Err unchecked with custom error message if the Result is Ok.
-   *
-   * @throws Error Your custom error message.
-   * @return The Throwable E represents.
-   */
-  fun expectErr(errorMessage: String): E {
-    return when (this) {
-      is Ok -> throw ExpectException(errorMessage)
-      else -> this.err.unwrap() // Smart cast into <E>.
-    }
-  }
-
-  /**
    * Unwrap Result as Err unchecked. Will throw the Ok held if the Result is an Ok.
    *
    * @throws Throwable The held Ok if it is an Ok.
@@ -129,6 +116,19 @@ abstract class Result<T, E : Throwable> protected constructor(ok: T?, err: E?) {
   fun unwrapErr(): E {
     return when (this) {
       is Ok -> throw Error(this.ok.toString())
+      else -> this.err.unwrap() // Smart cast into <E>.
+    }
+  }
+
+  /**
+   * Unwrap Result as Err unchecked with custom error message if the Result is Ok.
+   *
+   * @throws Error Your custom error message.
+   * @return The Throwable E represents.
+   */
+  fun expectErr(errorMessage: String): E {
+    return when (this) {
+      is Ok -> throw ExpectException(errorMessage)
       else -> this.err.unwrap() // Smart cast into <E>.
     }
   }
