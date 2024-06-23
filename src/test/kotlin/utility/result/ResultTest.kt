@@ -1,8 +1,11 @@
 package utility.result
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import utility.safety_exceptions.ExpectException
+import utility.safety_exceptions.UnwrapException
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -45,10 +48,36 @@ class ResultTest {
   }
 
   @Test
+  fun unwrap() {
+    // String Error
+    assertThrows<UnwrapException> {
+      stringError.unwrap()
+    }
+  }
+
+  @Test
   fun expect() {
     // String Error
     assertThrows<ExpectException> {
       stringError.expect("Should fail.")
+    }
+  }
+
+  @Test
+  fun unwrapOrDefault() {
+    // String Error
+    assertDoesNotThrow {
+      assertEquals(100, stringError.unwrapOrDefault(100))
+    }
+  }
+
+  @Test
+  fun withOk() {
+    // String Error
+    assertDoesNotThrow {
+      stringError.withOk {
+        throw Error("Shouldn't work")
+      }
     }
   }
 
