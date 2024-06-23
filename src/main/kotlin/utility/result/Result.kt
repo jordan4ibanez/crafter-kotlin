@@ -13,7 +13,7 @@ import utility.safety_exceptions.UnwrapException
  * This has been written, so you can also late throw or intercept failure states in functions.
  * Makes the code base more durable.
  */
-abstract class Result<T, E : Exception> protected constructor(ok: T?, err: E?) {
+abstract class Result<T> protected constructor(ok: T?, err: Error?) {
 
   /**
    * Only exists in Ok variant of Result. Represents successful return.
@@ -23,7 +23,7 @@ abstract class Result<T, E : Exception> protected constructor(ok: T?, err: E?) {
   /**
    * Only exists in Err variant of Result. Represents failed return via a Throwable.
    */
-  private val err: Option<E>
+  private val err: Option<Error>
 
   init {
     // Only one can be None. Only one can be Some.
@@ -100,7 +100,7 @@ abstract class Result<T, E : Exception> protected constructor(ok: T?, err: E?) {
    * @param f The function to run.
    * @return The Result for further chaining.
    */
-  fun withOk(f: (t: T) -> Unit): Result<T, E> {
+  fun withOk(f: (t: T) -> Unit): Result<T> {
     when (this) {
       is Ok -> f(this.ok.unwrap())
     }
@@ -111,12 +111,12 @@ abstract class Result<T, E : Exception> protected constructor(ok: T?, err: E?) {
    * Unwrap Result as Err unchecked. Will throw the Ok held if the Result is an Ok.
    *
    * @throws Throwable The held Ok if it is an Ok in an UnwrapException.
-   * @return The throwable E represents.
+   * @return The Error.
    */
-  fun unwrapErr(): E {
+  fun unwrapErr(): Error {
     return when (this) {
-      is Ok -> throw UnwrapException(this.ok.toString())
-      else -> this.err.unwrap() // Smart cast into <E>.
+      is Ok -> throw UnwrapException("Failed to unwrap Err. Contains Ok: ${this.ok.unwrap().toString()}")
+      else -> this.err.unwrap()// Smart cast into <E>.
     }
   }
 
@@ -124,9 +124,9 @@ abstract class Result<T, E : Exception> protected constructor(ok: T?, err: E?) {
    * Unwrap Result as Err unchecked with custom error message if the Result is Ok.
    *
    * @throws Error Your custom error message in ExpectException.
-   * @return The Throwable E represents.
+   * @return The Error.
    */
-  fun expectErr(errorMessage: String): E {
+  fun expectErr(errorMessage: String): Error {
     return when (this) {
       is Ok -> throw ExpectException(errorMessage)
       else -> this.err.unwrap() // Smart cast into <E>.
@@ -140,7 +140,7 @@ abstract class Result<T, E : Exception> protected constructor(ok: T?, err: E?) {
    * @param f The function to run.
    * @return The Result for further chaining.
    */
-  fun withErr(f: (e: E) -> Unit): Result<T, E> {
+  fun withErr(f: (e: Error) -> Unit): Result<T> {
     when (this) {
       is Err -> f(this.err.unwrap())
     }
@@ -151,13 +151,9 @@ abstract class Result<T, E : Exception> protected constructor(ok: T?, err: E?) {
 /**
  * Ok Result. Indicates successful function run. Contains type T.
  */
-class Ok<T, E : Exception>(ok: T) : Result<T, E>(ok, null)
+class Ok<T>(ok: T) : Result<T>(ok, null)
 
 /**
  * Err Result. Indicates failed function run. Contains Throwable type E.
  */
-class Err<T, E : Exception>(err: E) : Result<T, E>(null, err) {
-
-  @Suppress("UNCHECKED_CAST")
-  constructor(stringError: String) : this(Exception(stringError) as E)
-}
+class Err<T>(err: String) : Result<T>(null, Error(err))
