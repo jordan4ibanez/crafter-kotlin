@@ -3,6 +3,8 @@ package utility.option
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import utility.safety_exceptions.ExpectException
+import utility.safety_exceptions.UnwrapException
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -19,7 +21,7 @@ class OptionTest {
   @Test
   fun unwrap() {
     // Nothing
-    assertThrows<Error> {
+    assertThrows<UnwrapException> {
       nothing.unwrap()
     }
     // Something
@@ -31,7 +33,7 @@ class OptionTest {
   @Test
   fun expect() {
     // Nothing
-    assertThrows<Error> {
+    assertThrows<ExpectException> {
       nothing.expect("oops")
     }
     // Something
