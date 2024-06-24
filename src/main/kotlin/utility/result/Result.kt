@@ -57,7 +57,7 @@ abstract class Result<T> protected constructor(ok: T?, err: Error?) {
   /**
    * Unwrap Result as Ok unchecked. Will throw the Err held if the Result is an Err.
    *
-   * @throws Throwable The held error if it is an Err.
+   * @throws UnwrapException The held error if it is an Err.
    * @return The data T represents.
    */
   fun unwrap(): T {
@@ -70,7 +70,7 @@ abstract class Result<T> protected constructor(ok: T?, err: Error?) {
   /**
    * Unwrap Result as Ok unchecked with custom error message if the Result is Err.
    *
-   * @throws Error Your custom error message as an ExpectException.
+   * @throws ExpectException Your custom error message as an ExpectException.
    * @return Whatever data T represents.
    */
   fun expect(errorMessage: String): T {
