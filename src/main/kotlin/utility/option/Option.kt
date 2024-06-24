@@ -57,11 +57,11 @@ abstract class Option<T> protected constructor(private val value: T?) {
   }
 
   /**
-   * Run a closure with the data encapsulated within the Option.
+   * Run a lambda with the data encapsulated within the Option.
    *
    * If the data is None, this has no effect.
    *
-   * @param f Closure to run if it is Some. Interacts with data.
+   * @param f Lambda to run if it is Some. Interacts with data.
    * @return This, making it chainable into withNone().
    */
   fun withSome(f: (t: T) -> Unit): Option<T> {
@@ -72,11 +72,11 @@ abstract class Option<T> protected constructor(private val value: T?) {
   }
 
   /**
-   * Run a closure if the data encapsulated is None.
+   * Run a lambda if the data encapsulated is None.
    *
    * If the data is Some, this has no effect.
    *
-   * @param f Closure to run if it is None.
+   * @param f Lambda to run if it is None.
    * @return This, making it chainable into withSome().
    */
   fun withNone(f: () -> Unit): Option<T> {
