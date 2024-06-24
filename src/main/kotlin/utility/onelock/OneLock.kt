@@ -1,4 +1,4 @@
-package utility.one_lock
+package utility.onelock
 
 import utility.option.None
 import utility.option.Option
