@@ -3,8 +3,6 @@ package utility.onelock
 import utility.option.None
 import utility.option.Option
 import utility.option.Some
-import utility.result.Ok
-import utility.result.Result
 import utility.safety_exceptions.MultipleOneLockSetException
 
 /**
@@ -16,10 +14,10 @@ class OneLock<T> {
 
   private var data: Option<T> = None()
 
-  fun set(t: T): Result<Int> {
-    return when (data) {
+  fun set(t: T) {
+    when (data) {
       is Some -> throw MultipleOneLockSetException("Cannot set value more than once.")
-      else -> Ok(0)
+      else -> this.data = Some(t)
     }
   }
 
@@ -36,5 +34,19 @@ class OneLock<T> {
       is Some -> data.unwrap()
       else -> throw Error(errorMessage)
     }
+  }
+
+  fun withSome(f: (t: T) -> Unit): OneLock<T> {
+    when (data) {
+      is Some -> f(data.unwrap())
+    }
+    return this
+  }
+
+  fun withNone(f: () -> Unit): OneLock<T> {
+    when (data) {
+      is None -> f()
+    }
+    return this
   }
 }
