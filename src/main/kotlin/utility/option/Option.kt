@@ -8,9 +8,7 @@ import utility.safety_exceptions.UnwrapException
  *
  * @param T is the type of the data contained in the Option.
  */
-abstract class Option<T> protected constructor(t: T?) {
-
-  private var value: T? = t
+abstract class Option<T> protected constructor(private val value: T?) {
 
   /**
    * Unwrap the Option.
