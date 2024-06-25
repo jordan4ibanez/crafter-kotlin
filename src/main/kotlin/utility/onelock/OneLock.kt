@@ -4,11 +4,11 @@ import utility.option.None
 import utility.option.Option
 import utility.option.Some
 import utility.safety_exceptions.ExpectException
-import utility.safety_exceptions.MultipleOneLockSetException
+import utility.safety_exceptions.MultipleOneLockLockException
 import utility.safety_exceptions.UnwrapException
 
 /**
- * OneLock is a container for holding data which can only be set once, or it throws an error.
+ * OneLock is a container for holding data which can only be locked once, or it throws an error.
  *
  * Consider this a general purpose alternative to Kotlin's "late-init".
  */
@@ -17,41 +17,41 @@ class OneLock<T> {
   private var data: Option<T> = None()
 
   /**
-   * Set the data of the OneLock.
+   * Lock the data of the OneLock.
    *
    * @param data The data to store in the OneLock.
-   * @throws MultipleOneLockSetException If the data has already been set.
+   * @throws MultipleOneLockLockException If the data has already been locked.
    */
-  fun set(data: T) {
+  fun lock(data: T) {
     when (this.data) {
-      is Some -> throw MultipleOneLockSetException("Cannot set value more than once.")
+      is Some -> throw MultipleOneLockLockException("Cannot lock OneLock more than once.")
       else -> this.data = Some(data)
     }
   }
 
   /**
-   * Check if the data has been set.
+   * Check if the data has been locked.
    *
-   * @return If the data has been set.
+   * @return If the data has been locked.
    */
-  fun isSet(): Boolean {
+  fun isLocked(): Boolean {
     return data is Some
   }
 
   /**
    * Unwrap the data.
    *
-   * @throws UnwrapException If the data has not been set.
+   * @throws UnwrapException If the data has not been locked.
    */
   fun unwrap(): T {
     return data.unwrap()
   }
 
   /**
-   * Unwrap the data. Throw a custom error message if it has not been set.
+   * Unwrap the data. Throw a custom error message if it has not been locked.
    *
    * @param errorMessage The custom error message.
-   * @throws ExpectException If the data has not been set.
+   * @throws ExpectException If the data has not been locked.
    */
   fun expect(errorMessage: String): T {
     return data.expect(errorMessage)
