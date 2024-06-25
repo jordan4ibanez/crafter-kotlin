@@ -64,7 +64,7 @@ class OneLock<T> {
    * @param f Lambda to run on the data, if there is any.
    * @return The OneLock, for chaining with withNone().
    */
-  fun withSome(f: (t: T) -> Unit): OneLock<T> {
+  fun withLocked(f: (t: T) -> Unit): OneLock<T> {
     when (data) {
       is Some -> f(data.unwrap())
     }
@@ -78,7 +78,7 @@ class OneLock<T> {
    * @param f Lambda to run if there's no data.
    * @return The OneLock, for chaining with isSome().
    */
-  fun withNone(f: () -> Unit): OneLock<T> {
+  fun withUnlocked(f: () -> Unit): OneLock<T> {
     when (data) {
       is None -> f()
     }
