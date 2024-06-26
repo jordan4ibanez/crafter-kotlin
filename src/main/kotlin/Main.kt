@@ -9,8 +9,8 @@ import engine.entity.entity
 import engine.glfw.glfw
 import engine.initialization.initialize
 import engine.keyboard.keyboard
-import engine.model.Texture
 import engine.model.mesh.Mesh
+import engine.model.texture.Texture
 import engine.mouse.mouse
 import engine.shader.shader
 import engine.thread.thread

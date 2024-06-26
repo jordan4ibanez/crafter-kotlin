@@ -1,6 +1,6 @@
 package engine.model.mesh
 
-import engine.model.texture
+import engine.model.texture.Texture
 import org.lwjgl.opengl.GL30.*
 import org.lwjgl.system.MemoryUtil.*
 import java.nio.FloatBuffer
@@ -85,7 +85,7 @@ object Mesh {
 //    val newBonesID: Int
     // Check texture existence before continuing.
     try {
-      newTextureID = texture.getID(textureName)
+      newTextureID = Texture.getID(textureName)
     } catch (e: RuntimeException) {
       throw RuntimeException("mesh: Tried to use nonexistent texture. $textureName")
     }
@@ -241,7 +241,7 @@ object Mesh {
 //  }
 
   fun swapTexture(id: Int, newTextureName: String) {
-    textureID[id] = texture.getID(newTextureName)
+    textureID[id] = Texture.getID(newTextureName)
   }
 
   fun swapTexture(name: String, newTextureName: String) =
