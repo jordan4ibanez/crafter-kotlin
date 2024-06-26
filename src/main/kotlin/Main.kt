@@ -1,4 +1,4 @@
-import engine.api.api
+import engine.api.Api
 import engine.block.block
 import engine.camera.camera
 import engine.client_player.clientPlayer
@@ -132,7 +132,7 @@ fun update(delta: Float) {
 fun tick(delta: Float) {
 
   // Global tick.
-  api.doOnTick(delta)
+  Api.doOnTick(delta)
   // Entity specific tick.
   entity.doOnTick(delta)
 }

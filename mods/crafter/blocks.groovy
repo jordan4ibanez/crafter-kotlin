@@ -1,10 +1,10 @@
 package crafter
 
-import engine.api.api
+import engine.api.Api
 import engine.block.block
 import engine.world.blockManipulator
 
-final api = api.INSTANCE
+final api = Api.INSTANCE
 final block = block.INSTANCE
 final blockManipulator = blockManipulator.INSTANCE
 

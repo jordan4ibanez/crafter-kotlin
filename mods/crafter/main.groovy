@@ -1,12 +1,12 @@
 package crafter
 
-import engine.api.api
+import engine.api.Api
 import engine.block.block
 import engine.world.blockManipulator
 import org.joml.Vector3i
 import org.joml.Vector3ic
 
-final api = api.INSTANCE
+final api = Api.INSTANCE
 final blockManipulator = blockManipulator.INSTANCE
 final block = block.INSTANCE
 
