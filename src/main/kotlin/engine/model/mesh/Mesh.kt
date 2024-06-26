@@ -11,8 +11,7 @@ import java.nio.IntBuffer
 // mesh works as a component system and namespace.
 
 object Mesh {
-
-
+  
   private val id = HashMap<String, Int>()
   private val name = HashMap<Int, String>()
   private val positionsID = HashMap<Int, Int>()
