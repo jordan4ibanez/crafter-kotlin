@@ -4,6 +4,7 @@ import engine.entity.Hostility
 import engine.entity.Mob
 import engine.entity.Mobility
 import engine.entity.entity
+import org.jetbrains.annotations.NotNull
 import org.joml.Vector3fc
 
 final entity = entity.INSTANCE
@@ -13,7 +14,7 @@ class Pig extends Mob {
   final String classifier = "crafter:pig"
   Hostility hostility = Hostility.Friendly
 
-  Pig(Vector3fc pos) {
+  Pig(@NotNull Vector3fc pos) {
     super(pos)
   }
 
@@ -33,7 +34,7 @@ class Squid extends Mob {
   Mobility mobility = Mobility.Swim
   Hostility hostility = Hostility.Friendly
 
-  Squid(Vector3fc pos) {
+  Squid(@NotNull Vector3fc pos) {
     super(pos)
     println("glub glub")
   }
