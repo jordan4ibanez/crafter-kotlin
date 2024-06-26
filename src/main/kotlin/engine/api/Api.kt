@@ -1,7 +1,5 @@
 package engine.api
 
-//import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory
-
 import engine.block.block
 import engine.file_helpers.getFileList
 import engine.file_helpers.getFolderList
@@ -16,7 +14,7 @@ import groovy.util.GroovyScriptEngine
 api works as a state machine.
 */
 
-object api {
+object Api {
 
   private val sharedData = Binding()
   val engine = GroovyScriptEngine("./mods/")
