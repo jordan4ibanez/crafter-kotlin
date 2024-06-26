@@ -1,4 +1,6 @@
 import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
   id "groovy"
@@ -84,9 +86,16 @@ sourceSets {
     }
   }
 }
+kotlin {
+}
 
 kotlin {
   jvmToolchain(22)
+  
+  compilerOptions {
+    jvmTarget.set(JvmTarget.JVM_22)
+    apiVersion = KotlinVersion.KOTLIN_2_0
+  }
 }
 
 application {
