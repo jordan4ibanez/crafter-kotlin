@@ -15,7 +15,7 @@ import java.nio.IntBuffer
 //note: Texture operations.
 
 // texture works as a factory, container, and namespace. All in one.
-object texture {
+object Texture {
 
   //note: For now textures in the game remain until game is closed.
   // But, in the future we will want textures to be able to be cleared from GL memory.

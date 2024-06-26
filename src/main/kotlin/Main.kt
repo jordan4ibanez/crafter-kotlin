@@ -9,8 +9,8 @@ import engine.entity.entity
 import engine.glfw.glfw
 import engine.initialization.initialize
 import engine.keyboard.keyboard
+import engine.model.Texture
 import engine.model.mesh.Mesh
-import engine.model.texture
 import engine.mouse.mouse
 import engine.shader.shader
 import engine.thread.thread
@@ -43,7 +43,7 @@ fun load() {
 //
 //  texture.create("debug", worldAtlas.flush(), worldAtlas.getSize(), worldAtlas.getChannels())
 
-  texture.create("debug.png", "./textures/debug.png")
+  Texture.create("debug.png", "./textures/debug.png")
 
   // Debug mesh.
   Mesh.create3D(
@@ -156,7 +156,7 @@ fun quit() {
 
   thread.destroy()
   Mesh.destroyAll()
-  texture.destroyAll()
+  Texture.destroyAll()
   shader.destroyAll()
   glfw.destroy()
 }

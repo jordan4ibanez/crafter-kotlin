@@ -7,7 +7,7 @@ import engine.file_helpers.getFileList
 import engine.file_helpers.getFolderList
 import engine.file_helpers.isFile
 import engine.file_helpers.isFolder
-import engine.model.texture
+import engine.model.Texture
 import engine.texture_atlas.worldAtlas
 import groovy.lang.Binding
 import groovy.util.GroovyScriptEngine
@@ -91,7 +91,7 @@ object api {
     }
 
     // Finally, flush the world atlas into the GPU.
-    texture.create("worldAtlas", worldAtlas.flush(), worldAtlas.getSize(), worldAtlas.getChannels())
+    Texture.create("worldAtlas", worldAtlas.flush(), worldAtlas.getSize(), worldAtlas.getChannels())
   }
 
   private fun loadBlockTextures() {
@@ -120,7 +120,7 @@ object api {
       .filter { it.contains(".png") }
       .ifEmpty { println("api: $currentModName has no textures in folder. Skipping."); return }
       .forEach { foundTexture: String ->
-        texture.create(foundTexture, "$textureDirectory/$foundTexture")
+        Texture.create(foundTexture, "$textureDirectory/$foundTexture")
       }
   }
 
