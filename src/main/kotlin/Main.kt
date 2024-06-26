@@ -9,7 +9,7 @@ import engine.entity.entity
 import engine.glfw.glfw
 import engine.initialization.initialize
 import engine.keyboard.keyboard
-import engine.model.mesh
+import engine.model.mesh.Mesh
 import engine.model.texture
 import engine.mouse.mouse
 import engine.shader.shader
@@ -46,7 +46,7 @@ fun load() {
   texture.create("debug.png", "./textures/debug.png")
 
   // Debug mesh.
-  mesh.create3D(
+  Mesh.create3D(
     "debug",
     // positions.
     floatArrayOf(
@@ -144,7 +144,7 @@ fun draw() {
 //  println(rotation)
   camera.updateCameraMatrix()
   camera.setObjectMatrix(Vector3f(0f, 0f, -1f), Vector3f(0f, toRadians(rotation), 0f))
-  mesh.draw("debug")
+  Mesh.draw("debug")
 
   world.renderChunks()
 
@@ -155,7 +155,7 @@ fun draw() {
 fun quit() {
 
   thread.destroy()
-  mesh.destroyAll()
+  Mesh.destroyAll()
   texture.destroyAll()
   shader.destroyAll()
   glfw.destroy()

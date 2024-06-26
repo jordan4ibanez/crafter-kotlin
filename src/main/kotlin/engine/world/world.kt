@@ -7,7 +7,7 @@ import engine.camera.camera
 import engine.client_player.clientPlayer
 import engine.collision.collision
 import engine.joml_bolt_ons.destructure
-import engine.model.mesh
+import engine.model.mesh.Mesh
 import engine.noise.Noise
 import engine.noise.NoiseType
 import engine.thread.thread
@@ -285,7 +285,7 @@ object world {
       if (meshIDs.containsKey(key)) {
         meshIDs[key]!!.forEach { id ->
           if (id != 0) {
-            mesh.destroy(id)
+            Mesh.destroy(id)
           }
         }
       }
@@ -588,7 +588,7 @@ object world {
 
         worker3.set(renderX, 0f, renderZ)
         camera.setObjectMatrix(worker3)
-        mesh.draw(id)
+        Mesh.draw(id)
 //      println("drawing: ${position.x()}, ${position.y()}")
       }
     }
@@ -608,7 +608,7 @@ object world {
     if (!meshIDs.containsKey(key)) meshIDs[key] = IntArray(MESH_ARRAY_SIZE)
     val currentArray = meshIDs[key]!!
     if (currentArray[pos.y()] != 0) {
-      mesh.destroy(currentArray[pos.y()])
+      Mesh.destroy(currentArray[pos.y()])
     }
     currentArray[pos.y()] = id
 //  println("put ${pos.x()} ${pos.z()} into ${pos.y()}")
@@ -632,7 +632,7 @@ object world {
     } else {
       //? note: received a normal update.
       val uuid = UUID.randomUUID().toString()
-      val id = mesh.create3D(uuid, data.positions, data.textureCoords, data.indices, data.light, "worldAtlas")
+      val id = Mesh.create3D(uuid, data.positions, data.textureCoords, data.indices, data.light, "worldAtlas")
       putOrCreatePutMesh(position, id)
     }
   }
