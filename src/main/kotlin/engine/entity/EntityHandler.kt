@@ -42,7 +42,7 @@ object EntityHandler {
   }
 
   fun draw() {
-    generics.forEach { (key, obj) ->
+    generics.forEach { (_, obj) ->
       obj.drawCollisionBox()
     }
   }
