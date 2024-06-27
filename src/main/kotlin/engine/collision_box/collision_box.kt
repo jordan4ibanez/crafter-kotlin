@@ -1,6 +1,6 @@
 package engine.collision_box
 
-import engine.camera.camera
+import engine.camera.Camera
 import engine.model.mesh.Mesh
 import org.joml.Vector2fc
 import org.joml.Vector3f
@@ -23,7 +23,7 @@ object collisionBox {
   fun draw(pos: Vector3fc, size: Vector2fc) {
     val positions = generatePositions(size)
     val id = Mesh.create3D("cbox", positions, noTextureCoords, indices, "debug.png")
-    camera.setObjectMatrix(pos)
+    Camera.setObjectMatrix(pos)
     Mesh.drawLines(id)
     Mesh.destroy(id)
   }

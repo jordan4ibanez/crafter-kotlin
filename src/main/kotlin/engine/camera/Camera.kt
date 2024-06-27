@@ -15,7 +15,7 @@ import org.joml.Vector3fc
 import org.lwjgl.glfw.GLFW.*
 
 
-object camera {
+object Camera {
 
   private var renderDistance = 8
 
@@ -70,9 +70,9 @@ object camera {
     objectMatrix
       .identity()
       .translate(
-        position.x() - camera.position.x(),
-        position.y() - camera.position.y(),
-        position.z() - camera.position.z()
+        position.x() - Camera.position.x(),
+        position.y() - Camera.position.y(),
+        position.z() - Camera.position.z()
       )
       .rotateY(-rotation.y())
       .rotateX(-rotation.x())

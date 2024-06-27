@@ -1,7 +1,7 @@
 package engine.collision
 
 import engine.block.Block
-import engine.camera.camera
+import engine.camera.Camera
 import engine.entity.GroovyEntity
 import engine.helpers.toward
 import engine.tick.tick
@@ -348,7 +348,7 @@ object collision {
 
     //? note: Simulate the calculation that happens in GLSL on the cpu.
     return intersection
-      .set(workerMatrix.set(camera.getCameraMatrix()).mul(chunkMatrix))
+      .set(workerMatrix.set(Camera.getCameraMatrix()).mul(chunkMatrix))
       .testAab(
         min.set(0f, 0f, 0f),
         max.set(world.getChunkWidthFloat(), world.getChunkHeightFloat(), world.getChunkDepthFloat())
@@ -357,7 +357,7 @@ object collision {
 
   private fun updateChunkMatrix(x: Float, y: Float, z: Float) {
     //? note: Simulates the positions that chunks are drawn in. They are actually drawn at Y = 0.
-    val camPos = camera.getPosition()
+    val camPos = Camera.getPosition()
     chunkMatrix
       .identity()
       .translate(

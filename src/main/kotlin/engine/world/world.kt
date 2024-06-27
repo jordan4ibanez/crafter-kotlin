@@ -3,7 +3,7 @@ package engine.world
 
 import engine.block.Block
 import engine.block.DrawType
-import engine.camera.camera
+import engine.camera.Camera
 import engine.client_player.ClientPlayer
 import engine.collision.collision
 import engine.joml_bolt_ons.destructure
@@ -234,7 +234,7 @@ object world {
 
   internal fun cleanAndGenerationScan() {
     val clientChunkPosition = ClientPlayer.getChunkPosition()
-    val renderDistance = camera.getRenderDistance()
+    val renderDistance = Camera.getRenderDistance()
 
 //    println("update")
 
@@ -587,7 +587,7 @@ object world {
         if (!collision.chunkMeshWithinFrustum(renderX, testY, renderZ)) return@inner
 
         worker3.set(renderX, 0f, renderZ)
-        camera.setObjectMatrix(worker3)
+        Camera.setObjectMatrix(worker3)
         Mesh.draw(id)
 //      println("drawing: ${position.x()}, ${position.y()}")
       }

@@ -1,6 +1,6 @@
 package engine.gl
 
-import engine.camera.camera
+import engine.camera.Camera
 import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.opengl.GL14.*
 import org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS
@@ -39,7 +39,7 @@ object gl {
     }
 
     //todo: this has to be implemented before it's used
-    glDepthRange(camera.getZNear().toDouble(), camera.getZFar().toDouble())
+    glDepthRange(Camera.getZNear().toDouble(), Camera.getZFar().toDouble())
 
     val enableCulling = true
 

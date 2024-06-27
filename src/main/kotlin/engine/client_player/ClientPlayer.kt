@@ -1,6 +1,6 @@
 package engine.client_player
 
-import engine.camera.camera
+import engine.camera.Camera
 import engine.entity.EntityHandler
 import engine.entity.mob.Player
 import engine.keyboard.keyboard
@@ -44,7 +44,7 @@ object ClientPlayer : Player(Vector3f(0f, 110f, 0f), "singleplayer") {
 
   override fun onTick(delta: Float) {
     super.onTick(delta)
-    val cameraYaw = camera.getYaw()
+    val cameraYaw = Camera.getYaw()
     val forwardBuffer = positionBuffer.y.toFloat()
     val sidewaysBuffer = positionBuffer.x.toFloat()
 
@@ -64,7 +64,7 @@ object ClientPlayer : Player(Vector3f(0f, 110f, 0f), "singleplayer") {
   }
 
   internal fun glueCamera() {
-    camera.setPosition(interpolationPosition.x(), interpolationPosition.y() + eyeHeight, +interpolationPosition.z())
+    Camera.setPosition(interpolationPosition.x(), interpolationPosition.y() + eyeHeight, +interpolationPosition.z())
   }
 
   internal fun doClientControls() {
