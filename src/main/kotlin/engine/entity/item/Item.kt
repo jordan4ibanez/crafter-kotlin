@@ -1,6 +1,6 @@
-package engine.entity.groovy_entity.item
+package engine.entity.item
 
-import engine.entity.groovy_entity.GroovyEntity
+import engine.entity.GroovyEntity
 import org.joml.Vector3fc
 
 class Item : GroovyEntity {
