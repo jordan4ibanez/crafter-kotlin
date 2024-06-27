@@ -5,7 +5,7 @@ import org.joml.Vector3f
 import org.joml.Vector3fc
 
 /**
- * Entity is a physical thing which only exists as a point in the map.
+ * Entity is a physical thing which only exists as a point in the map with a visual (maybe).
  */
 open class Entity {
 
