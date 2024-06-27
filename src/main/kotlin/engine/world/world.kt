@@ -5,7 +5,7 @@ import engine.block.Block
 import engine.block.DrawType
 import engine.camera.Camera
 import engine.client_player.ClientPlayer
-import engine.collision.collision
+import engine.collision.Collision
 import engine.joml_bolt_ons.destructure
 import engine.model.mesh.Mesh
 import engine.noise.Noise
@@ -584,7 +584,7 @@ object world {
         val testY = (y * Y_SLICE_HEIGHT).toFloat()
         val renderZ = (position.y() * DEPTH).toFloat()
 
-        if (!collision.chunkMeshWithinFrustum(renderX, testY, renderZ)) return@inner
+        if (!Collision.chunkMeshWithinFrustum(renderX, testY, renderZ)) return@inner
 
         worker3.set(renderX, 0f, renderZ)
         Camera.setObjectMatrix(worker3)

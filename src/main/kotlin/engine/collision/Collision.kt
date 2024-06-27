@@ -13,7 +13,7 @@ import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector3f
 
-object collision {
+object Collision {
 
   private const val MAX_SPEED = 10f
   private const val WORLD_Y_MAX = world.HEIGHT
@@ -39,7 +39,7 @@ object collision {
   private val velocity2d = Vector2f()
   private val frictionVelocity = Vector2f()
 
-  private object directionResult {
+  private object DirectionResult {
 
     var left = false
     var right = false
@@ -185,13 +185,13 @@ object collision {
               // todo: Here it would get the blockbox collision box and run through the boxes individually
               // todo: Here it would run through them individually
 
-              directionResult.reset()
+              DirectionResult.reset()
 
 //              val oldY = pos.y
               if (!entityCollidesWithWorld(axis)) continue
               resolveCollision(axis)
               updateEntityAABB()
-              if (directionResult.down) {
+              if (DirectionResult.down) {
 //                if (abs(oldY - pos.y) > 0.5f) {
 //                  println("$x,$y,$z | ${floor(pos.x)},${floor(pos.y)},${floor(pos.z)} | ${pos.x}, ${pos.z}")
 //                }
@@ -244,12 +244,12 @@ object collision {
   private fun resolveCollision(axis: Int) {
     when (axis) {
       0 -> {
-        if (directionResult.left) {
+        if (DirectionResult.left) {
 //          println("left collision")
           pos.x = worldAABBMax.x + size.x + 0.0001f
           normalizedVelocity.x = 0f
           velocity.x = 0f
-        } else if (directionResult.right) {
+        } else if (DirectionResult.right) {
 //          println("right collision")
           pos.x = worldAABBMin.x - size.x - 0.0001f
           normalizedVelocity.x = 0f
@@ -258,12 +258,12 @@ object collision {
       }
 
       1 -> {
-        if (directionResult.down) {
+        if (DirectionResult.down) {
 //          println("down collision")
           pos.y = worldAABBMax.y + 0.0001f
           normalizedVelocity.y = -0.001f
           velocity.y = -0.01f
-        } else if (directionResult.up) {
+        } else if (DirectionResult.up) {
 //          println("up collision")
           pos.y = worldAABBMin.y - size.y - 0.0001f
           normalizedVelocity.y = 0f
@@ -272,12 +272,12 @@ object collision {
       }
 
       2 -> {
-        if (directionResult.front) {
+        if (DirectionResult.front) {
 //          println("front collision")
           pos.z = worldAABBMax.z + size.x + 0.0001f
           normalizedVelocity.z = 0f
           velocity.z = 0f
-        } else if (directionResult.back) {
+        } else if (DirectionResult.back) {
 //          println("back collision")
           pos.z = worldAABBMin.z - size.x - 0.0001f
           normalizedVelocity.z = 0f
@@ -312,18 +312,18 @@ object collision {
 
     when (axis) {
       0 -> {
-        if (velocity.x < 0f) directionResult.left = true
-        if (velocity.x > 0f) directionResult.right = true
+        if (velocity.x < 0f) DirectionResult.left = true
+        if (velocity.x > 0f) DirectionResult.right = true
       }
 
       1 -> {
-        if (velocity.y < 0f) directionResult.down = true
-        if (velocity.y > 0f) directionResult.up = true
+        if (velocity.y < 0f) DirectionResult.down = true
+        if (velocity.y > 0f) DirectionResult.up = true
       }
 
       2 -> {
-        if (velocity.z < 0f) directionResult.front = true
-        if (velocity.z > 0f) directionResult.back = true
+        if (velocity.z < 0f) DirectionResult.front = true
+        if (velocity.z > 0f) DirectionResult.back = true
       }
     }
 

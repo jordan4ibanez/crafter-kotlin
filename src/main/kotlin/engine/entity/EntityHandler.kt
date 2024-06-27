@@ -1,6 +1,6 @@
 package engine.entity
 
-import engine.collision.collision
+import engine.collision.Collision
 import engine.entity.mob.Mob
 import engine.entity.mob.Player
 import engine.entity.particle.Particle
@@ -34,7 +34,7 @@ object EntityHandler {
 
   fun doOnTick(delta: Float) {
     generics.forEach { (key, obj) ->
-      collision.collideEntityToWorld(obj)
+      Collision.collideEntityToWorld(obj)
       // todo: collision result can be set from collide entity to entities
       obj.onTick(delta)
     }
