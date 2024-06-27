@@ -2,8 +2,9 @@ package engine.entity
 
 import engine.collision.collision
 import engine.entity.point_entity.groovy_entity.GroovyEntity
+import engine.entity.point_entity.groovy_entity.mob.Mob
+import engine.entity.point_entity.groovy_entity.mob.Player
 import engine.entity.point_entity.particle.Particle
-import engine.joml_bolt_ons.print
 import engine.tick.tick
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -18,46 +19,6 @@ internal val diff = Vector2f()
 internal val accelerationWorker = Vector3f()
 internal val goalVel = Vector2f()
 
-
-enum class Mobility {
-  Walk,
-  Swim,
-  Fly,
-  Jump
-}
-
-enum class Hostility {
-  Hostile,
-  Neutral,
-  Friendly
-}
-
-
-open class Mob : GroovyEntity {
-
-  var hp = 0
-  var fallDamage = false
-  var mobility = Mobility.Walk
-  var lavaSwim = false
-  var hostility = Hostility.Neutral
-  var eyeHeight = 1.5f
-
-  constructor(pos: Vector3fc) : super(pos)
-
-  open fun onDeath() {}
-}
-
-open class Player : Mob {
-
-  override val classifier = "player"
-  var name: String
-
-  constructor(pos: Vector3fc, name: String) : super(pos) {
-    this.name = name
-    setSize(Vector2f(0.3f, 1.8f))
-    getSize().print("$name size")
-  }
-}
 
 object entity {
 
