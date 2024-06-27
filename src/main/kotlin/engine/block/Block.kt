@@ -7,13 +7,13 @@ import engine.file_helpers.*
 import engine.texture_atlas.worldAtlas
 import java.util.concurrent.ConcurrentHashMap
 
-/*
-A concurrent component system to handle blocks.
-Basic functional interface.
-Indexed by: ID OR translate through name -> ID
-*/
-
-
+/**
+ * A concurrent component system to handle blocks.
+ * Basic functional interface.
+ * Indexed by: ID OR translate through name -> ID
+ *
+ * So if you're looking where raw block representation data is, it's here.
+ */
 object Block {
 
   // Required components.
