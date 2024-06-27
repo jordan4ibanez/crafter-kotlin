@@ -4,7 +4,9 @@ import engine.world.world
 import org.joml.Vector3f
 import org.joml.Vector3fc
 
-
+/**
+ * Entity is a physical thing which only exists as a point in the map.
+ */
 open class Entity {
 
   internal var interpolationTimer = 0f
