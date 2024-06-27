@@ -31,7 +31,7 @@ class Squid extends Mob {
 
   final String classifier = ""
 
-  Locomotion locomotion = Mobility.Swim
+  Locomotion locomotion = Locomotion.Swim
   Hostility hostility = Hostility.Friendly
 
   Squid(@NotNull Vector3fc pos) {
