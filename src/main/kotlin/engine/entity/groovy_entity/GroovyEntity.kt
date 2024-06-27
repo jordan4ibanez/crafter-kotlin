@@ -8,6 +8,9 @@ import org.joml.Vector3f
 import org.joml.Vector3fc
 import java.util.*
 
+/**
+ * Groovy entity has a size and isn't just a point with a visual.
+ */
 open class GroovyEntity : Entity {
 
   // Thanks, GreenXenith!
