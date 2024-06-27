@@ -28,7 +28,7 @@ object EntityHandler {
   private val particles = HashMap<String, Particle>()
 
   fun doOnStep(delta: Float) {
-    generics.forEach { (key, obj) ->
+    generics.forEach { (_, obj) ->
       obj.interpolate(delta)
     }
   }
