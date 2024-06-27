@@ -5,20 +5,7 @@ import engine.entity.point_entity.groovy_entity.GroovyEntity
 import engine.entity.point_entity.groovy_entity.mob.Mob
 import engine.entity.point_entity.groovy_entity.mob.Player
 import engine.entity.point_entity.particle.Particle
-import engine.tick.tick
-import org.joml.Vector2f
-import org.joml.Vector3f
 import org.joml.Vector3fc
-
-internal const val interpolationSnappiness = tick.GOAL
-internal val vector3Worker = Vector3f()
-internal val vector2Worker = Vector2f()
-
-internal val vel2d = Vector2f()
-internal val diff = Vector2f()
-internal val accelerationWorker = Vector3f()
-internal val goalVel = Vector2f()
-
 
 object Entity {
 

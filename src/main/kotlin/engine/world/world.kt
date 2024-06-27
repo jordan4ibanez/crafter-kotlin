@@ -4,7 +4,7 @@ package engine.world
 import engine.block.DrawType
 import engine.block.block
 import engine.camera.camera
-import engine.client_player.clientPlayer
+import engine.client_player.ClientPlayer
 import engine.collision.collision
 import engine.joml_bolt_ons.destructure
 import engine.model.mesh.Mesh
@@ -233,7 +233,7 @@ object world {
   }
 
   internal fun cleanAndGenerationScan() {
-    val clientChunkPosition = clientPlayer.getChunkPosition()
+    val clientChunkPosition = ClientPlayer.getChunkPosition()
     val renderDistance = camera.getRenderDistance()
 
 //    println("update")

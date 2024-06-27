@@ -1,7 +1,7 @@
 import engine.api.Api
 import engine.block.block
 import engine.camera.camera
-import engine.client_player.clientPlayer
+import engine.client_player.ClientPlayer
 import engine.delta.fpsUpdated
 import engine.delta.getDelta
 import engine.delta.getFPS
@@ -74,8 +74,8 @@ fun load() {
   window.setVsync(true)
   stone = block.getID("crafter:stone")
 
-  clientPlayer.initialize()
-  clientPlayer.setPosition(clientPlayer.getPosition())
+  ClientPlayer.initialize()
+  ClientPlayer.setPosition(ClientPlayer.getPosition())
 }
 
 
@@ -94,9 +94,9 @@ fun update(delta: Float) {
 //  camera.freeCam()
 
   camera.doMouseInputCameraRotation()
-  clientPlayer.doClientControls()
+  ClientPlayer.doClientControls()
   Entity.doOnStep(delta)
-  clientPlayer.glueCamera()
+  ClientPlayer.glueCamera()
 
 
   if (keyboard.isDown(GLFW_KEY_ESCAPE)) {
