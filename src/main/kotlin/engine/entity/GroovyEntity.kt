@@ -10,7 +10,7 @@ import java.util.*
 /**
  * Groovy entity has a size and isn't just a point with a visual.
  */
-open class GroovyEntity : Entity {
+open class GroovyEntity(pos: Vector3fc) : Entity(pos) {
 
   // Thanks, GreenXenith!
   open val classifier = "undefined"
@@ -57,8 +57,6 @@ open class GroovyEntity : Entity {
     if (!accelerationWorker.isFinite) accelerationWorker.set(0f, currentAcceleration.y(), 0f)
     setAcceleration(accelerationWorker)
   }
-
-  constructor(pos: Vector3fc) : super(pos)
 
   open fun onSpawn() {}
   open fun onDespawn() {}
