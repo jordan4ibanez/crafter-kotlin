@@ -2,7 +2,7 @@ package engine.client_player
 
 import engine.camera.camera
 import engine.entity.Entity
-import engine.entity.Player
+import engine.entity.point_entity.groovy_entity.mob.Player
 import engine.keyboard.keyboard
 import engine.world.world
 import org.joml.Math.*
