@@ -1,6 +1,10 @@
 package engine.entity
 
 import engine.collision.collision
+import engine.entity.groovy_entity.GroovyEntity
+import engine.entity.groovy_entity.mob.Mob
+import engine.entity.groovy_entity.mob.Player
+import engine.entity.particle.Particle
 import org.joml.Vector3fc
 
 object EntityHandler {

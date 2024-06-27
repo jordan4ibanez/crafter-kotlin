@@ -2,7 +2,7 @@ package engine.collision
 
 import engine.block.block
 import engine.camera.camera
-import engine.entity.GroovyEntity
+import engine.entity.groovy_entity.GroovyEntity
 import engine.helpers.toward
 import engine.tick.tick
 import engine.world.blockManipulator

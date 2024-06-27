@@ -1,13 +1,14 @@
-package engine.entity
+package engine.entity.groovy_entity
 
 import engine.collision_box.collisionBox
+import engine.entity.*
 import org.joml.Vector2f
 import org.joml.Vector2fc
 import org.joml.Vector3f
 import org.joml.Vector3fc
 import java.util.*
 
-open class GroovyEntity : PointEntity {
+open class GroovyEntity : Entity {
 
   // Thanks, GreenXenith!
   open val classifier = "undefined"

@@ -1,9 +1,9 @@
 package crafter
 
 import engine.entity.EntityHandler
-import engine.entity.Hostility
-import engine.entity.Mob
 import engine.entity.Mobility
+import engine.entity.groovy_entity.mob.Hostility
+import engine.entity.groovy_entity.mob.Mob
 import org.jetbrains.annotations.NotNull
 import org.joml.Vector3fc
 

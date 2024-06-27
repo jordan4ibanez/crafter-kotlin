@@ -1,4 +1,4 @@
-package engine.entity
+package engine.entity.groovy_entity.mob
 
 /**
  * How a Mob moves around.
