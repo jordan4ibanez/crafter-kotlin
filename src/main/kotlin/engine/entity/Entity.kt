@@ -7,7 +7,7 @@ import org.joml.Vector3fc
 /**
  * Entity is a physical thing which only exists as a point in the map with a visual (maybe).
  */
-open class Entity {
+open class Entity(pos: Vector3fc) {
 
   internal var interpolationTimer = 0f
   internal val oldPosition = Vector3f()
@@ -19,7 +19,7 @@ open class Entity {
   var onGround = false
   internal var friction = 0.8f
 
-  constructor(pos: Vector3fc) {
+  init {
     this.position.set(pos)
     oldPosition.set(pos)
     interpolationPosition.set(pos)
