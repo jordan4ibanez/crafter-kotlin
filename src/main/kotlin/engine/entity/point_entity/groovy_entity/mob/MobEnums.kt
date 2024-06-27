@@ -11,7 +11,11 @@ enum class Locomotion {
   Jump
 }
 
+/**
+ * A Mob's base behavior towards the player.
+ */
 enum class Hostility {
+
   Hostile,
   Neutral,
   Friendly
