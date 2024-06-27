@@ -1,13 +1,10 @@
 package engine.entity.point_entity
 
 import engine.entity.interpolationSnappiness
+import engine.entity.vector3Worker
 import engine.world.world
-import org.joml.Vector2f
 import org.joml.Vector3f
 import org.joml.Vector3fc
-
-internal val vector3Worker = Vector3f()
-private val vector2Worker = Vector2f()
 
 
 open class PointEntity {

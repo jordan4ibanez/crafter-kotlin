@@ -1,13 +1,13 @@
 package engine.entity
 
 import engine.collision.collision
+import engine.entity.point_entity.groovy_entity.GroovyEntity
 import engine.entity.point_entity.particle.Particle
 import engine.joml_bolt_ons.print
 import engine.tick.tick
 import org.joml.Vector2f
 import org.joml.Vector3f
 import org.joml.Vector3fc
-import java.util.*
 
 const val interpolationSnappiness = tick.GOAL
 internal val vector3Worker = Vector3f()
@@ -18,21 +18,6 @@ internal val diff = Vector2f()
 internal val accelerationWorker = Vector3f()
 internal val goalVel = Vector2f()
 
-
-class Item : GroovyEntity {
-
-  private var itemName: String
-  override val classifier = "item"
-
-  constructor(itemName: String, pos: Vector3fc) : super(pos) {
-    this.itemName = itemName
-    this.position.set(pos)
-  }
-
-  fun getItemName(): String {
-    return itemName
-  }
-}
 
 enum class Mobility {
   Walk,
