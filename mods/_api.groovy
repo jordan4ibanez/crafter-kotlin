@@ -1,8 +1,8 @@
 import engine.api.Api
+import engine.block.Block
 import engine.block.DrawType
-import engine.block.block
 
-final block = block.INSTANCE
+final block = Block.INSTANCE
 final api = Api.INSTANCE
 
 println("Crafter API is feeling pretty groovy. 8)")

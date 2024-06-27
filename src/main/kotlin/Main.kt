@@ -1,5 +1,5 @@
 import engine.api.Api
-import engine.block.block
+import engine.block.Block
 import engine.camera.camera
 import engine.client_player.ClientPlayer
 import engine.delta.fpsUpdated
@@ -72,7 +72,7 @@ fun load() {
 
 //  window.maximize()
   window.setVsync(true)
-  stone = block.getID("crafter:stone")
+  stone = Block.getID("crafter:stone")
 
   ClientPlayer.initialize()
   ClientPlayer.setPosition(ClientPlayer.getPosition())

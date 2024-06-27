@@ -1,8 +1,8 @@
 package engine.world
 
 
+import engine.block.Block
 import engine.block.DrawType
-import engine.block.block
 import engine.camera.camera
 import engine.client_player.ClientPlayer
 import engine.collision.collision
@@ -113,7 +113,7 @@ object world {
     newBlock.getBlockID().idCheck()
     newBlock.getBlockState().stateCheck()
     newBlock.getBlockLight().lightCheck()
-    if (!block.has(newBlock.getBlockID())) throw RuntimeException("world: ${newBlock.getBlockID()} is not a registered block.")
+    if (!Block.has(newBlock.getBlockID())) throw RuntimeException("world: ${newBlock.getBlockID()} is not a registered block.")
     calculatePosition(pos)
     throwIfNonExistent(chunkPosition)
     data[chunkPosition]!![posToIndex(internalPosition)] = newBlock
@@ -464,9 +464,9 @@ object world {
 
 //  println("Generating: $xOffset, $zOffset")
 
-    val grass = block.getID("crafter:grass")
-    val dirt = block.getID("crafter:dirt")
-    val stone = block.getID("crafter:stone")
+    val grass = Block.getID("crafter:grass")
+    val dirt = Block.getID("crafter:dirt")
+    val stone = Block.getID("crafter:stone")
 
     val biomeFrequency = 0.01f
     val biomeScale = 20f
@@ -712,7 +712,7 @@ object world {
           val currentBlock = chunkData[posToIndex(x, y, z)]
           if (currentBlock.getBlockID() == 0) continue
 
-          when (block.getDrawType(currentBlock.getBlockID())) {
+          when (Block.getDrawType(currentBlock.getBlockID())) {
             DrawType.AIR -> continue
             DrawType.BLOCK -> {
               val left = detectNeighbor(x, y, z, 0, chunkData, leftExists, leftChunk)
@@ -777,7 +777,7 @@ object world {
 
     // Left.
     if (left != -1) {
-      when (block.getDrawType(left.getBlockID())) {
+      when (Block.getDrawType(left.getBlockID())) {
         DrawType.BLOCK -> {/*do nothing*/
         }
 
@@ -789,7 +789,7 @@ object world {
             0f + x, 0f - overProvision + y, 1f + overProvision + z,
             0f + x, 1f + overProvision + y, 1f + overProvision + z
           )
-          putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[0])
+          putTextureCoords(Block.getTextureCoords(currentBlock.getBlockID())[0])
           putIndices()
           putColors(left.getBlockLight().toFloat() / 15f)
         }
@@ -798,7 +798,7 @@ object world {
 
     // Right.
     if (right != -1) {
-      when (block.getDrawType(right.getBlockID())) {
+      when (Block.getDrawType(right.getBlockID())) {
         DrawType.BLOCK -> {/*do nothing*/
         }
 
@@ -810,7 +810,7 @@ object world {
             1f + x, 0f - overProvision + y, 0f - overProvision + z,
             1f + x, 1f + overProvision + y, 0f - overProvision + z
           )
-          putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[1])
+          putTextureCoords(Block.getTextureCoords(currentBlock.getBlockID())[1])
           putIndices()
           putColors(right.getBlockLight().toFloat() / 15f)
         }
@@ -819,7 +819,7 @@ object world {
 
     // Front.
     if (front != -1) {
-      when (block.getDrawType(front.getBlockID())) {
+      when (Block.getDrawType(front.getBlockID())) {
         DrawType.BLOCK -> {/*do nothing*/
         }
 
@@ -831,7 +831,7 @@ object world {
             0f - overProvision + x, 0f - overProvision + y, 0f + z,
             0f - overProvision + x, 1f + overProvision + y, 0f + z
           )
-          putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[2])
+          putTextureCoords(Block.getTextureCoords(currentBlock.getBlockID())[2])
           putIndices()
           putColors(front.getBlockLight().toFloat() / 15f)
         }
@@ -840,7 +840,7 @@ object world {
 
     // Back.
     if (back != -1) {
-      when (block.getDrawType(back.getBlockID())) {
+      when (Block.getDrawType(back.getBlockID())) {
         DrawType.BLOCK -> {/*do nothing*/
         }
 
@@ -852,7 +852,7 @@ object world {
             1f + overProvision + x, 0f - overProvision + y, 1f + z,
             1f + overProvision + x, 1f + overProvision + y, 1f + z
           )
-          putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[3])
+          putTextureCoords(Block.getTextureCoords(currentBlock.getBlockID())[3])
           putIndices()
           putColors(back.getBlockLight().toFloat() / 15f)
         }
@@ -868,7 +868,7 @@ object world {
     val bottomAdjusted = if (bottom == -1) 0 setBlockLight 15 else bottom
 
     // Bottom.
-    when (block.getDrawType(bottomAdjusted.getBlockID())) {
+    when (Block.getDrawType(bottomAdjusted.getBlockID())) {
       DrawType.BLOCK -> {/*do nothing*/
       }
 
@@ -880,14 +880,14 @@ object world {
           0f - overProvision + x, 0f + y, 0f - overProvision + z,
           1f + overProvision + x, 0f + y, 0f - overProvision + z
         )
-        putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[4])
+        putTextureCoords(Block.getTextureCoords(currentBlock.getBlockID())[4])
         putIndices()
         putColors(bottomAdjusted.getBlockLight().toFloat() / 15f)
       }
     }
 
     // Top.
-    when (block.getDrawType(topAdjusted.getBlockID())) {
+    when (Block.getDrawType(topAdjusted.getBlockID())) {
       DrawType.BLOCK -> {/*do nothing*/
       }
 
@@ -899,7 +899,7 @@ object world {
           0f - overProvision + x, 1f + y, 1f + overProvision + z,
           1f + overProvision + x, 1f + y, 1f + overProvision + z
         )
-        putTextureCoords(block.getTextureCoords(currentBlock.getBlockID())[5])
+        putTextureCoords(Block.getTextureCoords(currentBlock.getBlockID())[5])
         putIndices()
         putColors(topAdjusted.getBlockLight().toFloat() / 15f)
       }

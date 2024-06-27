@@ -1,6 +1,6 @@
 package engine.api
 
-import engine.block.block
+import engine.block.Block
 import engine.file_helpers.getFileList
 import engine.file_helpers.getFolderList
 import engine.file_helpers.isFile
@@ -56,7 +56,7 @@ object Api {
     loadMods()
 
     // This maps the block definitions to the world atlas that was just created.
-    block.updateTextureCoords()
+    Block.updateTextureCoords()
   }
 
   private fun loadMods() {

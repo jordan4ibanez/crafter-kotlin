@@ -71,7 +71,7 @@ fun Int.toDrawType(): DrawType {
 
 // using this as a namespace.
 
-object block {
+object Block {
 
 // note: setter api begins here.
 

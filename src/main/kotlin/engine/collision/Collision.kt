@@ -1,6 +1,6 @@
 package engine.collision
 
-import engine.block.block
+import engine.block.Block
 import engine.camera.camera
 import engine.entity.GroovyEntity
 import engine.helpers.toward
@@ -169,7 +169,7 @@ object collision {
 //                throw RuntimeException("failed. Got $id expected $doubleCheck")
 //              }
 
-              if (!block.isWalkable(id)) continue
+              if (!Block.isWalkable(id)) continue
 
               worldAABBMin.set(
                 x.toFloat(),
@@ -195,7 +195,7 @@ object collision {
 //                if (abs(oldY - pos.y) > 0.5f) {
 //                  println("$x,$y,$z | ${floor(pos.x)},${floor(pos.y)},${floor(pos.z)} | ${pos.x}, ${pos.z}")
 //                }
-                currentFriction = block.getFriction(id)
+                currentFriction = Block.getFriction(id)
                 entity.onGround = true
               }
             }
