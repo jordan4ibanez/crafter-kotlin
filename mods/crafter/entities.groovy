@@ -1,8 +1,8 @@
 package crafter
 
 import engine.entity.EntityHandler
-import engine.entity.Mobility
 import engine.entity.groovy_entity.mob.Hostility
+import engine.entity.groovy_entity.mob.Locomotion
 import engine.entity.groovy_entity.mob.Mob
 import org.jetbrains.annotations.NotNull
 import org.joml.Vector3fc
@@ -31,7 +31,7 @@ class Squid extends Mob {
 
   final String classifier = ""
 
-  Mobility mobility = Mobility.Swim
+  Locomotion locomotion = Mobility.Swim
   Hostility hostility = Hostility.Friendly
 
   Squid(@NotNull Vector3fc pos) {
