@@ -3,13 +3,11 @@ package engine.entity.item
 import engine.entity.GroovyEntity
 import org.joml.Vector3fc
 
-class Item : GroovyEntity {
+class Item(private var itemName: String, pos: Vector3fc) : GroovyEntity(pos) {
 
-  private var itemName: String
   override val classifier = "item"
 
-  constructor(itemName: String, pos: Vector3fc) : super(pos) {
-    this.itemName = itemName
+  init {
     this.position.set(pos)
   }
 
