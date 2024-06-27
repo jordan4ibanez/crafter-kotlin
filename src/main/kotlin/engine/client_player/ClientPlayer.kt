@@ -13,7 +13,7 @@ import org.joml.Vector3fc
 import org.lwjgl.glfw.GLFW
 import kotlin.math.floor
 
-object clientPlayer : Player(Vector3f(0f, 110f, 0f), "singleplayer") {
+object ClientPlayer : Player(Vector3f(0f, 110f, 0f), "singleplayer") {
 
   //? note: this will create a bug that if you're sitting at the exact corner of the world, it doesn't auto scan. Who cares.
   private val oldChunkPosition = Vector2i(Int.MAX_VALUE, Int.MAX_VALUE)
