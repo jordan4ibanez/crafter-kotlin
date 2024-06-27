@@ -1,4 +1,4 @@
-package engine.entity.point_entity.item
+package engine.entity.point_entity.groovy_entity.item
 
 import engine.entity.point_entity.groovy_entity.GroovyEntity
 import org.joml.Vector3fc
