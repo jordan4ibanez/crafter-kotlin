@@ -21,10 +21,6 @@ private val accelerationWorker = Vector3f()
 private val goalVel = Vector2f()
 
 
-class Particle : PointEntity {
-  constructor(pos: Vector3fc) : super(pos)
-}
-
 open class GroovyEntity : PointEntity {
 
   // Thanks, GreenXenith!
