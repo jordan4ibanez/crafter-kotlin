@@ -13,15 +13,6 @@ Basic functional interface.
 Indexed by: ID OR translate through name -> ID
 */
 
-//note: con stands for container.
-private fun <T> concurrent(): ConcurrentHashMap<Int, T> {
-  return ConcurrentHashMap<Int, T>()
-}
-
-private fun <T> singleThreaded(): HashMap<Int, T> {
-  return HashMap()
-}
-
 
 object Block {
 

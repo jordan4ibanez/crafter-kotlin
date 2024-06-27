@@ -1,6 +1,10 @@
 package engine.block
 
+/**
+ * Represents a block's drawtype.
+ */
 enum class DrawType(val data: Int) {
+
   AIR(0),
   BLOCK(1),
   BLOCK_BOX(2),
