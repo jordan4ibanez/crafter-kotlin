@@ -10,7 +10,7 @@ open class Mob(pos: Vector3fc) : GroovyEntity(pos) {
 
   var hp = 0
   var fallDamage = false
-  var mobility = Mobility.Walk
+  var locomotion = Locomotion.Walk
   var lavaSwim = false
   var hostility = Hostility.Neutral
   var eyeHeight = 1.5f

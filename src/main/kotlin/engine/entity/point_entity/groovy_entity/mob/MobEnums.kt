@@ -1,6 +1,10 @@
 package engine.entity.point_entity.groovy_entity.mob
 
-enum class Mobility {
+/**
+ * How a Mob moves around.
+ */
+enum class Locomotion {
+
   Walk,
   Swim,
   Fly,
