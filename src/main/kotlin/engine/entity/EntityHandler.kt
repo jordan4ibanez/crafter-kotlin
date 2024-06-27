@@ -1,7 +1,6 @@
 package engine.entity
 
 import engine.collision.collision
-import engine.entity.point_entity.particle.Particle
 import org.joml.Vector3fc
 
 object EntityHandler {

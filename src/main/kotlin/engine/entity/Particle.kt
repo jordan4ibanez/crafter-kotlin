@@ -1,6 +1,5 @@
-package engine.entity.point_entity.particle
+package engine.entity
 
-import engine.entity.PointEntity
 import org.joml.Vector3fc
 
 class Particle : PointEntity {
