@@ -1,7 +1,5 @@
-package engine.entity.point_entity
+package engine.entity
 
-import engine.entity.interpolationSnappiness
-import engine.entity.vector3Worker
 import engine.world.world
 import org.joml.Vector3f
 import org.joml.Vector3fc

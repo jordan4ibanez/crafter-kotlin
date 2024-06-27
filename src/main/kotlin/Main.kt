@@ -5,7 +5,7 @@ import engine.client_player.ClientPlayer
 import engine.delta.fpsUpdated
 import engine.delta.getDelta
 import engine.delta.getFPS
-import engine.entity.Entity
+import engine.entity.EntityHandler
 import engine.glfw.glfw
 import engine.initialization.initialize
 import engine.keyboard.keyboard
@@ -95,7 +95,7 @@ fun update(delta: Float) {
 
   camera.doMouseInputCameraRotation()
   ClientPlayer.doClientControls()
-  Entity.doOnStep(delta)
+  EntityHandler.doOnStep(delta)
   ClientPlayer.glueCamera()
 
 
@@ -134,7 +134,7 @@ fun tick(delta: Float) {
   // Global tick.
   Api.doOnTick(delta)
   // Entity specific tick.
-  Entity.doOnTick(delta)
+  EntityHandler.doOnTick(delta)
 }
 
 // All draw procedures go here. Consider this love.draw()
@@ -148,7 +148,7 @@ fun draw() {
 
   world.renderChunks()
 
-  Entity.draw()
+  EntityHandler.draw()
 }
 
 // Game cleanup procedures go here. Consider this love.quit()

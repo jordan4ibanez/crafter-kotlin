@@ -1,13 +1,13 @@
 package crafter
 
-import engine.entity.Entity
+import engine.entity.EntityHandler
 import engine.entity.Hostility
 import engine.entity.Mob
 import engine.entity.Mobility
 import org.jetbrains.annotations.NotNull
 import org.joml.Vector3fc
 
-final entity = Entity.INSTANCE
+final entity = EntityHandler.INSTANCE
 
 class Pig extends Mob {
 

@@ -1,8 +1,8 @@
 package engine.client_player
 
 import engine.camera.camera
-import engine.entity.Entity
-import engine.entity.point_entity.groovy_entity.mob.Player
+import engine.entity.EntityHandler
+import engine.entity.Player
 import engine.keyboard.keyboard
 import engine.world.world
 import org.joml.Math.*
@@ -26,7 +26,7 @@ object ClientPlayer : Player(Vector3f(0f, 110f, 0f), "singleplayer") {
 
   fun initialize() {
     // Automatically add in the client player into players.
-    Entity.addPlayer(this)
+    EntityHandler.addPlayer(this)
   }
 
   override fun setPosition(newPosition: Vector3fc) {

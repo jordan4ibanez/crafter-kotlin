@@ -1,13 +1,10 @@
 package engine.entity
 
 import engine.collision.collision
-import engine.entity.point_entity.groovy_entity.GroovyEntity
-import engine.entity.point_entity.groovy_entity.mob.Mob
-import engine.entity.point_entity.groovy_entity.mob.Player
 import engine.entity.point_entity.particle.Particle
 import org.joml.Vector3fc
 
-object Entity {
+object EntityHandler {
 
   // Spawner function containers
   private val genericSpawners = HashMap<String, (Vector3fc) -> GroovyEntity>()

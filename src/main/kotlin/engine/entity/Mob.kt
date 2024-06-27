@@ -1,6 +1,5 @@
-package engine.entity.point_entity.groovy_entity.mob
+package engine.entity
 
-import engine.entity.point_entity.groovy_entity.GroovyEntity
 import engine.joml_bolt_ons.print
 import org.joml.Vector2f
 import org.joml.Vector3fc

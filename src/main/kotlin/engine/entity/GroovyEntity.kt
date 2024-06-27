@@ -1,8 +1,6 @@
-package engine.entity.point_entity.groovy_entity
+package engine.entity
 
 import engine.collision_box.collisionBox
-import engine.entity.*
-import engine.entity.point_entity.PointEntity
 import org.joml.Vector2f
 import org.joml.Vector2fc
 import org.joml.Vector3f
