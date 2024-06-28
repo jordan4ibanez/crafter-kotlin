@@ -2,7 +2,6 @@ package engine.file_helpers
 
 import java.io.File
 
-//note: A few file helper functions.
 
 fun getFile(location: String): File {
   val file = File(location)
