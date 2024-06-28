@@ -13,8 +13,8 @@ import java.io.File
  * @return Result<File> A Result of trying to load the file into memory.
  */
 fun getFile(location: String): Result<File> {
-  with(File(location)) {
-    return when (this.exists() && this.isFile()) {
+  return with(File(location)) {
+    when (this.exists() && this.isFile()) {
       true -> Ok(this)
       false -> Err("getFile: $location does not exist.")
     }
@@ -28,8 +28,8 @@ fun getFile(location: String): Result<File> {
  * @return Result<File> A Result of trying to load the file into memory.
  */
 fun getFolder(location: String): Result<File> {
-  with(File(location)) {
-    return when (this.exists() && this.isDirectory()) {
+  return with(File(location)) {
+    when (this.exists() && this.isDirectory()) {
       true -> Ok(this)
       false -> Err("getFolder: $location is not a directory.")
     }
@@ -37,6 +37,7 @@ fun getFolder(location: String): Result<File> {
 }
 
 fun getFileString(location: String): String {
+
   return getFile(location).unwrap().readText()
 }
 
