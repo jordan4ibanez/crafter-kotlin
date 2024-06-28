@@ -1,6 +1,6 @@
 package engine.camera
 
-import engine.delta.getDelta
+import engine.delta.Delta
 import engine.joml_bolt_ons.destructure
 import engine.keyboard.keyboard
 import engine.mouse.mouse
@@ -158,7 +158,7 @@ object Camera {
     if (keyboard.isDown(GLFW_KEY_LEFT_SHIFT)) inputMovement.y -= 1f
 
     val yaw = newCameraRotation.y
-    val movementDelta = getDelta() * cameraSpeed
+    val movementDelta = Delta.getDelta() * cameraSpeed
 
     // Layered fixme: Why is this layered??
     cameraMovementX.zero()

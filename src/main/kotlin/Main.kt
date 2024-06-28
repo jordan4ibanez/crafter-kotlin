@@ -2,9 +2,7 @@ import engine.api.Api
 import engine.block.Block
 import engine.camera.Camera
 import engine.client_player.ClientPlayer
-import engine.delta.fpsUpdated
-import engine.delta.getDelta
-import engine.delta.getFPS
+import engine.delta.Delta
 import engine.entity.EntityHandler
 import engine.glfw.glfw
 import engine.initialization.initialize
@@ -108,8 +106,8 @@ fun update(delta: Float) {
     mouse.toggleCapture()
   }
 
-  if (fpsUpdated()) {
-    window.setTitle("FPS: ${getFPS()}")
+  if (Delta.fpsUpdated()) {
+    window.setTitle("FPS: ${Delta.getFPS()}")
   }
 
   if (brighten) {
@@ -166,7 +164,7 @@ tailrec fun gameLoop() {
 
   window.update()
 
-  val delta = getDelta()
+  val delta = Delta.getDelta()
 
   if (tick.think(delta)) {
     tick(delta)
