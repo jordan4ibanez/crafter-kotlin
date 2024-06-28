@@ -4,13 +4,13 @@ object Delta {
 
   // Time keeper object.
 
-  internal var deltaTime: Float = 0f
+  private var deltaTime: Float = 0f
   private var oldTime: Long = System.nanoTime()
 
-  internal var fps = 0
+  private var fps = 0
   private var fpsAccumulator = 0
   private var fpsTime = 0f
-  internal var fpsUpdate = false
+  private var fpsUpdate = false
 
   internal fun calculate() {
     // No other packages should be able to touch this besides engine.
