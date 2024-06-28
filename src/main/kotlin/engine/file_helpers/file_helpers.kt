@@ -6,9 +6,15 @@ import utility.result.Result
 import java.io.File
 
 
+/**
+ * Get a file from a location.
+ *
+ * @param location The location of the file.
+ * @return A Result of trying to load the file into memory.
+ */
 fun getFile(location: String): Result<File> {
   with(File(location)) {
-    return when (this.exists()) {
+    return when (this.exists() && this.isFile()) {
       true -> Ok(this)
       false -> Err("getFile: $location does not exist.")
     }
@@ -16,6 +22,7 @@ fun getFile(location: String): Result<File> {
 }
 
 fun getFolder(location: String): File {
+
   val folder = File(location)
   if (!folder.isDirectory) throw RuntimeException("getFolder: $location is not a directory.")
   return folder
