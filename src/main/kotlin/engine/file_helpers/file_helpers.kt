@@ -24,7 +24,7 @@ fun getFile(location: String): Result<File> {
 /**
  * Get a folder from a location as a File.
  *
- * @param location the location of the Folder.
+ * @param location the location of the folder.
  * @return Result<File> A Result of trying to load the file into memory.
  */
 fun getFolder(location: String): Result<File> {
@@ -36,9 +36,19 @@ fun getFolder(location: String): Result<File> {
   }
 }
 
-fun getFileString(location: String): String {
-
-  return getFile(location).unwrap().readText()
+/**
+ * Get a string from a file
+ *
+ * @param location the location of the file.
+ * @return Result<String> A Result of trying to load the file into memory.
+ */
+fun getFileString(location: String): Result<String> {
+  return with(getFile(location)) {
+    when (this) {
+      is Ok -> Ok(this.unwrap().readText())
+      else -> Err("getFileString: $location does not exist.")
+    }
+  }
 }
 
 fun getFolderList(folderLocation: String): Array<String> {
