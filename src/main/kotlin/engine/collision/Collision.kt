@@ -72,7 +72,6 @@ object Collision {
     velocity.set(entity.getVelocity())
     acceleration.set(entity.getAcceleration()).mul(TICK_DELTA)
 
-
     oldPos.set(pos)
     oldVelocity.set(velocity)
 
