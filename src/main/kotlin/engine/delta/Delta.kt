@@ -32,17 +32,17 @@ object Delta {
     }
     fpsAccumulator++;
   }
-}
 
-// Hook this up as a general function. An alias so you do not have to do: delta.getDelta()
-fun getDelta(): Float {
-  return Delta.deltaTime
-}
+  // Exposed API to Groovy.
+  fun getDelta(): Float {
+    return Delta.deltaTime
+  }
 
-fun fpsUpdated(): Boolean {
-  return Delta.fpsUpdate
-}
+  fun fpsUpdated(): Boolean {
+    return Delta.fpsUpdate
+  }
 
-fun getFPS(): Int {
-  return Delta.fps
+  fun getFPS(): Int {
+    return Delta.fps
+  }
 }
