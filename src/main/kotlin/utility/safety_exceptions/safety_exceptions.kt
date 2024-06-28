@@ -19,3 +19,4 @@ class MultipleOneLockLockException(info: String) : Exception(info)
  * Exception class which indicates we have literally no idea what you did.
  */
 class UnknownException(info: String) : Exception(info)
+
