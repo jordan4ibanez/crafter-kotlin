@@ -7,10 +7,10 @@ import java.io.File
 
 
 /**
- * Get a file from a location.
+ * Get a file from a location as a File.
  *
  * @param location The location of the file.
- * @return A Result of trying to load the file into memory.
+ * @return Result<File> A Result of trying to load the file into memory.
  */
 fun getFile(location: String): Result<File> {
   with(File(location)) {
@@ -21,11 +21,19 @@ fun getFile(location: String): Result<File> {
   }
 }
 
-fun getFolder(location: String): File {
-
-  val folder = File(location)
-  if (!folder.isDirectory) throw RuntimeException("getFolder: $location is not a directory.")
-  return folder
+/**
+ * Get a folder from a location as a File.
+ *
+ * @param location the location of the Folder.
+ * @return Result<File> A Result of trying to load the file into memory.
+ */
+fun getFolder(location: String): Result<File> {
+  with(File(location)) {
+    return when (this.exists() && this.isDirectory()) {
+      true -> Ok(this)
+      false -> Err("getFolder: $location is not a directory.")
+    }
+  }
 }
 
 fun getFileString(location: String): String {
