@@ -30,19 +30,19 @@ object DeltaTime {
       fpsUpdate = true
       fpsAccumulator = 0
     }
-    fpsAccumulator++;
+    fpsAccumulator++
   }
 
   // Exposed API to Groovy.
   fun getDelta(): Float {
-    return DeltaTime.deltaTime
+    return deltaTime
   }
 
   fun fpsUpdated(): Boolean {
-    return DeltaTime.fpsUpdate
+    return fpsUpdate
   }
 
   fun getFPS(): Int {
-    return DeltaTime.fps
+    return fps
   }
 }
