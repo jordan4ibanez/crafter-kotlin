@@ -1,12 +1,18 @@
 package engine.file_helpers
 
+import utility.result.Err
+import utility.result.Ok
+import utility.result.Result
 import java.io.File
 
 
-fun getFile(location: String): File {
-  val file = File(location)
-  if (!file.exists()) throw RuntimeException("getFile: $location does not exist.")
-  return file
+fun getFile(location: String): Result<File> {
+  with(File(location)) {
+    return when (this.exists()) {
+      true -> Ok(this)
+      false -> Err("getFile: $location does not exist.")
+    }
+  }
 }
 
 fun getFolder(location: String): File {
@@ -16,7 +22,7 @@ fun getFolder(location: String): File {
 }
 
 fun getFileString(location: String): String {
-  return getFile(location).readText()
+  return getFile(location).unwrap().readText()
 }
 
 fun getFolderList(folderLocation: String): Array<String> {
