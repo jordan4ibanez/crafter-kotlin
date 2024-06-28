@@ -1,6 +1,6 @@
 package engine.delta
 
-internal object delta {
+object Delta {
 
   // Time keeper object.
 
@@ -36,13 +36,13 @@ internal object delta {
 
 // Hook this up as a general function. An alias so you do not have to do: delta.getDelta()
 fun getDelta(): Float {
-  return delta.deltaTime
+  return Delta.deltaTime
 }
 
 fun fpsUpdated(): Boolean {
-  return delta.fpsUpdate
+  return Delta.fpsUpdate
 }
 
 fun getFPS(): Int {
-  return delta.fps
+  return Delta.fps
 }
