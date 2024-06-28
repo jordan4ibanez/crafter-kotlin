@@ -1,6 +1,6 @@
-package engine.delta
+package engine.delta_time
 
-object Delta {
+object DeltaTime {
 
   // Time keeper object.
 
@@ -35,14 +35,14 @@ object Delta {
 
   // Exposed API to Groovy.
   fun getDelta(): Float {
-    return Delta.deltaTime
+    return DeltaTime.deltaTime
   }
 
   fun fpsUpdated(): Boolean {
-    return Delta.fpsUpdate
+    return DeltaTime.fpsUpdate
   }
 
   fun getFPS(): Int {
-    return Delta.fps
+    return DeltaTime.fps
   }
 }
