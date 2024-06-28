@@ -1,6 +1,6 @@
 package engine.entity
 
-import engine.collision_box.collisionBox
+import engine.collision_box.CollisionBox
 import org.joml.Vector2f
 import org.joml.Vector2fc
 import org.joml.Vector3f
@@ -19,7 +19,7 @@ open class GroovyEntity(pos: Vector3fc) : Entity(pos) {
   private val rotation = Vector3f()
 
   fun drawCollisionBox() {
-    collisionBox.draw(interpolationPosition, size)
+    CollisionBox.draw(interpolationPosition, size)
 //    collisionBox.draw(position, size)
   }
 
