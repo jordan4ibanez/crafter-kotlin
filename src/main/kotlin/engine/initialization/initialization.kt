@@ -1,7 +1,7 @@
 package engine.initialization
 
 import engine.api.Api
-import engine.block.blockIDCache
+import engine.block.BlockIDCache
 import engine.gl.gl
 import engine.glfw.glfw
 import engine.shader.shader
@@ -16,9 +16,9 @@ fun initialize() {
   shader.createUniforms(arrayOf("cameraMatrix", "objectMatrix"))
   shader.start("main")
 
-  blockIDCache.initialize()
+  BlockIDCache.initialize()
 
   Api.initialize()
 
-  blockIDCache.write()
+  BlockIDCache.write()
 }

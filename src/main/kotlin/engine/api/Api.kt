@@ -66,8 +66,8 @@ object Api {
       //? note: For now, we will assume the mod is called the folder name. In a bit: The conf will be implemented.
       currentModName = thisFolder.name
       currentModFolder = thisFolder.name
-      currentDirectoryLiteral = "$MOD_BASE_FOLDER/$thisFolder"
-      if (!currentDirectoryLiteral.isFolder()) throw RuntimeException("Api Something strange has gone wrong with loading mods.\nFolder $thisFolder does not exist.")
+      currentDirectoryLiteral = "$MOD_BASE_FOLDER/$currentModFolder"
+      if (!currentDirectoryLiteral.isFolder()) throw RuntimeException("Api: Something strange has gone wrong with loading mods.\nFolder $thisFolder does not exist.")
 
       //!todo: check mod.json existence here!
       //!fixme: implement config checker!!
@@ -76,7 +76,7 @@ object Api {
       //! FIXME: THIS NEEDS TO BE HANDLED BETTER.
 
       val currentMain = "$currentDirectoryLiteral/main.groovy"
-      if (!currentMain.isFile()) throw RuntimeException("Api $currentModName does not contain a main.groovy!")
+      if (!currentMain.isFile()) throw RuntimeException("Api: $currentModName does not contain a main.groovy!")
       runFile("$currentModName/main.groovy")
     }
   }
@@ -86,8 +86,8 @@ object Api {
       //? note: For now, we will assume the mod is called the folder name. In a bit: The conf will be implemented.
       currentModName = thisFolder.name
       currentModFolder = thisFolder.name
-      currentDirectoryLiteral = "$MOD_BASE_FOLDER/$thisFolder"
-      if (!currentDirectoryLiteral.isFolder()) throw RuntimeException("Api Something strange has gone wrong with loading textures.\nFolder $thisFolder does not exist.")
+      currentDirectoryLiteral = "$MOD_BASE_FOLDER/$currentModFolder"
+      if (!currentDirectoryLiteral.isFolder()) throw RuntimeException("Api: Something strange has gone wrong with loading textures.\nFolder $thisFolder does not exist.")
       loadBlockTextures()
       loadIndividualTextures()
     }
@@ -98,33 +98,40 @@ object Api {
 
   private fun loadBlockTextures() {
     val textureDirectory = "$MOD_BASE_FOLDER/$currentModFolder/textures"
+
     if (!textureDirectory.isFolder()) {
-      println("Api $currentModName has no textures folder. Skipping."); return
+      println("Api: $currentModName has no textures folder. Skipping.")
+      return
     }
     val blockTextureDirectory = "$textureDirectory/blocks"
     if (!blockTextureDirectory.isFolder()) {
-      println("Api $currentModName has no block textures folder. Skipping."); return
+      println("Api: $currentModName has no block textures folder. Skipping.")
+      return
     }
     getFileList(blockTextureDirectory)
       .unwrap()
-      .filter { it.endsWith(".png") }
-      .ifEmpty { println("Api $currentModName has no block textures in folder. Skipping."); return }
+      .filter { it.name.endsWith(".png") }
+      .ifEmpty { println("Api: $currentModName has no block textures in folder. Skipping."); return }
       .forEach { foundTexture: Path ->
-        worldAtlas.add(foundTexture.name, "$blockTextureDirectory/$foundTexture")
+        worldAtlas.add(
+          foundTexture.name,
+          "$blockTextureDirectory/${foundTexture.name}"
+        )
       }
   }
 
   private fun loadIndividualTextures() {
     val textureDirectory = "$MOD_BASE_FOLDER/$currentModFolder/textures"
     if (!textureDirectory.isFolder()) {
-      println("Api $currentModName has no textures folder. Skipping."); return
+      println("Api: $currentModName has no textures folder. Skipping.")
+      return
     }
     getFileList(textureDirectory)
       .unwrap()
-      .filter { it.endsWith(".png") }
-      .ifEmpty { println("Api $currentModName has no textures in folder. Skipping."); return }
+      .filter { it.name.endsWith(".png") }
+      .ifEmpty { println("Api: $currentModName has no textures in folder. Skipping."); return }
       .forEach { foundTexture: Path ->
-        Texture.create(foundTexture.name, "$textureDirectory/$foundTexture")
+        Texture.create(foundTexture.name, "$textureDirectory/${foundTexture.name}")
       }
   }
 

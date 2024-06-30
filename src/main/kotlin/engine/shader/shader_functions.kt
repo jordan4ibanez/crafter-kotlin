@@ -20,7 +20,7 @@ fun createShader(vertexSourceCodeLocation: String, fragmentSourceCodeLocation: S
 }
 
 private fun compileSourceCode(programID: Int, sourceCodeLocation: String, shaderType: Int): Int {
-  val sourceCode = getFileString(sourceCodeLocation)
+  val sourceCode = getFileString(sourceCodeLocation).unwrap()
 
   val shaderID = glCreateShader(shaderType)
 

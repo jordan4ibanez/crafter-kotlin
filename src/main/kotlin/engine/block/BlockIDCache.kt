@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeType
 import engine.file_helpers.*
+import utility.result.Ok
 
 /**
  * This object's soul purpose is to parse and map the block_cache.json file for the BlockDefinitionContainer to get
@@ -111,12 +112,12 @@ internal object BlockIDCache {
 
   fun write() {
     println("blockIDCache: Writing cache.")
-    val mapper = ObjectMapper()
-    try {
-      mapper.writeValue(cacheFile.makeFile().unwrap().toFile(), nameToIDMap)
-    } catch (e: Exception) {
-      throw RuntimeException("blockIDCache: Write error. $e")
+
+    when (val path = cacheFile.makeOrGetFile()) {
+      is Ok -> ObjectMapper().writeValue(path.unwrap().toFile(), nameToIDMap)
+      else -> throw path.unwrapErr()
     }
+
     println("blockIDCache: Cache write successful.")
   }
 }

@@ -95,6 +95,7 @@ fun getFileList(folderLocation: String): Result<List<Path>> {
  * @return If the string is a folder directory.
  */
 fun String.isFolder(): Boolean {
+  println(this)
   return Path(this).isDirectory()
 }
 
@@ -123,6 +124,20 @@ fun String.makeFolder(): Result<Path> {
  */
 fun String.makeFile(): Result<Path> {
   return catcher { Path(this).createFile() }
+}
+
+fun String.makeOrGetFile(): Result<Path> {
+  return when (val newFile = this.makeFile()) {
+    is Ok -> newFile
+    else -> {
+      with(Path(this)) {
+        when (this.isRegularFile()) {
+          true -> Ok(this)
+          else -> Err("makeOrGetFile: Could not create or get the file in $this")
+        }
+      }
+    }
+  }
 }
 
 /**

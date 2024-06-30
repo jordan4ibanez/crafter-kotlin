@@ -63,7 +63,7 @@ abstract class Result<T> protected constructor(ok: T?, err: Error?) {
   fun unwrap(): T {
     return when (this) {
       is Ok -> this.ok.unwrap()// Smart cast into <T>.
-      else -> throw UnwrapException(this.err.unwrap().message.toString())
+      else -> throw UnwrapException(this.unwrapErrMessage())
     }
   }
 
