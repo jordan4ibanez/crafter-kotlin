@@ -57,24 +57,28 @@ fun getFileString(location: String): Result<String> {
  */
 fun getFolderList(folderLocation: String): Result<Array<String>> {
   return when (val folderOption = getFolder(folderLocation)) {
-    is Ok -> {
-      when (val folderArrayOption =
-        undecided(folderOption.unwrap().list { currentFolder, name -> File(currentFolder, name).isDirectory })) {
+    is Ok -> when (val folderArrayOption =
+      undecided(folderOption.unwrap().list { currentFile, name -> File(currentFile, name).isDirectory })) {
 
-        is Some -> Ok(folderArrayOption.unwrap())
-        else -> Err("getFolderList: Invalid list filter applied.")
-      }
+      is Some -> Ok(folderArrayOption.unwrap())
+      else -> Err("getFolderList: Invalid list filter applied.")
     }
 
     else -> Err("getFolderList: $folderLocation does not exist.")
   }
 }
 
-fun getFileList(folderLocation: String): Array<String> {
-  val folder = getFolder(folderLocation)
-  return folder.list { currentFile, name ->
-    File(currentFile, name).isFile
-  }!!
+fun getFileList(folderLocation: String): Result<Array<String>> {
+  return when (val folderOption = getFolder(folderLocation)) {
+    is Ok -> when (val folderArrayOption =
+      undecided(folderOption.unwrap().list { currentFile, name -> File(currentFile, name).isFile })) {
+
+      is Some -> Ok(folderArrayOption.unwrap())
+      else -> Err("getFileList: Invalid list filter applied.")
+    }
+
+    else -> Err("getFileList: $folderLocation does not exist.")
+  }
 }
 
 fun isFolder(folderLocation: String): Boolean {
