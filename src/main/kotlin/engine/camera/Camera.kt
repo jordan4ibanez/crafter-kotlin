@@ -2,8 +2,8 @@ package engine.camera
 
 import engine.delta_time.DeltaTime
 import engine.joml_bolt_ons.destructure
-import engine.keyboard.keyboard
-import engine.mouse.mouse
+import engine.keyboard.Keyboard
+import engine.mouse.Mouse
 import engine.shader.shader
 import engine.window.window
 import engine.world.world
@@ -134,7 +134,7 @@ object Camera {
   fun yawToLeft(yaw: Float): Float = yaw - (PI / 2F).toFloat()
 
   internal fun doMouseInputCameraRotation() {
-    val mouseDelta = mouse.getDelta()
+    val mouseDelta = Mouse.getDelta()
     cameraDelta.set(mouseDelta.y(), mouseDelta.x(), 0f).mul(sensitivity)
     rotation.add(cameraDelta, newCameraRotation)
     rotation.set(newCameraRotation)
@@ -150,12 +150,12 @@ object Camera {
 
     inputMovement.zero()
 
-    if (keyboard.isDown(GLFW_KEY_W)) inputMovement.z -= 1f
-    if (keyboard.isDown(GLFW_KEY_S)) inputMovement.z += 1f
-    if (keyboard.isDown(GLFW_KEY_A)) inputMovement.x -= 1f
-    if (keyboard.isDown(GLFW_KEY_D)) inputMovement.x += 1f
-    if (keyboard.isDown(GLFW_KEY_SPACE)) inputMovement.y += 1f
-    if (keyboard.isDown(GLFW_KEY_LEFT_SHIFT)) inputMovement.y -= 1f
+    if (Keyboard.isDown(GLFW_KEY_W)) inputMovement.z -= 1f
+    if (Keyboard.isDown(GLFW_KEY_S)) inputMovement.z += 1f
+    if (Keyboard.isDown(GLFW_KEY_A)) inputMovement.x -= 1f
+    if (Keyboard.isDown(GLFW_KEY_D)) inputMovement.x += 1f
+    if (Keyboard.isDown(GLFW_KEY_SPACE)) inputMovement.y += 1f
+    if (Keyboard.isDown(GLFW_KEY_LEFT_SHIFT)) inputMovement.y -= 1f
 
     val yaw = newCameraRotation.y
     val movementDelta = DeltaTime.getDelta() * cameraSpeed

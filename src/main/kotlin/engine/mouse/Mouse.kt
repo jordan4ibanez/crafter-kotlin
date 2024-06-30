@@ -5,7 +5,7 @@ import org.joml.Vector2f
 import org.joml.Vector2fc
 import org.lwjgl.glfw.GLFW.*
 
-object mouse {
+object Mouse {
 
   internal val position = Vector2f(-1f, -1f)
   private val oldPosition = Vector2f(-1f, -1f)

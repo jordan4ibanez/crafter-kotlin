@@ -6,10 +6,10 @@ import engine.delta_time.DeltaTime
 import engine.entity.EntityHandler
 import engine.glfw.Glfw
 import engine.initialization.initialize
-import engine.keyboard.keyboard
+import engine.keyboard.Keyboard
 import engine.model.mesh.Mesh
 import engine.model.texture.Texture
-import engine.mouse.mouse
+import engine.mouse.Mouse
 import engine.shader.shader
 import engine.thread.thread
 import engine.tick.tick
@@ -97,13 +97,13 @@ fun update(delta: Float) {
   ClientPlayer.glueCamera()
 
 
-  if (keyboard.isDown(GLFW_KEY_ESCAPE)) {
+  if (Keyboard.isDown(GLFW_KEY_ESCAPE)) {
     window.close()
     return
   }
 
-  if (keyboard.isPressed(GLFW_KEY_F1)) {
-    mouse.toggleCapture()
+  if (Keyboard.isPressed(GLFW_KEY_F1)) {
+    Mouse.toggleCapture()
   }
 
   if (DeltaTime.fpsUpdated()) {

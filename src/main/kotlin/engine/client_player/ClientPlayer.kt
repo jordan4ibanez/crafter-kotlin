@@ -3,7 +3,7 @@ package engine.client_player
 import engine.camera.Camera
 import engine.entity.EntityHandler
 import engine.entity.mob.Player
-import engine.keyboard.keyboard
+import engine.keyboard.Keyboard
 import engine.world.world
 import org.joml.Math.*
 import org.joml.Vector2i
@@ -69,23 +69,23 @@ object ClientPlayer : Player(Vector3f(0f, 110f, 0f), "singleplayer") {
 
   internal fun doClientControls() {
     positionBuffer.y = when {
-      keyboard.isDown(GLFW.GLFW_KEY_LEFT_CONTROL) -> when {
-        keyboard.isDown(GLFW.GLFW_KEY_W) -> -2
-        keyboard.isDown(GLFW.GLFW_KEY_S) -> 2
+      Keyboard.isDown(GLFW.GLFW_KEY_LEFT_CONTROL) -> when {
+        Keyboard.isDown(GLFW.GLFW_KEY_W) -> -2
+        Keyboard.isDown(GLFW.GLFW_KEY_S) -> 2
         else -> 0
       }
 
-      keyboard.isDown(GLFW.GLFW_KEY_W) -> -1
-      keyboard.isDown(GLFW.GLFW_KEY_S) -> 1
+      Keyboard.isDown(GLFW.GLFW_KEY_W) -> -1
+      Keyboard.isDown(GLFW.GLFW_KEY_S) -> 1
       else -> 0
     }
     positionBuffer.x = when {
-      keyboard.isDown(GLFW.GLFW_KEY_A) -> -1
-      keyboard.isDown(GLFW.GLFW_KEY_D) -> 1
+      Keyboard.isDown(GLFW.GLFW_KEY_A) -> -1
+      Keyboard.isDown(GLFW.GLFW_KEY_D) -> 1
       else -> 0
     }
 
-    sneaking = keyboard.isDown(GLFW.GLFW_KEY_LEFT_SHIFT)
-    jumping = keyboard.isDown(GLFW.GLFW_KEY_SPACE)
+    sneaking = Keyboard.isDown(GLFW.GLFW_KEY_LEFT_SHIFT)
+    jumping = Keyboard.isDown(GLFW.GLFW_KEY_SPACE)
   }
 }

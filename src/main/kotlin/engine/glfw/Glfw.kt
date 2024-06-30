@@ -1,8 +1,8 @@
 package engine.glfw
 
 import engine.joml_bolt_ons.destructure
-import engine.keyboard.keyboard
-import engine.mouse.mouse
+import engine.keyboard.Keyboard
+import engine.mouse.Mouse
 import engine.window.window
 import org.joml.Vector2i
 import org.joml.Vector2ic
@@ -109,31 +109,31 @@ object Glfw {
     //note: keyboard
 
     glfwSetCharCallback(window.pointer) { _, codePoint ->
-      keyboard.lastKey = codePoint.toChar()
+      Keyboard.lastKey = codePoint.toChar()
     }
 
     glfwSetKeyCallback(window.pointer) { _, key, scancode, action, mods ->
       if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-        keyboard.setMemory(key)
-        keyboard.setCurrent(key, true)
-        keyboard.memoryFlush.add(key)
+        Keyboard.setMemory(key)
+        Keyboard.setCurrent(key, true)
+        Keyboard.memoryFlush.add(key)
       } else if (action == GLFW_RELEASE) {
         //todo: this needs to be tested, these might need to be flipped
-        keyboard.setCurrent(key, false)
-        keyboard.setMemory(key)
+        Keyboard.setCurrent(key, false)
+        Keyboard.setMemory(key)
       }
     }
 
     // Note: Mouse.
     glfwSetCursorPosCallback(window.pointer) { _, posX, posY ->
-      mouse.position.set(posX, posY)
+      Mouse.position.set(posX, posY)
     }
 
     glfwSetCursorEnterCallback(window.pointer) { _, entered ->
       // Only reset to -1 when mouse leaves.
       if (!entered) {
         println("mouse: resetting position to -1, -1")
-        mouse.position.set(-1f, -1f)
+        Mouse.position.set(-1f, -1f)
       }
     }
   }

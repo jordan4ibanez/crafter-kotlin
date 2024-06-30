@@ -1,8 +1,8 @@
 package engine.window
 
 import engine.delta_time.DeltaTime
-import engine.keyboard.keyboard
-import engine.mouse.mouse
+import engine.keyboard.Keyboard
+import engine.mouse.Mouse
 import org.joml.Vector2i
 import org.joml.Vector2ic
 import org.joml.Vector3f
@@ -82,8 +82,8 @@ object window {
   }
 
   fun update() {
-    keyboard.pollMemory()
-    mouse.poll()
+    Keyboard.pollMemory()
+    Mouse.poll()
     DeltaTime.calculate()
     glfwPollEvents()
     glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)

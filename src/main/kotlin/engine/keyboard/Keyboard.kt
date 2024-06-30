@@ -1,6 +1,6 @@
 package engine.keyboard
 
-object keyboard {
+object Keyboard {
 
   internal var lastKey: Char = '\u0000'
 
