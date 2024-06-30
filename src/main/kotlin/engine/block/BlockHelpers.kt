@@ -16,3 +16,6 @@ internal fun <T> singleThreaded(): HashMap<Int, T> {
   return HashMap()
 }
 
+// These two help with the BlockIDCache
+internal const val cacheFolder = "./cache"
+internal const val cacheFile = "./cache/block_cache.json"
