@@ -146,6 +146,16 @@ abstract class Result<T> protected constructor(ok: T?, err: Error?) {
     }
     return this
   }
+
+  /**
+   * Unwrap the error message.
+   *
+   * @throws UnwrapException The held Ok if it is an Ok in an UnwrapException.
+   * @return The Error message.
+   */
+  fun unwrapErrMessage(): String {
+    return this.unwrapErr().message.toString()
+  }
 }
 
 /**
