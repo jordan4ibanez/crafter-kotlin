@@ -132,7 +132,7 @@ fun String.makeOrGetFile(): Result<Path> {
       with(Path(this)) {
         when (this.isRegularFile()) {
           true -> Ok(this)
-          else -> Err("makeOrGetFile: Could not create or get the file in $this")
+          else -> Err("makeOrGetFile: Could not create or get the file in ${this@makeOrGetFile}")
         }
       }
     }
