@@ -1,5 +1,7 @@
 package engine.file_helpers
 
+import utility.option.Some
+import utility.option.undecided
 import utility.result.Err
 import utility.result.Ok
 import utility.result.Result
@@ -51,11 +53,21 @@ fun getFileString(location: String): Result<String> {
   }
 }
 
-fun getFolderList(folderLocation: String): Array<String> {
-  val folder = getFolder(folderLocation)
-  return folder.list { currentFolder, name ->
-    File(currentFolder, name).isDirectory
-  }!!
+fun getFolderList(folderLocation: String): Result<Array<String>> {
+  return with(getFolder(folderLocation)) {
+    when (this) {
+      is Ok -> {
+        with(undecided(this.unwrap().list { currentFolder, name -> File(currentFolder, name).isDirectory })) {
+          when (this) {
+            is Some -> Ok(this.unwrap())
+            else -> Err("getFolderList: Invalid list filter applied.")
+          }
+        }
+      }
+
+      else -> Err("getFolderList: $folderLocation does not exist.")
+    }
+  }
 }
 
 fun getFileList(folderLocation: String): Array<String> {
