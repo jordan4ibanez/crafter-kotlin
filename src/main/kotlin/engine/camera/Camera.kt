@@ -4,8 +4,8 @@ import engine.delta_time.DeltaTime
 import engine.joml_bolt_ons.destructure
 import engine.keyboard.Keyboard
 import engine.mouse.Mouse
-import engine.shader.shader
-import engine.window.window
+import engine.shader.Shader
+import engine.window.Window
 import engine.world.world
 import org.joml.Math.*
 import org.joml.Matrix4f
@@ -47,11 +47,11 @@ object Camera {
   fun updateCameraMatrix() {
     cameraMatrix
       .identity()
-      .perspective(FOV, window.getAspectRatio(), zNear, zFar)
+      .perspective(FOV, Window.getAspectRatio(), zNear, zFar)
       .rotateX(rotation.x)
       .rotateY(rotation.y)
 
-    shader.setUniform("cameraMatrix", cameraMatrix)
+    Shader.setUniform("cameraMatrix", cameraMatrix)
   }
 
   fun getZNear(): Float = zNear
@@ -79,17 +79,17 @@ object Camera {
       .rotateZ(-rotation.z())
       .scale(scale)
 
-    shader.setUniform("objectMatrix", objectMatrix)
+    Shader.setUniform("objectMatrix", objectMatrix)
   }
 
   fun updateGUICameraMatrix() {
-    val (width, height) = window.getFrameBufferSize().destructure()
+    val (width, height) = Window.getFrameBufferSize().destructure()
 
     guiCameraMatrix
       .identity()
       .setOrtho2D(0f, width.toFloat(), height.toFloat(), 0f)
 
-    shader.setUniform("cameraMatrix", guiCameraMatrix)
+    Shader.setUniform("cameraMatrix", guiCameraMatrix)
   }
 
 
@@ -103,7 +103,7 @@ object Camera {
       .translate(posX, posY, 0f)
       .scale(scaleX, scaleY, 1f)
 
-    shader.setUniform("objectMatrix", guiObjectMatrix)
+    Shader.setUniform("objectMatrix", guiObjectMatrix)
   }
 
   fun getCameraMatrix(): Matrix4fc = cameraMatrix

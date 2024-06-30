@@ -2,7 +2,7 @@ package engine.tick
 
 
 // Thanks Rubenwardy!
-object tick {
+object Tick {
 
   private var accumulator = 0f
   internal const val GOAL = 30

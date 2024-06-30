@@ -4,7 +4,7 @@ import engine.api.Api
 import engine.block.BlockIDCache
 import engine.gl.Gl
 import engine.glfw.Glfw
-import engine.shader.shader
+import engine.shader.Shader
 
 fun initialize() {
   println("Initializing Crafter.")
@@ -12,9 +12,9 @@ fun initialize() {
   Glfw.initialize()
   Gl.initialize()
 
-  shader.create("main", "./shaders/main_shader.vert", "./shaders/main_shader.frag")
-  shader.createUniforms(arrayOf("cameraMatrix", "objectMatrix"))
-  shader.start("main")
+  Shader.create("main", "./shaders/main_shader.vert", "./shaders/main_shader.frag")
+  Shader.createUniforms(arrayOf("cameraMatrix", "objectMatrix"))
+  Shader.start("main")
 
   BlockIDCache.initialize()
 

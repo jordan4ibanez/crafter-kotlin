@@ -4,7 +4,7 @@ import engine.block.Block
 import engine.camera.Camera
 import engine.entity.GroovyEntity
 import engine.helpers.toward
-import engine.tick.tick
+import engine.tick.Tick
 import engine.world.blockManipulator
 import engine.world.world
 import org.joml.FrustumIntersection
@@ -35,7 +35,7 @@ object Collision {
   private val worldAABBMin = Vector3f()
   private val worldAABBMax = Vector3f()
   private val normalizedVelocity = Vector3f()
-  private const val TICK_DELTA = tick.GOAL_DELTA
+  private const val TICK_DELTA = Tick.GOAL_DELTA
   private val velocity2d = Vector2f()
   private val frictionVelocity = Vector2f()
 

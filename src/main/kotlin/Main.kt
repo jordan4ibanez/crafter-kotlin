@@ -10,10 +10,10 @@ import engine.keyboard.Keyboard
 import engine.model.mesh.Mesh
 import engine.model.texture.Texture
 import engine.mouse.Mouse
-import engine.shader.shader
-import engine.thread.thread
-import engine.tick.tick
-import engine.window.window
+import engine.shader.Shader
+import engine.thread.Thread
+import engine.tick.Tick
+import engine.window.Window
 import engine.world.world
 import org.joml.Math.toRadians
 import org.joml.Random
@@ -29,7 +29,7 @@ fun load() {
 
   initialize()
 
-  window.setVsync(false)
+  Window.setVsync(false)
 
   // Debug texture.
 
@@ -69,7 +69,7 @@ fun load() {
 //  mouse.capture()
 
 //  window.maximize()
-  window.setVsync(true)
+  Window.setVsync(true)
   stone = Block.getID("crafter:stone")
 
   ClientPlayer.initialize()
@@ -98,7 +98,7 @@ fun update(delta: Float) {
 
 
   if (Keyboard.isDown(GLFW_KEY_ESCAPE)) {
-    window.close()
+    Window.close()
     return
   }
 
@@ -107,7 +107,7 @@ fun update(delta: Float) {
   }
 
   if (DeltaTime.fpsUpdated()) {
-    window.setTitle("FPS: ${DeltaTime.getFPS()}")
+    Window.setTitle("FPS: ${DeltaTime.getFPS()}")
   }
 
   if (brighten) {
@@ -123,7 +123,7 @@ fun update(delta: Float) {
       brighten = true
     }
   }
-  window.setClearColor(color)
+  Window.setClearColor(color)
 }
 
 // Consider this pure logic updates. onTick, collision, etc. For real time things, put them in update().
@@ -152,32 +152,32 @@ fun draw() {
 // Game cleanup procedures go here. Consider this love.quit()
 fun quit() {
 
-  thread.destroy()
+  Thread.destroy()
   Mesh.destroyAll()
   Texture.destroyAll()
-  shader.destroyAll()
+  Shader.destroyAll()
   Glfw.destroy()
 }
 
 // Warning: gameLoop really should not be touched. Focus on the infrastructure around it before adding to it.
 tailrec fun gameLoop() {
 
-  window.update()
+  Window.update()
 
   val delta = DeltaTime.getDelta()
 
-  if (tick.think(delta)) {
+  if (Tick.think(delta)) {
     tick(delta)
-    thread.launchAllThreads()
+    Thread.launchAllThreads()
   }
 
   update(delta)
 
   draw()
 
-  window.swapBuffers()
+  Window.swapBuffers()
 
-  if (window.shouldClose()) return
+  if (Window.shouldClose()) return
 
   return gameLoop()
 }

@@ -11,7 +11,7 @@ import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.system.MemoryUtil.NULL
 
-object window {
+object Window {
 
   internal var pointer: Long = NULL
   private const val WINDOW_TITLE_BASE = "Crafter"

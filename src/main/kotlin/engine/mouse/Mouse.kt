@@ -1,6 +1,6 @@
 package engine.mouse
 
-import engine.window.window
+import engine.window.Window
 import org.joml.Vector2f
 import org.joml.Vector2fc
 import org.lwjgl.glfw.GLFW.*
@@ -24,8 +24,8 @@ object Mouse {
   internal fun poll() {
     calculateDeltaWhenCaptured()
 
-    val leftButtonState = glfwGetMouseButton(window.pointer, GLFW_MOUSE_BUTTON_LEFT)
-    val rightButtonState = glfwGetMouseButton(window.pointer, GLFW_MOUSE_BUTTON_RIGHT)
+    val leftButtonState = glfwGetMouseButton(Window.pointer, GLFW_MOUSE_BUTTON_LEFT)
+    val rightButtonState = glfwGetMouseButton(Window.pointer, GLFW_MOUSE_BUTTON_RIGHT)
 
     if (leftButtonState == GLFW_PRESS) {
       leftHeld = true
@@ -68,23 +68,23 @@ object Mouse {
 
 
   internal fun capture() {
-    glfwSetInputMode(window.pointer, GLFW_CURSOR, GLFW_CURSOR_DISABLED)
+    glfwSetInputMode(Window.pointer, GLFW_CURSOR, GLFW_CURSOR_DISABLED)
     needsDeltaReset = true
   }
 
   internal fun release() {
-    glfwSetInputMode(window.pointer, GLFW_CURSOR, GLFW_CURSOR_NORMAL)
+    glfwSetInputMode(Window.pointer, GLFW_CURSOR, GLFW_CURSOR_NORMAL)
     needsDeltaReset = true
   }
 
-  internal fun isCaptured(): Boolean = glfwGetInputMode(window.pointer, GLFW_CURSOR) == GLFW_CURSOR_DISABLED
+  internal fun isCaptured(): Boolean = glfwGetInputMode(Window.pointer, GLFW_CURSOR) == GLFW_CURSOR_DISABLED
 
   internal fun toggleCapture() = if (isCaptured()) release() else capture()
 
   private fun doReset() {
     delta.zero()
     //! FIXME: move this to the center of the window instead of the top left.
-    glfwSetCursorPos(window.pointer, 0.0, 0.0)
+    glfwSetCursorPos(Window.pointer, 0.0, 0.0)
     needsDeltaReset = false
   }
 }

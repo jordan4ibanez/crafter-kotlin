@@ -3,7 +3,7 @@ package engine.glfw
 import engine.joml_bolt_ons.destructure
 import engine.keyboard.Keyboard
 import engine.mouse.Mouse
-import engine.window.window
+import engine.window.Window
 import org.joml.Vector2i
 import org.joml.Vector2ic
 import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
@@ -21,7 +21,7 @@ object Glfw {
   fun initialize() {
 
     // A simple way to stop this from being called multiple times.
-    if (window.pointer != NULL) {
+    if (Window.pointer != NULL) {
       throw RuntimeException("GLFW: Attempted to initialize GLFW with active window.")
     }
 
@@ -55,21 +55,21 @@ object Glfw {
     // Puts all callback initializations into one function scope.
     constructCallbacks()
 
-    glfwMakeContextCurrent(window.pointer)
+    glfwMakeContextCurrent(Window.pointer)
     glfwSwapInterval(1)
-    glfwShowWindow(window.pointer)
+    glfwShowWindow(Window.pointer)
 
     // Create the initial framebuffer size in window object.
     run {
       val x = IntArray(1)
       val y = IntArray(1)
-      glfwGetFramebufferSize(window.pointer, x, y)
-      window.frameBufferSize.set(x[0], y[0])
+      glfwGetFramebufferSize(Window.pointer, x, y)
+      Window.frameBufferSize.set(x[0], y[0])
     }
 
     // Mouse raw motion support
     if (glfwRawMouseMotionSupported()) {
-      glfwSetInputMode(window.pointer, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE)
+      glfwSetInputMode(Window.pointer, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE)
     }
   }
 
@@ -80,14 +80,14 @@ object Glfw {
     val (monitorSizeX, monitorSizeY) = getMonitorSize().destructure()
     val (windowSizeX, windowSizeY) = arrayOf(monitorSizeX / 2, monitorSizeY / 2)
     val (windowPosX, windowPosY) = arrayOf((monitorSizeX - windowSizeX) / 2, (monitorSizeY - windowSizeY) / 2)
-    window.pointer = glfwCreateWindow(windowSizeX, windowSizeY, window.getTitleBase(), NULL, NULL)
+    Window.pointer = glfwCreateWindow(windowSizeX, windowSizeY, Window.getTitleBase(), NULL, NULL)
 
     // Now if this gets called, we have a serious problem.
-    if (window.pointer == NULL) {
+    if (Window.pointer == NULL) {
       throw RuntimeException("GLFW: Failed to create GLFW window.")
     }
 
-    window.setPosition(windowPosX, windowPosY)
+    Window.setPosition(windowPosX, windowPosY)
   }
 
 
@@ -95,24 +95,24 @@ object Glfw {
 
     //note: window
 
-    glfwSetFramebufferSizeCallback(window.pointer) { _, width, height ->
+    glfwSetFramebufferSizeCallback(Window.pointer) { _, width, height ->
       println("Framebuffer was resized to: $width, $height")
       glViewport(0, 0, width, height)
-      window.frameBufferSize.set(width, height)
+      Window.frameBufferSize.set(width, height)
     }
 
-    glfwSetWindowPosCallback(window.pointer) { _, positionX, positionY ->
+    glfwSetWindowPosCallback(Window.pointer) { _, positionX, positionY ->
       println("Window was moved to: $positionX, $positionY")
-      window.position.set(positionX, positionY)
+      Window.position.set(positionX, positionY)
     }
 
     //note: keyboard
 
-    glfwSetCharCallback(window.pointer) { _, codePoint ->
+    glfwSetCharCallback(Window.pointer) { _, codePoint ->
       Keyboard.lastKey = codePoint.toChar()
     }
 
-    glfwSetKeyCallback(window.pointer) { _, key, scancode, action, mods ->
+    glfwSetKeyCallback(Window.pointer) { _, key, scancode, action, mods ->
       if (action == GLFW_PRESS || action == GLFW_REPEAT) {
         Keyboard.setMemory(key)
         Keyboard.setCurrent(key, true)
@@ -125,11 +125,11 @@ object Glfw {
     }
 
     // Note: Mouse.
-    glfwSetCursorPosCallback(window.pointer) { _, posX, posY ->
+    glfwSetCursorPosCallback(Window.pointer) { _, posX, posY ->
       Mouse.position.set(posX, posY)
     }
 
-    glfwSetCursorEnterCallback(window.pointer) { _, entered ->
+    glfwSetCursorEnterCallback(Window.pointer) { _, entered ->
       // Only reset to -1 when mouse leaves.
       if (!entered) {
         println("mouse: resetting position to -1, -1")
@@ -145,8 +145,8 @@ object Glfw {
   }
 
   fun destroy() {
-    glfwFreeCallbacks(window.pointer)
-    glfwDestroyWindow(window.pointer)
+    glfwFreeCallbacks(Window.pointer)
+    glfwDestroyWindow(Window.pointer)
     glfwTerminate()
     glfwSetErrorCallback(null)?.free()
   }

@@ -6,7 +6,7 @@ import org.joml.Vector3fc
 import org.lwjgl.opengl.GL20
 import org.lwjgl.system.MemoryStack
 
-object shader {
+object Shader {
 
   //note: We do not want to destroy shaders during gameplay. No individual destruction. Only full.
   // This is a state machine.

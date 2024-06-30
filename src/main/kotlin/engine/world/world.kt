@@ -10,8 +10,8 @@ import engine.joml_bolt_ons.destructure
 import engine.model.mesh.Mesh
 import engine.noise.Noise
 import engine.noise.NoiseType
-import engine.thread.thread
-import engine.thread.thread.parallelForEach
+import engine.thread.Thread
+import engine.thread.Thread.parallelForEach
 import engine.world.world.addMeshUpdate
 import engine.world.world.getBlockID
 import engine.world.world.getBlockLight
@@ -258,7 +258,7 @@ object world {
   private val meshDestructionQueue = ArrayDeque<Vector2ic>()
 
   private fun discardOldChunks(currentX: Int, currentZ: Int, renderDistance: Int) {
-    thread.launch {
+    Thread.launch {
       val dataDestructionQueue = ArrayDeque<Vector2ic>()
       data.forEach { (key: Vector2ic, _) ->
         val (x, z) = key.destructure()
@@ -423,21 +423,21 @@ object world {
       receiveChunkMeshes()
     }
 
-    thread.launch {
+    Thread.launch {
       for (i in 0..MAX_CHUNK_MESH_UPDATES_PER_TICK) {
         if (meshGenerationInput.isEmpty()) break
         processMeshUpdate()
       }
     }
 
-    thread.launch {
+    Thread.launch {
       for (i in 0..MAX_CHUNK_GENS_PER_TICK) {
         if (dataGenerationInput.isEmpty()) break
         genChunk()
       }
     }
 
-    thread.launch {
+    Thread.launch {
       for (i in 0..MAX_CHUNK_PROCS_PER_TICK) {
         if (dataGenerationOutput.isEmpty()) break
         processChunks()

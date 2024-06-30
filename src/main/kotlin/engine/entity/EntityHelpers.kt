@@ -1,10 +1,10 @@
 package engine.entity
 
-import engine.tick.tick
+import engine.tick.Tick
 import org.joml.Vector2f
 import org.joml.Vector3f
 
-internal const val interpolationSnappiness = tick.GOAL
+internal const val interpolationSnappiness = Tick.GOAL
 internal val vector3Worker = Vector3f()
 internal val vector2Worker = Vector2f()
 
