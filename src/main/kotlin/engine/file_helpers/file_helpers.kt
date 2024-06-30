@@ -95,7 +95,6 @@ fun getFileList(folderLocation: String): Result<List<Path>> {
  * @return If the string is a folder directory.
  */
 fun String.isFolder(): Boolean {
-  println(this)
   return Path(this).isDirectory()
 }
 
