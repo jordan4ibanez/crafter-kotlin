@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GLCapabilities
 import org.lwjgl.opengl.GLUtil.setupDebugMessageCallback
 import org.lwjgl.system.Callback
 
-object gl {
+object Gl {
 
   private lateinit var debugCallback: Callback
   private lateinit var capabilities: GLCapabilities
