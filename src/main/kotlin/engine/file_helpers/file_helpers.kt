@@ -16,9 +16,9 @@ import java.io.File
  */
 fun getFile(location: String): Result<File> {
   return with(File(location)) {
-    when (this.exists() && this.isFile()) {
-      true -> Ok(this)
-      false -> Err("getFile: $location does not exist.")
+    when {
+      this.isFile() -> Ok(this)
+      else -> Err("getFile: $location does not exist.")
     }
   }
 }
@@ -32,7 +32,7 @@ fun getFile(location: String): Result<File> {
 fun getFolder(location: String): Result<File> {
   return with(File(location)) {
     when {
-      this.exists() && this.isDirectory() -> Ok(this)
+      this.isDirectory() -> Ok(this)
       else -> Err("getFolder: $location is not a directory.")
     }
   }
