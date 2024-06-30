@@ -9,6 +9,8 @@ import engine.model.texture.Texture
 import engine.texture_atlas.worldAtlas
 import groovy.lang.Binding
 import groovy.util.GroovyScriptEngine
+import java.nio.file.Path
+import kotlin.io.path.name
 
 /*
 api works as a state machine.
@@ -60,30 +62,32 @@ object Api {
   }
 
   private fun loadMods() {
-    getFolderList(MOD_BASE_FOLDER).forEach { thisFolder: String ->
+    getFolderList(MOD_BASE_FOLDER).unwrap().forEach { thisFolder: Path ->
       //? note: For now, we will assume the mod is called the folder name. In a bit: The conf will be implemented.
-      currentModName = thisFolder
-      currentModFolder = thisFolder
+      currentModName = thisFolder.name
+      currentModFolder = thisFolder.name
       currentDirectoryLiteral = "$MOD_BASE_FOLDER/$thisFolder"
-      if (!isFolder(currentDirectoryLiteral)) throw RuntimeException("api: Something strange has gone wrong with loading mods.\nFolder $thisFolder does not exist.")
+      if (!currentDirectoryLiteral.isFolder()) throw RuntimeException("Api Something strange has gone wrong with loading mods.\nFolder $thisFolder does not exist.")
 
       //!todo: check mod.json existence here!
       //!fixme: implement config checker!!
       //!fixme: currentModName is set here!
 
+      //! FIXME: THIS NEEDS TO BE HANDLED BETTER.
+
       val currentMain = "$currentDirectoryLiteral/main.groovy"
-      if (!isFile(currentMain)) throw RuntimeException("api: $currentModName does not contain a main.groovy!")
+      if (!currentMain.isFile()) throw RuntimeException("Api $currentModName does not contain a main.groovy!")
       runFile("$currentModName/main.groovy")
     }
   }
 
   private fun loadTextures() {
-    getFolderList(MOD_BASE_FOLDER).forEach { thisFolder: String ->
+    getFolderList(MOD_BASE_FOLDER).unwrap().forEach { thisFolder: Path ->
       //? note: For now, we will assume the mod is called the folder name. In a bit: The conf will be implemented.
-      currentModName = thisFolder
-      currentModFolder = thisFolder
+      currentModName = thisFolder.name
+      currentModFolder = thisFolder.name
       currentDirectoryLiteral = "$MOD_BASE_FOLDER/$thisFolder"
-      if (!isFolder(currentDirectoryLiteral)) throw RuntimeException("api: Something strange has gone wrong with loading textures.\nFolder $thisFolder does not exist.")
+      if (!currentDirectoryLiteral.isFolder()) throw RuntimeException("Api Something strange has gone wrong with loading textures.\nFolder $thisFolder does not exist.")
       loadBlockTextures()
       loadIndividualTextures()
     }
@@ -94,31 +98,33 @@ object Api {
 
   private fun loadBlockTextures() {
     val textureDirectory = "$MOD_BASE_FOLDER/$currentModFolder/textures"
-    if (!isFolder(textureDirectory)) {
-      println("api: $currentModName has no textures folder. Skipping."); return
+    if (!textureDirectory.isFolder()) {
+      println("Api $currentModName has no textures folder. Skipping."); return
     }
     val blockTextureDirectory = "$textureDirectory/blocks"
-    if (!isFolder(blockTextureDirectory)) {
-      println("api: $currentModName has no block textures folder. Skipping."); return
+    if (!blockTextureDirectory.isFolder()) {
+      println("Api $currentModName has no block textures folder. Skipping."); return
     }
     getFileList(blockTextureDirectory)
-      .filter { it.contains(".png") }
-      .ifEmpty { println("api: $currentModName has no block textures in folder. Skipping."); return }
-      .forEach { foundTexture: String ->
-        worldAtlas.add(foundTexture, "$blockTextureDirectory/$foundTexture")
+      .unwrap()
+      .filter { it.endsWith(".png") }
+      .ifEmpty { println("Api $currentModName has no block textures in folder. Skipping."); return }
+      .forEach { foundTexture: Path ->
+        worldAtlas.add(foundTexture.name, "$blockTextureDirectory/$foundTexture")
       }
   }
 
   private fun loadIndividualTextures() {
     val textureDirectory = "$MOD_BASE_FOLDER/$currentModFolder/textures"
-    if (!isFolder(textureDirectory)) {
-      println("api: $currentModName has no textures folder. Skipping."); return
+    if (!textureDirectory.isFolder()) {
+      println("Api $currentModName has no textures folder. Skipping."); return
     }
     getFileList(textureDirectory)
-      .filter { it.contains(".png") }
-      .ifEmpty { println("api: $currentModName has no textures in folder. Skipping."); return }
-      .forEach { foundTexture: String ->
-        Texture.create(foundTexture, "$textureDirectory/$foundTexture")
+      .unwrap()
+      .filter { it.endsWith(".png") }
+      .ifEmpty { println("Api $currentModName has no textures in folder. Skipping."); return }
+      .forEach { foundTexture: Path ->
+        Texture.create(foundTexture.name, "$textureDirectory/$foundTexture")
       }
   }
 
