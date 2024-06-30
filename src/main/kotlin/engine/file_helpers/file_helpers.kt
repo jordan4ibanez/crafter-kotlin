@@ -30,11 +30,9 @@ fun getFile(location: String): Result<File> {
  * @return A Result of trying to load the file into memory.
  */
 fun getFolder(location: String): Result<File> {
-  return with(File(location)) {
-    when {
-      this.isDirectory() -> Ok(this)
-      else -> Err("getFolder: $location is not a directory.")
-    }
+  return when (val folderOption = File(location).someFolder()) {
+    is Some -> Ok(folderOption.unwrap())
+    else -> Err("getFolder: $location is not a directory.")
   }
 }
 
