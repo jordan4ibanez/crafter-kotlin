@@ -17,11 +17,9 @@ import java.io.File
  * @return A Result of trying to load the file into memory.
  */
 fun getFile(location: String): Result<File> {
-  return with(File(location)) {
-    when {
-      this.isFile() -> Ok(this)
-      else -> Err("getFile: $location does not exist.")
-    }
+  return when (val fileOption = File(location).someFile()) {
+    is Some -> Ok(fileOption.unwrap())
+    else -> Err("getFile: $location does not exist.")
   }
 }
 
