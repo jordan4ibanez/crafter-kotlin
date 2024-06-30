@@ -12,7 +12,7 @@ import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL11.glViewport
 import org.lwjgl.system.MemoryUtil.NULL
 
-object glfw {
+object Glfw {
 
   // This object is abstracting away complex implementation details away from the window object.
 

@@ -4,7 +4,7 @@ import engine.camera.Camera
 import engine.client_player.ClientPlayer
 import engine.delta_time.DeltaTime
 import engine.entity.EntityHandler
-import engine.glfw.glfw
+import engine.glfw.Glfw
 import engine.initialization.initialize
 import engine.keyboard.keyboard
 import engine.model.mesh.Mesh
@@ -156,7 +156,7 @@ fun quit() {
   Mesh.destroyAll()
   Texture.destroyAll()
   shader.destroyAll()
-  glfw.destroy()
+  Glfw.destroy()
 }
 
 // Warning: gameLoop really should not be touched. Focus on the infrastructure around it before adding to it.
