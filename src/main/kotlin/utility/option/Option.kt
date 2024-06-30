@@ -100,7 +100,9 @@ class None<T> : Option<T>(null)
 /**
  * Create Some or None based on the input given to it.
  *
- * This is mainly to piggyback Option onto other functions.
+ * This is mainly to piggyback Option onto other functions which use nullables.
+ *
+ * I really do not like using nullables, that's why this exists.
  */
 fun <T> undecided(t: T?): Option<T> {
   return when (t) {
