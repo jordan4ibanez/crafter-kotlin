@@ -68,6 +68,12 @@ fun getFolderList(folderLocation: String): Result<Array<String>> {
   }
 }
 
+/**
+ * Get a list of files in a directory.
+ *
+ * @param folderLocation The location of the folder.
+ * @return A Result of trying to get the files into a string array.
+ */
 fun getFileList(folderLocation: String): Result<Array<String>> {
   return when (val folderOption = getFolder(folderLocation)) {
     is Ok -> when (val folderArrayOption =
