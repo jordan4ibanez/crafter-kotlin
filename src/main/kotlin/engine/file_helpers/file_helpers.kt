@@ -1,5 +1,7 @@
 package engine.file_helpers
 
+import utility.option.None
+import utility.option.Option
 import utility.option.Some
 import utility.option.undecided
 import utility.result.Err
@@ -93,4 +95,28 @@ fun makeFolder(folderLocation: String): Boolean {
 
 fun makeFile(fileLocation: String): File {
   return File(fileLocation)
+}
+
+/**
+ * Check if a File is a file utilizing Option. If it's not, will return None.
+ *
+ * @return A Result. Some if it's a file. None if it's not.
+ */
+fun File.someFile(): Option<File> {
+  return when (this.isFile) {
+    true -> Some(this)
+    else -> None()
+  }
+}
+
+/**
+ * Check if a File is a directory utilizing Option. If it's not, will return None.
+ *
+ * @return A Result. Some if it's a directory. None if it's not.
+ */
+fun File.someFolder(): Option<File> {
+  return when (this.isDirectory) {
+    true -> Some(this)
+    else -> None()
+  }
 }
