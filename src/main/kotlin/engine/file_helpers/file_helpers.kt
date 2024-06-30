@@ -12,7 +12,7 @@ import java.io.File
  * Get a file from a location as a File.
  *
  * @param location The location of the file.
- * @return Result<File> A Result of trying to load the file into memory.
+ * @return A Result of trying to load the file into memory.
  */
 fun getFile(location: String): Result<File> {
   return with(File(location)) {
@@ -27,13 +27,13 @@ fun getFile(location: String): Result<File> {
  * Get a folder from a location as a File.
  *
  * @param location the location of the folder.
- * @return Result<File> A Result of trying to load the file into memory.
+ * @return A Result of trying to load the file into memory.
  */
 fun getFolder(location: String): Result<File> {
   return with(File(location)) {
-    when (this.exists() && this.isDirectory()) {
-      true -> Ok(this)
-      false -> Err("getFolder: $location is not a directory.")
+    when {
+      this.exists() && this.isDirectory() -> Ok(this)
+      else -> Err("getFolder: $location is not a directory.")
     }
   }
 }
@@ -42,7 +42,7 @@ fun getFolder(location: String): Result<File> {
  * Get a string from a file
  *
  * @param location the location of the file.
- * @return Result<String> A Result of trying to load the file into memory.
+ * @return A Result of trying to load the file into memory.
  */
 fun getFileString(location: String): Result<String> {
   return when (val fileOption = getFile(location)) {
@@ -51,20 +51,24 @@ fun getFileString(location: String): Result<String> {
   }
 }
 
+/**
+ * Get a list of folders in a directory.
+ *
+ * @param folderLocation The location of the folder.
+ * @return A Result of trying to get the folders into a string array.
+ */
 fun getFolderList(folderLocation: String): Result<Array<String>> {
-  return with(getFolder(folderLocation)) {
-    when (this) {
-      is Ok -> {
-        with(undecided(this.unwrap().list { currentFolder, name -> File(currentFolder, name).isDirectory })) {
-          when (this) {
-            is Some -> Ok(this.unwrap())
-            else -> Err("getFolderList: Invalid list filter applied.")
-          }
-        }
-      }
+  return when (val folderOption = getFolder(folderLocation)) {
+    is Ok -> {
+      when (val folderArrayOption =
+        undecided(folderOption.unwrap().list { currentFolder, name -> File(currentFolder, name).isDirectory })) {
 
-      else -> Err("getFolderList: $folderLocation does not exist.")
+        is Some -> Ok(folderArrayOption.unwrap())
+        else -> Err("getFolderList: Invalid list filter applied.")
+      }
     }
+
+    else -> Err("getFolderList: $folderLocation does not exist.")
   }
 }
 
