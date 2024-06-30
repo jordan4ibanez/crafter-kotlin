@@ -1,5 +1,6 @@
 package engine.file_helpers
 
+import utility.catcher.catcher
 import utility.option.None
 import utility.option.Option
 import utility.option.Some
@@ -7,7 +8,8 @@ import utility.option.undecided
 import utility.result.Err
 import utility.result.Ok
 import utility.result.Result
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.*
 
 
 /**
@@ -16,8 +18,8 @@ import java.io.File
  * @param location The location of the file.
  * @return A Result of trying to load the file into memory.
  */
-fun getFile(location: String): Result<File> {
-  return when (val fileOption = File(location).someFile()) {
+fun getFile(location: String): Result<Path> {
+  return when (val fileOption = Path(location).someFile()) {
     is Some -> Ok(fileOption.unwrap())
     else -> Err("getFile: $location does not exist.")
   }
@@ -29,8 +31,8 @@ fun getFile(location: String): Result<File> {
  * @param location the location of the folder.
  * @return A Result of trying to load the file into memory.
  */
-fun getFolder(location: String): Result<File> {
-  return when (val folderOption = File(location).someFolder()) {
+fun getFolder(location: String): Result<Path> {
+  return when (val folderOption = Path(location).someFolder()) {
     is Some -> Ok(folderOption.unwrap())
     else -> Err("getFolder: $location is not a directory.")
   }
@@ -55,16 +57,16 @@ fun getFileString(location: String): Result<String> {
  * @param folderLocation The location of the folder.
  * @return A Result of trying to get the folders into a string array.
  */
-fun getFolderList(folderLocation: String): Result<Array<String>> {
+fun getFolderList(folderLocation: String): Result<List<Path>> {
   return when (val folderOption = getFolder(folderLocation)) {
     is Ok -> when (val folderArrayOption =
-      undecided(folderOption.unwrap().list { currentFile, name -> File(currentFile, name).isDirectory })) {
+      undecided(folderOption.unwrap().listDirectoryEntries().filter { path: Path -> path.isDirectory() })) {
 
       is Some -> Ok(folderArrayOption.unwrap())
       else -> Err("getFolderList: Invalid list filter applied.")
     }
 
-    else -> Err("getFolderList: $folderLocation does not exist.")
+    else -> Err("getFolderList: $folderLocation is not a folder.")
   }
 }
 
@@ -74,10 +76,10 @@ fun getFolderList(folderLocation: String): Result<Array<String>> {
  * @param folderLocation The location of the folder.
  * @return A Result of trying to get the files into a string array.
  */
-fun getFileList(folderLocation: String): Result<Array<String>> {
+fun getFileList(folderLocation: String): Result<List<Path>> {
   return when (val folderOption = getFolder(folderLocation)) {
     is Ok -> when (val folderArrayOption =
-      undecided(folderOption.unwrap().list { currentFile, name -> File(currentFile, name).isFile })) {
+      undecided(folderOption.unwrap().listDirectoryEntries().filter { path: Path -> path.isRegularFile() })) {
 
       is Some -> Ok(folderArrayOption.unwrap())
       else -> Err("getFileList: Invalid list filter applied.")
@@ -87,20 +89,20 @@ fun getFileList(folderLocation: String): Result<Array<String>> {
   }
 }
 
-fun isFolder(folderLocation: String): Boolean {
-  return File(folderLocation).isDirectory
+fun String.isFolder(): Boolean {
+  return Path(this).isDirectory()
 }
 
-fun isFile(fileLocation: String): Boolean {
-  return File(fileLocation).isFile
+fun String.isFile(): Boolean {
+  return Path(this).isRegularFile()
 }
 
-fun makeFolder(folderLocation: String): Boolean {
-  return File(folderLocation).mkdir()
+fun String.makeFolder(): Result<Path> {
+  return catcher { Path(this).createDirectory() }
 }
 
-fun makeFile(fileLocation: String): File {
-  return File(fileLocation)
+fun String.makeFile(): Result<Path> {
+  return catcher { Path(this).createFile() }
 }
 
 /**
@@ -108,8 +110,8 @@ fun makeFile(fileLocation: String): File {
  *
  * @return A Result. Some if it's a file. None if it's not.
  */
-fun File.someFile(): Option<File> {
-  return when (this.isFile) {
+fun Path.someFile(): Option<Path> {
+  return when (this.isRegularFile()) {
     true -> Some(this)
     else -> None()
   }
@@ -120,8 +122,8 @@ fun File.someFile(): Option<File> {
  *
  * @return A Result. Some if it's a directory. None if it's not.
  */
-fun File.someFolder(): Option<File> {
-  return when (this.isDirectory) {
+fun Path.someFolder(): Option<Path> {
+  return when (this.isDirectory()) {
     true -> Some(this)
     else -> None()
   }
