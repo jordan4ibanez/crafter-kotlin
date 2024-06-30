@@ -20,7 +20,8 @@ fun createShader(vertexSourceCodeLocation: String, fragmentSourceCodeLocation: S
 }
 
 private fun compileSourceCode(programID: Int, sourceCodeLocation: String, shaderType: Int): Int {
-  val sourceCode = getFileString(sourceCodeLocation).unwrap()
+  val sourceCode =
+    getFileString(sourceCodeLocation).expect("Shader: $programID. Location: $sourceCodeLocation does not exist.")
 
   val shaderID = glCreateShader(shaderType)
 
