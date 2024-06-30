@@ -45,11 +45,9 @@ fun getFolder(location: String): Result<File> {
  * @return Result<String> A Result of trying to load the file into memory.
  */
 fun getFileString(location: String): Result<String> {
-  return with(getFile(location)) {
-    when (this) {
-      is Ok -> Ok(this.unwrap().readText())
-      else -> Err("getFileString: $location does not exist.")
-    }
+  return when (val fileOption = getFile(location)) {
+    is Ok -> Ok(fileOption.unwrap().readText())
+    else -> Err("getFileString: $location does not exist.")
   }
 }
 
