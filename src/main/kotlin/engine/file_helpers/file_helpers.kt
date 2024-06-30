@@ -89,18 +89,38 @@ fun getFileList(folderLocation: String): Result<List<Path>> {
   }
 }
 
+/**
+ * Check if a String is a folder directory.
+ *
+ * @return If the string is a folder directory.
+ */
 fun String.isFolder(): Boolean {
   return Path(this).isDirectory()
 }
 
+/**
+ * Check if a String is a file directory.
+ *
+ * @return If the string is a file directory.
+ */
 fun String.isFile(): Boolean {
   return Path(this).isRegularFile()
 }
 
+/**
+ * Make a folder from a String directory.
+ *
+ * @return Result<Path> if the folder creation was successful.
+ */
 fun String.makeFolder(): Result<Path> {
   return catcher { Path(this).createDirectory() }
 }
 
+/**
+ * Make a file from a String directory.
+ *
+ * @return Result<Path> if the file creation was successful.
+ */
 fun String.makeFile(): Result<Path> {
   return catcher { Path(this).createFile() }
 }
