@@ -11,7 +11,7 @@ A texture packer that automates into an atlas.
 This is designed very strangely because it's meant to be an internal module.
 Self-contained, sleek, black box.
  */
-class TexturePacker {
+class TexturePacker(name: String) {
 
   private val padding = 1
   private val edgeColor = Vector4i(255, 0, 0, 255)
@@ -25,12 +25,10 @@ class TexturePacker {
   private val availableX: SortedSet<Int> = TreeSet()
   private val availableY: SortedSet<Int> = TreeSet()
   private var locked = false
-  private val name: String
 
-  constructor(name: String) {
+  init {
     availableX.add(padding)
     availableY.add(padding)
-    this.name = name
     canvas = Canvas(name, size.x(), size.y())
   }
 
