@@ -36,7 +36,6 @@ import org.joml.Vector3f
 
 class Noise(private var seed: Int) {
 
-
   private var frequency = 0.01f
   private var interp = Interp.Quintic
   private var noiseType = NoiseType.Simplex
