@@ -6,22 +6,11 @@ import java.nio.ByteBuffer
 import java.util.*
 
 
-val worldAtlas = Packer("worldAtlas")
-val fontAtlas = Packer("fontAtlas")
-
-// note: Everything below this is just implementation.
-//  You only really talk to the two vals above.
-
 /*
 A texture packer that automates into an atlas.
 This is designed very strangely because it's meant to be an internal module.
 Self-contained, sleek, black box.
  */
-
-internal const val CHANNELS = 4
-internal const val UNDER_PROVISION = 0.00001f;
-
-
 class Packer {
 
   private val padding = 1
