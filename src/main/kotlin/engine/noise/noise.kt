@@ -34,45 +34,6 @@ import org.joml.Vector3f
 // off every 'zix'.)
 //
 
-enum class NoiseType { Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, Cellular, WhiteNoise, Cubic, CubicFractal }
-enum class Interp { Linear, Hermite, Quintic }
-enum class FractalType { FBM, Billow, RigidMulti }
-enum class CellularDistanceFunction { Euclidean, Manhattan, Natural }
-enum class CellularReturnType { CellValue, NoiseLookup, Distance, Distance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div }
-
-private val Value = NoiseType.Value
-private val ValueFractal = NoiseType.ValueFractal
-private val Perlin = NoiseType.Perlin
-private val PerlinFractal = NoiseType.PerlinFractal
-private val Simplex = NoiseType.Simplex
-private val SimplexFractal = NoiseType.SimplexFractal
-private val Cellular = NoiseType.Cellular
-private val WhiteNoise = NoiseType.WhiteNoise
-private val Cubic = NoiseType.Cubic
-private val CubicFractal = NoiseType.CubicFractal
-
-private val Linear = Interp.Linear
-private val Hermite = Interp.Hermite
-private val Quintic = Interp.Quintic
-
-private val FBM = FractalType.FBM
-private val Billow = FractalType.Billow
-private val RigidMulti = FractalType.RigidMulti
-
-private val Euclidean = CellularDistanceFunction.Euclidean
-private val Manhattan = CellularDistanceFunction.Manhattan
-private val Natural = CellularDistanceFunction.Natural
-
-private val CellValue = CellularReturnType.CellValue
-private val NoiseLookup = CellularReturnType.NoiseLookup
-private val Distance = CellularReturnType.Distance
-private val Distance2 = CellularReturnType.Distance2
-private val Distance2Add = CellularReturnType.Distance2Add
-private val Distance2Sub = CellularReturnType.Distance2Sub
-private val Distance2Mul = CellularReturnType.Distance2Mul
-private val Distance2Div = CellularReturnType.Distance2Div
-
-
 class Noise {
 
 
