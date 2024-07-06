@@ -13,8 +13,9 @@ import org.lwjgl.system.MemoryUtil.NULL
 
 object Window {
 
-  internal var pointer: Long = NULL
   private const val WINDOW_TITLE_BASE = "Crafter"
+  
+  internal var pointer: Long = NULL
   internal val frameBufferSize = Vector2i(0, 0)
   internal val position = Vector2i(0, 0)
   private val clearColor = Vector3f(0f, 0f, 0f)
