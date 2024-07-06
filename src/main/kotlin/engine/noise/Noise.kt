@@ -4,7 +4,7 @@ import org.joml.Math.*
 import org.joml.Vector2f
 import org.joml.Vector3f
 
-//note: IntelliJ's auto translater butchered this so I had to translate it by hand.
+//note: IntelliJ's auto translator butchered this so I had to translate it by hand.
 
 // FastNoise.java
 //
