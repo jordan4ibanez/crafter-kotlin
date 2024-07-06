@@ -11,7 +11,7 @@ A texture packer that automates into an atlas.
 This is designed very strangely because it's meant to be an internal module.
 Self-contained, sleek, black box.
  */
-class Packer {
+class TexturePacker {
 
   private val padding = 1
   private val edgeColor = Vector4i(255, 0, 0, 255)
