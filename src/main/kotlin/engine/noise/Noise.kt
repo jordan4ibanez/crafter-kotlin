@@ -34,10 +34,9 @@ import org.joml.Vector3f
 // off every 'zix'.)
 //
 
-class Noise {
+class Noise(private var seed: Int) {
 
 
-  private var seed = 1337
   private var frequency = 0.01f
   private var interp = Interp.Quintic
   private var noiseType = NoiseType.Simplex
@@ -54,11 +53,6 @@ class Noise {
   private var cellularNoiseLookup: Noise? = null
 
   private var gradientPerturbAmp = (1.0f / 0.45f)
-
-  constructor(seed: Int) {
-    this.seed = seed
-    calculateFractalBounding()
-  }
 
   // Returns a 0 float/double
   fun getDecimalType(): Float {
@@ -2856,5 +2850,9 @@ class Noise {
 
     v2.x += lerp(lx0x, lx1x, ys) * perturbAmp
     v2.y += lerp(ly0x, ly1x, ys) * perturbAmp
+  }
+
+  init {
+    calculateFractalBounding()
   }
 }
